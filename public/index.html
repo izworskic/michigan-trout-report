@@ -450,6 +450,16 @@ function renderCard(river, briefRivers) {
         <span class="stat-label">Median (today)</span>
         <span class="stat-value">${c.stats?.p50 ? c.stats.p50.toLocaleString() + ' cfs' : '—'}</span>
       </div>
+      ${c.turbidity_fnu !== null ? `<div class="stat-item" style="grid-column:1/-1">
+        <span class="stat-label">Turbidity</span>
+        <span class="stat-value">${c.turbidity_fnu} FNU — ${c.turbidityLabel}</span>
+        <span class="stat-sub">${c.turbidityNote}</span>
+      </div>` : ''}
+      ${c.do_mgl !== null ? `<div class="stat-item">
+        <span class="stat-label">Dissolved O₂</span>
+        <span class="stat-value">${c.do_mgl} mg/L</span>
+        <span class="stat-sub">${c.doLabel}</span>
+      </div>` : ''}
     </div>`;
 
   const noteHtml = aiNote ? `<div class="card-note">${aiNote}</div>` : '';
@@ -596,6 +606,16 @@ function renderModal(data, aiNote, recData) {
         <div class="modal-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
         ${c.stats?.p50 ? `<div class="modal-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
       </div>
+      ${c.turbidity_fnu !== null ? `<div class="modal-stat" style="grid-column:1/-1">
+        <div class="modal-stat-label">Turbidity</div>
+        <div class="modal-stat-value">${c.turbidity_fnu} FNU — ${c.turbidityLabel}</div>
+        <div class="modal-stat-sub">${c.turbidityNote}</div>
+      </div>` : ''}
+      ${c.do_mgl !== null ? `<div class="modal-stat">
+        <div class="modal-stat-label">Dissolved O₂</div>
+        <div class="modal-stat-value">${c.do_mgl} mg/L</div>
+        <div class="modal-stat-sub">${c.doLabel} — ${c.doNote}</div>
+      </div>` : ''}
     </div>
     ${c.flowPct ? `
     <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${Math.min((c.flowPct||0)/2,100)}%;background:${flowBarColor(c.flowPct)}"></div></div>
