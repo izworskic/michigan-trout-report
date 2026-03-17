@@ -244,6 +244,77 @@
     .rivers-grid { grid-template-columns: 1fr; }
     .legend-inner { gap: 8px 14px; }
   }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 24px 16px;
+  }
+  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal-box {
+    background: #fff;
+    border-radius: 8px;
+    max-width: 680px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,.25);
+    overflow: hidden;
+    margin: auto;
+  }
+  .modal-header {
+    background: #1a3a1a;
+    color: #f0ede6;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 18px; font-weight: normal; }
+  .modal-close {
+    background: none; border: none; color: #a8c8a8;
+    font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1;
+  }
+  .modal-close:hover { color: #fff; }
+  .modal-body { padding: 20px; }
+  .modal-rating {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-radius: 5px; margin-bottom: 16px;
+  }
+  .modal-rating-emoji { font-size: 28px; }
+  .modal-rating-label { font-size: 20px; font-weight: bold; }
+  .modal-rating-tagline { font-size: 13px; opacity: .85; }
+  .modal-stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .modal-stat { background: #f9f6f0; border-radius: 4px; padding: 10px 12px; }
+  .modal-stat-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+  .modal-stat-value { font-size: 16px; color: #2c2c2c; }
+  .modal-stat-sub { font-size: 11px; color: #aaa; }
+  .modal-flow-bar { background: #f0ece4; border-radius: 4px; height: 6px; margin-bottom: 4px; overflow: hidden; }
+  .modal-flow-fill { height: 100%; border-radius: 4px; }
+  .modal-flow-label { font-size: 12px; color: #aaa; margin-bottom: 14px; }
+  .modal-brief { font-size: 14px; color: #555; line-height: 1.65; border-top: 1px solid #f0ece4; padding-top: 14px; font-style: italic; }
+  .modal-actions {
+    display: flex; gap: 10px; margin-top: 18px;
+    padding-top: 14px; border-top: 1px solid #f0ece4;
+  }
+  .modal-btn-full {
+    display: inline-block; background: #1a3a1a; color: #fff;
+    padding: 9px 18px; border-radius: 4px; font-size: 13px;
+    text-decoration: none; letter-spacing: .3px;
+  }
+  .modal-btn-full:hover { background: #2c5f2d; text-decoration: none; }
+  .modal-btn-close {
+    display: inline-block; background: #f0ece4; color: #555;
+    padding: 9px 18px; border-radius: 4px; font-size: 13px;
+    border: none; cursor: pointer; letter-spacing: .3px;
+  }
+  .modal-btn-close:hover { background: #e0dbd0; }
+  .modal-loading { text-align: center; padding: 30px; color: #888; font-style: italic; }
 </style>
 </head>
 <body>
@@ -296,6 +367,19 @@
   Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a> &nbsp;·&nbsp;
   <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
 </footer>
+
+<!-- Modal overlay -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">River Conditions</div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="modal-loading">Loading...</div>
+    </div>
+  </div>
+</div>
 
 <script>
 const RATINGS = {
@@ -369,9 +453,10 @@ function renderCard(river, briefRivers) {
     </div>`;
 
   const noteHtml = aiNote ? `<div class="card-note">${aiNote}</div>` : '';
+  const tapHint = `<div style="font-size:11px;color:#bbb;padding:8px 16px 12px;text-align:right">Tap for details →</div>`;
 
   return `
-    <div class="river-card">
+    <div class="river-card" onclick="openModal('${river.id}', '${river.name.replace(/'/g,"\\'")}')">
       <div class="card-header">
         <div class="card-river-name">${river.name}</div>
         <div class="card-region">${river.region}</div>
@@ -386,6 +471,112 @@ function renderCard(river, briefRivers) {
       ${statsHtml}
       ${flowBar}
       ${noteHtml}
+      ${tapHint}
+    </div>`;
+}
+
+// ── Modal ──────────────────────────────────────────────────────────────────
+let _briefRivers = {};
+
+function openModal(riverId, riverName) {
+  document.getElementById('modalTitle').textContent = riverName;
+  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading guide reports and history...</div>';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  fetch(`/api/river/${riverId}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) throw new Error(data.error);
+      renderModal(data, _briefRivers[riverId]);
+    })
+    .catch(e => {
+      document.getElementById('modalBody').innerHTML = `
+        <div class="modal-loading">Failed to load. <a href="/river.html?id=${riverId}">Open full page instead →</a></div>`;
+    });
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function renderModal(data, aiNote) {
+  const c   = data.primaryConditions;
+  const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+  const hist = data.history;
+
+  // Guide note
+  let guideHtml = '';
+  if (data.reports?.synthesis) {
+    guideHtml = `<div style="margin-bottom:14px">
+      <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">What the guides are saying</div>
+      <div style="font-size:14px;color:#444;line-height:1.65">${data.reports.synthesis}</div>
+    </div>`;
+  }
+
+  // History snippet
+  let histHtml = '';
+  const daysNeeded = 30;
+  const pct = Math.min(Math.round((hist.totalDays / daysNeeded) * 100), 100);
+  if (!hist.hasEnough) {
+    histHtml = `<div style="font-size:12px;color:#aaa;padding:10px 0;border-top:1px solid #f0ece4;margin-top:10px">
+      <strong style="color:#888">Building history</strong> — ${hist.totalDays} of ~${daysNeeded} days collected.
+      Similar-conditions lookup available soon.
+    </div>`;
+  } else if (hist.similarDays?.length) {
+    const best = hist.similarDays[0];
+    const dr = RATINGS[best.ratingKey] || RATINGS.FAIR;
+    histHtml = `<div style="font-size:12px;color:#aaa;padding:10px 0;border-top:1px solid #f0ece4;margin-top:10px">
+      <strong style="color:#888">On a similar day</strong> (${best.date}):
+      <span style="color:${dr.color};font-weight:bold">${dr.emoji} ${dr.label}</span>
+      ${best.guideNotes ? `— "${best.guideNotes.slice(0, 120)}..."` : ''}
+    </div>`;
+  }
+
+  // AI conditions note
+  const noteHtml = aiNote ? `<div class="modal-brief">${aiNote}</div>` : '';
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}30">
+      <div class="modal-rating-emoji">${rat.emoji}</div>
+      <div>
+        <div class="modal-rating-label" style="color:${rat.color}">${rat.label}</div>
+        <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}</div>
+      </div>
+    </div>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="modal-stat-label">Flow</div>
+        <div class="modal-stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
+        ${c.flowLabel ? `<div class="modal-stat-sub">${c.flowLabel}</div>` : ''}
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-label">Water Temp</div>
+        <div class="modal-stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</div>
+        ${c.tempLabel ? `<div class="modal-stat-sub">${c.tempLabel}</div>` : ''}
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-label">Gage Height</div>
+        <div class="modal-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
+        ${c.stats?.p50 ? `<div class="modal-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
+      </div>
+    </div>
+    ${c.flowPct ? `
+    <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${Math.min((c.flowPct||0)/2,100)}%;background:${flowBarColor(c.flowPct)}"></div></div>
+    <div class="modal-flow-label">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>` : ''}
+    ${guideHtml}
+    ${noteHtml}
+    ${histHtml}
+    <div class="modal-actions">
+      <a href="/river.html?id=${data.id}" class="modal-btn-full">Full details + all gauges →</a>
+      <button class="modal-btn-close" onclick="closeModal()">Close</button>
     </div>`;
 }
 
@@ -419,6 +610,9 @@ async function loadData() {
       document.getElementById('briefText').textContent = data.brief.lead;
       document.getElementById('briefSection').style.display = 'block';
     }
+
+    // Store brief river notes for modal use
+    if (data.brief?.rivers) _briefRivers = data.brief.rivers;
 
     // River cards
     const grid = document.getElementById('riversGrid');
