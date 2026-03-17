@@ -82,6 +82,20 @@
   .site-footer { border-top: 1px solid #ddd8cc; padding: 20px; text-align: center; font-size: 12px; color: #aaa; background: #fff; margin-top: 40px; }
   .site-footer a { color: #4a7c4a; }
 
+  /* Recommendation */
+  .rec-section { background: #fff; border: 2px solid #4a7c4a; border-radius: 6px; padding: 20px 22px; }
+  .rec-lead { font-size: 15px; color: #2c2c2c; line-height: 1.75; margin-bottom: 16px; }
+  .rec-fly-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .rec-fly-tag { background: #e8f5e9; color: #1a3a1a; font-size: 12px; padding: 4px 10px; border-radius: 4px; border: 1px solid #c8e6c9; }
+  .rec-hatch { margin-top: 14px; padding-top: 14px; border-top: 1px solid #e8f5e9; }
+  .rec-hatch-name { font-size: 13px; font-weight: bold; color: #2c5f2d; margin-bottom: 4px; }
+  .rec-hatch-detail { font-size: 13px; color: #555; line-height: 1.6; }
+  .rec-intel { margin-top: 14px; padding-top: 14px; border-top: 1px solid #e8e4dc; }
+  .rec-intel-title { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #bbb; margin-bottom: 8px; }
+  .rec-intel-item { font-size: 13px; color: #666; margin-bottom: 6px; }
+  .rec-intel-item a { color: #2c5f2d; }
+  .rec-loading { color: #aaa; font-style: italic; font-size: 14px; padding: 16px 0; }
+
   @media (max-width: 480px) {
     .river-name { font-size: 24px; }
     .gauges-grid { grid-template-columns: 1fr 1fr; }
@@ -132,7 +146,7 @@ function formatDate(d) {
   } catch(e) { return d; }
 }
 
-function renderPage(data) {
+function renderPage(data, recData) {
   const r   = data;
   const c   = r.primaryConditions;
   const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
@@ -140,6 +154,33 @@ function renderPage(data) {
   // Update meta
   document.getElementById('pageTitle').textContent = `${r.name} Conditions — Michigan Trout Report`;
   document.getElementById('pageDesc').content = `Live stream conditions for the ${r.name}: ${rat.label}. Flow ${c.flow ? c.flow + ' cfs' : 'N/A'}, water temp ${c.tempF ? c.tempF + '°F' : 'N/A'}.`;
+
+  // Build recommendation section
+  let recHtml = '';
+  if (recData) {
+    const flies = (recData.staticRec?.topFlies || []).slice(0, 6);
+    const flyTags = flies.map(f =>
+      `<span class="rec-fly-tag">${f.name} #${f.sizes.join('/')}</span>`
+    ).join('');
+    const hatches = (recData.staticRec?.activeHatches || []).slice(0, 2).map(h => `
+      <div class="rec-hatch">
+        <div class="rec-hatch-name">${h.name} <span style="font-weight:normal;color:#888;font-size:12px">— peaks ${h.timeOfDay}</span></div>
+        <div class="rec-hatch-detail">${h.presentation}</div>
+      </div>`).join('');
+    const intel = (recData.intel?.items || []).slice(0, 2).map(i =>
+      `<div class="rec-intel-item"><a href="${i.url}" target="_blank" rel="noopener">${i.title}</a> <span style="color:#ccc">[${i.source}, ${i.date}]</span></div>`
+    ).join('');
+    const flowTip = recData.staticRec?.flowAdvice;
+    const timeTip = recData.staticRec?.timeAdvice;
+    recHtml = `<div class="rec-section">
+      ${recData.recommendation ? `<div class="rec-lead">${recData.recommendation}</div>` : ''}
+      ${flyTags ? `<div class="rec-fly-tags">${flyTags}</div>` : ''}
+      ${flowTip ? `<div style="font-size:13px;color:#555;margin-bottom:8px"><strong>Flow situation:</strong> ${flowTip.technique}</div>` : ''}
+      ${timeTip ? `<div style="font-size:13px;color:#555;margin-bottom:8px"><strong>${timeTip.period}:</strong> ${timeTip.tip}</div>` : ''}
+      ${hatches}
+      ${intel ? `<div class="rec-intel"><div class="rec-intel-title">Current intel from the web</div>${intel}</div>` : ''}
+    </div>`;
+  }
 
   // Gauges
   const gaugesHtml = r.gauges.map(g => {
@@ -258,6 +299,11 @@ function renderPage(data) {
         <div class="gauges-grid">${gaugesHtml}</div>
       </div>
 
+      ${recHtml ? `<div class="section">
+        <div class="section-title">🎣 What to Tie On Today</div>
+        ${recHtml}
+      </div>` : ''}
+
       <div class="section">
         <div class="section-title">What the Guides Are Saying</div>
         ${reportsHtml}
@@ -276,11 +322,16 @@ async function load() {
   if (!id) { window.location = '/'; return; }
 
   try {
-    const resp = await fetch(`/api/river/${id}`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
+    // Fetch river detail and recommendation in parallel
+    const [riverResp, recResp] = await Promise.all([
+      fetch(`/api/river/${id}`),
+      fetch(`/api/recommend?id=${id}`),
+    ]);
+    if (!riverResp.ok) throw new Error(`HTTP ${riverResp.status}`);
+    const data   = await riverResp.json();
+    const recData = recResp.ok ? await recResp.json() : null;
     if (!data.success) throw new Error(data.error);
-    renderPage(data);
+    renderPage(data, recData?.success ? recData : null);
   } catch(e) {
     document.getElementById('mainContent').innerHTML = `
       <div class="loading">Failed to load river data. <a href="/">← Back to all rivers</a></div>`;
