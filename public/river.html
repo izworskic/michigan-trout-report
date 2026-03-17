@@ -82,7 +82,22 @@
   .site-footer { border-top: 1px solid #ddd8cc; padding: 20px; text-align: center; font-size: 12px; color: #aaa; background: #fff; margin-top: 40px; }
   .site-footer a { color: #4a7c4a; }
 
-  /* Recommendation */
+  /* Weather */
+  .weather-section { background: #f0f4ff; border: 1px solid #c5cfe8; border-radius: 6px; padding: 18px 20px; }
+  .weather-today { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .wx-stat { background: #fff; border-radius: 4px; padding: 10px 12px; border: 1px solid #dde3f0; }
+  .wx-stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #8899bb; margin-bottom: 3px; }
+  .wx-stat-value { font-size: 16px; color: #2c2c2c; }
+  .wx-stat-sub { font-size: 11px; color: #99a; margin-top: 2px; }
+  .wx-tip { font-size: 13px; color: #445; line-height: 1.6; margin-bottom: 8px; padding: 8px 12px; background: #fff; border-radius: 4px; border-left: 3px solid #6680cc; }
+  .wx-tip.rain-warning { border-left-color: #cc6644; background: #fff5f2; }
+  .wx-week { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-top: 12px; }
+  .wx-day { background: #fff; border: 1px solid #dde3f0; border-radius: 4px; padding: 8px 10px; min-width: 90px; text-align: center; flex-shrink: 0; }
+  .wx-day-name { font-size: 11px; color: #8899bb; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+  .wx-day-temp { font-size: 14px; color: #2c2c2c; }
+  .wx-day-low { font-size: 11px; color: #aaa; }
+  .wx-day-rain { font-size: 11px; color: #6680cc; margin-top: 3px; }
+  .wx-day-short { font-size: 11px; color: #666; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
   .rec-section { background: #fff; border: 2px solid #4a7c4a; border-radius: 6px; padding: 20px 22px; }
   .rec-lead { font-size: 15px; color: #2c2c2c; line-height: 1.75; margin-bottom: 16px; }
   .rec-fly-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
@@ -182,7 +197,46 @@ function renderPage(data, recData) {
     </div>`;
   }
 
-  // Gauges
+  // Build weather section
+  let weatherHtml = '';
+  const wx = recData?.weather;
+  if (wx?.today) {
+    const t = wx.today;
+    const rainClass = (wx.maxRainNext48 >= 50) ? 'wx-tip rain-warning' : 'wx-tip';
+    const weekCards = (wx.week || []).slice(0,5).map(d => `
+      <div class="wx-day">
+        <div class="wx-day-name">${d.name.replace(' Night','').slice(0,3)}</div>
+        <div class="wx-day-temp">${d.tempF}°</div>
+        ${d.tempLow !== null ? `<div class="wx-day-low">↓${d.tempLow}°</div>` : ''}
+        ${d.rain > 10 ? `<div class="wx-day-rain">💧${d.rain}%</div>` : ''}
+        <div class="wx-day-short">${d.forecast}</div>
+      </div>`).join('');
+
+    weatherHtml = `<div class="weather-section">
+      <div class="weather-today">
+        <div class="wx-stat">
+          <div class="wx-stat-label">Air Temp</div>
+          <div class="wx-stat-value">${t.tempF}°F</div>
+          ${wx.tonight ? `<div class="wx-stat-sub">Tonight: ${wx.tonight.tempF}°F</div>` : ''}
+        </div>
+        <div class="wx-stat">
+          <div class="wx-stat-label">Rain Chance</div>
+          <div class="wx-stat-value">${t.rain}%</div>
+          <div class="wx-stat-sub">${t.precip?.label || ''}</div>
+        </div>
+        <div class="wx-stat">
+          <div class="wx-stat-label">Wind</div>
+          <div class="wx-stat-value" style="font-size:13px">${t.wind || 'Calm'}</div>
+          <div class="wx-stat-sub">${t.wind_int?.level || ''}</div>
+        </div>
+      </div>
+      <div class="wx-tip">${t.forecast}${t.cloud?.hatchTip ? ' — ' + t.cloud.hatchTip : ''}</div>
+      ${wx.flowTrend !== 'stable' ? `<div class="${rainClass}">⚠ Rain incoming — flow may rise in the next 24-48h. Check conditions before heading out.</div>` : ''}
+      ${t.wind_int?.level === 'high' ? `<div class="wx-tip">${t.wind_int.tip}</div>` : ''}
+      ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div class="wx-tip">Best upcoming window: <strong>${wx.bestWindow.name}</strong> — ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast} (${wx.bestWindow.rain}% rain)</div>` : ''}
+      ${weekCards ? `<div class="wx-week">${weekCards}</div>` : ''}
+    </div>`;
+  }
   const gaugesHtml = r.gauges.map(g => {
     const gc  = g.conditions;
     const gr  = RATINGS[gc.ratingKey] || RATINGS.FAIR;
@@ -298,6 +352,11 @@ function renderPage(data, recData) {
         <div class="section-title">Stream Gauges</div>
         <div class="gauges-grid">${gaugesHtml}</div>
       </div>
+
+      ${weatherHtml ? `<div class="section">
+        <div class="section-title">🌤 Weather Forecast</div>
+        ${weatherHtml}
+      </div>` : ''}
 
       ${recHtml ? `<div class="section">
         <div class="section-title">🎣 What to Tie On Today</div>
