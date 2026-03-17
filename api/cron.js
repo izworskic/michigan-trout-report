@@ -1,11 +1,15 @@
 // Daily cron — 8am CT (13:00 UTC), set in vercel.json
 // Fetches USGS data, generates AI brief, caches to Redis.
+// Also fetches guide reports and stores daily history snapshots.
 
 import { Redis } from '@upstash/redis';
 import { RIVERS, ALL_GAUGE_IDS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
 import { generateBrief } from '../lib/generator.js';
+import { fetchAllRiverReports } from '../lib/outfitters.js';
+import { synthesizeReports } from '../lib/synthesizer.js';
+import { storeSnapshot } from '../lib/history.js';
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
@@ -57,11 +61,26 @@ export default async function handler(req, res) {
     const ttl     = secondsUntilMidnight() + 120;
     const payload = { rivers: riverData, brief, generated_at: new Date().toISOString(), date: today };
 
-    const r = makeRedis();
     if (r) {
       await r.set(`trout:daily:${today}`, JSON.stringify(payload), { ex: ttl });
-      log.push(`[${ts()}] Cached to Redis`);
+      log.push(`[${ts()}] Main payload cached`);
     }
+
+    // Fetch guide reports for all rivers
+    log.push(`[${ts()}] Fetching outfitter reports...`);
+    const allReports = await fetchAllRiverReports(RIVERS.map(rv => rv.id));
+    log.push(`[${ts()}] Outfitter reports fetched`);
+
+    // Store historical snapshots + invalidate detail caches
+    for (const river of riverData) {
+      const reports   = allReports[river.id] || [];
+      const synthesis = await synthesizeReports(river.id, river.name, reports);
+      await storeSnapshot(r, river.id, river.conditions, synthesis);
+      if (r) {
+        try { await r.del(`trout:detail:${river.id}:${today}`); } catch(e) {}
+      }
+    }
+    log.push(`[${ts()}] History snapshots stored for ${riverData.length} rivers`);
 
     return res.status(200).json({ success: true, log });
   } catch(e) {
