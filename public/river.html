@@ -245,6 +245,8 @@ function renderPage(data, recData) {
       <div class="gauge-stat"><span>Flow</span> ${gc.flow !== null ? gc.flow.toLocaleString() + ' cfs' : '—'}</div>
       <div class="gauge-stat"><span>Temp</span> ${gc.tempF !== null ? gc.tempF + '°F' : '—'}</div>
       <div class="gauge-stat"><span>Gage</span> ${gc.gage !== null ? gc.gage + ' ft' : '—'}</div>
+      ${gc.turbidity_fnu !== null ? `<div class="gauge-stat"><span>Turbidity</span> ${gc.turbidity_fnu} FNU — <em>${gc.turbidityLabel}</em></div>` : ''}
+      ${gc.do_mgl !== null ? `<div class="gauge-stat"><span>Dissolved O₂</span> ${gc.do_mgl} mg/L — <em>${gc.doLabel}</em></div>` : ''}
       ${gc.flowPct ? `<div class="flow-mini"><div class="flow-mini-fill" style="width:${flowBarW(gc.flowPct)}%;background:${flowBarColor(gc.flowPct)}"></div></div>` : ''}
       ${gc.flowPct ? `<div style="font-size:11px;color:#aaa;margin-top:2px">${gc.flowPct}% of median</div>` : ''}
       <div class="gauge-rating" style="background:${gr.color}">${gr.emoji} ${gr.label}</div>
