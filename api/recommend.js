@@ -14,6 +14,7 @@ import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
 import { buildRecommendations, getTempZone, getFlowAdvice, MICHIGAN_HATCHES } from '../lib/hatches.js';
 import { fetchHatchIntel } from '../lib/intel.js';
+import { fetchRiverWeather } from '../lib/weather.js';
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
@@ -55,17 +56,44 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Fetch live conditions
-    const [liveReadings, allStats] = await Promise.all([
+    // Fetch live conditions + hatch intel + weather in parallel
+    const [liveReadings, allStats, intel, weather] = await Promise.all([
       fetchLiveReadings([river.primaryGauge]),
       fetchAllStats([river.primaryGauge]),
+      (async () => {
+        const intelKey = `trout:intel:${dateKey}`;
+        if (redis) {
+          try {
+            const c = await redis.get(intelKey);
+            if (c) return typeof c === 'string' ? JSON.parse(c) : c;
+          } catch(e) {}
+        }
+        const fresh = await fetchHatchIntel();
+        if (redis && fresh) {
+          try { await redis.set(intelKey, JSON.stringify(fresh), { ex: 6*60*60 }); } catch(e) {}
+        }
+        return fresh;
+      })(),
+      (async () => {
+        const wxKey = `trout:weather:${id}:${now.toISOString().slice(0,13)}`;
+        if (redis) {
+          try {
+            const c = await redis.get(wxKey);
+            if (c) return typeof c === 'string' ? JSON.parse(c) : c;
+          } catch(e) {}
+        }
+        const fresh = await fetchRiverWeather(id);
+        if (redis && fresh) {
+          try { await redis.set(wxKey, JSON.stringify(fresh), { ex: 2*60*60 }); } catch(e) {}
+        }
+        return fresh;
+      })(),
     ]);
 
     const reading    = liveReadings[river.primaryGauge] || {};
     const stats      = allStats[river.primaryGauge]    || {};
     const conditions = buildConditions(reading, stats);
 
-    // Build static recommendations from hatch chart
     const staticRec = buildRecommendations(
       conditions.tempF,
       conditions.flowPct,
@@ -74,28 +102,8 @@ export default async function handler(req, res) {
       hourET
     );
 
-    // Fetch current hatch intel from RSS (cached separately in Redis)
-    let intel = null;
-    const intelKey = `trout:intel:${dateKey}`;
-    if (redis) {
-      try {
-        const cachedIntel = await redis.get(intelKey);
-        if (cachedIntel) {
-          intel = typeof cachedIntel === 'string' ? JSON.parse(cachedIntel) : cachedIntel;
-        }
-      } catch(e) { /* non-fatal */ }
-    }
-
-    if (!intel) {
-      intel = await fetchHatchIntel();
-      if (redis && intel) {
-        try { await redis.set(intelKey, JSON.stringify(intel), { ex: 6 * 60 * 60 }); }
-        catch(e) { /* non-fatal */ }
-      }
-    }
-
-    // Generate AI recommendation
-    const aiRec = await generateAIRecommendation(river, conditions, staticRec, intel, month, hourET);
+    // Generate AI recommendation (now includes weather)
+    const aiRec = await generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hourET);
 
     const payload = {
       river: { id: river.id, name: river.name },
@@ -123,6 +131,15 @@ export default async function handler(req, res) {
           excerpt: i.content.slice(0, 200),
         })),
       },
+      weather: weather ? {
+        today:       weather.today,
+        tonight:     weather.tonight,
+        week:        weather.week?.slice(0, 5),
+        bestWindow:  weather.bestWindow,
+        flowTrend:   weather.flowTrend,
+        maxRainNext48: weather.maxRainNext48,
+        hourly:      weather.hourly?.slice(0, 8),
+      } : null,
       context: { month, hourET, dateKey },
       generatedAt: now.toISOString(),
     };
@@ -141,7 +158,7 @@ export default async function handler(req, res) {
   }
 }
 
-async function generateAIRecommendation(river, conditions, staticRec, intel, month, hour) {
+async function generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hour) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return null;
 
@@ -188,8 +205,20 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, mon
     }
   }
 
-  // Current intel
-  const goodIntel = (intel?.items || []).filter(i => i.score?.hatchScore >= 2).slice(0, 3);
+  // Weather context
+  if (weather?.today) {
+    const w = weather.today;
+    lines.push('', 'NWS WEATHER FORECAST (river location):');
+    lines.push(`  Today: ${w.tempF}°F | ${w.forecast} | Wind: ${w.wind || 'calm'}`);
+    lines.push(`  Rain chance: ${w.rain}% — ${w.precip?.flowImpact || ''}`);
+    lines.push(`  Cloud cover: ${w.cloud?.hatchTip || ''}`);
+    if (w.wind_int) lines.push(`  Wind: ${w.wind_int.tip}`);
+    if (weather.tonight) lines.push(`  Tonight: ${weather.tonight.tempF}°F | ${weather.tonight.forecast}`);
+    if (weather.flowTrend !== 'stable') lines.push(`  ⚠ Flow trend: ${weather.flowTrend.replace('_', ' ')} — rain incoming`);
+    if (weather.bestWindow && weather.bestWindow.name !== weather.today.name) {
+      lines.push(`  Best upcoming window: ${weather.bestWindow.name} (${weather.bestWindow.tempF}°F, ${weather.bestWindow.forecast}, ${weather.bestWindow.rain}% rain)`);
+    }
+  }
   if (goodIntel.length) {
     lines.push('', 'CURRENT HATCH INTEL (from Hatch Magazine / MidCurrent):');
     for (const item of goodIntel) {
