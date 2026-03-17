@@ -189,6 +189,13 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, wea
   }
   lines.push(`  Conditions rating: ${conditions.ratingKey}`);
 
+  if (conditions.turbidity_fnu !== null) {
+    lines.push(`  Turbidity: ${conditions.turbidity_fnu} FNU (${conditions.turbidityLabel}) — ${conditions.turbidityNote}`);
+  }
+  if (conditions.do_mgl !== null) {
+    lines.push(`  Dissolved oxygen: ${conditions.do_mgl} mg/L (${conditions.doLabel}) — ${conditions.doNote}`);
+  }
+
   // Active hatches from chart
   lines.push('', 'ACTIVE HATCHES FROM MICHIGAN HATCH CHART:');
   if (staticRec.activeHatches.length) {
