@@ -79,7 +79,11 @@ export default async function handler(req, res) {
         if (redis) {
           try {
             const c = await redis.get(wxKey);
-            if (c) return typeof c === 'string' ? JSON.parse(c) : c;
+            if (c) {
+              const parsed = typeof c === 'string' ? JSON.parse(c) : c;
+              // weather endpoint stores {weather:{...}, id, fetchedAt} — unwrap
+              return parsed.weather ?? parsed;
+            }
           } catch(e) {}
         }
         const fresh = await fetchRiverWeather(id);
