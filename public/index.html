@@ -546,8 +546,20 @@ function renderModal(data, aiNote, recData) {
   // AI conditions note
   const noteHtml = aiNote ? `<div class="modal-brief">${aiNote}</div>` : '';
 
-  // Fly recommendation
-  let recHtml = '';
+  // Weather summary for modal
+  let wxModalHtml = '';
+  const wx = recData?.weather;
+  if (wx?.today) {
+    const t = wx.today;
+    const flowWarn = wx.flowTrend !== 'stable' ? `<span style="color:#cc6644;margin-left:8px">⚠ Rain incoming — flow may rise</span>` : '';
+    wxModalHtml = `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0ece4;font-size:13px;color:#555">
+      <span style="color:#8899bb;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">🌤 Forecast</span>
+      <strong>${t.tempF}°F</strong> · ${t.forecast} · ${t.rain}% rain · ${t.wind || 'calm'}
+      ${flowWarn}
+      ${t.cloud?.hatchTip ? `<div style="margin-top:5px;color:#667;font-style:italic">${t.cloud.hatchTip}</div>` : ''}
+      ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div style="margin-top:4px;color:#557">Best window: <strong>${wx.bestWindow.name}</strong> — ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast}</div>` : ''}
+    </div>`;
+  }
   if (recData?.recommendation) {
     const topFlies = (recData.staticRec?.topFlies || []).slice(0, 5);
     const flyTags = topFlies.map(f =>
@@ -589,6 +601,7 @@ function renderModal(data, aiNote, recData) {
     <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${Math.min((c.flowPct||0)/2,100)}%;background:${flowBarColor(c.flowPct)}"></div></div>
     <div class="modal-flow-label">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>` : ''}
     ${guideHtml}
+    ${wxModalHtml}
     ${recHtml}
     ${noteHtml}
     ${histHtml}
