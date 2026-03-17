@@ -219,6 +219,9 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, wea
       lines.push(`  Best upcoming window: ${weather.bestWindow.name} (${weather.bestWindow.tempF}°F, ${weather.bestWindow.forecast}, ${weather.bestWindow.rain}% rain)`);
     }
   }
+
+  // Current intel
+  const goodIntel = (intel?.items || []).filter(i => i.score?.hatchScore >= 2).slice(0, 3);
   if (goodIntel.length) {
     lines.push('', 'CURRENT HATCH INTEL (from Hatch Magazine / MidCurrent):');
     for (const item of goodIntel) {
