@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michigan Trout Report — Daily Stream Conditions</title>
+<meta name="description" content="Daily Michigan trout stream conditions: AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Pigeon, Rifle, and Little Manistee. Powered by USGS live data.">
+<link rel="canonical" href="https://michigan-trout-report.vercel.app/">
+<meta property="og:title" content="Michigan Trout Report — Daily Stream Conditions">
+<meta property="og:description" content="Live USGS stream data interpreted for Michigan trout anglers. Updated daily.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Michigan Trout Report",
+  "url": "https://michigan-trout-report.vercel.app/",
+  "description": "Daily Michigan trout stream conditions powered by USGS live data.",
+  "creator": { "@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com" }
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #f5f2ec;
+    color: #2c2c2c;
+    line-height: 1.65;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: #1a3a1a;
+    color: #f0ede6;
+    padding: 24px 20px 20px;
+    text-align: center;
+    border-bottom: 3px solid #4a7c4a;
+  }
+  .site-header h1 {
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .site-header .tagline {
+    font-size: 14px;
+    color: #a8c8a8;
+    letter-spacing: .5px;
+  }
+  .site-header .last-updated {
+    font-size: 12px;
+    color: #7a9a7a;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    background: #fff;
+    border-bottom: 1px solid #ddd8cc;
+    padding: 12px 0;
+  }
+  .legend-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .legend-label { color: #666; font-style: italic; margin-right: 4px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* ── Lead brief ── */
+  .brief-section {
+    background: #fff;
+    border-bottom: 1px solid #ddd8cc;
+    padding: 20px 0;
+  }
+  .brief-inner {
+    max-width: 720px;
+  }
+  .brief-inner h2 {
+    font-size: 13px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .brief-text {
+    font-size: 15px;
+    color: #3a3a3a;
+    line-height: 1.7;
+  }
+
+  /* ── River cards grid ── */
+  .rivers-section { padding: 24px 0 40px; }
+  .rivers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── River card ── */
+  .river-card {
+    background: #fff;
+    border: 1px solid #ddd8cc;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: box-shadow .15s;
+    cursor: pointer;
+  }
+  .river-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+
+  .card-header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid #f0ece4;
+  }
+  .card-river-name {
+    font-size: 17px;
+    font-weight: normal;
+    color: #1a3a1a;
+    margin-bottom: 2px;
+  }
+  .card-region {
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+  }
+
+  .card-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0ece4;
+  }
+  .rating-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: normal;
+  }
+  .rating-emoji { font-size: 18px; }
+  .rating-label { font-weight: bold; }
+  .rating-tagline {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+  }
+
+  .card-stats {
+    padding: 10px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    border-bottom: 1px solid #f0ece4;
+  }
+  .stat-item { font-size: 13px; }
+  .stat-label { color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; display: block; }
+  .stat-value { color: #2c2c2c; font-size: 14px; }
+  .stat-sub { color: #aaa; font-size: 11px; }
+
+  .flow-bar-wrap {
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid #f0ece4;
+  }
+  .flow-bar-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+  .flow-bar-track {
+    background: #f0ece4;
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .flow-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .3s ease;
+  }
+  .flow-bar-pct { font-size: 11px; color: #999; margin-top: 3px; }
+
+  .card-note {
+    padding: 10px 16px 14px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ── Loading / Error ── */
+  .loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    font-style: italic;
+  }
+  .loading-spinner {
+    display: inline-block;
+    width: 28px; height: 28px;
+    border: 3px solid #ddd;
+    border-top-color: #4a7c4a;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin-bottom: 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid #ddd8cc;
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    background: #fff;
+  }
+  .site-footer a { color: #4a7c4a; text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+
+  /* ── Season banner ── */
+  .season-banner {
+    background: #fff3cd;
+    border-bottom: 1px solid #e6c84a;
+    padding: 10px 0;
+    font-size: 13px;
+    color: #5a4a00;
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    .site-header h1 { font-size: 22px; }
+    .rivers-grid { grid-template-columns: 1fr; }
+    .legend-inner { gap: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>Michigan Trout Report</h1>
+  <div class="tagline">Daily stream conditions — AuSable, Manistee, Pere Marquette &amp; more</div>
+  <div class="last-updated" id="lastUpdated">Loading...</div>
+</div>
+
+<div id="seasonBanner" class="season-banner" style="display:none"></div>
+
+<div class="legend">
+  <div class="container">
+    <div class="legend-inner">
+      <span class="legend-label">Conditions:</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#2e7d32"></span>Prime</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#558b2f"></span>Fishing Well</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#f9a825"></span>Fair</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#e65100"></span>Tough</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#b71c1c"></span>Blown Out</span>
+      <span style="font-size:12px;color:#aaa;margin-left:8px">Flow bar shows % of seasonal median</span>
+    </div>
+  </div>
+</div>
+
+<div class="brief-section" id="briefSection" style="display:none">
+  <div class="container">
+    <div class="brief-inner">
+      <h2>Today's Conditions</h2>
+      <div class="brief-text" id="briefText"></div>
+    </div>
+  </div>
+</div>
+
+<div class="rivers-section">
+  <div class="container">
+    <div id="riversGrid" class="rivers-grid">
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div>Pulling USGS stream data...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  Stream data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS Water Services</a> &nbsp;·&nbsp;
+  Updated daily at 8am CT &nbsp;·&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a> &nbsp;·&nbsp;
+  <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
+</footer>
+
+<script>
+const RATINGS = {
+  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', tagline: 'Drop everything and go.' },
+  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', tagline: 'Worth the drive.' },
+  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', tagline: 'Fishable. Pick your spots.' },
+  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', tagline: 'Fish are off. Long leader, small fly.' },
+  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', tagline: 'Stay home. Fish another day.' },
+};
+
+function formatTimestamp(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts);
+    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+  } catch(e) { return ts.slice(0, 16); }
+}
+
+function flowBarColor(pct) {
+  if (!pct) return '#ccc';
+  if (pct > 200) return '#b71c1c';
+  if (pct > 150) return '#e65100';
+  if (pct > 120) return '#f9a825';
+  if (pct > 80)  return '#2e7d32';
+  if (pct > 50)  return '#558b2f';
+  return '#888';
+}
+
+function flowBarWidth(pct) {
+  if (!pct) return 0;
+  // 80-120% is "normal center" — show that as ~50% bar width visually
+  // Cap at 100% width for blown-out scenarios
+  const normalized = Math.min(pct / 2, 100);
+  return normalized;
+}
+
+function renderCard(river, briefRivers) {
+  const c = river.conditions;
+  const ratingKey = c.ratingKey || 'FAIR';
+  const rating = RATINGS[ratingKey] || RATINGS.FAIR;
+  const aiNote = briefRivers && briefRivers[river.id] ? briefRivers[river.id] : null;
+
+  const flowBar = c.flowPct ? `
+    <div class="flow-bar-wrap">
+      <div class="flow-bar-label">Flow vs. seasonal median</div>
+      <div class="flow-bar-track">
+        <div class="flow-bar-fill" style="width:${flowBarWidth(c.flowPct)}%;background:${flowBarColor(c.flowPct)}"></div>
+      </div>
+      <div class="flow-bar-pct">${c.flowPct}% of median — ${c.flowLabel}</div>
+    </div>` : '';
+
+  const statsHtml = `
+    <div class="card-stats">
+      <div class="stat-item">
+        <span class="stat-label">Flow</span>
+        <span class="stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Water Temp</span>
+        <span class="stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</span>
+        ${c.tempF !== null ? `<span class="stat-sub">${c.tempLabel}</span>` : ''}
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Gage Height</span>
+        <span class="stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Median (today)</span>
+        <span class="stat-value">${c.stats?.p50 ? c.stats.p50.toLocaleString() + ' cfs' : '—'}</span>
+      </div>
+    </div>`;
+
+  const noteHtml = aiNote ? `<div class="card-note">${aiNote}</div>` : '';
+
+  return `
+    <div class="river-card">
+      <div class="card-header">
+        <div class="card-river-name">${river.name}</div>
+        <div class="card-region">${river.region}</div>
+      </div>
+      <div class="card-rating">
+        <div class="rating-badge" style="color:${rating.color}">
+          <span class="rating-emoji">${rating.emoji}</span>
+          <span class="rating-label">${rating.label}</span>
+        </div>
+        <div class="rating-tagline">${rating.tagline}</div>
+      </div>
+      ${statsHtml}
+      ${flowBar}
+      ${noteHtml}
+    </div>`;
+}
+
+function setSeasonBanner() {
+  const month = new Date().getMonth() + 1;
+  const banner = document.getElementById('seasonBanner');
+  let msg = '';
+  if (month <= 3)       msg = '⚠️ Pre-season — General trout season opens the last Saturday of April.';
+  else if (month === 4) msg = '🎣 Opening month — Season is open. Check special regulations for your river.';
+  else if (month <= 6)  msg = '🪰 Peak season — Best hatches of the year. Hex hatch late June on the AuSable.';
+  else if (month <= 8)  msg = '☀️ Summer — Watch water temps. Fish early morning or evening on warm days.';
+  else if (month <= 10) msg = '🍂 Fall season — Brown trout spawning in October. Steelhead entering lower rivers.';
+  else                  msg = '❄️ Late season — Steelhead in lower rivers. Most streams closed or special regs.';
+  if (msg) { banner.textContent = msg; banner.style.display = 'block'; }
+}
+
+async function loadData() {
+  try {
+    const resp = await fetch('/api/generate');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    if (!data.success) throw new Error(data.error || 'Unknown error');
+
+    // Update header
+    const ts = data.generated_at ? formatTimestamp(data.generated_at) : 'today';
+    document.getElementById('lastUpdated').textContent = `Data as of ${ts}`;
+
+    // Brief
+    if (data.brief?.lead) {
+      document.getElementById('briefText').textContent = data.brief.lead;
+      document.getElementById('briefSection').style.display = 'block';
+    }
+
+    // River cards
+    const grid = document.getElementById('riversGrid');
+    if (data.rivers?.length) {
+      grid.innerHTML = data.rivers
+        .map(r => renderCard(r, data.brief?.rivers))
+        .join('');
+    } else {
+      grid.innerHTML = '<div class="loading-state">No river data available. Try again shortly.</div>';
+    }
+
+  } catch(e) {
+    console.error('Load failed:', e);
+    document.getElementById('lastUpdated').textContent = 'Error loading data';
+    document.getElementById('riversGrid').innerHTML = `
+      <div class="loading-state">
+        Failed to load stream data. USGS may be experiencing delays.
+        <br><br>
+        Check <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" style="color:#4a7c4a" target="_blank">USGS Michigan directly</a>.
+      </div>`;
+  }
+}
+
+setSeasonBanner();
+loadData();
+</script>
+</body>
+</html>
