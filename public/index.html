@@ -480,15 +480,18 @@ let _briefRivers = {};
 
 function openModal(riverId, riverName) {
   document.getElementById('modalTitle').textContent = riverName;
-  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading guide reports and history...</div>';
+  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading conditions and fly recommendations...</div>';
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  fetch(`/api/river/${riverId}`)
-    .then(r => r.json())
-    .then(data => {
-      if (!data.success) throw new Error(data.error);
-      renderModal(data, _briefRivers[riverId]);
+  // Fetch river detail and recommendation in parallel
+  Promise.all([
+    fetch(`/api/river/${riverId}`).then(r => r.json()),
+    fetch(`/api/recommend?id=${riverId}`).then(r => r.json()),
+  ])
+    .then(([riverData, recData]) => {
+      if (!riverData.success) throw new Error(riverData.error);
+      renderModal(riverData, _briefRivers[riverId], recData.success ? recData : null);
     })
     .catch(e => {
       document.getElementById('modalBody').innerHTML = `
@@ -507,7 +510,7 @@ function handleOverlayClick(e) {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-function renderModal(data, aiNote) {
+function renderModal(data, aiNote, recData) {
   const c   = data.primaryConditions;
   const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
   const hist = data.history;
@@ -543,6 +546,20 @@ function renderModal(data, aiNote) {
   // AI conditions note
   const noteHtml = aiNote ? `<div class="modal-brief">${aiNote}</div>` : '';
 
+  // Fly recommendation
+  let recHtml = '';
+  if (recData?.recommendation) {
+    const topFlies = (recData.staticRec?.topFlies || []).slice(0, 5);
+    const flyTags = topFlies.map(f =>
+      `<span style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px">${f.name} #${f.sizes[0]}</span>`
+    ).join('');
+    recHtml = `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0ece4">
+      <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">🎣 What to Tie On</div>
+      <div style="font-size:13px;color:#3a3a3a;line-height:1.65;margin-bottom:8px">${recData.recommendation}</div>
+      ${flyTags ? `<div style="margin-top:6px">${flyTags}</div>` : ''}
+    </div>`;
+  }
+
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}30">
       <div class="modal-rating-emoji">${rat.emoji}</div>
@@ -572,6 +589,7 @@ function renderModal(data, aiNote) {
     <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${Math.min((c.flowPct||0)/2,100)}%;background:${flowBarColor(c.flowPct)}"></div></div>
     <div class="modal-flow-label">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>` : ''}
     ${guideHtml}
+    ${recHtml}
     ${noteHtml}
     ${histHtml}
     <div class="modal-actions">
