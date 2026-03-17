@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">River Conditions — Michigan Trout Report</title>
+<meta name="description" id="pageDesc" content="Live stream conditions, guide reports, and historical data for Michigan trout rivers.">
+<link rel="canonical" id="pageCanonical" href="https://michigan-trout-report.vercel.app/river.html">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.65; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 20px; text-align: center; border-bottom: 3px solid #4a7c4a; }
+  .site-header h1 { font-size: 20px; font-weight: normal; letter-spacing: 1px; }
+  .site-header .back { font-size: 13px; color: #a8c8a8; margin-bottom: 6px; display: block; }
+  .site-header .back:hover { color: #fff; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  /* River hero */
+  .river-hero { background: #fff; border-bottom: 1px solid #ddd8cc; padding: 28px 0 20px; }
+  .river-name { font-size: 32px; font-weight: normal; color: #1a3a1a; margin-bottom: 4px; }
+  .river-region { font-size: 14px; color: #888; font-style: italic; margin-bottom: 16px; }
+  .river-notes { font-size: 15px; color: #555; max-width: 640px; }
+
+  /* Rating hero */
+  .rating-hero { display: flex; align-items: center; gap: 16px; margin: 20px 0 0; padding: 16px 20px; border-radius: 6px; }
+  .rating-emoji-big { font-size: 36px; }
+  .rating-label-big { font-size: 24px; font-weight: bold; }
+  .rating-tagline-big { font-size: 15px; margin-top: 2px; opacity: .85; }
+
+  /* Sections */
+  .section { padding: 24px 0; border-bottom: 1px solid #e8e4dc; }
+  .section:last-child { border-bottom: none; }
+  .section-title { font-size: 13px; font-weight: normal; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin-bottom: 16px; }
+
+  /* Gauges grid */
+  .gauges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .gauge-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 5px; padding: 12px 14px; }
+  .gauge-name { font-size: 13px; color: #1a3a1a; font-weight: bold; margin-bottom: 8px; }
+  .gauge-stat { font-size: 13px; color: #444; margin-bottom: 3px; }
+  .gauge-stat span { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; }
+  .gauge-rating { display: inline-block; font-size: 12px; font-weight: bold; margin-top: 6px; padding: 2px 8px; border-radius: 3px; color: #fff; }
+  .flow-mini { background: #f0ece4; border-radius: 3px; height: 4px; margin-top: 6px; overflow: hidden; }
+  .flow-mini-fill { height: 100%; border-radius: 3px; }
+
+  /* Guide reports */
+  .reports-section { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 18px 20px; }
+  .synthesis-text { font-size: 15px; color: #3a3a3a; line-height: 1.7; margin-bottom: 16px; }
+  .sources-list { font-size: 12px; color: #aaa; }
+  .sources-list a { color: #888; }
+  .no-reports { font-size: 14px; color: #aaa; font-style: italic; }
+  .report-raw { margin-top: 12px; border-top: 1px solid #e8e4dc; padding-top: 12px; }
+  .report-raw-title { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: #bbb; margin-bottom: 6px; }
+  .report-item { margin-bottom: 10px; }
+  .report-item-source { font-size: 12px; color: #2c5f2d; font-weight: bold; }
+  .report-item-date { font-size: 11px; color: #bbb; margin-left: 6px; }
+  .report-item-text { font-size: 13px; color: #555; margin-top: 3px; line-height: 1.55; }
+
+  /* History */
+  .history-placeholder { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 18px 20px; }
+  .history-placeholder-title { font-size: 14px; color: #888; margin-bottom: 6px; }
+  .history-placeholder-text { font-size: 13px; color: #aaa; font-style: italic; }
+  .history-bar { background: #e8e4dc; border-radius: 4px; height: 6px; margin: 10px 0 4px; overflow: hidden; }
+  .history-bar-fill { height: 100%; background: #4a7c4a; border-radius: 4px; transition: width .4s; }
+  .history-bar-label { font-size: 11px; color: #bbb; }
+
+  .similar-days { display: flex; flex-direction: column; gap: 10px; }
+  .similar-day { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 5px; padding: 12px 14px; }
+  .similar-day-date { font-size: 12px; color: #888; margin-bottom: 4px; }
+  .similar-day-conditions { font-size: 13px; color: #444; margin-bottom: 4px; }
+  .similar-day-notes { font-size: 13px; color: #555; font-style: italic; line-height: 1.5; }
+  .similar-day-rating { font-size: 12px; font-weight: bold; }
+
+  /* Loading */
+  .loading { text-align: center; padding: 60px 20px; color: #888; font-style: italic; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid #ddd; border-top-color: #4a7c4a; border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 20px; text-align: center; font-size: 12px; color: #aaa; background: #fff; margin-top: 40px; }
+  .site-footer a { color: #4a7c4a; }
+
+  @media (max-width: 480px) {
+    .river-name { font-size: 24px; }
+    .gauges-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <a href="/" class="back">← All Rivers</a>
+  <h1>Michigan Trout Report</h1>
+</div>
+
+<div id="mainContent">
+  <div class="loading"><div class="spinner"></div><div>Loading river data...</div></div>
+</div>
+
+<footer class="site-footer">
+  Stream data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS Water Services</a> &nbsp;·&nbsp;
+  Updated daily &nbsp;·&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a> &nbsp;·&nbsp;
+  <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
+</footer>
+
+<script>
+const RATINGS = {
+  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
+  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
+  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
+  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off. Long leader, small fly.' },
+  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home. Fish another day.' },
+};
+
+function flowBarColor(pct) {
+  if (!pct) return '#ccc';
+  if (pct > 200) return '#b71c1c';
+  if (pct > 150) return '#e65100';
+  if (pct > 120) return '#f9a825';
+  if (pct > 80)  return '#2e7d32';
+  if (pct > 50)  return '#558b2f';
+  return '#888';
+}
+function flowBarW(pct) { return Math.min((pct||0)/2, 100); }
+
+function formatDate(d) {
+  try {
+    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+  } catch(e) { return d; }
+}
+
+function renderPage(data) {
+  const r   = data;
+  const c   = r.primaryConditions;
+  const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+
+  // Update meta
+  document.getElementById('pageTitle').textContent = `${r.name} Conditions — Michigan Trout Report`;
+  document.getElementById('pageDesc').content = `Live stream conditions for the ${r.name}: ${rat.label}. Flow ${c.flow ? c.flow + ' cfs' : 'N/A'}, water temp ${c.tempF ? c.tempF + '°F' : 'N/A'}.`;
+
+  // Gauges
+  const gaugesHtml = r.gauges.map(g => {
+    const gc  = g.conditions;
+    const gr  = RATINGS[gc.ratingKey] || RATINGS.FAIR;
+    return `<div class="gauge-card">
+      <div class="gauge-name">${g.name}</div>
+      <div class="gauge-stat"><span>Flow</span> ${gc.flow !== null ? gc.flow.toLocaleString() + ' cfs' : '—'}</div>
+      <div class="gauge-stat"><span>Temp</span> ${gc.tempF !== null ? gc.tempF + '°F' : '—'}</div>
+      <div class="gauge-stat"><span>Gage</span> ${gc.gage !== null ? gc.gage + ' ft' : '—'}</div>
+      ${gc.flowPct ? `<div class="flow-mini"><div class="flow-mini-fill" style="width:${flowBarW(gc.flowPct)}%;background:${flowBarColor(gc.flowPct)}"></div></div>` : ''}
+      ${gc.flowPct ? `<div style="font-size:11px;color:#aaa;margin-top:2px">${gc.flowPct}% of median</div>` : ''}
+      <div class="gauge-rating" style="background:${gr.color}">${gr.emoji} ${gr.label}</div>
+    </div>`;
+  }).join('');
+
+  // Guide reports
+  let reportsHtml = '';
+  const reports = r.reports;
+  if (reports?.synthesis) {
+    const sourceLinks = (reports.sources || [])
+      .map(s => `<a href="${s.url}" target="_blank" rel="noopener">${s.source}</a>`)
+      .join(', ');
+    reportsHtml = `
+      <div class="reports-section">
+        <div class="synthesis-text">${reports.synthesis}</div>
+        ${sourceLinks ? `<div class="sources-list">Sources: ${sourceLinks}</div>` : ''}
+      </div>`;
+  } else if (reports?.sources?.length) {
+    // Raw reports, no synthesis
+    const items = reports.sources.flatMap(s =>
+      (s.posts || []).map(p => `
+        <div class="report-item">
+          <span class="report-item-source">${s.source}</span>
+          <span class="report-item-date">${p.date || ''}</span>
+          <div class="report-item-text">${p.excerpt || p.content?.slice(0,200) || ''}</div>
+        </div>`)
+    ).join('');
+    reportsHtml = `
+      <div class="reports-section">
+        <div class="report-raw">
+          <div class="report-raw-title">Recent Reports</div>
+          ${items}
+        </div>
+      </div>`;
+  } else {
+    const month = new Date().getMonth() + 1;
+    const msg = month <= 3
+      ? 'Pre-season — guide shops post reports starting in April when the season opens.'
+      : 'No reports found today. Check back tomorrow or visit guide shop sites directly.';
+    reportsHtml = `<div class="reports-section"><div class="no-reports">${msg}</div></div>`;
+  }
+
+  // History / similar days
+  const hist = r.history;
+  let historyHtml = '';
+
+  const daysNeeded = 30;
+  const pct = Math.min(Math.round((hist.totalDays / daysNeeded) * 100), 100);
+
+  if (!hist.hasEnough) {
+    historyHtml = `
+      <div class="history-placeholder">
+        <div class="history-placeholder-title">📊 Building historical data</div>
+        <div class="history-bar"><div class="history-bar-fill" style="width:${pct}%"></div></div>
+        <div class="history-bar-label">${hist.totalDays} of ~${daysNeeded} days collected</div>
+        <div class="history-placeholder-text" style="margin-top:10px">
+          ${hist.message} — once we have enough data, this section will show what guides reported
+          on past days when the ${r.name} had similar flow and temperature conditions.
+        </div>
+      </div>`;
+  } else if (!hist.similarDays?.length) {
+    historyHtml = `
+      <div class="history-placeholder">
+        <div class="history-placeholder-title">📊 ${hist.message}</div>
+        <div class="history-placeholder-text">No past days match today's conditions closely enough yet. Data continues building daily.</div>
+      </div>`;
+  } else {
+    const dayCards = hist.similarDays.map(day => {
+      const dr = RATINGS[day.ratingKey] || RATINGS.FAIR;
+      return `<div class="similar-day">
+        <div class="similar-day-date">${formatDate(day.date)}</div>
+        <div class="similar-day-conditions">
+          <span class="similar-day-rating" style="color:${dr.color}">${dr.emoji} ${dr.label}</span>
+          &nbsp;·&nbsp; ${day.flowPct ? day.flowPct + '% median' : ''} ${day.tempF ? '· ' + day.tempF + '°F' : ''}
+        </div>
+        ${day.guideNotes ? `<div class="similar-day-notes">${day.guideNotes}</div>` : '<div class="similar-day-notes" style="color:#ccc">No guide notes for this day.</div>'}
+      </div>`;
+    }).join('');
+    historyHtml = `
+      <div>
+        <p style="font-size:13px;color:#888;margin-bottom:12px">${hist.message} — past days with similar flow and temperature in the same season:</p>
+        <div class="similar-days">${dayCards}</div>
+      </div>`;
+  }
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="river-hero">
+      <div class="container">
+        <div class="river-name">${r.name}</div>
+        <div class="river-region">${r.region}</div>
+        <div class="river-notes">${r.notes}</div>
+        <div class="rating-hero" style="background:${rat.bg};border:1px solid ${rat.color}30">
+          <div class="rating-emoji-big">${rat.emoji}</div>
+          <div>
+            <div class="rating-label-big" style="color:${rat.color}">${rat.label}</div>
+            <div class="rating-tagline-big" style="color:${rat.color}">${rat.tagline}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="section">
+        <div class="section-title">Stream Gauges</div>
+        <div class="gauges-grid">${gaugesHtml}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">What the Guides Are Saying</div>
+        ${reportsHtml}
+      </div>
+
+      <div class="section">
+        <div class="section-title">On Similar Days — Historical Conditions</div>
+        ${historyHtml}
+      </div>
+    </div>`;
+}
+
+async function load() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { window.location = '/'; return; }
+
+  try {
+    const resp = await fetch(`/api/river/${id}`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error);
+    renderPage(data);
+  } catch(e) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="loading">Failed to load river data. <a href="/">← Back to all rivers</a></div>`;
+  }
+}
+
+load();
+</script>
+</body>
+</html>
