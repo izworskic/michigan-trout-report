@@ -7,6 +7,14 @@
   ],
   "rewrites": [
     {
+      "source": "/api/river/:id",
+      "destination": "/api/river/[id]"
+    },
+    {
+      "source": "/api/recommend",
+      "destination": "/api/recommend"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
