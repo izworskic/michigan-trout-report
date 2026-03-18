@@ -12,11 +12,54 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Michigan Trout Report",
-  "url": "https://michigan-trout-report.vercel.app/",
-  "description": "Daily Michigan trout stream conditions powered by USGS live data.",
-  "creator": { "@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com" }
+  "@graph": [
+    {
+      "@type": "Dataset",
+      "@id": "https://michigan-trout-report.vercel.app/#dataset",
+      "name": "Michigan Trout Report — Live Stream Conditions",
+      "description": "Daily live stream conditions for nine Michigan trout rivers: AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Pigeon, Rifle, and Little Manistee. Data includes USGS flow (cfs), water temperature, gage height, dissolved oxygen, and turbidity with NWS weather forecasts and AI fly fishing recommendations.",
+      "url": "https://michigan-trout-report.vercel.app/",
+      "creator": {
+        "@type": "Person",
+        "name": "Chris Izworski",
+        "url": "https://chrisizworski.com",
+        "sameAs": "https://freighterviewfarms.com"
+      },
+      "spatialCoverage": {
+        "@type": "Place",
+        "name": "Michigan Lower Peninsula Trout Rivers",
+        "geo": {
+          "@type": "GeoShape",
+          "description": "AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Pigeon, Rifle, and Little Manistee rivers, Michigan"
+        }
+      },
+      "temporalCoverage": "2026/..",
+      "updateFrequency": "Daily — USGS data updated every 15 minutes, AI brief generated each morning",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Stream Flow", "unitCode": "CFS", "description": "Cubic feet per second from USGS gauges" },
+        { "@type": "PropertyValue", "name": "Water Temperature", "unitCode": "FAH", "description": "Degrees Fahrenheit from in-stream USGS sensors" },
+        { "@type": "PropertyValue", "name": "Turbidity", "unitCode": "FNU", "description": "Formazin Nephelometric Units from USGS optical sensors" },
+        { "@type": "PropertyValue", "name": "Dissolved Oxygen", "unitCode": "mg/L", "description": "Milligrams per liter from USGS sensors" },
+        { "@type": "PropertyValue", "name": "Gage Height", "unitCode": "FT", "description": "Stream gage height in feet" },
+        { "@type": "PropertyValue", "name": "Conditions Rating", "description": "Five-level fishing conditions scale: Prime / Fishing Well / Fair / Tough / Blown Out" }
+      ],
+      "measurementTechnique": "USGS National Water Information System (NWIS) instantaneous values API; NOAA National Weather Service gridded forecast API; 48-hour sensor staleness check applied",
+      "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "application/json",
+        "contentUrl": "https://michigan-trout-report.vercel.app/api/generate",
+        "description": "JSON API returning live conditions for all nine rivers"
+      },
+      "keywords": ["Michigan trout fishing", "AuSable River", "Manistee River", "Pere Marquette River", "stream conditions", "USGS water data", "fly fishing Michigan", "trout stream flow"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://michigan-trout-report.vercel.app/#website",
+      "name": "Michigan Trout Report",
+      "url": "https://michigan-trout-report.vercel.app/",
+      "creator": { "@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com" }
+    }
+  ]
 }
 </script>
 <style>
