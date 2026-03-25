@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Michigan Trout Stream Map — Live Conditions</title>
+<!-- Google AdSense — replace ca-pub-XXXXXXXXXXXXXXXXX after approval -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
 <meta name="description" content="Interactive Michigan trout stream map with live USGS conditions. Color-coded by today's fishing rating. 310 DNR access points.">
 <link rel="canonical" href="https://michigan-trout-report.vercel.app/map.html">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -119,8 +121,8 @@ html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
   <div style="display:flex;align-items:center;gap:14px">
     <span class="hdr-status" id="hdrStatus">Loading...</span>
     <nav class="hdr-nav">
-      <a href="/directory.html">Guides</a>
-      <a href="/alerts.html">Alerts</a>
+      
+      
     </nav>
   </div>
 </div>
@@ -159,6 +161,16 @@ html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
     <div class="sb-list-header" id="listHeader">Access points</div>
     <div class="sb-list" id="sbList"></div>
 
+    <!-- Affiliate links -->
+    <div style="padding:12px 14px;border-top:1px solid #e8e4dc;flex-shrink:0">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;margin-bottom:7px">Gear</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <a href="https://www.amazon.com/s?k=fly+fishing+michigan+trout&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#2c5f2d;text-decoration:none">🪰 Fly Fishing Gear →</a>
+        <a href="https://www.amazon.com/s?k=simms+waders+wading+boots&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#2c5f2d;text-decoration:none">🥾 Waders &amp; Boots →</a>
+        <a href="https://www.michigan.gov/dnr/hunting-fishing/fishing/fishing-licenses" target="_blank" rel="noopener" style="font-size:12px;color:#555;text-decoration:none">📋 MI Fishing License →</a>
+      </div>
+      <div style="font-size:9px;color:#ccc;margin-top:6px">Affiliate links</div>
+    </div>
   </div>
 
   <div id="map"></div>
@@ -506,3 +518,4 @@ loadAll();
 </script>
 </body>
 </html>
+
