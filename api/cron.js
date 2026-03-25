@@ -10,6 +10,7 @@ import { generateBrief } from '../lib/generator.js';
 import { fetchAllRiverReports } from '../lib/outfitters.js';
 import { synthesizeReports } from '../lib/synthesizer.js';
 import { storeSnapshot } from '../lib/history.js';
+import { sendConditionAlerts } from '../lib/alerts.js';
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
@@ -82,9 +83,18 @@ export default async function handler(req, res) {
     }
     log.push(`[${ts()}] History snapshots stored for ${riverData.length} rivers`);
 
+    // Send condition alerts to premium subscribers
+    try {
+      const alertResult = await sendConditionAlerts(riverData, log);
+      log.push(`[${ts()}] Alerts: sent=${alertResult.sent} skipped=${alertResult.skipped}`);
+    } catch(e) {
+      log.push(`[${ts()}] Alert send error (non-fatal): ${e.message}`);
+    }
+
     return res.status(200).json({ success: true, log });
   } catch(e) {
     log.push(`[${ts()}] ERROR: ${e.message}`);
     return res.status(500).json({ success: false, error: e.message, log });
   }
 }
+
