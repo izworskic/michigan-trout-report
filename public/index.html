@@ -3,1078 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Michigan Trout Report — Daily Stream Conditions, All Rivers</title>
-<meta name="description" content="Live Michigan trout stream conditions for 40+ rivers and streams. AuSable, Manistee, Pere Marquette, Upper Peninsula brook trout streams and more. Powered by USGS data, updated daily.">
+<title>Michigan Trout Report — Where to Fish Today</title>
+<meta name="description" content="Live Michigan trout stream conditions for 39 rivers. AuSable, Manistee, Pere Marquette and more. Powered by USGS data, updated daily.">
 <link rel="canonical" href="https://michigan-trout-report.vercel.app/">
 <meta property="og:title" content="Michigan Trout Report — Where to Fish Today">
-<meta property="og:description" content="Live USGS conditions for 40+ Michigan trout streams. Find out where the fish are biting right now.">
+<meta property="og:description" content="Live USGS conditions for 39 Michigan trout streams. Find out where to fish right now.">
 <meta property="og:type" content="website">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Dataset",
-      "@id": "https://michigan-trout-report.vercel.app/#dataset",
-      "name": "Michigan Trout Report — Live Stream Conditions",
-      "description": "Daily live stream conditions for 40+ Michigan trout rivers covering the Upper Peninsula, Northern Lower Peninsula, Western Lower Peninsula, and Central Lower Michigan. Data includes USGS flow, water temperature, gage height, dissolved oxygen, and turbidity with AI fly fishing recommendations.",
-      "url": "https://michigan-trout-report.vercel.app/",
-      "creator": { "@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com" },
-      "keywords": ["Michigan trout fishing", "AuSable River", "Upper Peninsula trout", "brook trout Michigan", "stream conditions", "fly fishing Michigan"]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://michigan-trout-report.vercel.app/#website",
-      "name": "Michigan Trout Report",
-      "url": "https://michigan-trout-report.vercel.app/"
-    }
-  ]
-}
-</script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Georgia, 'Times New Roman', serif; background:#f5f2ec; color:#2c2c2c; line-height:1.6; }
+a { color:#2c5f2d; text-decoration:none; }
 
-  body {
-    font-family: Georgia, 'Times New Roman', serif;
-    background: #f5f2ec;
-    color: #2c2c2c;
-    line-height: 1.65;
-  }
+/* Header */
+.hdr { background:#1a3a1a; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid #3a6a3a; }
+.hdr-title { color:#f0ede6; font-size:17px; font-weight:normal; letter-spacing:.5px; }
+.hdr-nav { display:flex; gap:14px; }
+.hdr-nav a { color:#7ab87a; font-size:12px; }
+.hdr-nav a:hover { color:#fff; }
 
-  /* ── Header ── */
-  .site-header {
-    background: #1a3a1a;
-    color: #f0ede6;
-    padding: 20px 20px 16px;
-    text-align: center;
-    border-bottom: 3px solid #4a7c4a;
-  }
-  .site-header h1 {
-    font-size: 26px;
-    font-weight: normal;
-    letter-spacing: 1px;
-    margin-bottom: 3px;
-  }
-  .site-header .tagline {
-    font-size: 13px;
-    color: #a8c8a8;
-    letter-spacing: .4px;
-  }
-  .site-header .last-updated {
-    font-size: 11px;
-    color: #6a8a6a;
-    margin-top: 6px;
-    font-style: italic;
-  }
+/* Hero — best rivers now */
+.hero { background:#1a3a1a; padding:20px 16px 24px; border-bottom:3px solid #2c5f2d; }
+.hero-label { font-size:10px; text-transform:uppercase; letter-spacing:2px; color:#5a9a5a; margin-bottom:8px; }
+.hero-heading { font-size:20px; color:#f0ede6; font-weight:normal; margin-bottom:4px; }
+.hero-sub { font-size:13px; color:#7ab87a; margin-bottom:16px; font-style:italic; }
+.hero-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:10px; }
+.hero-card {
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1);
+  border-radius:5px; padding:12px 14px; cursor:pointer; transition:background .12s;
+}
+.hero-card:hover { background:rgba(255,255,255,.12); }
+.hero-rank { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#5a9a5a; margin-bottom:3px; }
+.hero-name { font-size:16px; color:#f0ede6; margin-bottom:2px; }
+.hero-region { font-size:11px; color:#6a9a6a; font-style:italic; margin-bottom:8px; }
+.hero-badge { display:inline-flex; align-items:center; gap:5px; font-size:14px; font-weight:bold; margin-bottom:6px; }
+.hero-stats { font-size:11px; color:#7ab87a; display:flex; gap:12px; border-top:1px solid rgba(255,255,255,.08); padding-top:7px; margin-top:4px; }
+.hero-stat span { color:rgba(255,255,255,.35); display:block; font-size:10px; text-transform:uppercase; letter-spacing:.4px; }
+.hero-empty { color:#5a9a5a; font-style:italic; font-size:13px; padding:12px 0; }
 
-  /* ── Layout ── */
-  .container {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 0 16px;
-  }
+/* Brief */
+.brief { background:#fff; padding:12px 16px; border-bottom:1px solid #ddd8cc; font-size:13px; color:#444; line-height:1.7; max-width:720px; display:none; }
+.brief-label { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#bbb; margin-bottom:5px; }
 
-  /* ── Season banner ── */
-  .season-banner {
-    background: #fff8e1;
-    border-bottom: 1px solid #e6c84a;
-    padding: 9px 0;
-    font-size: 13px;
-    color: #5a4a00;
-    text-align: center;
-  }
+/* Controls — sticky */
+.controls {
+  background:#fff; border-bottom:1px solid #ddd8cc;
+  position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+  padding:8px 16px;
+}
+.ctrl-row { display:flex; flex-wrap:wrap; gap:5px 8px; align-items:center; margin-bottom:5px; }
+.ctrl-row:last-child { margin-bottom:0; }
+.ctrl-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:#bbb; margin-right:2px; flex-shrink:0; }
+.chip {
+  font-family:Georgia,serif; font-size:11px; padding:3px 10px;
+  border-radius:10px; border:1px solid #ddd; background:#f9f6f0;
+  color:#666; cursor:pointer; transition:all .1s; line-height:1.5;
+}
+.chip.on { background:#1a3a1a; color:#fff; border-color:#1a3a1a; }
+.chip.on-brook     { background:#1b5e20; color:#fff; border-color:#1b5e20; }
+.chip.on-brown     { background:#bf360c; color:#fff; border-color:#bf360c; }
+.chip.on-steelhead { background:#6a1b9a; color:#fff; border-color:#6a1b9a; }
+.chip:hover:not([class*="on"]) { background:#ede9e0; }
+.legend-row { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; }
+.leg { display:flex; align-items:center; gap:4px; font-size:11px; color:#666; }
+.dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
 
-  /* ── HERO: Best Streams Now ── */
-  .hero-section {
-    background: #1a3a1a;
-    border-bottom: 3px solid #2c5f2d;
-    padding: 20px 0 22px;
-    color: #f0ede6;
-  }
-  .hero-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #7ab87a;
-    margin-bottom: 10px;
-  }
-  .hero-title {
-    font-size: 22px;
-    font-weight: normal;
-    margin-bottom: 4px;
-  }
-  .hero-subtitle {
-    font-size: 13px;
-    color: #8ab88a;
-    margin-bottom: 18px;
-    font-style: italic;
-  }
-  .hero-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 12px;
-  }
-  .hero-card {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 6px;
-    padding: 14px 16px;
-    cursor: pointer;
-    transition: background .15s;
-    text-decoration: none;
-    display: block;
-  }
-  .hero-card:hover { background: rgba(255,255,255,0.12); }
-  .hero-card-rank {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #7ab87a;
-    margin-bottom: 4px;
-  }
-  .hero-card-name {
-    font-size: 17px;
-    color: #f0ede6;
-    margin-bottom: 2px;
-  }
-  .hero-card-region {
-    font-size: 11px;
-    color: #8ab88a;
-    margin-bottom: 10px;
-    font-style: italic;
-  }
-  .hero-card-rating {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .hero-rating-emoji { font-size: 18px; }
-  .hero-rating-label { font-size: 15px; font-weight: bold; }
-  .hero-rating-tagline { font-size: 11px; opacity: .75; }
-  .hero-card-stats {
-    display: flex;
-    gap: 14px;
-    font-size: 12px;
-    color: #a8c8a8;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 8px;
-    margin-top: 4px;
-  }
-  .hero-stat-item span { color: rgba(255,255,255,0.45); font-size: 10px; display: block; text-transform: uppercase; letter-spacing: .5px; }
-  .hero-species-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-  .hero-species-tag {
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    letter-spacing: .3px;
-    text-transform: uppercase;
-  }
-  .hero-empty {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 20px;
-    color: #7ab87a;
-    font-style: italic;
-    font-size: 14px;
-  }
+/* Count line */
+.count-line { font-size:11px; color:#aaa; padding:6px 16px 4px; font-style:italic; }
 
-  /* ── AI Brief ── */
-  .brief-section {
-    background: #fff;
-    border-bottom: 1px solid #ddd8cc;
-    padding: 16px 0;
-  }
-  .brief-inner { max-width: 720px; }
-  .brief-inner h2 {
-    font-size: 11px;
-    font-weight: normal;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #999;
-    margin-bottom: 8px;
-  }
-  .brief-text {
-    font-size: 14px;
-    color: #3a3a3a;
-    line-height: 1.7;
-  }
+/* River list — single column on mobile, 2 col on desktop */
+.river-list { padding:8px 16px 48px; }
+.river-row {
+  background:#fff; border:1px solid #e4e0d8; border-radius:5px;
+  margin-bottom:8px; display:flex; align-items:stretch; cursor:pointer;
+  transition:box-shadow .12s; overflow:hidden;
+}
+.river-row:hover { box-shadow:0 3px 10px rgba(0,0,0,.08); }
+.river-row.hidden { display:none; }
 
-  /* ── Legend + Filters ── */
-  .controls-section {
-    background: #fff;
-    border-bottom: 1px solid #ddd8cc;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04);
-  }
-  .controls-inner {
-    padding: 10px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .legend-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 16px;
-    font-size: 12px;
-  }
-  .legend-label { color: #888; font-style: italic; }
-  .legend-item { display: flex; align-items: center; gap: 5px; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+/* Color stripe */
+.row-stripe { width:5px; flex-shrink:0; }
 
-  .filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-  }
-  .filter-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: .8px; margin-right: 2px; }
-  .filter-btn {
-    font-family: Georgia, serif;
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background: #f9f6f0;
-    color: #666;
-    cursor: pointer;
-    transition: all .15s;
-  }
-  .filter-btn.active {
-    background: #1a3a1a;
-    color: #fff;
-    border-color: #1a3a1a;
-  }
-  .filter-btn:hover:not(.active) { background: #f0ece4; }
+/* Row body */
+.row-body { padding:10px 12px; flex:1; min-width:0; }
+.row-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:3px; }
+.row-name { font-size:15px; color:#1a3a1a; }
+.row-rating { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+.row-rating-emoji { font-size:15px; }
+.row-rating-label { font-size:12px; font-weight:bold; }
+.row-meta { font-size:11px; color:#aaa; font-style:italic; margin-bottom:5px; }
+.row-stats { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:12px; color:#555; }
+.row-stat { }
+.row-stat-lbl { color:#bbb; font-size:10px; }
+.row-tagline { font-size:11px; color:#aaa; font-style:italic; }
+.row-flow-bar { height:3px; background:#f0ece4; border-radius:2px; margin-top:6px; overflow:hidden; }
+.row-flow-fill { height:100%; border-radius:2px; }
+.row-species { display:flex; gap:3px; margin-top:5px; flex-wrap:wrap; }
+.sp-dot { width:7px; height:7px; border-radius:50%; }
 
-  /* ── River Grid ── */
-  .rivers-section { padding: 20px 0 48px; }
-  .region-group { margin-bottom: 32px; }
-  .region-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #e8e4dc;
-  }
-  .region-header h2 {
-    font-size: 14px;
-    font-weight: normal;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #888;
-  }
-  .region-count {
-    font-size: 11px;
-    color: #bbb;
-    font-style: italic;
-  }
-  .rivers-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 14px;
-  }
+/* Page links */
+.row-links { padding:10px 12px 10px 0; display:flex; flex-direction:column; justify-content:center; gap:5px; flex-shrink:0; }
+.row-link {
+  font-size:11px; color:#2c5f2d; background:#e8f5e9;
+  padding:3px 8px; border-radius:3px; white-space:nowrap;
+  text-decoration:none; text-align:center; border:1px solid #c8e6c9;
+}
+.row-link:hover { background:#c8e6c9; }
+.row-link.secondary { color:#666; background:#f5f2ec; border-color:#ddd; }
 
-  /* ── River Card ── */
-  .river-card {
-    background: #fff;
-    border: 1px solid #ddd8cc;
-    border-radius: 6px;
-    overflow: hidden;
-    transition: box-shadow .15s;
-    cursor: pointer;
-  }
-  .river-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.09); }
-  .river-card.hidden { display: none; }
+/* Loading */
+.loading { text-align:center; padding:48px 16px; color:#aaa; font-style:italic; }
+.spinner { display:inline-block; width:24px; height:24px; border:3px solid #eee; border-top-color:#4a7c4a; border-radius:50%; animation:spin .7s linear infinite; margin-bottom:12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-  .card-header {
-    padding: 12px 14px 8px;
-    border-bottom: 1px solid #f0ece4;
-  }
-  .card-top-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
-  .card-river-name {
-    font-size: 16px;
-    font-weight: normal;
-    color: #1a3a1a;
-  }
-  .card-region {
-    font-size: 11px;
-    color: #bbb;
-    font-style: italic;
-    margin-bottom: 6px;
-  }
-  .species-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .species-tag {
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-style: normal;
-    text-transform: uppercase;
-    letter-spacing: .3px;
-  }
-  .species-brook   { background: #e8f5e9; color: #1b5e20; }
-  .species-brown   { background: #fff3e0; color: #e65100; }
-  .species-rainbow { background: #e3f2fd; color: #0d47a1; }
-  .species-steelhead { background: #f3e5f5; color: #6a1b9a; }
-  .tier-badge {
-    font-size: 10px;
-    color: #ccc;
-    font-style: italic;
-    white-space: nowrap;
-    flex-shrink: 0;
-    padding-top: 2px;
-  }
+/* Empty filter state */
+.empty { text-align:center; padding:32px 16px; color:#bbb; font-style:italic; font-size:14px; }
 
-  .card-rating {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border-bottom: 1px solid #f0ece4;
-  }
-  .rating-emoji { font-size: 18px; }
-  .rating-label { font-weight: bold; font-size: 14px; }
-  .rating-tagline { font-size: 11px; color: #999; font-style: italic; }
+/* Footer */
+footer { border-top:1px solid #ddd8cc; padding:16px; text-align:center; font-size:11px; color:#bbb; background:#fff; }
+footer a { color:#4a7c4a; }
 
-  .card-stats {
-    padding: 8px 14px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px 10px;
-    border-bottom: 1px solid #f0ece4;
-  }
-  .stat-item { font-size: 12px; }
-  .stat-label { color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; display: block; }
-  .stat-value { color: #2c2c2c; font-size: 13px; }
-  .stat-sub { color: #bbb; font-size: 10px; }
+/* Modal */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; overflow-y:auto; padding:20px 14px; }
+.modal-bg.open { display:flex; align-items:flex-start; justify-content:center; }
+.modal-box { background:#fff; border-radius:7px; max-width:600px; width:100%; box-shadow:0 8px 36px rgba(0,0,0,.25); overflow:hidden; margin:auto; }
+.modal-hdr { background:#1a3a1a; color:#f0ede6; padding:13px 17px; display:flex; align-items:center; justify-content:space-between; }
+.modal-hdr-title { font-size:16px; font-weight:normal; }
+.modal-close { background:none; border:none; color:#7ab87a; font-size:20px; cursor:pointer; padding:0 3px; line-height:1; }
+.modal-close:hover { color:#fff; }
+.modal-body { padding:17px; }
+.modal-rating { display:flex; align-items:center; gap:10px; padding:10px 13px; border-radius:5px; margin-bottom:13px; }
+.modal-rating-emoji { font-size:24px; }
+.modal-rating-label { font-size:17px; font-weight:bold; }
+.modal-rating-tagline { font-size:12px; opacity:.8; }
+.modal-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; }
+.ms { background:#f9f6f0; border-radius:4px; padding:8px 10px; }
+.ms-lbl { font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+.ms-val { font-size:14px; color:#2c2c2c; }
+.ms-sub { font-size:10px; color:#bbb; }
+.modal-bar { background:#f0ece4; border-radius:3px; height:4px; margin:2px 0; overflow:hidden; }
+.modal-bar-fill { height:100%; border-radius:3px; }
+.modal-bar-lbl { font-size:10px; color:#bbb; margin-bottom:12px; }
+.modal-note { font-size:13px; color:#555; font-style:italic; line-height:1.65; border-top:1px solid #f0ece4; padding-top:12px; }
+.modal-actions { display:flex; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid #f0ece4; }
+.modal-btn { font-family:Georgia,serif; font-size:12px; padding:7px 14px; border-radius:4px; text-decoration:none; border:none; cursor:pointer; }
+.modal-btn.primary { background:#1a3a1a; color:#fff; }
+.modal-btn.primary:hover { background:#2c5f2d; }
+.modal-btn.secondary { background:#f0ece4; color:#555; }
+.modal-btn.secondary:hover { background:#e0dbd0; }
+.modal-loading { text-align:center; padding:24px; color:#aaa; font-style:italic; font-size:13px; }
+.modal-rec { font-size:13px; color:#3a3a3a; line-height:1.65; margin-bottom:8px; }
+.fly-tag { display:inline-block; background:#e8f5e9; color:#1a3a1a; font-size:11px; padding:2px 7px; border-radius:3px; margin:2px; }
 
-  .flow-bar-wrap {
-    padding: 6px 14px 8px;
-    border-bottom: 1px solid #f0ece4;
-  }
-  .flow-bar-label { font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
-  .flow-bar-track { background: #f0ece4; border-radius: 3px; height: 5px; overflow: hidden; }
-  .flow-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
-  .flow-bar-pct { font-size: 10px; color: #bbb; margin-top: 2px; }
-
-  .card-note {
-    padding: 8px 14px 10px;
-    font-size: 12px;
-    color: #666;
-    line-height: 1.55;
-    font-style: italic;
-  }
-  .card-tap-hint {
-    font-size: 10px;
-    color: #ccc;
-    padding: 4px 14px 10px;
-    text-align: right;
-  }
-
-  /* ── No data state ── */
-  .no-gauge-state {
-    padding: 12px 14px 14px;
-    font-size: 12px;
-    color: #aaa;
-    font-style: italic;
-    text-align: center;
-  }
-
-  /* ── Loading/Error ── */
-  .loading-state {
-    text-align: center;
-    padding: 50px 20px;
-    color: #aaa;
-    font-style: italic;
-    grid-column: 1 / -1;
-  }
-  .loading-spinner {
-    display: inline-block;
-    width: 26px; height: 26px;
-    border: 3px solid #eee;
-    border-top-color: #4a7c4a;
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
-    margin-bottom: 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Footer ── */
-  .site-footer {
-    border-top: 1px solid #ddd8cc;
-    padding: 18px 20px;
-    text-align: center;
-    font-size: 12px;
-    color: #bbb;
-    background: #fff;
-  }
-  .site-footer a { color: #4a7c4a; text-decoration: none; }
-  .site-footer a:hover { text-decoration: underline; }
-
-  /* ── Modal ── */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.55);
-    z-index: 1000;
-    overflow-y: auto;
-    padding: 20px 14px;
-  }
-  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
-  .modal-box {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 680px;
-    width: 100%;
-    box-shadow: 0 8px 40px rgba(0,0,0,.28);
-    overflow: hidden;
-    margin: auto;
-  }
-  .modal-header {
-    background: #1a3a1a; color: #f0ede6;
-    padding: 14px 18px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .modal-title { font-size: 17px; font-weight: normal; }
-  .modal-close {
-    background: none; border: none; color: #a8c8a8;
-    font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1;
-  }
-  .modal-close:hover { color: #fff; }
-  .modal-body { padding: 18px; }
-  .modal-rating {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px; border-radius: 5px; margin-bottom: 14px;
-  }
-  .modal-rating-emoji { font-size: 26px; }
-  .modal-rating-label { font-size: 18px; font-weight: bold; }
-  .modal-rating-tagline { font-size: 12px; opacity: .85; }
-  .modal-stats {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px; margin-bottom: 14px;
-  }
-  .modal-stat { background: #f9f6f0; border-radius: 4px; padding: 10px 12px; }
-  .modal-stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
-  .modal-stat-value { font-size: 15px; color: #2c2c2c; }
-  .modal-stat-sub { font-size: 10px; color: #bbb; }
-  .modal-flow-bar { background: #f0ece4; border-radius: 4px; height: 5px; margin-bottom: 3px; overflow: hidden; }
-  .modal-flow-fill { height: 100%; border-radius: 4px; }
-  .modal-flow-label { font-size: 11px; color: #bbb; margin-bottom: 14px; }
-  .modal-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 8px; }
-  .modal-access { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 8px; }
-  .modal-regs { font-size: 12px; color: #888; font-style: italic; line-height: 1.55; }
-  .modal-brief { font-size: 13px; color: #555; line-height: 1.65; border-top: 1px solid #f0ece4; padding-top: 14px; font-style: italic; }
-  .modal-actions {
-    display: flex; gap: 10px; margin-top: 16px;
-    padding-top: 14px; border-top: 1px solid #f0ece4;
-  }
-  .modal-btn-full {
-    display: inline-block; background: #1a3a1a; color: #fff;
-    padding: 8px 16px; border-radius: 4px; font-size: 12px;
-    text-decoration: none;
-  }
-  .modal-btn-full:hover { background: #2c5f2d; }
-  .modal-btn-close {
-    display: inline-block; background: #f0ece4; color: #555;
-    padding: 8px 16px; border-radius: 4px; font-size: 12px;
-    border: none; cursor: pointer;
-  }
-  .modal-btn-close:hover { background: #e0dbd0; }
-  .modal-loading { text-align: center; padding: 28px; color: #aaa; font-style: italic; }
-
-  /* ── Empty filter state ── */
-  .empty-filter {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 30px 20px;
-    color: #bbb;
-    font-style: italic;
-    font-size: 14px;
-  }
-
-  @media (max-width: 500px) {
-    .site-header h1 { font-size: 21px; }
-    .rivers-grid { grid-template-columns: 1fr; }
-    .hero-cards { grid-template-columns: 1fr; }
-    .modal-stats { grid-template-columns: 1fr 1fr; }
-    .controls-inner { gap: 6px; }
-  }
+@media (max-width:480px) {
+  .hero-grid { grid-template-columns:1fr; }
+  .modal-stats { grid-template-columns:1fr 1fr; }
+  .hdr-nav { gap:10px; }
+}
 </style>
 </head>
 <body>
 
-<div class="site-header">
-  <h1>Michigan Trout Report</h1>
-  <div class="tagline">Live conditions — 40+ rivers across Michigan</div>
-  <div class="last-updated" id="lastUpdated">Loading data...</div>
+<header class="hdr">
+  <div class="hdr-title">Michigan Trout Report</div>
+  <nav class="hdr-nav">
+    <a href="/map.html">Map</a>
+    <a href="/directory.html">Guides</a>
+    <a href="/alerts.html">Alerts</a>
+  </nav>
+</header>
+
+<!-- Best Rivers Now -->
+<section class="hero">
+  <div class="hero-label">Right Now</div>
+  <div class="hero-heading">Where to Fish Today</div>
+  <div class="hero-sub" id="heroSub">Loading conditions...</div>
+  <div class="hero-grid" id="heroGrid"><div class="hero-empty">Checking rivers...</div></div>
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+    <a href="/map.html" style="font-size:12px;color:#a8c8a8;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:4px">🗺 Stream Map — 310 access points</a>
+    <a href="/alerts.html" style="font-size:12px;color:#a8c8a8;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:4px">🔔 Alerts when rivers hit Prime — $19/yr</a>
+  </div>
+</section>
+
+<!-- AI brief -->
+<div class="brief" id="brief">
+  <div class="brief-label">Today's Report</div>
+  <div id="briefText"></div>
 </div>
 
-<div id="seasonBanner" class="season-banner" style="display:none"></div>
-
-<!-- HERO: Best Streams Now -->
-<div class="hero-section" id="heroSection">
-  <div class="container">
-    <div class="hero-label">Right Now</div>
-    <div class="hero-title">Best Streams Today</div>
-    <div class="hero-subtitle" id="heroSubtitle">Finding the best conditions across the state...</div>
-    <div style="margin-top:12px">
-      <a href="/map.html" style="display:inline-block;background:rgba(255,255,255,0.12);color:#f0ede6;border:1px solid rgba(255,255,255,0.25);padding:7px 16px;border-radius:4px;font-family:Georgia,serif;font-size:13px;text-decoration:none;letter-spacing:.3px">🗺 View Interactive Map — 310 Access Points →</a>
-      <a href="/alerts.html" style="display:inline-block;background:rgba(255,255,255,0.07);color:#a8c8a8;border:1px solid rgba(255,255,255,0.15);padding:7px 16px;border-radius:4px;font-family:Georgia,serif;font-size:13px;text-decoration:none;letter-spacing:.3px">🔔 Get Prime condition alerts — $19/yr</a>
-    </div>
-    <div class="hero-cards" id="heroCards">
-      <div class="hero-empty">Loading conditions...</div>
-    </div>
+<!-- Sticky controls -->
+<div class="controls">
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Region:</span>
+    <button class="chip on" data-r="ALL"  onclick="setR('ALL')">All</button>
+    <button class="chip"    data-r="UP"   onclick="setR('UP')">Upper Peninsula</button>
+    <button class="chip"    data-r="NLP"  onclick="setR('NLP')">Northern LP</button>
+    <button class="chip"    data-r="WLP"  onclick="setR('WLP')">Western LP</button>
+    <button class="chip"    data-r="CLP"  onclick="setR('CLP')">Central LP</button>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Species:</span>
+    <button class="chip on"         data-s="ALL"       onclick="setS('ALL')">All</button>
+    <button class="chip"            data-s="brook"     onclick="setS('brook')">Brook Trout</button>
+    <button class="chip"            data-s="brown"     onclick="setS('brown')">Brown Trout</button>
+    <button class="chip"            data-s="steelhead" onclick="setS('steelhead')">Steelhead</button>
+  </div>
+  <div class="legend-row" style="margin-top:6px;padding-top:6px;border-top:1px solid #f0ece4">
+    <span style="font-size:10px;color:#bbb;text-transform:uppercase;letter-spacing:.6px">Conditions:</span>
+    <span class="leg"><span class="dot" style="background:#2e7d32"></span>Prime</span>
+    <span class="leg"><span class="dot" style="background:#558b2f"></span>Fishing Well</span>
+    <span class="leg"><span class="dot" style="background:#f9a825"></span>Fair</span>
+    <span class="leg"><span class="dot" style="background:#e65100"></span>Tough</span>
+    <span class="leg"><span class="dot" style="background:#b71c1c"></span>Blown Out</span>
   </div>
 </div>
 
-<!-- AI Brief -->
-<div class="brief-section" id="briefSection" style="display:none">
-  <div class="container">
-    <div class="brief-inner">
-      <h2>Today's Report</h2>
-      <div class="brief-text" id="briefText"></div>
-    </div>
-  </div>
+<div class="count-line" id="countLine"></div>
+
+<div class="river-list" id="riverList">
+  <div class="loading"><div class="spinner"></div><div>Pulling USGS stream data...</div></div>
 </div>
 
-<!-- Controls: Legend + Filters -->
-<div class="controls-section">
-  <div class="container">
-    <div class="controls-inner">
-      <div class="legend-row">
-        <span class="legend-label">Conditions:</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#2e7d32"></span>Prime</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#558b2f"></span>Fishing Well</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#f9a825"></span>Fair</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#e65100"></span>Tough</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#b71c1c"></span>Blown Out</span>
-      </div>
-      <div class="filter-row" id="regionFilters">
-        <span class="filter-label">Region:</span>
-        <button class="filter-btn active" data-region="ALL" onclick="setRegion('ALL')">All Michigan</button>
-        <button class="filter-btn" data-region="UP" onclick="setRegion('UP')">Upper Peninsula</button>
-        <button class="filter-btn" data-region="NLP" onclick="setRegion('NLP')">Northern LP</button>
-        <button class="filter-btn" data-region="WLP" onclick="setRegion('WLP')">Western LP</button>
-        <button class="filter-btn" data-region="CLP" onclick="setRegion('CLP')">Central LP</button>
-      </div>
-      <div class="filter-row" id="speciesFilters">
-        <span class="filter-label">Species:</span>
-        <button class="filter-btn active" data-species="ALL" onclick="setSpecies('ALL')">All Species</button>
-        <button class="filter-btn" data-species="brook" onclick="setSpecies('brook')">Brook Trout</button>
-        <button class="filter-btn" data-species="brown" onclick="setSpecies('brown')">Brown Trout</button>
-        <button class="filter-btn" data-species="steelhead" onclick="setSpecies('steelhead')">Steelhead</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Rivers Grid -->
-<div class="rivers-section">
-  <div class="container">
-    <div id="riversContainer">
-      <div class="rivers-grid">
-        <div class="loading-state">
-          <div class="loading-spinner"></div>
-          <div>Pulling USGS data for all rivers...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer class="site-footer">
-  USGS data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">waterservices.usgs.gov</a>
-  &nbsp;·&nbsp; Updated daily at 8am CT
+<footer>
+  Data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS Water Services</a>
+  &nbsp;·&nbsp; Updated 8am CT daily
+  &nbsp;·&nbsp; <a href="/map.html">Stream Map</a>
+  &nbsp;·&nbsp; <a href="/sitemap.xml">Sitemap</a>
   &nbsp;·&nbsp; Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>
-  &nbsp;·&nbsp; <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
-  &nbsp;·&nbsp; <a href="/map.html">Stream Map</a> &nbsp;·&nbsp; <a href="/directory.html">Guides</a> &nbsp;·&nbsp; <a href="/alerts.html">Alerts</a> &nbsp;·&nbsp; <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Michigan Trout Streams Guide</a>
 </footer>
 
 <!-- Modal -->
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-  <div class="modal-box" id="modalBox">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitle">River Conditions</div>
-      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="modalTitle"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body" id="modalBody">
-      <div class="modal-loading">Loading...</div>
-    </div>
+    <div class="modal-body" id="modalBody"><div class="modal-loading">Loading...</div></div>
   </div>
 </div>
 
 <script>
-const RIVER_SLUG_MAP = {'ausable':'ausable-river','manistee':'manistee-river','pere-marquette':'pere-marquette-river','muskegon':'muskegon-river','boardman':'boardman-river','jordan':'jordan-river-michigan','pigeon':'pigeon-river-michigan','rifle-river':'rifle-river-michigan','little-manistee':'little-manistee-river','betsie-river':'betsie-river','pine-river':'pine-river-michigan','platte-river':'platte-river-michigan','rogue-river':'rogue-river-michigan','white-river':'white-river-michigan','flat-river':'flat-river-michigan','looking-glass-river':'looking-glass-river','sturgeon-river-nlp':'sturgeon-river-michigan','thunder-bay-river':'thunder-bay-river','black-river-up':'black-river-upper-peninsula','tahquamenon-river':'tahquamenon-river','paint-river':'paint-river-michigan','iron-river':'iron-river-michigan','brule-river':'brule-river-michigan','michigamme-river':'michigamme-river','au-train-river':'au-train-river','miners-river':'miners-river-michigan','salmon-trout-river':'salmon-trout-river','presque-isle-river':'presque-isle-river','trap-rock-river':'trap-rock-river','ontonagon-river':'ontonagon-river','sturgeon-river-up':'sturgeon-river-upper-peninsula','silver-river':'silver-river-michigan','black-river-schoolcraft':'black-river-schoolcraft-county','au-gres-river':'au-gres-river','pine-river-midland':'pine-river-midland-county','little-muskegon-river':'little-muskegon-river','clam-river':'clam-river-michigan','maple-river-lp':'maple-river-michigan','thornapple-river':'thornapple-river'};
+// ── Embedded metadata (regionCode + species per river) ───────────────────────
+const META = {"black-river-up":{"rc":"UP","s":["brook","brown"]},"presque-isle-river":{"rc":"UP","s":["brook","steelhead"]},"sturgeon-river-up":{"rc":"UP","s":["brook"]},"ontonagon-river":{"rc":"UP","s":["brook","brown","steelhead"]},"trap-rock-river":{"rc":"UP","s":["brook","steelhead"]},"silver-river":{"rc":"UP","s":["brook"]},"salmon-trout-river":{"rc":"UP","s":["brook"]},"au-train-river":{"rc":"UP","s":["brook","steelhead"]},"miners-river":{"rc":"UP","s":["brook"]},"tahquamenon-river":{"rc":"UP","s":["brook","steelhead","brown"]},"black-river-schoolcraft":{"rc":"UP","s":["brook"]},"paint-river":{"rc":"UP","s":["brook","brown"]},"iron-river":{"rc":"UP","s":["brook","brown"]},"michigamme-river":{"rc":"UP","s":["brown","brook","steelhead"]},"brule-river":{"rc":"UP","s":["brook","brown"]},"ausable":{"rc":"NLP","s":["brown","rainbow"]},"manistee":{"rc":"NLP","s":["brown","rainbow","steelhead"]},"pere-marquette":{"rc":"NLP","s":["brown","rainbow","steelhead"]},"muskegon":{"rc":"NLP","s":["brown","rainbow","steelhead"]},"boardman":{"rc":"NLP","s":["brown","brook"]},"jordan":{"rc":"NLP","s":["brook","brown"]},"pigeon":{"rc":"NLP","s":["brook","brown"]},"sturgeon-river-nlp":{"rc":"NLP","s":["brown","brook"]},"pine-river":{"rc":"NLP","s":["brown","rainbow","steelhead"]},"platte-river":{"rc":"NLP","s":["brown","rainbow","steelhead"]},"betsie-river":{"rc":"NLP","s":["brown","steelhead"]},"little-manistee":{"rc":"NLP","s":["steelhead","brown"]},"rifle-river":{"rc":"NLP","s":["brown","rainbow","steelhead"]},"thunder-bay-river":{"rc":"NLP","s":["brown","steelhead"]},"white-river":{"rc":"WLP","s":["brown","steelhead"]},"little-muskegon-river":{"rc":"WLP","s":["brown"]},"clam-river":{"rc":"WLP","s":["brown","brook"]},"rogue-river":{"rc":"WLP","s":["brown","steelhead"]},"flat-river":{"rc":"WLP","s":["brown"]},"thornapple-river":{"rc":"WLP","s":["brown"]},"looking-glass-river":{"rc":"CLP","s":["brown"]},"maple-river-lp":{"rc":"CLP","s":["brown"]},"pine-river-midland":{"rc":"CLP","s":["brown"]},"au-gres-river":{"rc":"CLP","s":["brown","steelhead"]}};
 
-function getStreamPageUrl(riverId) {
-  const slug = RIVER_SLUG_MAP[riverId];
-  return slug ? `/stream/${slug}.html` : `/river.html?id=${riverId}`;
-}
+const SLUGS = {"ausable":"ausable-river","manistee":"manistee-river","pere-marquette":"pere-marquette-river","muskegon":"muskegon-river","boardman":"boardman-river","jordan":"jordan-river-michigan","pigeon":"pigeon-river-michigan","rifle-river":"rifle-river-michigan","little-manistee":"little-manistee-river","betsie-river":"betsie-river","pine-river":"pine-river-michigan","platte-river":"platte-river-michigan","rogue-river":"rogue-river-michigan","white-river":"white-river-michigan","flat-river":"flat-river-michigan","looking-glass-river":"looking-glass-river","sturgeon-river-nlp":"sturgeon-river-michigan","thunder-bay-river":"thunder-bay-river","black-river-up":"black-river-upper-peninsula","tahquamenon-river":"tahquamenon-river","paint-river":"paint-river-michigan","iron-river":"iron-river-michigan","brule-river":"brule-river-michigan","michigamme-river":"michigamme-river","au-train-river":"au-train-river","miners-river":"miners-river-michigan","salmon-trout-river":"salmon-trout-river","presque-isle-river":"presque-isle-river","trap-rock-river":"trap-rock-river","ontonagon-river":"ontonagon-river","sturgeon-river-up":"sturgeon-river-upper-peninsula","silver-river":"silver-river-michigan","black-river-schoolcraft":"black-river-schoolcraft-county","au-gres-river":"au-gres-river","pine-river-midland":"pine-river-midland-county","little-muskegon-river":"little-muskegon-river","clam-river":"clam-river-michigan","maple-river-lp":"maple-river-michigan","thornapple-river":"thornapple-river"};
 
 const RATINGS = {
-  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
-  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
-  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
-  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off. Long leader, small fly.' },
-  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home. Fish another day.' },
+  PRIME:        {label:'Prime',        emoji:'🎣', color:'#2e7d32', bg:'#e8f5e9', tagline:'Drop everything and go.'},
+  FISHING_WELL: {label:'Fishing Well', emoji:'✅', color:'#558b2f', bg:'#f1f8e9', tagline:'Worth the drive.'},
+  FAIR:         {label:'Fair',         emoji:'🟡', color:'#f9a825', bg:'#fffde7', tagline:'Fishable. Pick your spots.'},
+  TOUGH:        {label:'Tough',        emoji:'🟠', color:'#e65100', bg:'#fff3e0', tagline:'Fish are off.'},
+  BLOWN_OUT:    {label:'Blown Out',    emoji:'🔴', color:'#b71c1c', bg:'#ffebee', tagline:'Stay home.'},
 };
+const SCORE = {PRIME:5,FISHING_WELL:4,FAIR:3,TOUGH:2,BLOWN_OUT:1};
+const SP_COLOR = {brook:'#1b5e20',brown:'#bf360c',rainbow:'#0d47a1',steelhead:'#6a1b9a'};
 
-const RATING_SCORE = { PRIME: 5, FISHING_WELL: 4, FAIR: 3, TOUGH: 2, BLOWN_OUT: 1 };
+function flowColor(p){if(!p)return'#ccc';if(p>200)return'#b71c1c';if(p>150)return'#e65100';if(p>120)return'#f9a825';if(p>80)return'#2e7d32';if(p>50)return'#558b2f';return'#999';}
+function flowW(p){return Math.min((p||0)/2,100);}
 
-const SPECIES_COLORS = {
-  brook:     { bg: '#e8f5e9', color: '#1b5e20' },
-  brown:     { bg: '#fff3e0', color: '#bf360c' },
-  rainbow:   { bg: '#e3f2fd', color: '#0d47a1' },
-  steelhead: { bg: '#f3e5f5', color: '#6a1b9a' },
-};
-const SPECIES_LABELS = {
-  brook: 'Brook', brown: 'Brown', rainbow: 'Rainbow', steelhead: 'Steelhead'
-};
+let _rivers=[], _brief={}, _activeR='ALL', _activeS='ALL';
 
-const REGION_LABELS = {
-  UP: 'Upper Peninsula',
-  NLP: 'Northern Lower Michigan',
-  WLP: 'Western Lower Michigan',
-  CLP: 'Central Lower Michigan',
-};
+// ── Hero ─────────────────────────────────────────────────────────────────────
+function renderHero(rivers){
+  const ranked = [...rivers]
+    .filter(r=>r.conditions?.ratingKey)
+    .sort((a,b)=>(SCORE[b.conditions.ratingKey]||0)-(SCORE[a.conditions.ratingKey]||0));
+  const top = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).slice(0,3);
+  const primeCount = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=4).length;
 
-let _allRivers = [];
-let _briefRivers = {};
-let _activeRegion = 'ALL';
-let _activeSpecies = 'ALL';
+  document.getElementById('heroSub').textContent = primeCount >= 1
+    ? `${primeCount} river${primeCount>1?'s':''} fishing ${primeCount===1?'well':'Prime or better'} today`
+    : ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length > 0
+    ? `${ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length} rivers in fishable condition`
+    : 'Tough conditions statewide today';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function formatTs(ts) {
-  if (!ts) return '';
-  try {
-    const d = new Date(ts);
-    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
-  } catch(e) { return ts.slice(0, 16); }
-}
-
-function flowBarColor(pct) {
-  if (!pct) return '#ccc';
-  if (pct > 200) return '#b71c1c';
-  if (pct > 150) return '#e65100';
-  if (pct > 120) return '#f9a825';
-  if (pct > 80)  return '#2e7d32';
-  if (pct > 50)  return '#558b2f';
-  return '#999';
-}
-
-function flowBarWidth(pct) {
-  return Math.min((pct || 0) / 2, 100);
-}
-
-function speciesTagsHtml(species, className) {
-  if (!species?.length) return '';
-  return species.map(s => {
-    const sc = SPECIES_COLORS[s] || { bg: '#eee', color: '#666' };
-    return `<span class="${className}" style="background:${sc.bg};color:${sc.color}">${SPECIES_LABELS[s] || s}</span>`;
-  }).join('');
-}
-
-// ── Hero Section ─────────────────────────────────────────────────────────────
-
-function renderHero(rivers) {
-  // Score all rivers and find the best fishable ones
-  const scored = rivers
-    .filter(r => r.conditions?.ratingKey)
-    .map(r => ({ ...r, score: RATING_SCORE[r.conditions.ratingKey] || 0 }))
-    .sort((a, b) => b.score - a.score);
-
-  const top = scored.filter(r => r.score >= 3).slice(0, 4); // FAIR or better
-  const heroCards = document.getElementById('heroCards');
-  const heroSubtitle = document.getElementById('heroSubtitle');
-
-  const primeCount = scored.filter(r => r.score >= 4).length;
-  const totalGood = scored.filter(r => r.score >= 3).length;
-
-  if (primeCount >= 1) {
-    heroSubtitle.textContent = `${primeCount} river${primeCount > 1 ? 's' : ''} fishing Prime or better today across Michigan`;
-  } else if (totalGood > 0) {
-    heroSubtitle.textContent = `${totalGood} river${totalGood > 1 ? 's' : ''} in fishable condition today`;
-  } else {
-    heroSubtitle.textContent = 'Tough conditions statewide — check individual rivers for your best option';
-  }
-
-  if (!top.length) {
-    heroCards.innerHTML = `<div class="hero-empty">No rivers reporting ideal conditions today. Check individual river pages for updates.</div>`;
+  if(!top.length){
+    document.getElementById('heroGrid').innerHTML='<div class="hero-empty">No rivers reporting ideal conditions today.</div>';
     return;
   }
-
-  const rankLabels = ['#1 Pick', '#2 Pick', '#3 Pick', '#4 Pick'];
-
-  heroCards.innerHTML = top.map((river, i) => {
-    const c = river.conditions;
-    const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
-    const speciesTags = speciesTagsHtml(river.species, 'hero-species-tag');
-    return `
-      <div class="hero-card" onclick="openModal('${river.id}', '${river.name.replace(/'/g, "\\'")}')">
-        <div class="hero-card-rank">${rankLabels[i] || ''}</div>
-        <div class="hero-card-name">${river.name}</div>
-        <div class="hero-card-region">${river.region}</div>
-        ${river.species?.length ? `<div class="hero-species-tags">${speciesTags}</div>` : ''}
-        <div class="hero-card-rating">
-          <span class="hero-rating-emoji">${rat.emoji}</span>
-          <span class="hero-rating-label" style="color:${rat.color}">${rat.label}</span>
-        </div>
-        <div class="hero-card-stats">
-          <div class="hero-stat-item">
-            <span>Flow</span>
-            ${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}
-          </div>
-          ${c.tempF !== null ? `<div class="hero-stat-item"><span>Water Temp</span>${c.tempF}°F</div>` : ''}
-          ${c.flowPct ? `<div class="hero-stat-item"><span>vs Median</span>${c.flowPct}%</div>` : ''}
-        </div>
-      </div>`;
+  const labels=['Top Pick','#2','#3'];
+  document.getElementById('heroGrid').innerHTML = top.map((r,i)=>{
+    const c=r.conditions, rat=RATINGS[c.ratingKey];
+    const slug=SLUGS[r.id];
+    return `<div class="hero-card" onclick="openModal('${r.id}','${r.name.replace(/'/g,"\\'")}')">
+      <div class="hero-rank">${labels[i]}</div>
+      <div class="hero-name">${r.name}</div>
+      <div class="hero-region">${r.region}</div>
+      <div class="hero-badge" style="color:${rat.color}">${rat.emoji} ${rat.label}</div>
+      <div class="hero-stats">
+        ${c.flow!==null?`<div class="hero-stat"><span>Flow</span>${c.flow.toLocaleString()} cfs</div>`:''}
+        ${c.tempF!==null?`<div class="hero-stat"><span>Temp</span>${c.tempF}°F</div>`:''}
+        ${c.flowPct?`<div class="hero-stat"><span>vs Median</span>${c.flowPct}%</div>`:''}
+      </div>
+    </div>`;
   }).join('');
 }
 
-// ── River Cards ───────────────────────────────────────────────────────────────
+// ── River rows ────────────────────────────────────────────────────────────────
+function renderRow(r){
+  const c=r.conditions||{};
+  const rat=c.ratingKey?RATINGS[c.ratingKey]:null;
+  const m=META[r.id]||{rc:'',s:[]};
+  const slug=SLUGS[r.id];
+  const stripeColor=rat?rat.color:'#ddd';
+  const aiNote=_brief.rivers?.[r.id]||'';
+  const speciesDots=(m.s||[]).map(s=>`<span class="sp-dot" style="background:${SP_COLOR[s]||'#ccc'}" title="${s}"></span>`).join('');
+  const flowBar=c.flowPct?`<div class="row-flow-bar"><div class="row-flow-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div>`:'';
 
-function renderCard(river) {
-  const c = river.conditions;
-  if (!c || !c.ratingKey) {
-    // Tier 3 / no data
-    return `
-      <div class="river-card" data-region="${river.regionCode}" data-species="${(river.species || []).join(',')}" onclick="openModal('${river.id}', '${river.name.replace(/'/g, "\\'")}')">
-        <div class="card-header">
-          <div class="card-top-row">
-            <div class="card-river-name">${river.name}</div>
-            <span class="tier-badge">Est.</span>
-          </div>
-          <div class="card-region">${river.region}</div>
-          <div class="species-tags">${speciesTagsHtml(river.species, 'species-tag')}</div>
-        </div>
-        <div class="no-gauge-state">No live gauge — tap for access info & regulations</div>
-      </div>`;
-  }
-
-  const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
-  const aiNote = _briefRivers[river.id] || null;
-  const tierBadge = river.tier === 2 ? '<span class="tier-badge">Flow only</span>' : '';
-
-  const flowBar = c.flowPct ? `
-    <div class="flow-bar-wrap">
-      <div class="flow-bar-label">Flow vs. seasonal median</div>
-      <div class="flow-bar-track">
-        <div class="flow-bar-fill" style="width:${flowBarWidth(c.flowPct)}%;background:${flowBarColor(c.flowPct)}"></div>
+  return `<div class="river-row" data-rc="${m.rc}" data-s="${(m.s||[]).join(',')}" onclick="openModal('${r.id}','${r.name.replace(/'/g,"\\'")}')">
+    <div class="row-stripe" style="background:${stripeColor}"></div>
+    <div class="row-body">
+      <div class="row-top">
+        <div class="row-name">${r.name}</div>
+        ${rat?`<div class="row-rating"><span class="row-rating-emoji">${rat.emoji}</span><span class="row-rating-label" style="color:${rat.color}">${rat.label}</span></div>`:'<div class="row-rating" style="color:#bbb;font-size:11px">No data</div>'}
       </div>
-      <div class="flow-bar-pct">${c.flowPct}% — ${c.flowLabel}</div>
-    </div>` : '';
-
-  return `
-    <div class="river-card" data-region="${river.regionCode}" data-species="${(river.species || []).join(',')}" onclick="openModal('${river.id}', '${river.name.replace(/'/g, "\\'")}')">
-      <div class="card-header">
-        <div class="card-top-row">
-          <div class="card-river-name">${river.name}</div>
-          ${tierBadge}
-        </div>
-        <div class="card-region">${river.region}</div>
-        <div class="species-tags">${speciesTagsHtml(river.species, 'species-tag')}</div>
-      </div>
-      <div class="card-rating">
-        <span class="rating-emoji">${rat.emoji}</span>
-        <span class="rating-label" style="color:${rat.color}">${rat.label}</span>
-        <span class="rating-tagline">${rat.tagline}</span>
-      </div>
-      <div class="card-stats">
-        <div class="stat-item">
-          <span class="stat-label">Flow</span>
-          <span class="stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Water Temp</span>
-          <span class="stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</span>
-          ${c.tempF !== null ? `<span class="stat-sub">${c.tempLabel}</span>` : ''}
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Gage</span>
-          <span class="stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Median</span>
-          <span class="stat-value">${c.stats?.p50 ? c.stats.p50.toLocaleString() + ' cfs' : '—'}</span>
-        </div>
+      <div class="row-meta">${r.region}</div>
+      <div class="row-stats">
+        ${c.flow!==null?`<div class="row-stat"><span class="row-stat-lbl">Flow </span>${c.flow.toLocaleString()} cfs</div>`:''}
+        ${c.tempF!==null?`<div class="row-stat"><span class="row-stat-lbl">Temp </span>${c.tempF}°F</div>`:''}
+        ${c.flowPct?`<div class="row-stat"><span class="row-stat-lbl">vs Median </span>${c.flowPct}%</div>`:''}
       </div>
       ${flowBar}
-      ${aiNote ? `<div class="card-note">${aiNote}</div>` : ''}
-      <div class="card-tap-hint">Tap for details →</div>
-    </div>`;
+      <div class="row-species">${speciesDots}</div>
+    </div>
+    ${slug?`<div class="row-links" onclick="event.stopPropagation()">
+      <a href="/stream/${slug}.html" class="row-link">Stream page</a>
+      <a href="/river.html?id=${r.id}" class="row-link secondary">Details</a>
+    </div>`:''}
+  </div>`;
 }
 
-// ── Filtering & Rendering ─────────────────────────────────────────────────────
-
-const REGION_ORDER = ['UP', 'NLP', 'WLP', 'CLP'];
-
-function renderRivers() {
-  const container = document.getElementById('riversContainer');
-
-  // Filter
-  const filtered = _allRivers.filter(r => {
-    const regionOk = _activeRegion === 'ALL' || r.regionCode === _activeRegion;
-    const speciesOk = _activeSpecies === 'ALL' || (r.species || []).includes(_activeSpecies);
-    return regionOk && speciesOk;
+function renderList(){
+  const list=document.getElementById('riverList');
+  // Sort: best conditions first
+  const sorted=[..._rivers].sort((a,b)=>{
+    const sa=SCORE[a.conditions?.ratingKey]||0;
+    const sb=SCORE[b.conditions?.ratingKey]||0;
+    return sb-sa;
   });
-
-  if (!filtered.length) {
-    container.innerHTML = `<div class="rivers-grid"><div class="empty-filter">No rivers match the current filters.</div></div>`;
-    return;
-  }
-
-  // Group by region
-  const grouped = {};
-  for (const r of filtered) {
-    if (!grouped[r.regionCode]) grouped[r.regionCode] = [];
-    grouped[r.regionCode].push(r);
-  }
-
-  const html = REGION_ORDER
-    .filter(rc => grouped[rc])
-    .map(rc => {
-      const rivers = grouped[rc];
-      const cards = rivers.map(renderCard).join('');
-      return `
-        <div class="region-group">
-          <div class="region-header">
-            <h2>${REGION_LABELS[rc] || rc}</h2>
-            <span class="region-count">${rivers.length} river${rivers.length > 1 ? 's' : ''}</span>
-          </div>
-          <div class="rivers-grid">${cards}</div>
-        </div>`;
-    }).join('');
-
-  container.innerHTML = html;
+  // Apply filter + render all, use hidden class
+  let visible=0;
+  const html=sorted.map(r=>{
+    const m=META[r.id]||{rc:'',s:[]};
+    const rOk=_activeR==='ALL'||m.rc===_activeR;
+    const sOk=_activeS==='ALL'||(m.s||[]).includes(_activeS);
+    const show=rOk&&sOk;
+    if(show)visible++;
+    // Inject hidden into the row
+    const row=renderRow(r);
+    return sOk&&rOk ? row : row.replace('class="river-row"','class="river-row hidden"');
+  }).join('');
+  list.innerHTML=html||'<div class="empty">No rivers match the current filters.</div>';
+  document.getElementById('countLine').textContent=
+    visible===_rivers.length?`Showing all ${visible} rivers — sorted by conditions`
+    :`${visible} of ${_rivers.length} rivers`;
 }
 
-// ── Filter Handlers ───────────────────────────────────────────────────────────
-
-function setRegion(region) {
-  _activeRegion = region;
-  document.querySelectorAll('[data-region]').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.region === region);
+// ── Filters ───────────────────────────────────────────────────────────────────
+function setR(v){
+  _activeR=v;
+  document.querySelectorAll('[data-r]').forEach(b=>{
+    b.className='chip'+(b.dataset.r===v?' on':'');
   });
-  renderRivers();
-  window.scrollTo({ top: document.querySelector('.controls-section').offsetTop - 10, behavior: 'smooth' });
+  renderList();
 }
-
-function setSpecies(species) {
-  _activeSpecies = species;
-  document.querySelectorAll('[data-species]').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.species === species);
+function setS(v){
+  _activeS=v;
+  document.querySelectorAll('[data-s]').forEach(b=>{
+    const cls=v==='ALL'?'on':`on-${v}`;
+    b.className='chip'+(b.dataset.s===v?' '+cls:'');
   });
-  renderRivers();
+  renderList();
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
-
-function openModal(riverId, riverName) {
-  document.getElementById('modalTitle').textContent = riverName;
-  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading conditions and recommendations...</div>';
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('open');
+  document.body.style.overflow='';
+}
+function openModal(id,name){
+  document.getElementById('modalTitle').textContent=name;
+  document.getElementById('modalBody').innerHTML='<div class="modal-loading">Loading...</div>';
+  document.getElementById('modalBg').classList.add('open');
+  document.body.style.overflow='hidden';
   Promise.all([
-    fetch(`/api/river/${riverId}`).then(r => r.json()),
-    fetch(`/api/recommend?id=${riverId}`).then(r => r.json()),
-  ])
-    .then(([riverData, recData]) => {
-      if (!riverData.success) throw new Error(riverData.error);
-      renderModal(riverData, _briefRivers[riverId], recData?.success ? recData : null);
-    })
-    .catch(() => {
-      document.getElementById('modalBody').innerHTML =
-        `<div class="modal-loading">Failed to load. <a href="/river.html?id=${riverId}">Open full page →</a></div>`;
-    });
+    fetch(`/api/river/${id}`).then(r=>r.json()),
+    fetch(`/api/recommend?id=${id}`).then(r=>r.json()),
+  ]).then(([rd,rec])=>{
+    if(!rd.success)throw new Error(rd.error);
+    renderModal(rd,_brief.rivers?.[id],rec?.success?rec:null,id);
+  }).catch(()=>{
+    document.getElementById('modalBody').innerHTML=`<div class="modal-loading">Failed to load. <a href="/river.html?id=${id}">Open full page →</a></div>`;
+  });
 }
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-function renderModal(data, aiNote, recData) {
-  const c   = data.primaryConditions;
-  const rat = c?.ratingKey ? (RATINGS[c.ratingKey] || RATINGS.FAIR) : null;
-  const river = _allRivers.find(r => r.id === data.id) || {};
-
-  let ratingHtml = '';
-  if (rat && c) {
-    ratingHtml = `
-      <div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}30">
-        <div class="modal-rating-emoji">${rat.emoji}</div>
-        <div>
-          <div class="modal-rating-label" style="color:${rat.color}">${rat.label}</div>
-          <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}</div>
-        </div>
-      </div>
-      <div class="modal-stats">
-        <div class="modal-stat">
-          <div class="modal-stat-label">Flow</div>
-          <div class="modal-stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
-          ${c.flowLabel ? `<div class="modal-stat-sub">${c.flowLabel}</div>` : ''}
-        </div>
-        <div class="modal-stat">
-          <div class="modal-stat-label">Water Temp</div>
-          <div class="modal-stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</div>
-          ${c.tempLabel ? `<div class="modal-stat-sub">${c.tempLabel}</div>` : ''}
-        </div>
-        <div class="modal-stat">
-          <div class="modal-stat-label">Gage Ht</div>
-          <div class="modal-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
-          ${c.stats?.p50 ? `<div class="modal-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
-        </div>
-      </div>
-      ${c.flowPct ? `
-        <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${flowBarWidth(c.flowPct)}%;background:${flowBarColor(c.flowPct)}"></div></div>
-        <div class="modal-flow-label">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>` : ''}`;
-  }
-
-  // Species
-  const speciesTags = speciesTagsHtml(river.species, 'species-tag');
-
-  // Access + Regs
-  const accessHtml = river.access || river.regulations ? `
-    <div style="margin-bottom:14px">
-      <div class="modal-section-title">Access &amp; Regulations</div>
-      ${river.access ? `<div class="modal-access">📍 ${river.access}</div>` : ''}
-      ${river.regulations ? `<div class="modal-regs">⚖️ ${river.regulations}</div>` : ''}
-    </div>` : '';
-
-  // Guide note
-  let guideHtml = '';
-  if (data.reports?.synthesis) {
-    guideHtml = `<div style="margin-bottom:14px">
-      <div class="modal-section-title">What the guides are saying</div>
-      <div style="font-size:13px;color:#444;line-height:1.65">${data.reports.synthesis}</div>
+function renderModal(data,aiNote,rec,riverId){
+  const c=data.primaryConditions;
+  const rat=c?.ratingKey?(RATINGS[c.ratingKey]||RATINGS.FAIR):null;
+  const slug=SLUGS[riverId];
+  let fliesHtml='';
+  if(rec?.recommendation){
+    const flies=(rec.staticRec?.topFlies||[]).slice(0,4);
+    fliesHtml=`<div style="margin-top:12px;padding-top:11px;border-top:1px solid #f0ece4">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">What to tie on</div>
+      <div class="modal-rec">${rec.recommendation}</div>
+      ${flies.map(f=>`<span class="fly-tag">${f.name} #${f.sizes[0]}</span>`).join('')}
     </div>`;
   }
-
-  // Fly recommendations
-  let recHtml = '';
-  if (recData?.recommendation) {
-    const flies = (recData.staticRec?.topFlies || []).slice(0, 5);
-    const flyTags = flies.map(f =>
-      `<span style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px">${f.name} #${f.sizes[0]}</span>`
-    ).join('');
-    recHtml = `<div style="margin-bottom:14px;padding:12px 14px;background:#f9f6f0;border-radius:5px">
-      <div class="modal-section-title" style="margin-bottom:8px">What to tie on</div>
-      <div style="font-size:13px;color:#3a3a3a;line-height:1.65;margin-bottom:8px">${recData.recommendation}</div>
-      ${flyTags ? `<div>${flyTags}</div>` : ''}
-    </div>`;
-  }
-
-  document.getElementById('modalBody').innerHTML = `
-    ${speciesTags ? `<div style="margin-bottom:12px">${speciesTags}</div>` : ''}
-    ${ratingHtml}
-    ${accessHtml}
-    ${guideHtml}
-    ${recHtml}
-    ${aiNote ? `<div class="modal-brief">${aiNote}</div>` : ''}
+  document.getElementById('modalBody').innerHTML=`
+    ${rat?`<div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}20">
+      <span class="modal-rating-emoji">${rat.emoji}</span>
+      <div><div class="modal-rating-label" style="color:${rat.color}">${rat.label}</div>
+      <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}</div></div>
+    </div>`:''}
+    <div class="modal-stats">
+      <div class="ms"><div class="ms-lbl">Flow</div><div class="ms-val">${c?.flow!==null?c.flow.toLocaleString()+' cfs':'—'}</div>${c?.flowLabel?`<div class="ms-sub">${c.flowLabel}</div>`:''}</div>
+      <div class="ms"><div class="ms-lbl">Water Temp</div><div class="ms-val">${c?.tempF!==null?c.tempF+'°F':'—'}</div>${c?.tempLabel?`<div class="ms-sub">${c.tempLabel}</div>`:''}</div>
+      <div class="ms"><div class="ms-lbl">Gage Height</div><div class="ms-val">${c?.gage!==null?c.gage+' ft':'—'}</div>${c?.stats?.p50?`<div class="ms-sub">Median: ${c.stats.p50} cfs</div>`:''}</div>
+    </div>
+    ${c?.flowPct?`<div class="modal-bar"><div class="modal-bar-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div><div class="modal-bar-lbl">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>`:''}
+    ${fliesHtml}
+    ${aiNote?`<div class="modal-note">${aiNote}</div>`:''}
     <div class="modal-actions">
-      <a href="/river.html?id=${data.id}" class="modal-btn-full">Full details + all gauges →</a>
-      <button class="modal-btn-close" onclick="closeModal()">Close</button>
+      ${slug?`<a href="/stream/${slug}.html" class="modal-btn primary">Full stream page →</a>`:''}
+      <a href="/river.html?id=${riverId}" class="modal-btn ${slug?'secondary':'primary'}">All gauges →</a>
+      <button class="modal-btn secondary" onclick="closeModal()">Close</button>
     </div>`;
 }
 
-// ── Season Banner ─────────────────────────────────────────────────────────────
-
-function setSeasonBanner() {
-  const m = new Date().getMonth() + 1;
-  const banner = document.getElementById('seasonBanner');
-  const msgs = {
-    1:  '❄️ Winter — Steelhead in lower rivers. Most interior streams closed or special regs.',
-    2:  '❄️ Late winter — Midge fishing on tailwaters. Little Black Stonefly emerging. Season opens late April.',
-    3:  '🌱 Pre-season — Season opens last Saturday in April. Scouting and fly-tying time.',
-    4:  '🎣 Opening month — Season is open. Hendrickson hatch underway. Check special regulations.',
-    5:  '🪰 Peak spring — Caddis and March Brown hatches. Best conditions of the year.',
-    6:  '🌙 Hex season — Hexagenia hatch on the AuSable and other NLP rivers. Fish after dark.',
-    7:  '☀️ Summer — Fish early mornings and evenings. Terrestrials and Trico hatches.',
-    8:  '🌿 Late summer — White Fly hatch in August. Fish cooler UP streams.',
-    9:  '🍂 Fall — Brown trout pre-spawn. Fall BWO and caddis hatches. Steelhead entering.',
-    10: '🍂 October — Brown trout spawning. Steelhead in Lake Michigan tributaries.',
-    11: '🌧️ Late fall — Steelhead season in progress on west Michigan rivers.',
-    12: '❄️ December — Season closing on most streams. Tailwater fishing continues.',
-  };
-  if (msgs[m]) { banner.textContent = msgs[m]; banner.style.display = 'block'; }
+// ── Season banner ─────────────────────────────────────────────────────────────
+function setBanner(){
+  const m=new Date().getMonth()+1;
+  const msgs={4:'🎣 Opening month — Season is open. Check special regulations.',5:'🪰 Peak spring — Caddis and Hendrickson hatches.',6:'🌙 Hex season — AuSable Hex hatch starts late June.',7:'☀️ Summer — Fish early morning and evening.',8:'🌿 Late summer — UP streams best now.',9:'🍂 Fall — Brown trout pre-spawn. Fall BWO hatches.',10:'🍂 October — Brown trout spawning. Steelhead entering.',11:'🌧️ Late fall — Steelhead in West Michigan rivers.',3:'🌱 Pre-season — General season opens last Saturday of April.'};
+  const msg=msgs[m];
+  if(msg){const b=document.createElement('div');b.style.cssText='background:#fffde7;border-bottom:1px solid #e6c84a;padding:8px 16px;font-size:12px;color:#5a4a00;text-align:center';b.textContent=msg;document.querySelector('.hero').after(b);}
 }
 
-// ── Main Load ─────────────────────────────────────────────────────────────────
+// ── Load ──────────────────────────────────────────────────────────────────────
+async function load(){
+  try{
+    const resp=await fetch('/api/generate');
+    if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
+    const data=await resp.json();
+    if(!data.success)throw new Error(data.error||'Unknown error');
 
-async function loadData() {
-  try {
-    const resp = await fetch('/api/generate');
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    if (!data.success) throw new Error(data.error || 'Unknown error');
+    const ts=data.generated_at?new Date(data.generated_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'today';
+    document.querySelector('.hdr-title').title=`Updated ${ts}`;
 
-    // Header timestamp
-    const ts = data.generated_at ? formatTs(data.generated_at) : 'today';
-    document.getElementById('lastUpdated').textContent = `Updated ${ts} · ${data.rivers?.length || 0} rivers`;
-
-    // Brief
-    if (data.brief?.lead) {
-      document.getElementById('briefText').textContent = data.brief.lead;
-      document.getElementById('briefSection').style.display = 'block';
+    if(data.brief?.lead){
+      document.getElementById('briefText').textContent=data.brief.lead;
+      document.getElementById('brief').style.display='block';
     }
-    if (data.brief?.rivers) _briefRivers = data.brief.rivers;
+    if(data.brief?.rivers)_brief=data.brief;
 
-    // Store rivers globally
-    _allRivers = data.rivers || [];
-
-    // Render hero
-    renderHero(_allRivers);
-
-    // Render river grid
-    renderRivers();
-
-  } catch(e) {
-    console.error('Load failed:', e);
-    document.getElementById('lastUpdated').textContent = 'Error loading data';
-    document.getElementById('heroCards').innerHTML = '<div class="hero-empty">Unable to load conditions.</div>';
-    document.getElementById('riversContainer').innerHTML = `
-      <div class="rivers-grid">
-        <div class="loading-state">
-          Failed to load stream data.<br><br>
-          <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" style="color:#4a7c4a" target="_blank" rel="noopener">Check USGS Michigan directly →</a>
-        </div>
-      </div>`;
+    _rivers=data.rivers||[];
+    renderHero(_rivers);
+    renderList();
+  }catch(e){
+    document.getElementById('heroSub').textContent='Error loading data';
+    document.getElementById('riverList').innerHTML=`<div class="loading">Failed to load. <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" target="_blank" rel="noopener">Check USGS directly →</a></div>`;
   }
 }
 
-setSeasonBanner();
-loadData();
+setBanner();
+load();
 </script>
 </body>
 </html>
-
-
-
