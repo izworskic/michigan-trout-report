@@ -3,792 +3,502 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Michigan Trout Stream Map — Access Points, Conditions & Where to Fish</title>
-<meta name="description" content="Interactive map of 310+ Michigan trout fishing access points from the DNR Trout Trail, with live USGS stream conditions. Find where to fish today.">
+<title>Michigan Trout Stream Map — Live Conditions</title>
+<meta name="description" content="Interactive Michigan trout stream map with live USGS conditions. Color-coded by today's fishing rating. 310 DNR access points.">
 <link rel="canonical" href="https://michigan-trout-report.vercel.app/map.html">
-<meta property="og:title" content="Michigan Trout Stream Map — Where to Fish Today">
-<meta property="og:description" content="310 DNR-verified access points with live stream conditions. Color-coded by today's fishing conditions.">
-<meta property="og:type" content="website">
-
-<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<!-- MarkerCluster CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css">
-
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; font-family: Georgia, 'Times New Roman', serif; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
 
-  /* ── Header ── */
-  .site-header {
-    background: #1a3a1a;
-    color: #f0ede6;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    border-bottom: 2px solid #4a7c4a;
-    flex-shrink: 0;
-  }
-  .header-left { display: flex; align-items: center; gap: 14px; }
-  .back-link {
-    color: #7ab87a;
-    text-decoration: none;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-  .back-link:hover { color: #fff; }
-  .site-header h1 { font-size: 17px; font-weight: normal; letter-spacing: .5px; }
-  .header-right { font-size: 12px; color: #7ab87a; font-style: italic; }
+.hdr { background:#1a3a1a; color:#f0ede6; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #3a6a3a; flex-shrink:0; height:46px; }
+.hdr-left { display:flex; align-items:center; gap:12px; }
+.back { color:#7ab87a; font-size:12px; text-decoration:none; }
+.back:hover { color:#fff; }
+.hdr-title { font-size:15px; font-weight:normal; }
+.hdr-status { font-size:11px; color:#5a9a5a; font-style:italic; }
+.hdr-nav { display:flex; gap:12px; font-size:12px; }
+.hdr-nav a { color:#7ab87a; text-decoration:none; }
+.hdr-nav a:hover { color:#fff; }
 
-  /* ── Layout: sidebar + map ── */
-  .app-layout {
-    display: flex;
-    height: calc(100vh - 48px);
-  }
+.layout { display:flex; height:calc(100vh - 46px); }
 
-  /* ── Sidebar ── */
-  .sidebar {
-    width: 300px;
-    flex-shrink: 0;
-    background: #faf7f2;
-    border-right: 1px solid #ddd8cc;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 10;
-  }
+/* ── Sidebar ── */
+.sidebar { width:280px; flex-shrink:0; background:#faf7f2; border-right:1px solid #ddd8cc; display:flex; flex-direction:column; overflow:hidden; }
 
-  .sidebar-top {
-    padding: 12px 14px 10px;
-    border-bottom: 1px solid #e8e4dc;
-    background: #fff;
-    flex-shrink: 0;
-  }
+.sb-section { padding:12px 14px; border-bottom:1px solid #e8e4dc; flex-shrink:0; }
+.sb-label { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#bbb; margin-bottom:8px; }
 
-  .best-now-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #4a7c4a;
-    margin-bottom: 6px;
-  }
-  .best-now-title { font-size: 15px; color: #1a3a1a; margin-bottom: 10px; }
+/* Best rivers */
+.best-list { display:flex; flex-direction:column; gap:5px; }
+.best-item { display:flex; align-items:center; justify-content:space-between; padding:7px 10px; background:#f0ece4; border-radius:4px; cursor:pointer; transition:background .1s; }
+.best-item:hover { background:#e4e0d8; }
+.best-name { font-size:13px; color:#1a3a1a; }
+.best-sub { font-size:10px; color:#aaa; font-style:italic; }
+.best-pill { font-size:11px; font-weight:bold; padding:2px 8px; border-radius:8px; color:#fff; white-space:nowrap; flex-shrink:0; }
 
-  .best-now-list { display: flex; flex-direction: column; gap: 6px; }
-  .best-river-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 7px 10px;
-    background: #f5f2ec;
-    border-radius: 4px;
-    border: 1px solid #e8e4dc;
-    cursor: pointer;
-    transition: background .12s;
-  }
-  .best-river-item:hover { background: #ede9e0; }
-  .best-river-name { font-size: 13px; color: #1a3a1a; }
-  .best-river-sub { font-size: 11px; color: #999; font-style: italic; }
-  .best-rating-pill {
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 10px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+/* Filter chips */
+.chip-row { display:flex; flex-wrap:wrap; gap:4px; }
+.chip { font-family:Georgia,serif; font-size:11px; padding:3px 9px; border-radius:8px; border:1px solid #ddd; background:#f5f2ec; color:#666; cursor:pointer; transition:all .1s; }
+.chip.on { background:#1a3a1a; color:#fff; border-color:#1a3a1a; }
+.chip:hover:not(.on) { background:#ede9e0; }
 
-  /* ── Filters ── */
-  .sidebar-filters {
-    padding: 10px 14px;
-    border-bottom: 1px solid #e8e4dc;
-    background: #fff;
-    flex-shrink: 0;
-  }
-  .filter-group { margin-bottom: 8px; }
-  .filter-group:last-child { margin-bottom: 0; }
-  .filter-group-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #bbb;
-    margin-bottom: 5px;
-  }
-  .filter-pills { display: flex; flex-wrap: wrap; gap: 4px; }
-  .pill {
-    font-family: Georgia, serif;
-    font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    background: #f5f2ec;
-    color: #666;
-    cursor: pointer;
-    transition: all .12s;
-  }
-  .pill.active-all, .pill.active-brook  { background: #1b5e20; color: #fff; border-color: #1b5e20; }
-  .pill.active-brown     { background: #bf360c; color: #fff; border-color: #bf360c; }
-  .pill.active-rainbow   { background: #0d47a1; color: #fff; border-color: #0d47a1; }
-  .pill.active-steelhead { background: #6a1b9a; color: #fff; border-color: #6a1b9a; }
-  .pill.active-cond      { background: #1a3a1a; color: #fff; border-color: #1a3a1a; }
-  .pill:hover:not([class*="active"]) { background: #ede9e0; }
+/* Layer toggle */
+.layer-row { display:flex; gap:6px; }
+.layer-btn { flex:1; font-family:Georgia,serif; font-size:11px; padding:5px; border:1px solid #ddd; border-radius:4px; background:#f5f2ec; color:#666; cursor:pointer; text-align:center; transition:all .1s; }
+.layer-btn.on { background:#1a3a1a; color:#fff; border-color:#1a3a1a; }
+.layer-btn:hover:not(.on) { background:#ede9e0; }
 
-  /* ── Access point list ── */
-  .sidebar-list {
-    flex: 1;
-    overflow-y: auto;
-  }
-  .sidebar-list-header {
-    padding: 8px 14px 6px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #bbb;
-    background: #faf7f2;
-    border-bottom: 1px solid #f0ece4;
-    position: sticky;
-    top: 0;
-  }
-  .access-item {
-    padding: 9px 14px;
-    border-bottom: 1px solid #f0ece4;
-    cursor: pointer;
-    transition: background .1s;
-  }
-  .access-item:hover { background: #f0ece4; }
-  .access-item.highlighted { background: #e8f5e9; border-left: 3px solid #2e7d32; }
-  .access-name { font-size: 13px; color: #1a3a1a; margin-bottom: 2px; }
-  .access-meta { font-size: 11px; color: #aaa; }
-  .access-species { display: flex; gap: 3px; margin-top: 3px; }
-  .access-species-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-  }
+/* Access point list */
+.sb-list-header { padding:7px 14px; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#bbb; background:#faf7f2; border-bottom:1px solid #f0ece4; flex-shrink:0; }
+.sb-list { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.sb-item { padding:8px 14px; border-bottom:1px solid #f0ece4; cursor:pointer; transition:background .1s; }
+.sb-item:hover { background:#f0ece4; }
+.sb-name { font-size:12px; color:#1a3a1a; }
+.sb-meta { font-size:10px; color:#bbb; display:flex; align-items:center; justify-content:space-between; margin-top:2px; }
+.sb-dots { display:flex; gap:3px; }
+.sb-dot { width:7px; height:7px; border-radius:50%; }
 
-  /* ── Map ── */
-  #map {
-    flex: 1;
-    z-index: 1;
-  }
+/* Map */
+#map { flex:1; z-index:1; }
 
-  /* ── Custom markers ── */
-  .marker-conditions {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    border: 2.5px solid #fff;
-    box-shadow: 0 1px 4px rgba(0,0,0,.35);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .marker-access {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,.8);
-    opacity: 0.85;
-    cursor: pointer;
-  }
+/* Custom markers */
+.cond-marker {
+  width:36px; height:36px; border-radius:50%;
+  border:3px solid #fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; cursor:pointer; background:#888;
+}
+.access-dot {
+  width:10px; height:10px; border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.7);
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
 
-  /* ── Popup ── */
-  .leaflet-popup-content-wrapper {
-    border-radius: 6px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.2);
-    font-family: Georgia, serif;
-    padding: 0;
-  }
-  .leaflet-popup-content { margin: 0; font-family: Georgia, serif; }
-  .popup-inner { padding: 14px 16px; min-width: 220px; max-width: 280px; }
-  .popup-type-badge {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #aaa;
-    margin-bottom: 4px;
-  }
-  .popup-name { font-size: 15px; color: #1a3a1a; margin-bottom: 4px; }
-  .popup-rating {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 10px; border-radius: 4px;
-    margin-bottom: 8px;
-  }
-  .popup-rating-emoji { font-size: 16px; }
-  .popup-rating-label { font-size: 13px; font-weight: bold; }
-  .popup-rating-tagline { font-size: 11px; opacity: .8; }
-  .popup-stat { font-size: 12px; color: #555; margin-bottom: 3px; }
-  .popup-species { display: flex; flex-wrap: wrap; gap: 3px; margin: 6px 0; }
-  .popup-species-tag {
-    font-size: 10px; padding: 1px 6px; border-radius: 3px;
-    text-transform: uppercase; letter-spacing: .3px;
-  }
-  .popup-desc {
-    font-size: 12px; color: #666; line-height: 1.55;
-    margin-top: 8px; border-top: 1px solid #f0ece4; padding-top: 8px;
-    max-height: 80px; overflow: hidden;
-  }
-  .popup-links { margin-top: 10px; display: flex; gap: 8px; }
-  .popup-link {
-    font-size: 12px; color: #2c5f2d; text-decoration: none;
-    border: 1px solid #c8e6c9; padding: 3px 10px; border-radius: 3px;
-    background: #e8f5e9;
-  }
-  .popup-link:hover { background: #c8e6c9; }
+/* Legend */
+.map-legend { background:#fff; padding:10px 12px; border-radius:5px; font-family:Georgia,serif; font-size:11px; box-shadow:0 1px 5px rgba(0,0,0,.18); }
+.map-legend h4 { font-size:10px; font-weight:normal; text-transform:uppercase; letter-spacing:.7px; color:#aaa; margin-bottom:6px; }
+.leg-row { display:flex; align-items:center; gap:5px; margin-bottom:4px; }
+.leg-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; border:1.5px solid rgba(0,0,0,.12); }
 
-  /* ── Legend ── */
-  .map-legend {
-    background: white;
-    padding: 10px 12px;
-    border-radius: 5px;
-    font-family: Georgia, serif;
-    font-size: 12px;
-    box-shadow: 0 1px 5px rgba(0,0,0,.2);
-    min-width: 160px;
-  }
-  .map-legend h4 { font-size: 11px; font-weight: normal; text-transform: uppercase; letter-spacing: .8px; color: #aaa; margin-bottom: 7px; }
-  .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(0,0,0,.15); }
-  .legend-label { color: #444; }
+/* Popup */
+.leaflet-popup-content-wrapper { border-radius:6px; box-shadow:0 4px 18px rgba(0,0,0,.2); }
+.leaflet-popup-content { margin:0; font-family:Georgia,serif; }
+.pu { padding:13px 15px; min-width:200px; max-width:260px; }
+.pu-type { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:#aaa; margin-bottom:3px; }
+.pu-name { font-size:14px; color:#1a3a1a; margin-bottom:8px; line-height:1.3; }
+.pu-badge { display:flex; align-items:center; gap:7px; padding:7px 9px; border-radius:4px; margin-bottom:8px; }
+.pu-emoji { font-size:16px; }
+.pu-label { font-size:13px; font-weight:bold; }
+.pu-tagline { font-size:11px; opacity:.8; }
+.pu-stat { font-size:12px; color:#555; margin-bottom:3px; }
+.pu-species { display:flex; flex-wrap:wrap; gap:3px; margin:5px 0; }
+.pu-sp { font-size:10px; padding:1px 6px; border-radius:3px; text-transform:uppercase; }
+.pu-desc { font-size:11px; color:#777; line-height:1.5; border-top:1px solid #f0ece4; padding-top:7px; margin-top:7px; max-height:72px; overflow:hidden; }
+.pu-links { margin-top:9px; display:flex; gap:6px; }
+.pu-link { font-size:11px; color:#2c5f2d; background:#e8f5e9; padding:3px 8px; border-radius:3px; text-decoration:none; border:1px solid #c8e6c9; }
+.pu-link:hover { background:#c8e6c9; }
 
-  /* ── Mobile: sidebar slides up ── */
-  .sidebar-toggle {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    background: #1a3a1a;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-family: Georgia, serif;
-    font-size: 14px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.3);
-    cursor: pointer;
-  }
-
-  @media (max-width: 680px) {
-    .app-layout { flex-direction: column-reverse; }
-    .sidebar {
-      width: 100%;
-      height: 45vh;
-      border-right: none;
-      border-top: 1px solid #ddd8cc;
-    }
-    #map { height: 55vh; flex: none; }
-    .sidebar-toggle { display: block; }
-    .site-header h1 { font-size: 15px; }
-  }
+/* Mobile */
+@media (max-width:640px) {
+  .sidebar { display:none; }
+  #map { width:100%; }
+}
 </style>
 </head>
 <body>
 
-<div class="site-header">
-  <div class="header-left">
-    <a href="/" class="back-link">← All Rivers</a>
-    <h1>Michigan Trout Map</h1>
+<div class="hdr">
+  <div class="hdr-left">
+    <a href="/" class="back">← All Rivers</a>
+    <span class="hdr-title">Michigan Trout Map</span>
   </div>
-  <div class="header-right" id="headerStatus">Loading 310 access points...</div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="hdr-status" id="hdrStatus">Loading...</span>
+    <nav class="hdr-nav">
+      <a href="/directory.html">Guides</a>
+      <a href="/alerts.html">Alerts</a>
+    </nav>
+  </div>
 </div>
 
-<div class="app-layout">
+<div class="layout">
+  <div class="sidebar">
 
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-
-    <!-- Best Rivers Now -->
-    <div class="sidebar-top">
-      <div class="best-now-label">Right Now</div>
-      <div class="best-now-title">Best Conditions</div>
-      <div class="best-now-list" id="bestNowList">
-        <div style="font-size:12px;color:#bbb;font-style:italic;padding:4px 0">Loading conditions...</div>
-      </div>
+    <!-- Best rivers -->
+    <div class="sb-section">
+      <div class="sb-label">Best conditions right now</div>
+      <div class="best-list" id="bestList"><div style="font-size:12px;color:#bbb;font-style:italic">Loading...</div></div>
     </div>
 
     <!-- Filters -->
-    <div class="sidebar-filters">
-      <div class="filter-group">
-        <div class="filter-group-label">Species</div>
-        <div class="filter-pills">
-          <button class="pill active-all" data-filter="species" data-value="all" onclick="setSpeciesFilter('all')">All</button>
-          <button class="pill" data-filter="species" data-value="brook" onclick="setSpeciesFilter('brook')">Brook</button>
-          <button class="pill" data-filter="species" data-value="brown" onclick="setSpeciesFilter('brown')">Brown</button>
-          <button class="pill" data-filter="species" data-value="rainbow" onclick="setSpeciesFilter('rainbow')">Rainbow</button>
-          <button class="pill" data-filter="species" data-value="steelhead" onclick="setSpeciesFilter('steelhead')">Steelhead</button>
-        </div>
-      </div>
-      <div class="filter-group">
-        <div class="filter-group-label">Show</div>
-        <div class="filter-pills">
-          <button class="pill active-all" data-filter="layer" data-value="all" onclick="setLayerFilter('all')">All Points</button>
-          <button class="pill" data-filter="layer" data-value="conditions" onclick="setLayerFilter('conditions')">Rivers w/ Conditions</button>
-        </div>
+    <div class="sb-section">
+      <div class="sb-label" style="margin-bottom:6px">Species filter</div>
+      <div class="chip-row" id="spFilter">
+        <button class="chip on" data-sp="all"       onclick="setSp('all')">All</button>
+        <button class="chip"    data-sp="brook"     onclick="setSp('brook')">Brook</button>
+        <button class="chip"    data-sp="brown"     onclick="setSp('brown')">Brown</button>
+        <button class="chip"    data-sp="rainbow"   onclick="setSp('rainbow')">Rainbow</button>
+        <button class="chip"    data-sp="steelhead" onclick="setSp('steelhead')">Steelhead</button>
       </div>
     </div>
 
-    <!-- Access Point List -->
-    <div class="sidebar-list-header" id="listHeader">Access points</div>
-    <div class="sidebar-list" id="accessList"></div>
+    <!-- Layer toggle -->
+    <div class="sb-section">
+      <div class="sb-label" style="margin-bottom:6px">Show access points</div>
+      <div class="layer-row">
+        <button class="layer-btn on" id="layerAll" onclick="setLayer('all')">All 310 points</button>
+        <button class="layer-btn"    id="layerOff" onclick="setLayer('off')">Rivers only</button>
+      </div>
+    </div>
 
-  </div><!-- /sidebar -->
+    <!-- Access point list -->
+    <div class="sb-list-header" id="listHeader">Access points</div>
+    <div class="sb-list" id="sbList"></div>
 
-  <!-- Map -->
+  </div>
+
   <div id="map"></div>
-
 </div>
 
-<!-- Leaflet JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 
 <script>
-// ── Constants ────────────────────────────────────────────────────────────────
-
 const RATINGS = {
-  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
-  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
-  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
-  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off.' },
-  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home.' },
+  PRIME:        {label:'Prime',        emoji:'🎣', color:'#2e7d32', bg:'#e8f5e9', tagline:'Drop everything and go.'},
+  FISHING_WELL: {label:'Fishing Well', emoji:'✅', color:'#558b2f', bg:'#f1f8e9', tagline:'Worth the drive.'},
+  FAIR:         {label:'Fair',         emoji:'🟡', color:'#f9a825', bg:'#fffde7', tagline:'Fishable. Pick your spots.'},
+  TOUGH:        {label:'Tough',        emoji:'🟠', color:'#e65100', bg:'#fff3e0', tagline:'Fish are off.'},
+  BLOWN_OUT:    {label:'Blown Out',    emoji:'🔴', color:'#b71c1c', bg:'#ffebee', tagline:'Stay home.'},
 };
-const RATING_SCORE = { PRIME: 5, FISHING_WELL: 4, FAIR: 3, TOUGH: 2, BLOWN_OUT: 1 };
+const SCORE = {PRIME:5,FISHING_WELL:4,FAIR:3,TOUGH:2,BLOWN_OUT:1};
+const SP_COLOR = {brook:'#1b5e20',brown:'#bf360c',rainbow:'#0d47a1',steelhead:'#6a1b9a'};
+const SP_BG    = {brook:'#e8f5e9',brown:'#fff3e0',rainbow:'#e3f2fd',steelhead:'#f3e5f5'};
+const SP_LABEL = {brook:'Brook',brown:'Brown',rainbow:'Rainbow',steelhead:'Steelhead'};
 
-const SPECIES_COLORS = {
-  brook:     '#1b5e20',
-  brown:     '#bf360c',
-  rainbow:   '#0d47a1',
-  steelhead: '#6a1b9a',
-};
-const SPECIES_BG = {
-  brook:     '#e8f5e9',
-  brown:     '#fff3e0',
-  rainbow:   '#e3f2fd',
-  steelhead: '#f3e5f5',
-};
-const SPECIES_LABELS = { brook: 'Brook', brown: 'Brown', rainbow: 'Rainbow', steelhead: 'Steelhead' };
-
-// River ID to USGS conditions mapping
-let _conditionsMap = {};
-let _allAccessPoints = [];
-let _activeSpecies = 'all';
-let _activeLayer = 'all';
-let _accessMarkers = null;
-let _riverMarkers = null;
-let _map = null;
-
-// River name -> USGS river ID fuzzy match
-const RIVER_NAME_MAP = {
-  'ausable': 'ausable',
-  'au sable': 'ausable',
-  'manistee': 'manistee',
-  'pere marquette': 'pere-marquette',
-  'muskegon': 'muskegon',
-  'boardman': 'boardman',
-  'jordan': 'jordan',
-  'pigeon': 'pigeon',
-  'rifle': 'rifle-river',
-  'little manistee': 'little-manistee',
-  'betsie': 'betsie-river',
-  'pine river': 'pine-river',
-  'platte': 'platte-river',
-  'rogue': 'rogue-river',
-  'white river': 'white-river',
-  'flat river': 'flat-river',
-  'looking glass': 'looking-glass-river',
-  'sturgeon': 'sturgeon-river-nlp',
-  'thunder bay': 'thunder-bay-river',
-  'black river': 'black-river-up',
-  'tahquamenon': 'tahquamenon-river',
-  'paint river': 'paint-river',
-  'iron river': 'iron-river',
-  'brule': 'brule-river',
-  'au train': 'au-train-river',
-  'salmon trout': 'salmon-trout-river',
-  'presque isle': 'presque-isle-river',
-  'trap rock': 'trap-rock-river',
-  'ontonagon': 'ontonagon-river',
-  'michigamme': 'michigamme-river',
+// Hardcoded river center coordinates — all verified
+const RIVER_COORDS = {
+  'ausable':              [44.655, -84.132],
+  'manistee':             [44.580, -85.760],
+  'pere-marquette':       [43.955, -86.230],
+  'muskegon':             [43.398, -85.842],
+  'boardman':             [44.789, -85.647],
+  'jordan':               [45.159, -85.077],
+  'pigeon':               [45.052, -84.569],
+  'rifle-river':          [44.016, -84.026],
+  'little-manistee':      [43.968, -86.189],
+  'betsie-river':         [44.612, -86.062],
+  'pine-river':           [44.210, -85.952],
+  'platte-river':         [44.676, -86.148],
+  'rogue-river':          [43.118, -85.541],
+  'white-river':          [43.703, -86.362],
+  'flat-river':           [43.047, -85.299],
+  'looking-glass-river':  [42.850, -84.813],
+  'sturgeon-river-nlp':   [45.278, -84.681],
+  'thunder-bay-river':    [45.070, -83.753],
+  'black-river-up':       [46.619, -90.068],
+  'tahquamenon-river':    [46.537, -85.262],
+  'paint-river':          [46.106, -88.309],
+  'iron-river':           [46.094, -88.672],
+  'brule-river':          [46.085, -88.452],
+  'michigamme-river':     [46.018, -88.298],
+  'au-train-river':       [46.462, -86.763],
+  'ontonagon-river':      [46.771, -89.306],
+  'presque-isle-river':   [46.691, -89.963],
+  'sturgeon-river-up':    [46.529, -89.097],
+  'salmon-trout-river':   [46.826, -87.948],
+  'trap-rock-river':      [47.148, -88.386],
+  'silver-river':         [46.793, -88.462],
+  'black-river-schoolcraft': [46.127, -86.180],
+  'miners-river':         [46.457, -86.528],
+  'au-gres-river':        [44.032, -83.682],
+  'pine-river-midland':   [43.617, -84.261],
+  'little-muskegon-river':[43.620, -85.580],
+  'clam-river':           [44.183, -85.415],
+  'maple-river-lp':       [43.105, -84.697],
+  'thornapple-river':     [42.668, -85.372],
 };
 
-function matchRiverId(name) {
-  if (!name) return null;
-  const lower = name.toLowerCase();
-  for (const [key, val] of Object.entries(RIVER_NAME_MAP)) {
-    if (lower.includes(key)) return val;
-  }
-  return null;
-}
+const RIVER_SLUGS = {"ausable":"ausable-river","manistee":"manistee-river","pere-marquette":"pere-marquette-river","muskegon":"muskegon-river","boardman":"boardman-river","jordan":"jordan-river-michigan","pigeon":"pigeon-river-michigan","rifle-river":"rifle-river-michigan","little-manistee":"little-manistee-river","betsie-river":"betsie-river","pine-river":"pine-river-michigan","platte-river":"platte-river-michigan","rogue-river":"rogue-river-michigan","white-river":"white-river-michigan","flat-river":"flat-river-michigan","looking-glass-river":"looking-glass-river","sturgeon-river-nlp":"sturgeon-river-michigan","thunder-bay-river":"thunder-bay-river","black-river-up":"black-river-upper-peninsula","tahquamenon-river":"tahquamenon-river","paint-river":"paint-river-michigan","iron-river":"iron-river-michigan","brule-river":"brule-river-michigan","michigamme-river":"michigamme-river","au-train-river":"au-train-river","miners-river":"miners-river-michigan","salmon-trout-river":"salmon-trout-river","presque-isle-river":"presque-isle-river","trap-rock-river":"trap-rock-river","ontonagon-river":"ontonagon-river","sturgeon-river-up":"sturgeon-river-upper-peninsula","silver-river":"silver-river-michigan","black-river-schoolcraft":"black-river-schoolcraft-county","au-gres-river":"au-gres-river","pine-river-midland":"pine-river-midland-county","little-muskegon-river":"little-muskegon-river","clam-river":"clam-river-michigan","maple-river-lp":"maple-river-michigan","thornapple-river":"thornapple-river"};
 
-// ── Map Init ─────────────────────────────────────────────────────────────────
+let _map, _riverLayer, _accessLayer, _allPoints=[], _condMap={};
+let _activeSp='all', _activeLayer='all';
 
-function initMap() {
-  _map = L.map('map', {
-    center: [44.8, -85.4],
-    zoom: 7,
-    zoomControl: true,
-  });
-
-  // OpenStreetMap tiles
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-    maxZoom: 18,
+// ── Map init ──────────────────────────────────────────────────────────────────
+function initMap(){
+  _map = L.map('map',{center:[44.8,-85.4],zoom:7,zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',maxZoom:18
   }).addTo(_map);
 
   // Legend
-  const legend = L.control({ position: 'bottomright' });
-  legend.onAdd = () => {
-    const div = L.DomUtil.create('div', 'map-legend');
-    div.innerHTML = `
-      <h4>Conditions</h4>
-      <div class="legend-row"><div class="legend-dot" style="background:#2e7d32"></div><span class="legend-label">Prime</span></div>
-      <div class="legend-row"><div class="legend-dot" style="background:#558b2f"></div><span class="legend-label">Fishing Well</span></div>
-      <div class="legend-row"><div class="legend-dot" style="background:#f9a825"></div><span class="legend-label">Fair</span></div>
-      <div class="legend-row"><div class="legend-dot" style="background:#e65100"></div><span class="legend-label">Tough</span></div>
-      <div class="legend-row"><div class="legend-dot" style="background:#b71c1c"></div><span class="legend-label">Blown Out</span></div>
-      <div style="margin-top:8px;padding-top:6px;border-top:1px solid #eee">
-        <h4 style="margin-top:0">Access Points</h4>
-        <div class="legend-row"><div class="legend-dot" style="background:#1b5e20"></div><span class="legend-label">Brook Trout</span></div>
-        <div class="legend-row"><div class="legend-dot" style="background:#bf360c"></div><span class="legend-label">Brown Trout</span></div>
-        <div class="legend-row"><div class="legend-dot" style="background:#0d47a1"></div><span class="legend-label">Rainbow</span></div>
-        <div class="legend-row"><div class="legend-dot" style="background:#6a1b9a"></div><span class="legend-label">Steelhead</span></div>
+  const leg=L.control({position:'bottomright'});
+  leg.onAdd=()=>{
+    const d=L.DomUtil.create('div','map-legend');
+    d.innerHTML=`<h4>River Conditions</h4>
+      <div class="leg-row"><div class="leg-dot" style="background:#2e7d32"></div>Prime</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#558b2f"></div>Fishing Well</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#f9a825"></div>Fair</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#e65100"></div>Tough</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#b71c1c"></div>Blown Out</div>
+      <div style="margin-top:7px;padding-top:6px;border-top:1px solid #eee">
+        <h4>Access Points</h4>
+        <div class="leg-row"><div class="leg-dot" style="background:#1b5e20"></div>Brook Trout</div>
+        <div class="leg-row"><div class="leg-dot" style="background:#bf360c"></div>Brown Trout</div>
+        <div class="leg-row"><div class="leg-dot" style="background:#0d47a1"></div>Rainbow</div>
+        <div class="leg-row"><div class="leg-dot" style="background:#6a1b9a"></div>Steelhead</div>
       </div>`;
-    return div;
+    return d;
   };
-  legend.addTo(_map);
+  leg.addTo(_map);
 }
 
-// ── Marker Creation ──────────────────────────────────────────────────────────
+// ── Condition markers (river level, always visible) ───────────────────────────
+function renderRiverMarkers(rivers){
+  if(_riverLayer) _map.removeLayer(_riverLayer);
+  _riverLayer = L.layerGroup();
 
-function accessMarkerColor(point) {
-  if (point.s.includes('brook') && !point.s.includes('brown')) return SPECIES_COLORS.brook;
-  if (point.s.includes('steelhead')) return SPECIES_COLORS.steelhead;
-  if (point.s.includes('brown')) return SPECIES_COLORS.brown;
-  if (point.s.includes('rainbow')) return SPECIES_COLORS.rainbow;
+  rivers.forEach(r=>{
+    const coords=RIVER_COORDS[r.id];
+    if(!coords)return;
+    const c=r.conditions;
+    const rat=c?.ratingKey?(RATINGS[c.ratingKey]||RATINGS.FAIR):RATINGS.FAIR;
+
+    const icon=L.divIcon({
+      className:'',
+      html:`<div class="cond-marker" style="background:${rat.color}">${rat.emoji}</div>`,
+      iconSize:[36,36],
+      iconAnchor:[18,18],
+      popupAnchor:[0,-20],
+    });
+
+    const slug=RIVER_SLUGS[r.id];
+    const popup=`<div class="pu">
+      <div class="pu-type">USGS River Conditions</div>
+      <div class="pu-name">${r.name}</div>
+      <div class="pu-badge" style="background:${rat.bg};border:1px solid ${rat.color}20">
+        <span class="pu-emoji">${rat.emoji}</span>
+        <div><div class="pu-label" style="color:${rat.color}">${rat.label}</div>
+        <div class="pu-tagline" style="color:${rat.color}">${rat.tagline}</div></div>
+      </div>
+      ${c?.flow!==null?`<div class="pu-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong>${c.flowPct?' ('+c.flowPct+'% of median)':''}</div>`:''}
+      ${c?.tempF!==null?`<div class="pu-stat">Water: <strong>${c.tempF}°F</strong> — ${c.tempLabel}</div>`:''}
+      <div class="pu-links">
+        ${slug?`<a href="/stream/${slug}.html" class="pu-link">Stream page →</a>`:''}
+        <a href="/river.html?id=${r.id}" class="pu-link">All gauges →</a>
+      </div>
+    </div>`;
+
+    const m=L.marker(coords,{icon,zIndexOffset:2000});
+    m.bindPopup(popup,{maxWidth:280});
+    _riverLayer.addLayer(m);
+  });
+
+  _riverLayer.addTo(_map);
+}
+
+// ── Access point markers ──────────────────────────────────────────────────────
+function accessMarkerColor(pt){
+  if(pt.s.includes('brook') && !pt.s.includes('brown')) return SP_COLOR.brook;
+  if(pt.s.includes('steelhead')) return SP_COLOR.steelhead;
+  if(pt.s.includes('brown')) return SP_COLOR.brown;
+  if(pt.s.includes('rainbow')) return SP_COLOR.rainbow;
   return '#888';
 }
 
-function makeAccessIcon(color) {
-  return L.divIcon({
-    className: '',
-    html: `<div class="marker-access" style="background:${color}"></div>`,
-    iconSize: [12, 12],
-    iconAnchor: [6, 6],
-  });
+function matchRiverId(name){
+  if(!name)return null;
+  const l=name.toLowerCase();
+  const map={
+    'au sable':'ausable','ausable':'ausable','manistee':'manistee',
+    'pere marquette':'pere-marquette','muskegon':'muskegon','boardman':'boardman',
+    'jordan river':'jordan','pigeon river':'pigeon','rifle river':'rifle-river',
+    'little manistee':'little-manistee','betsie':'betsie-river','pine river':'pine-river',
+    'platte':'platte-river','rogue':'rogue-river','brule':'brule-river',
+    'sturgeon':'sturgeon-river-nlp','tahquamenon':'tahquamenon-river',
+    'black river near bessemer':'black-river-up',
+    'paint river':'paint-river','iron river':'iron-river',
+    'au train':'au-train-river','miners':'miners-river',
+  };
+  for(const [k,v] of Object.entries(map)) if(l.includes(k)) return v;
+  return null;
 }
 
-function makeConditionsIcon(color, emoji) {
-  return L.divIcon({
-    className: '',
-    html: `<div class="marker-conditions" style="background:${color}">${emoji}</div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-  });
-}
+function renderAccessMarkers(points){
+  if(_accessLayer) _map.removeLayer(_accessLayer);
 
-// ── Popup HTML ───────────────────────────────────────────────────────────────
-
-function accessPointPopup(point, conditions) {
-  const speciesTags = (point.s || []).map(s =>
-    `<span class="popup-species-tag" style="background:${SPECIES_BG[s]||'#eee'};color:${SPECIES_COLORS[s]||'#666'}">${SPECIES_LABELS[s]||s}</span>`
-  ).join('');
-
-  let condHtml = '';
-  if (conditions) {
-    const rat = RATINGS[conditions.ratingKey] || RATINGS.FAIR;
-    const c = conditions;
-    condHtml = `
-      <div class="popup-rating" style="background:${rat.bg};border:1px solid ${rat.color}20">
-        <span class="popup-rating-emoji">${rat.emoji}</span>
-        <div>
-          <div class="popup-rating-label" style="color:${rat.color}">${rat.label}</div>
-          <div class="popup-rating-tagline" style="color:${rat.color}">${rat.tagline}</div>
-        </div>
-      </div>
-      ${c.flow !== null ? `<div class="popup-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong> (${c.flowPct || '?'}% of median)</div>` : ''}
-      ${c.tempF !== null ? `<div class="popup-stat">Temp: <strong>${c.tempF}°F</strong> — ${c.tempLabel}</div>` : ''}`;
-  }
-
-  const riverId = matchRiverId(point.n);
-  const fullPageLink = riverId ? `<a href="/river.html?id=${riverId}" class="popup-link">Full report →</a>` : '';
-
-  return `<div class="popup-inner">
-    <div class="popup-type-badge">DNR Trout Trail — ${point.c || ''}</div>
-    <div class="popup-name">${point.n}</div>
-    ${condHtml}
-    <div class="popup-species">${speciesTags}</div>
-    ${point.d ? `<div class="popup-desc">${point.d}</div>` : ''}
-    ${point.dir ? `<div class="popup-stat" style="margin-top:8px;padding-top:8px;border-top:1px solid #f0ece4">📍 ${point.dir}</div>` : ''}
-    ${fullPageLink ? `<div class="popup-links">${fullPageLink}</div>` : ''}
-  </div>`;
-}
-
-function riverConditionsPopup(river) {
-  const c = river.conditions;
-  const rat = c?.ratingKey ? (RATINGS[c.ratingKey] || RATINGS.FAIR) : null;
-  if (!rat) return `<div class="popup-inner"><div class="popup-name">${river.name}</div></div>`;
-  return `<div class="popup-inner">
-    <div class="popup-type-badge">USGS River Conditions</div>
-    <div class="popup-name">${river.name}</div>
-    <div class="popup-rating" style="background:${rat.bg};border:1px solid ${rat.color}20">
-      <span class="popup-rating-emoji">${rat.emoji}</span>
-      <div>
-        <div class="popup-rating-label" style="color:${rat.color}">${rat.label}</div>
-        <div class="popup-rating-tagline" style="color:${rat.color}">${rat.tagline}</div>
-      </div>
-    </div>
-    ${c.flow !== null ? `<div class="popup-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong></div>` : ''}
-    ${c.tempF !== null ? `<div class="popup-stat">Water Temp: <strong>${c.tempF}°F</strong> — ${c.tempLabel}</div>` : ''}
-    ${c.flowPct ? `<div class="popup-stat">Flow vs. median: <strong>${c.flowPct}%</strong> — ${c.flowLabel}</div>` : ''}
-    <div class="popup-links"><a href="/river.html?id=${river.id}" class="popup-link">Full report →</a></div>
-  </div>`;
-}
-
-// ── Render Markers ───────────────────────────────────────────────────────────
-
-function renderMarkers() {
-  // Clear existing
-  if (_accessMarkers) _map.removeLayer(_accessMarkers);
-  if (_riverMarkers) _map.removeLayer(_riverMarkers);
-
-  const filteredPoints = _allAccessPoints.filter(p => {
-    const speciesOk = _activeSpecies === 'all' || p.s.includes(_activeSpecies);
-    const layerOk = _activeLayer === 'all' || matchRiverId(p.n) !== null;
-    return speciesOk && layerOk;
+  const filtered = points.filter(p=>{
+    if(_activeSp==='all')return true;
+    return p.s.includes(_activeSp);
   });
 
-  // Access point cluster layer
-  _accessMarkers = L.markerClusterGroup({
-    maxClusterRadius: 40,
-    iconCreateFunction: cluster => {
-      const count = cluster.getChildCount();
-      const size = count < 10 ? 28 : count < 50 ? 34 : 40;
+  _accessLayer = L.markerClusterGroup({
+    maxClusterRadius:50,
+    disableClusteringAtZoom:12,
+    iconCreateFunction:cluster=>{
+      const n=cluster.getChildCount();
+      const sz=n<10?26:n<50?30:34;
       return L.divIcon({
-        html: `<div style="background:#1a3a1a;color:#fff;border-radius:50%;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:Georgia,serif;border:2px solid #4a7c4a;box-shadow:0 1px 4px rgba(0,0,0,.3)">${count}</div>`,
-        className: '',
-        iconSize: [size, size],
-        iconAnchor: [size/2, size/2],
+        html:`<div style="background:#2c5f2d;color:#fff;border-radius:50%;width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:Georgia,serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)">${n}</div>`,
+        className:'',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2],
       });
     },
-    spiderfyOnMaxZoom: true,
-    showCoverageOnHover: false,
+    spiderfyOnMaxZoom:true,
+    showCoverageOnHover:false,
   });
 
-  filteredPoints.forEach(point => {
-    const riverId = matchRiverId(point.n);
-    const conditions = riverId ? _conditionsMap[riverId] : null;
-    const color = conditions
-      ? (RATINGS[conditions.ratingKey]?.color || '#888')
-      : accessMarkerColor(point);
-    const icon = makeAccessIcon(color);
-    const marker = L.marker([point.lat, point.lon], { icon });
-    marker.bindPopup(accessPointPopup(point, conditions), { maxWidth: 300 });
-    _accessMarkers.addLayer(marker);
+  filtered.forEach(pt=>{
+    const riverId=matchRiverId(pt.n);
+    const cond=riverId?_condMap[riverId]:null;
+    // Color by conditions if available, else by primary species
+    const color=cond?.conditions?.ratingKey
+      ? RATINGS[cond.conditions.ratingKey]?.color||'#888'
+      : accessMarkerColor(pt);
+
+    const icon=L.divIcon({
+      className:'',
+      html:`<div class="access-dot" style="background:${color}"></div>`,
+      iconSize:[10,10],iconAnchor:[5,5],
+    });
+
+    const spTags=(pt.s||[]).map(s=>`<span class="pu-sp" style="background:${SP_BG[s]||'#eee'};color:${SP_COLOR[s]||'#666'}">${SP_LABEL[s]||s}</span>`).join('');
+    const slug=riverId?RIVER_SLUGS[riverId]:null;
+    const condHtml=cond?.conditions?.ratingKey ? (()=>{
+      const rat=RATINGS[cond.conditions.ratingKey];
+      const c2=cond.conditions;
+      return `<div class="pu-badge" style="background:${rat.bg};border:1px solid ${rat.color}20">
+        <span class="pu-emoji">${rat.emoji}</span>
+        <div><div class="pu-label" style="color:${rat.color}">${rat.label}</div>
+        <div class="pu-tagline" style="color:${rat.color}">${rat.tagline}</div></div>
+      </div>
+      ${c2.flow!==null?`<div class="pu-stat">Flow: <strong>${c2.flow.toLocaleString()} cfs</strong></div>`:''}
+      ${c2.tempF!==null?`<div class="pu-stat">Water: <strong>${c2.tempF}°F</strong></div>`:''}`;
+    })() : '';
+
+    const popup=`<div class="pu">
+      <div class="pu-type">DNR Trout Trail · ${pt.c||''}</div>
+      <div class="pu-name">${pt.n}</div>
+      ${condHtml}
+      <div class="pu-species">${spTags}</div>
+      ${pt.d?`<div class="pu-desc">${pt.d}</div>`:''}
+      ${pt.dir?`<div class="pu-stat" style="margin-top:6px;font-size:11px">📍 ${pt.dir}</div>`:''}
+      ${slug?`<div class="pu-links"><a href="/stream/${slug}.html" class="pu-link">Full report →</a></div>`:''}
+    </div>`;
+
+    const marker=L.marker([pt.lat,pt.lon],{icon});
+    marker.bindPopup(popup,{maxWidth:270});
+    _accessLayer.addLayer(marker);
   });
 
-  _map.addLayer(_accessMarkers);
+  if(_activeLayer==='all') _map.addLayer(_accessLayer);
 
-  // River conditions layer — larger markers for gauged rivers
-  _riverMarkers = L.layerGroup();
-  const riverCoords = {
-    'ausable':          [44.655, -84.132],
-    'manistee':         [44.580, -85.760],
-    'pere-marquette':   [43.955, -86.230],
-    'muskegon':         [43.398, -85.842],
-    'boardman':         [44.789, -85.647],
-    'jordan':           [45.159, -85.077],
-    'pigeon':           [45.052, -84.569],
-    'rifle-river':      [44.016, -84.026],
-    'little-manistee':  [43.968, -86.189],
-    'betsie-river':     [44.612, -86.062],
-    'pine-river':       [44.210, -85.952],
-    'platte-river':     [44.676, -86.148],
-    'rogue-river':      [43.118, -85.541],
-    'white-river':      [43.703, -86.362],
-    'flat-river':       [43.047, -85.299],
-    'looking-glass-river': [42.850, -84.813],
-    'sturgeon-river-nlp': [45.278, -84.681],
-    'thunder-bay-river': [45.070, -83.753],
-    'black-river-up':   [46.619, -90.068],
-    'tahquamenon-river': [46.537, -85.262],
-    'paint-river':      [46.106, -88.309],
-    'iron-river':       [46.094, -88.672],
-    'brule-river':      [46.085, -88.452],
-    'au-train-river':   [46.462, -86.763],
-    'ontonagon-river':  [46.771, -89.306],
-    'presque-isle-river': [46.691, -89.963],
-    'sturgeon-river-up':  [46.529, -89.097],
-    'salmon-trout-river': [46.826, -87.948],
-    'trap-rock-river':  [47.148, -88.386],
-    'michigamme-river': [46.018, -88.298],
-    'au-gres-river':    [44.032, -83.682],
-    'pine-river-midland': [43.617, -84.261],
-  };
-
-  const riverList = Object.values(_conditionsMap);
-  riverList.forEach(river => {
-    const coords = riverCoords[river.id];
-    if (!coords || !river.conditions?.ratingKey) return;
-    const rat = RATINGS[river.conditions.ratingKey];
-    if (!rat) return;
-    const icon = makeConditionsIcon(rat.color, rat.emoji);
-    const marker = L.marker(coords, { icon, zIndexOffset: 1000 });
-    marker.bindPopup(riverConditionsPopup(river), { maxWidth: 300 });
-    _riverMarkers.addLayer(marker);
-  });
-
-  _riverMarkers.addTo(_map);
-
-  // Update list
-  renderSidebarList(filteredPoints);
-  document.getElementById('listHeader').textContent =
-    `${filteredPoints.length} access point${filteredPoints.length !== 1 ? 's' : ''}`;
+  // Update sidebar list
+  renderSbList(filtered);
+  document.getElementById('listHeader').textContent=
+    `${filtered.length} access point${filtered.length!==1?'s':''}`;
 }
 
-// ── Sidebar List ─────────────────────────────────────────────────────────────
-
-function renderSidebarList(points) {
-  const list = document.getElementById('accessList');
-  if (!points.length) {
-    list.innerHTML = '<div style="padding:16px 14px;font-size:13px;color:#bbb;font-style:italic">No points match the current filters.</div>';
-    return;
-  }
-
-  // Sort: rivers with conditions first (by score), then alphabetical
-  const sorted = [...points].sort((a, b) => {
-    const ra = matchRiverId(a.n);
-    const rb = matchRiverId(b.n);
-    const ca = ra ? _conditionsMap[ra] : null;
-    const cb = rb ? _conditionsMap[rb] : null;
-    const sa = ca ? (RATING_SCORE[ca.conditions?.ratingKey] || 0) : 0;
-    const sb = cb ? (RATING_SCORE[cb.conditions?.ratingKey] || 0) : 0;
-    if (sa !== sb) return sb - sa;
-    return a.n.localeCompare(b.n);
+// ── Sidebar list ──────────────────────────────────────────────────────────────
+function renderSbList(points){
+  const el=document.getElementById('sbList');
+  if(!points.length){el.innerHTML='<div style="padding:14px;font-size:12px;color:#bbb;font-style:italic">No points match filter.</div>';return;}
+  // Sort by conditions score then name
+  const sorted=[...points].sort((a,b)=>{
+    const ra=matchRiverId(a.n),rb=matchRiverId(b.n);
+    const ca=ra?_condMap[ra]:null,cb=rb?_condMap[rb]:null;
+    const sa=ca?(SCORE[ca.conditions?.ratingKey]||0):0;
+    const sb=cb?(SCORE[cb.conditions?.ratingKey]||0):0;
+    return sb-sa||a.n.localeCompare(b.n);
   });
-
-  list.innerHTML = sorted.slice(0, 200).map(point => {
-    const speciesDots = (point.s || []).map(s =>
-      `<div class="access-species-dot" style="background:${SPECIES_COLORS[s]||'#ccc'}"></div>`
-    ).join('');
-    const riverId = matchRiverId(point.n);
-    const cond = riverId ? _conditionsMap[riverId] : null;
-    const rat = cond?.conditions?.ratingKey ? RATINGS[cond.conditions.ratingKey] : null;
-    const condBadge = rat ? `<span class="best-rating-pill" style="background:${rat.color};color:#fff">${rat.emoji} ${rat.label}</span>` : '';
-    return `<div class="access-item" onclick="flyToPoint(${point.lat},${point.lon},'${point.n.replace(/'/g,"\\'")}')">
-      <div class="access-name">${point.n}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div class="access-meta">${point.c || ''}</div>
-        ${condBadge}
+  el.innerHTML=sorted.slice(0,150).map(pt=>{
+    const riverId=matchRiverId(pt.n);
+    const cond=riverId?_condMap[riverId]:null;
+    const rat=cond?.conditions?.ratingKey?RATINGS[cond.conditions.ratingKey]:null;
+    const dots=(pt.s||[]).map(s=>`<span class="sb-dot" style="background:${SP_COLOR[s]||'#ccc'}"></span>`).join('');
+    return `<div class="sb-item" onclick="_map.flyTo([${pt.lat},${pt.lon}],13,{duration:0.7})">
+      <div class="sb-name">${pt.n}</div>
+      <div class="sb-meta">
+        <span>${pt.c||''}</span>
+        ${rat?`<span style="color:${rat.color};font-weight:bold;font-size:11px">${rat.emoji} ${rat.label}</span>`:''}
       </div>
-      <div class="access-species">${speciesDots}</div>
+      <div class="sb-dots">${dots}</div>
     </div>`;
   }).join('');
 }
 
-function flyToPoint(lat, lon, name) {
-  _map.flyTo([lat, lon], 13, { duration: 0.8 });
-}
-
-// ── Best Rivers Now ───────────────────────────────────────────────────────────
-
-function renderBestNow(rivers) {
-  const scored = rivers
-    .filter(r => r.conditions?.ratingKey)
-    .map(r => ({ ...r, score: RATING_SCORE[r.conditions.ratingKey] || 0 }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
-
-  const container = document.getElementById('bestNowList');
-  if (!scored.length) {
-    container.innerHTML = '<div style="font-size:12px;color:#bbb;font-style:italic">No conditions data available.</div>';
-    return;
-  }
-
-  container.innerHTML = scored.map(river => {
-    const rat = RATINGS[river.conditions.ratingKey];
-    const coords = getRiverCoords(river.id);
-    const onclick = coords ? `flyToRiver('${river.id}',${coords[0]},${coords[1]})` : '';
-    return `<div class="best-river-item" onclick="${onclick}">
+// ── Best rivers ───────────────────────────────────────────────────────────────
+function renderBest(rivers){
+  const top=[...rivers]
+    .filter(r=>r.conditions?.ratingKey && RIVER_COORDS[r.id])
+    .sort((a,b)=>(SCORE[b.conditions.ratingKey]||0)-(SCORE[a.conditions.ratingKey]||0))
+    .slice(0,5);
+  const el=document.getElementById('bestList');
+  if(!top.length){el.innerHTML='<div style="font-size:11px;color:#bbb;font-style:italic">No data yet.</div>';return;}
+  el.innerHTML=top.map(r=>{
+    const rat=RATINGS[r.conditions.ratingKey];
+    const coords=RIVER_COORDS[r.id];
+    const c=r.conditions;
+    return `<div class="best-item" onclick="_map.flyTo([${coords[0]},${coords[1]}],11,{duration:0.7})">
       <div>
-        <div class="best-river-name">${river.name}</div>
-        <div class="best-river-sub">${river.conditions.tempF ? river.conditions.tempF + '°F' : ''} ${river.conditions.flow ? '· ' + river.conditions.flow.toLocaleString() + ' cfs' : ''}</div>
+        <div class="best-name">${r.name}</div>
+        <div class="best-sub">${c.flow!==null?c.flow.toLocaleString()+' cfs':''}${c.tempF!==null?' · '+c.tempF+'°F':''}</div>
       </div>
-      <span class="best-rating-pill" style="background:${rat.color};color:#fff">${rat.emoji} ${rat.label}</span>
+      <span class="best-pill" style="background:${rat.color}">${rat.emoji} ${rat.label}</span>
     </div>`;
   }).join('');
 }
 
-function getRiverCoords(id) {
-  const coords = {
-    'ausable': [44.655, -84.132], 'manistee': [44.580, -85.760],
-    'pere-marquette': [43.955, -86.230], 'muskegon': [43.398, -85.842],
-    'boardman': [44.789, -85.647], 'jordan': [45.159, -85.077],
-    'pigeon': [45.052, -84.569], 'rifle-river': [44.016, -84.026],
-    'little-manistee': [43.968, -86.189], 'betsie-river': [44.612, -86.062],
-    'pine-river': [44.210, -85.952], 'platte-river': [44.676, -86.148],
-    'rogue-river': [43.118, -85.541], 'looking-glass-river': [42.850, -84.813],
-    'sturgeon-river-nlp': [45.278, -84.681], 'tahquamenon-river': [46.537, -85.262],
-  };
-  return coords[id] || null;
+// ── Filters ───────────────────────────────────────────────────────────────────
+function setSp(v){
+  _activeSp=v;
+  document.querySelectorAll('[data-sp]').forEach(b=>{b.className='chip'+(b.dataset.sp===v?' on':'');});
+  renderAccessMarkers(_allPoints);
+}
+function setLayer(v){
+  _activeLayer=v;
+  document.getElementById('layerAll').className='layer-btn'+(v==='all'?' on':'');
+  document.getElementById('layerOff').className='layer-btn'+(v==='off'?' on':'');
+  if(v==='all' && _accessLayer && !_map.hasLayer(_accessLayer)) _map.addLayer(_accessLayer);
+  if(v==='off' && _accessLayer && _map.hasLayer(_accessLayer)) _map.removeLayer(_accessLayer);
 }
 
-function flyToRiver(id, lat, lon) {
-  _map.flyTo([lat, lon], 11, { duration: 0.9 });
-}
-
-// ── Filters ──────────────────────────────────────────────────────────────────
-
-function setSpeciesFilter(value) {
-  _activeSpecies = value;
-  document.querySelectorAll('[data-filter="species"]').forEach(el => {
-    el.className = 'pill' + (el.dataset.value === value ? ` active-${value}` : '');
-  });
-  renderMarkers();
-}
-
-function setLayerFilter(value) {
-  _activeLayer = value;
-  document.querySelectorAll('[data-filter="layer"]').forEach(el => {
-    el.className = 'pill' + (el.dataset.value === value ? ' active-cond' : '');
-  });
-  renderMarkers();
-}
-
-// ── Load Data ─────────────────────────────────────────────────────────────────
-
-async function loadAll() {
+// ── Load ──────────────────────────────────────────────────────────────────────
+async function loadAll(){
   initMap();
-
-  try {
-    // Load both in parallel
-    const [accessResp, condResp] = await Promise.all([
-      fetch('/trout-access-points.json'),
+  try{
+    // Load conditions + access points in parallel
+    const [condResp, accessResp] = await Promise.all([
       fetch('/api/generate'),
+      fetch('/trout-access-points.json'),
     ]);
 
-    // Access points
-    _allAccessPoints = await accessResp.json();
-    document.getElementById('headerStatus').textContent =
-      `${_allAccessPoints.length} DNR access points`;
-
-    // Conditions
-    if (condResp.ok) {
-      const condData = await condResp.json();
-      if (condData.success && condData.rivers) {
-        condData.rivers.forEach(r => { _conditionsMap[r.id] = r; });
-        renderBestNow(condData.rivers);
-        document.getElementById('headerStatus').textContent =
-          `${_allAccessPoints.length} access points · ${condData.rivers.length} rivers with live conditions`;
+    // Conditions — render river markers first (fast, high value)
+    if(condResp.ok){
+      const cd=await condResp.json();
+      if(cd.success && cd.rivers){
+        cd.rivers.forEach(r=>{_condMap[r.id]=r;});
+        renderRiverMarkers(cd.rivers);
+        renderBest(cd.rivers);
+        document.getElementById('hdrStatus').textContent=
+          `${cd.rivers.length} rivers with live data`;
       }
     }
 
-    renderMarkers();
+    // Access points — render after conditions so conditions stay on top
+    if(accessResp.ok){
+      _allPoints=await accessResp.json();
+      renderAccessMarkers(_allPoints);
+      document.getElementById('hdrStatus').textContent=
+        `${Object.keys(_condMap).length} rivers · ${_allPoints.length} access points`;
+    }
 
-  } catch(e) {
-    console.error('Load error:', e);
-    document.getElementById('headerStatus').textContent = 'Error loading data';
+  }catch(e){
+    console.error(e);
+    document.getElementById('hdrStatus').textContent='Error loading data';
   }
 }
 
