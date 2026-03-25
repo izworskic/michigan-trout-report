@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michigan Trout Fishing Guide Directory — Outfitters, Fly Shops & Guides</title>
+<meta name="description" content="Michigan trout fishing guides, fly shops, and outfitters. Find local experts on the AuSable, Pere Marquette, Manistee, Muskegon, and more.">
+<link rel="canonical" href="https://michigan-trout-report.vercel.app/directory.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Michigan Trout Fishing Guides and Outfitters",
+  "url": "https://michigan-trout-report.vercel.app/directory.html",
+  "description": "Verified Michigan trout fishing guides, fly shops, and outfitters."
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.65; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 3px solid #4a7c4a; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-link { color: #7ab87a; font-size: 13px; }
+  .back-link:hover { color: #fff; text-decoration: none; }
+  .site-name { font-size: 16px; font-weight: normal; }
+  .header-nav { display: flex; gap: 14px; font-size: 13px; }
+  .header-nav a { color: #7ab87a; }
+  .header-nav a:hover { color: #fff; text-decoration: none; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+  /* Page header */
+  .page-header { background: #fff; border-bottom: 1px solid #ddd8cc; padding: 28px 0 24px; }
+  .page-header h1 { font-size: 28px; font-weight: normal; color: #1a3a1a; margin-bottom: 8px; }
+  .page-header p { font-size: 15px; color: #666; max-width: 600px; }
+
+  /* River filter tabs */
+  .filter-bar { background: #fff; border-bottom: 1px solid #ddd8cc; position: sticky; top: 0; z-index: 50; padding: 10px 0; box-shadow: 0 2px 6px rgba(0,0,0,.04); }
+  .filter-inner { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .filter-label { font-size: 11px; color: #bbb; text-transform: uppercase; letter-spacing: .8px; margin-right: 2px; }
+  .filter-pill { font-family: Georgia, serif; font-size: 12px; padding: 4px 12px; border-radius: 12px; border: 1px solid #ddd; background: #f5f2ec; color: #666; cursor: pointer; transition: all .12s; }
+  .filter-pill.active { background: #1a3a1a; color: #fff; border-color: #1a3a1a; }
+  .filter-pill:hover:not(.active) { background: #ede9e0; }
+
+  /* Featured listing card */
+  .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: #aaa; margin: 28px 0 14px; }
+  .featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .featured-card { background: #fff; border: 2px solid #4a7c4a; border-radius: 6px; overflow: hidden; }
+  .featured-header { background: #1a3a1a; padding: 14px 18px 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .featured-badge { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #7ab87a; margin-bottom: 4px; }
+  .featured-name { font-size: 17px; color: #f0ede6; font-weight: normal; }
+  .featured-tagline { font-size: 12px; color: #8ab88a; margin-top: 3px; font-style: italic; }
+  .featured-body { padding: 16px 18px; }
+  .featured-desc { font-size: 14px; color: #3a3a3a; line-height: 1.65; margin-bottom: 12px; }
+  .featured-details { font-size: 13px; color: #555; margin-bottom: 4px; }
+  .featured-details strong { color: #2c2c2c; }
+  .services-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0; }
+  .service-tag { font-size: 11px; padding: 2px 8px; background: #e8f5e9; color: #1b5e20; border-radius: 3px; }
+  .species-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+  .species-tag { font-size: 10px; padding: 1px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: .3px; }
+  .featured-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid #f0ece4; }
+  .btn-primary { font-family: Georgia, serif; font-size: 12px; padding: 7px 14px; background: #1a3a1a; color: #fff; border-radius: 4px; text-decoration: none; }
+  .btn-primary:hover { background: #2c5f2d; text-decoration: none; }
+  .btn-secondary { font-family: Georgia, serif; font-size: 12px; padding: 7px 14px; background: #f5f2ec; color: #555; border-radius: 4px; text-decoration: none; border: 1px solid #ddd; }
+  .btn-secondary:hover { background: #ede9e0; text-decoration: none; }
+
+  /* River badge */
+  .river-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+  .river-tag { font-size: 11px; padding: 2px 8px; background: #f0ece4; color: #555; border-radius: 3px; }
+
+  /* Basic listings */
+  .basic-list { display: flex; flex-direction: column; gap: 1px; margin-bottom: 32px; }
+  .basic-item { background: #fff; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid #f0ece4; }
+  .basic-item:first-child { border-radius: 5px 5px 0 0; border: 1px solid #ddd8cc; border-bottom: none; }
+  .basic-item:last-child { border-radius: 0 0 5px 5px; border: 1px solid #ddd8cc; }
+  .basic-item:only-child { border-radius: 5px; border: 1px solid #ddd8cc; }
+  .basic-name { font-size: 14px; color: #1a3a1a; }
+  .basic-meta { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .basic-link { font-size: 12px; color: #2c5f2d; }
+
+  /* Claim CTA */
+  .claim-section { background: #1a3a1a; color: #f0ede6; padding: 36px 0; margin: 32px 0; border-radius: 6px; }
+  .claim-inner { text-align: center; max-width: 560px; margin: 0 auto; }
+  .claim-title { font-size: 22px; font-weight: normal; margin-bottom: 10px; }
+  .claim-sub { font-size: 14px; color: #a8c8a8; margin-bottom: 20px; line-height: 1.65; }
+  .claim-price { font-size: 28px; color: #7ab87a; margin-bottom: 6px; }
+  .claim-price-note { font-size: 13px; color: #8ab88a; margin-bottom: 24px; }
+  .claim-features { text-align: left; display: inline-block; margin-bottom: 24px; }
+  .claim-feature { font-size: 13px; color: #c8e8c8; margin-bottom: 6px; }
+  .claim-feature::before { content: '✓  '; color: #7ab87a; }
+  .btn-claim { display: inline-block; background: #4a7c4a; color: #fff; padding: 12px 28px; border-radius: 4px; font-family: Georgia, serif; font-size: 15px; text-decoration: none; }
+  .btn-claim:hover { background: #5a8c5a; text-decoration: none; }
+  .claim-note { font-size: 11px; color: #6a8a6a; margin-top: 14px; }
+
+  /* Affiliate section */
+  .affiliate-section { background: #fff; border: 1px solid #ddd8cc; border-radius: 6px; padding: 20px 22px; margin-bottom: 32px; }
+  .affiliate-title { font-size: 13px; font-weight: normal; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 14px; }
+  .affiliate-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .affiliate-link-item { border: 1px solid #e8e4dc; border-radius: 4px; padding: 12px 14px; text-decoration: none; transition: background .12s; display: block; }
+  .affiliate-link-item:hover { background: #f5f2ec; text-decoration: none; }
+  .aff-title { font-size: 13px; color: #1a3a1a; margin-bottom: 2px; }
+  .aff-sub { font-size: 11px; color: #aaa; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-style: italic; background: #fff; border-radius: 5px; border: 1px solid #ddd8cc; }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; margin-top: 2px; }
+  .site-footer a { color: #4a7c4a; }
+
+  @media (max-width: 540px) {
+    .featured-grid { grid-template-columns: 1fr; }
+    .affiliate-links { grid-template-columns: 1fr 1fr; }
+    .header-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <a href="/" class="back-link">← All Rivers</a>
+    <span class="site-name">Michigan Trout Report</span>
+  </div>
+  <nav class="header-nav">
+    <a href="/map.html">Map</a>
+    <a href="/alerts.html">Alerts</a>
+    <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Trout Guide</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-header">
+    <div class="container">
+      <h1>Michigan Trout Fishing Directory</h1>
+      <p>Guides, fly shops, and outfitters covering Michigan's best trout rivers. Every listing is staffed by people who fish these waters for a living.</p>
+    </div>
+  </div>
+
+  <!-- River filter -->
+  <div class="filter-bar">
+    <div class="container">
+      <div class="filter-inner">
+        <span class="filter-label">River:</span>
+        <button class="filter-pill active" data-river="all" onclick="filterByRiver('all')">All Rivers</button>
+        <button class="filter-pill" data-river="ausable" onclick="filterByRiver('ausable')">AuSable</button>
+        <button class="filter-pill" data-river="manistee" onclick="filterByRiver('manistee')">Manistee</button>
+        <button class="filter-pill" data-river="pere-marquette" onclick="filterByRiver('pere-marquette')">Pere Marquette</button>
+        <button class="filter-pill" data-river="muskegon" onclick="filterByRiver('muskegon')">Muskegon</button>
+        <button class="filter-pill" data-river="boardman" onclick="filterByRiver('boardman')">Boardman</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:8px;padding-bottom:48px">
+
+    <!-- Featured listings -->
+    <div class="section-title">Featured Outfitters</div>
+    <div class="featured-grid" id="featuredGrid"></div>
+
+    <!-- Basic listings -->
+    <div class="section-title">Directory</div>
+    <div class="basic-list" id="basicList"></div>
+
+    <!-- Gear affiliates -->
+    <div class="section-title">Gear & Licenses</div>
+    <div class="affiliate-section">
+      <div class="affiliate-title">Recommended Gear & Resources</div>
+      <div class="affiliate-links">
+        <a href="https://www.orvis.com/fly-fishing-rods/" target="_blank" rel="noopener sponsored" class="affiliate-link-item">
+          <div class="aff-title">Orvis Fly Rods</div>
+          <div class="aff-sub">Rods, waders & flies</div>
+        </a>
+        <a href="https://www.amazon.com/s?k=fly+fishing+Michigan&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="affiliate-link-item">
+          <div class="aff-title">Fly Fishing Gear</div>
+          <div class="aff-sub">Amazon — all gear</div>
+        </a>
+        <a href="https://www.michigan.gov/dnr/hunting-fishing/fishing/fishing-licenses" target="_blank" rel="noopener" class="affiliate-link-item">
+          <div class="aff-title">Michigan Fishing License</div>
+          <div class="aff-sub">Buy from Michigan DNR</div>
+        </a>
+        <a href="https://www.amazon.com/s?k=simms+waders&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="affiliate-link-item">
+          <div class="aff-title">Simms Waders</div>
+          <div class="aff-sub">Waders & wading boots</div>
+        </a>
+        <a href="https://www.amazon.com/s?k=rio+fly+fishing+line+trout&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="affiliate-link-item">
+          <div class="aff-title">RIO Fly Lines</div>
+          <div class="aff-sub">Lines, leaders & tippet</div>
+        </a>
+        <a href="https://www.troutunlimited.org/join/" target="_blank" rel="noopener" class="affiliate-link-item">
+          <div class="aff-title">Trout Unlimited</div>
+          <div class="aff-sub">Support Michigan trout streams</div>
+        </a>
+      </div>
+      <p style="font-size:11px;color:#ccc;margin-top:12px">Some links are affiliate links. We earn a small commission at no cost to you. Revenue supports maintaining this site.</p>
+    </div>
+
+    <!-- Claim your spot CTA -->
+    <div class="claim-section">
+      <div class="claim-inner">
+        <div class="claim-title">List Your Outfitter or Fly Shop</div>
+        <div class="claim-sub">Michigan trout anglers are actively looking for guides and local expertise. A featured listing puts you in front of them when conditions are right — exactly when they're planning a trip.</div>
+        <div class="claim-price">$99 <span style="font-size:16px;color:#7ab87a">/year</span></div>
+        <div class="claim-price-note">One flat annual rate. No percentage, no per-lead fee.</div>
+        <div class="claim-features">
+          <div class="claim-feature">Featured placement above basic listings</div>
+          <div class="claim-feature">Your description, phone, and website</div>
+          <div class="claim-feature">Linked to your specific rivers (AuSable, PM, etc.)</div>
+          <div class="claim-feature">Guide report link shown on relevant stream pages</div>
+          <div class="claim-feature">Listing on all 39 individual river stream pages</div>
+        </div>
+        <a href="mailto:chris@chrisizworski.com?subject=Directory%20Listing%20%E2%80%94%20Michigan%20Trout%20Report&body=Hi%2C%20I%E2%80%99d%20like%20to%20list%20my%20outfitter%20in%20the%20Michigan%20Trout%20Report%20directory.%0A%0AShop%2FGuide%20name%3A%20%0ARivers%20covered%3A%20%0AWebsite%3A%20%0APhone%3A%20" class="btn-claim">Get Listed — $99/year</a>
+        <div class="claim-note">Responds within 1 business day. Listings go live within 24 hours of payment.</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <a href="/">Michigan Trout Report</a> &nbsp;·&nbsp;
+  <a href="/map.html">Stream Map</a> &nbsp;·&nbsp;
+  <a href="/alerts.html">Condition Alerts</a> &nbsp;·&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>
+</footer>
+
+<script>
+const SPECIES_COLORS = {
+  brook:     { bg: '#e8f5e9', color: '#1b5e20', label: 'Brook' },
+  brown:     { bg: '#fff3e0', color: '#bf360c', label: 'Brown' },
+  rainbow:   { bg: '#e3f2fd', color: '#0d47a1', label: 'Rainbow' },
+  steelhead: { bg: '#f3e5f5', color: '#6a1b9a', label: 'Steelhead' },
+};
+
+const RIVER_NAMES = {
+  'ausable': 'AuSable', 'manistee': 'Manistee', 'pere-marquette': 'Pere Marquette',
+  'muskegon': 'Muskegon', 'boardman': 'Boardman', 'jordan': 'Jordan',
+  'pigeon': 'Pigeon', 'little-manistee': 'Little Manistee', 'betsie-river': 'Betsie',
+  'pine-river': 'Pine River', 'platte-river': 'Platte', 'rogue-river': 'Rogue',
+};
+
+const RIVER_SLUGS = {
+  'ausable': 'ausable-river', 'manistee': 'manistee-river',
+  'pere-marquette': 'pere-marquette-river', 'muskegon': 'muskegon-river',
+  'boardman': 'boardman-river', 'jordan': 'jordan-river-michigan',
+  'little-manistee': 'little-manistee-river', 'pine-river': 'pine-river-michigan',
+};
+
+let _activeRiver = 'all';
+let _directory = [];
+
+function speciesTagsHtml(species) {
+  return (species || []).map(s => {
+    const sc = SPECIES_COLORS[s] || { bg: '#eee', color: '#666', label: s };
+    return `<span class="species-tag" style="background:${sc.bg};color:${sc.color}">${sc.label}</span>`;
+  }).join('');
+}
+
+function riverTagsHtml(rivers) {
+  return (rivers || []).map(r => {
+    const name = RIVER_NAMES[r] || r;
+    const slug = RIVER_SLUGS[r];
+    const html = slug
+      ? `<a href="/stream/${slug}.html" class="river-tag" style="text-decoration:none">${name}</a>`
+      : `<span class="river-tag">${name}</span>`;
+    return html;
+  }).join('');
+}
+
+function renderFeatured(listings) {
+  const grid = document.getElementById('featuredGrid');
+  if (!listings.length) {
+    grid.innerHTML = '<div class="empty-filter" style="grid-column:1/-1;text-align:center;padding:24px;color:#bbb;font-style:italic">No featured listings match the current filter.</div>';
+    return;
+  }
+  grid.innerHTML = listings.map(d => `
+    <div class="featured-card">
+      <div class="featured-header">
+        <div>
+          <div class="featured-badge">Featured Outfitter</div>
+          <div class="featured-name">${d.name}</div>
+          ${d.tagline ? `<div class="featured-tagline">${d.tagline}</div>` : ''}
+        </div>
+      </div>
+      <div class="featured-body">
+        ${d.description ? `<div class="featured-desc">${d.description}</div>` : ''}
+        <div class="river-tags">${riverTagsHtml(d.rivers)}</div>
+        <div class="species-tags">${speciesTagsHtml(d.species)}</div>
+        ${d.services?.length ? `<div class="services-tags">${d.services.map(s => `<span class="service-tag">${s}</span>`).join('')}</div>` : ''}
+        ${d.phone ? `<div class="featured-details"><strong>Phone:</strong> <a href="tel:${d.phone}">${d.phone}</a></div>` : ''}
+        <div class="featured-actions">
+          <a href="${d.website}" target="_blank" rel="noopener" class="btn-primary">Visit website →</a>
+          ${d.reportUrl ? `<a href="${d.reportUrl}" target="_blank" rel="noopener" class="btn-secondary">Fishing report</a>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderBasic(listings) {
+  const list = document.getElementById('basicList');
+  if (!listings.length) {
+    list.innerHTML = '<div class="empty-state">No listings match the current filter.</div>';
+    return;
+  }
+  list.innerHTML = listings.map(d => `
+    <div class="basic-item" data-rivers="${d.rivers.join(',')}">
+      <div>
+        <div class="basic-name">${d.name}</div>
+        <div class="basic-meta">${d.county || ''} ${d.services?.slice(0,2).join(' · ') || ''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="species-tags" style="margin:0">${speciesTagsHtml(d.species)}</div>
+        <a href="${d.website}" target="_blank" rel="noopener" class="basic-link">Website →</a>
+      </div>
+    </div>`).join('');
+}
+
+function filterByRiver(river) {
+  _activeRiver = river;
+  document.querySelectorAll('.filter-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.river === river);
+  });
+  const featured = _directory.filter(d => d.featured && (river === 'all' || d.rivers.includes(river)));
+  const basic    = _directory.filter(d => !d.featured && (river === 'all' || d.rivers.includes(river)));
+  renderFeatured(featured);
+  renderBasic(basic);
+}
+
+async function loadDirectory() {
+  try {
+    const resp = await fetch('/api/directory');
+    if (!resp.ok) throw new Error('Failed');
+    const data = await resp.json();
+    _directory = data.listings || [];
+  } catch(e) {
+    // Fallback: use hardcoded data
+    _directory = window._DIRECTORY_FALLBACK || [];
+  }
+  filterByRiver('all');
+}
+
+// Inline fallback directory data (matches lib/directory.js)
+window._DIRECTORY_FALLBACK = [
+  { id:'gates-ausable-lodge', name:'Gates Au Sable Lodge', featured:true, rivers:['ausable'], county:'Crawford County', tagline:'The original AuSable fly fishing lodge. On the Holy Water since 1938.', description:'Gates Au Sable Lodge sits directly on the Holy Water stretch of the AuSable River near Grayling. Guided float and wade trips, fly shop, lodging, and daily fishing reports. Home of the legendary Hex hatch season.', phone:'(989) 348-8462', website:'https://gatesausablelodge.com', reportUrl:'https://gatesausablelodge.com/fishing-report/', species:['brown','rainbow'], services:['Guided wade trips','Float trips','Fly shop','Lodging'] },
+  { id:'little-forks-outfitters', name:'Little Forks Outfitters', featured:true, rivers:['manistee','little-manistee','pine-river'], county:'Wexford County', tagline:'Northwest Michigan fly fishing specialists since 1995.', description:'Little Forks Outfitters in Mesick is the go-to shop for Manistee River, Little Manistee, and Pine River fishing. Guided trips, full fly shop, and one of the best fishing reports in the region.', phone:'(231) 885-3008', website:'https://littleforksoutfitters.com', reportUrl:'https://littleforksoutfitters.com/fishing-reports/', species:['brown','rainbow','steelhead'], services:['Guided wade trips','Float trips','Fly shop','Classes'] },
+  { id:'schultz-outfitters', name:'Schultz Outfitters', featured:true, rivers:['pere-marquette','muskegon','little-manistee'], county:'Statewide guided trips', tagline:'Pere Marquette and West Michigan specialists.', description:'Schultz Outfitters runs guided trips on the Pere Marquette, Muskegon, and Little Manistee rivers. Known for their steelhead expertise and precise fly fishing instruction.', phone:'(734) 662-4916', website:'https://schultzoutfitters.com', reportUrl:'https://schultzoutfitters.com/blogs/news', species:['brown','rainbow','steelhead'], services:['Guided wade trips','Guided drift boat','Fly shop','Instruction'] },
+  { id:'northern-angler', name:'The Northern Angler', featured:true, rivers:['boardman','jordan','platte-river','betsie-river'], county:'Grand Traverse County', tagline:'Traverse City fly fishing since 1996.', description:'The Northern Angler in Traverse City covers the Boardman, Jordan, Platte, Betsie, and surrounding rivers. Expert staff, local knowledge, guided trips, and a fly tying program.', phone:'(231) 933-4730', website:'https://thenorthernangler.com', reportUrl:'https://thenorthernangler.com/blogs/news', species:['brown','brook','rainbow','steelhead'], services:['Guided wade trips','Float trips','Fly shop','Fly tying classes'] },
+  { id:'ausable-fly-shop', name:'AuSable Fly Shop', featured:false, rivers:['ausable'], county:'Crawford County', website:'https://ausablefly.com', species:['brown','rainbow'], services:['Fly shop','Guided trips'] },
+  { id:'muskegon-river-outfitters', name:'Muskegon River Outfitters', featured:false, rivers:['muskegon'], county:'Newaygo County', website:'https://muskegonriveroutfitters.com', species:['brown','rainbow','steelhead'], services:['Guided drift boat','Fly shop'] },
+  { id:'rusty-hook', name:'Rusty Hook Fly Fishing', featured:false, rivers:['ausable'], county:'Crawford County', website:'https://rustyhookflyfishing.com', species:['brown','rainbow'], services:['Guided trips'] },
+  { id:'baldwins', name:'Baldwin Bait & Tackle', featured:false, rivers:['pere-marquette'], county:'Lake County', website:'https://baldwinbaitandtackle.com', species:['brown','rainbow','steelhead'], services:['Tackle shop','Local reports'] },
+];
+
+loadDirectory();
+</script>
+</body>
+</html>
