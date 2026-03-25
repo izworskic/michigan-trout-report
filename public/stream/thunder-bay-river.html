@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thunder Bay River — Brown Trout & Steelhead Conditions</title>
+<meta name="description" content="Live Thunder Bay River conditions near Herron in Alpena County. Brown trout and Lake Huron steelhead in northeast Michigan. Updated daily.">
+<link rel="canonical" href="https://michigan-trout-report.vercel.app/stream/thunder-bay-river.html">
+<meta property="og:title" content="Thunder Bay River — Brown Trout & Steelhead Conditions">
+<meta property="og:description" content="Live Thunder Bay River conditions near Herron in Alpena County. Brown trout and Lake Huron steelhead in northeast Michigan. Updated daily.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://michigan-trout-report.vercel.app/stream/thunder-bay-river.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+  "@type": "Dataset",
+  "@id": "https://michigan-trout-report.vercel.app/stream/thunder-bay-river.html#dataset",
+  "name": "Thunder Bay River Trout Fishing Conditions",
+  "description": "Live Thunder Bay River conditions near Herron in Alpena County. Brown trout and Lake Huron steelhead in northeast Michigan. Updated daily.",
+  "url": "https://michigan-trout-report.vercel.app/stream/thunder-bay-river.html",
+  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"},
+  "keywords": ["Thunder Bay River", "Michigan trout fishing", "stream conditions", "fly fishing Michigan", "Northeast Lower Michigan"]
+}
+  ]
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.7; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 16px 20px; border-bottom: 3px solid #4a7c4a; }
+  .header-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-link { color: #7ab87a; font-size: 13px; text-decoration: none; }
+  .back-link:hover { color: #fff; }
+  .site-name { font-size: 16px; font-weight: normal; }
+  .header-nav { display: flex; gap: 14px; font-size: 13px; }
+  .header-nav a { color: #7ab87a; }
+  .header-nav a:hover { color: #fff; text-decoration: none; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  .river-hero { background: #fff; border-bottom: 1px solid #ddd8cc; padding: 28px 0 24px; }
+  .river-meta-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .region-badge { font-size: 12px; color: #888; font-style: italic; }
+  .type-badge { font-size: 11px; background: #f0ece4; color: #666; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: .5px; }
+  .river-h1 { font-size: 30px; font-weight: normal; color: #1a3a1a; margin-bottom: 10px; line-height: 1.3; }
+  .species-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .species-tag { font-size: 11px; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: .3px; }
+
+  .conditions-widget { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 16px 18px; margin-top: 18px; }
+  .widget-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 10px; }
+  .widget-loading { font-size: 13px; color: #aaa; font-style: italic; }
+  .widget-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .widget-emoji { font-size: 24px; }
+  .widget-label-text { font-size: 18px; font-weight: bold; }
+  .widget-tagline { font-size: 13px; opacity: .8; }
+  .widget-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+  .widget-stat { background: #fff; border-radius: 4px; padding: 8px 10px; border: 1px solid #e8e4dc; }
+  .widget-stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+  .widget-stat-value { font-size: 15px; color: #2c2c2c; }
+  .widget-stat-sub { font-size: 10px; color: #bbb; }
+  .flow-bar { background: #e8e4dc; border-radius: 3px; height: 5px; margin: 4px 0 2px; overflow: hidden; }
+  .flow-bar-fill { height: 100%; border-radius: 3px; }
+  .flow-bar-label { font-size: 10px; color: #bbb; }
+  .widget-actions { display: flex; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e8e4dc; }
+  .widget-btn { font-family: Georgia, serif; font-size: 12px; padding: 6px 14px; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; }
+  .widget-btn-primary { background: #1a3a1a; color: #fff; }
+  .widget-btn-primary:hover { background: #2c5f2d; text-decoration: none; }
+  .widget-btn-secondary { background: #f0ece4; color: #555; }
+  .widget-btn-secondary:hover { background: #e0dbd0; text-decoration: none; }
+
+  .content-section { background: #fff; margin-top: 1px; padding: 28px 0; border-bottom: 1px solid #e8e4dc; }
+  .content-section h2 { font-size: 20px; font-weight: normal; color: #1a3a1a; margin: 24px 0 12px; line-height: 1.35; }
+  .content-section h2:first-child { margin-top: 0; }
+  .content-section p { margin-bottom: 16px; font-size: 15px; color: #3a3a3a; }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .info-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 5px; padding: 14px 16px; }
+  .info-card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #aaa; margin-bottom: 6px; }
+  .info-card-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+  .faq-section { background: #fff; padding: 28px 0; border-bottom: 1px solid #e8e4dc; }
+  .faq-section h2 { font-size: 20px; font-weight: normal; color: #1a3a1a; margin-bottom: 18px; }
+  .faq-item { margin-bottom: 18px; border-bottom: 1px solid #f0ece4; padding-bottom: 18px; }
+  .faq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .faq-q { font-size: 16px; color: #1a3a1a; margin-bottom: 8px; font-weight: normal; }
+  .faq-a { font-size: 14px; color: #555; line-height: 1.7; }
+
+  .related-section { background: #fff; padding: 24px 0; border-bottom: 1px solid #e8e4dc; }
+  .related-section h2 { font-size: 14px; font-weight: normal; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 14px; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .related-link { font-size: 13px; padding: 6px 14px; background: #f5f2ec; border: 1px solid #ddd8cc; border-radius: 4px; color: #1a3a1a; text-decoration: none; }
+  .related-link:hover { background: #e8e4dc; text-decoration: none; }
+
+  .data-attribution { padding: 20px 0; font-size: 12px; color: #bbb; }
+  .data-attribution a { color: #999; }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; margin-top: 2px; }
+  .site-footer a { color: #4a7c4a; }
+
+  @media (max-width: 520px) {
+    .river-h1 { font-size: 23px; }
+    .widget-stats { grid-template-columns: 1fr 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+    .header-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <a href="/" class="back-link">← All Rivers</a>
+      <span class="site-name">Michigan Trout Report</span>
+    </div>
+    <nav class="header-nav">
+      <a href="/map.html">Stream Map</a>
+      <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Trout Guide</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="river-hero">
+    <div class="container">
+      <div class="river-meta-row">
+        <span class="region-badge">Northeast Lower Michigan</span>
+        <span class="type-badge">Freestone</span>
+      </div>
+      <h1 class="river-h1">Thunder Bay River Trout Fishing Conditions</h1>
+      <div class="species-row"><span class="species-tag" style="background:#fff3e0;color:#bf360c">Brown Trout</span><span class="species-tag" style="background:#f3e5f5;color:#6a1b9a">Steelhead</span></div>
+      <p style="font-size:15px;color:#555;max-width:640px;margin-bottom:0">The Thunder Bay River flows through Alpena County to Lake Huron at Alpena, offering brown trout in the upper reaches and Lake Huron steelhead in the lower river. An underutilized stream in northeast Michigan with good public access.</p>
+
+      <!-- Live Conditions Widget -->
+      <div class="conditions-widget" id="condWidget">
+        <div class="widget-label">Live Conditions — Updated Daily</div>
+        <div class="widget-loading" id="widgetContent">Loading USGS data...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="container">
+      
+<p>The Thunder Bay is northeast Michigan's primary trout river — a designation that comes partly by default given the region's lack of famous streams and partly because the river genuinely holds quality trout water in its upper reaches near Atlanta. Brown trout and some brook trout in the cold upper sections; steelhead entering from Lake Huron in the lower river near Alpena.</p>
+
+<p>The Thunder Bay River watershed near Atlanta and Herron is good base-camp fishing territory. The surrounding state forest provides public access and a remote character that contrasts with the more tourist-oriented northeast Michigan coast. Anglers from the Alpena area have excellent local access to both upper trout water and lower steelhead reaches.</p>
+    
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">Access Points</div>
+          <div class="info-card-text">Herron, Bolton, Atlanta area</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Regulations</div>
+          <div class="info-card-text">General trout. Lake Huron tributary steelhead rules apply.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <div class="related-section">
+    <div class="container">
+      <h2>Related Rivers</h2>
+      <div class="related-links">
+        <a href="/stream/ausable-river.html" class="related-link">AuSable River</a>
+<a href="/stream/rifle-river-michigan.html" class="related-link">Rifle River</a>
+<a href="/stream/au-gres-river.html" class="related-link">Au Gres River</a>
+        <a href="/" class="related-link">All Michigan Rivers →</a>
+        <a href="/map.html" class="related-link">Stream Map →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="container">
+      <div class="data-attribution">
+        Stream data from <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS Water Services</a>.
+        Access point data from <a href="https://gis-midnr.opendata.arcgis.com" target="_blank" rel="noopener">Michigan DNR GIS Open Data</a>.
+        For comprehensive Michigan trout stream information, see <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Chris Izworski's Michigan Trout Streams Guide</a>.
+        Current Michigan fishing regulations: <a href="https://www.michigan.gov/dnr/hunting-fishing/fishing/fishing-guide" target="_blank" rel="noopener">Michigan DNR Fishing Guide</a>.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  USGS data updated daily &nbsp;·&nbsp;
+  <a href="/">Michigan Trout Report</a> &nbsp;·&nbsp;
+  <a href="/map.html">Stream Map</a> &nbsp;·&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a> &nbsp;·&nbsp;
+  <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
+</footer>
+
+<script>
+const RATINGS = {
+  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
+  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
+  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
+  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off.' },
+  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home.' },
+};
+
+function flowBarColor(pct) {
+  if (!pct) return '#ccc';
+  if (pct > 200) return '#b71c1c';
+  if (pct > 150) return '#e65100';
+  if (pct > 120) return '#f9a825';
+  if (pct > 80)  return '#2e7d32';
+  if (pct > 50)  return '#558b2f';
+  return '#999';
+}
+
+async function loadConditions() {
+  const riverId = 'thunder-bay-river';
+  try {
+    const [riverResp, recResp] = await Promise.all([
+      fetch(`/api/river/${riverId}`),
+      fetch(`/api/recommend?id=${riverId}`),
+    ]);
+    const data   = riverResp.ok ? await riverResp.json() : null;
+    const recData = recResp.ok  ? await recResp.json()  : null;
+
+    if (!data?.success || !data.primaryConditions?.ratingKey) {
+      document.getElementById('widgetContent').innerHTML =
+        '<span style="color:#bbb;font-size:13px">No live data available for this river today. Check back tomorrow or <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" target="_blank" rel="noopener" style="color:#4a7c4a">check USGS directly</a>.</span>';
+      return;
+    }
+
+    const c   = data.primaryConditions;
+    const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+    const pct = c.flowPct;
+
+    let fliesHtml = '';
+    if (recData?.success && recData.recommendation) {
+      const flies = (recData.staticRec?.topFlies || []).slice(0, 4);
+      const flyTags = flies.map(f =>
+        `<span style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px">${f.name} #${f.sizes[0]}</span>`
+      ).join('');
+      fliesHtml = `
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e8e4dc">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">What to tie on today</div>
+          <div style="font-size:13px;color:#3a3a3a;margin-bottom:6px">${recData.recommendation}</div>
+          ${flyTags ? `<div>${flyTags}</div>` : ''}
+        </div>`;
+    }
+
+    document.getElementById('widgetContent').innerHTML = `
+      <div class="widget-rating" style="background:${rat.bg};border:1px solid ${rat.color}25;padding:10px 14px;border-radius:5px;margin-bottom:12px">
+        <span class="widget-emoji">${rat.emoji}</span>
+        <div>
+          <div class="widget-label-text" style="color:${rat.color}">${rat.label}</div>
+          <div class="widget-tagline" style="color:${rat.color}">${rat.tagline}</div>
+        </div>
+      </div>
+      <div class="widget-stats">
+        <div class="widget-stat">
+          <div class="widget-stat-label">Flow</div>
+          <div class="widget-stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
+          ${c.flowLabel ? `<div class="widget-stat-sub">${c.flowLabel}</div>` : ''}
+        </div>
+        <div class="widget-stat">
+          <div class="widget-stat-label">Water Temp</div>
+          <div class="widget-stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</div>
+          ${c.tempLabel ? `<div class="widget-stat-sub">${c.tempLabel}</div>` : ''}
+        </div>
+        <div class="widget-stat">
+          <div class="widget-stat-label">Gage Height</div>
+          <div class="widget-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
+          ${c.stats?.p50 ? `<div class="widget-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
+        </div>
+      </div>
+      ${pct ? `
+        <div class="flow-bar"><div class="flow-bar-fill" style="width:${Math.min(pct/2,100)}%;background:${flowBarColor(pct)}"></div></div>
+        <div class="flow-bar-label">${pct}% of seasonal median</div>` : ''}
+      ${fliesHtml}
+      <div class="widget-actions">
+        <a href="/river.html?id=${riverId}" class="widget-btn widget-btn-primary">Full report + all gauges →</a>
+        <a href="/map.html" class="widget-btn widget-btn-secondary">View on map</a>
+      </div>`;
+  } catch(e) {
+    document.getElementById('widgetContent').innerHTML =
+      '<span style="color:#bbb;font-size:13px">Unable to load live data right now.</span>';
+  }
+}
+
+loadConditions();
+</script>
+</body>
+</html>
