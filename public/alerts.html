@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michigan Trout Condition Alerts — Get Notified When Your Rivers Are Fishing</title>
+<meta name="description" content="Get email alerts when your Michigan trout rivers hit Prime or Fishing Well conditions. $19/year. Powered by live USGS data.">
+<link rel="canonical" href="https://michigan-trout-report.vercel.app/alerts.html">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.65; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 3px solid #4a7c4a; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-link { color: #7ab87a; font-size: 13px; }
+  .back-link:hover { color: #fff; text-decoration: none; }
+  .site-name { font-size: 16px; font-weight: normal; }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 0 16px; }
+
+  /* Hero */
+  .hero { background: #1a3a1a; color: #f0ede6; padding: 40px 0 36px; text-align: center; border-bottom: 3px solid #2c5f2d; }
+  .hero-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #7ab87a; margin-bottom: 12px; }
+  .hero h1 { font-size: 28px; font-weight: normal; margin-bottom: 12px; line-height: 1.3; }
+  .hero-sub { font-size: 15px; color: #a8c8a8; max-width: 480px; margin: 0 auto 24px; line-height: 1.65; }
+  .hero-price { font-size: 36px; color: #f0ede6; margin-bottom: 4px; }
+  .hero-price span { font-size: 16px; color: #7ab87a; }
+  .hero-price-note { font-size: 13px; color: #6a8a6a; }
+
+  /* How it works */
+  .how-section { background: #fff; padding: 32px 0; border-bottom: 1px solid #ddd8cc; }
+  .how-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin-bottom: 20px; text-align: center; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step { text-align: center; padding: 0 8px; }
+  .step-num { width: 32px; height: 32px; background: #1a3a1a; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; margin: 0 auto 10px; }
+  .step-title { font-size: 14px; color: #1a3a1a; margin-bottom: 5px; }
+  .step-desc { font-size: 12px; color: #888; line-height: 1.55; }
+
+  /* Signup form */
+  .signup-section { background: #fff; padding: 32px 0; border-bottom: 1px solid #ddd8cc; }
+  .form-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 24px; }
+  .form-title { font-size: 18px; color: #1a3a1a; margin-bottom: 20px; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label { font-size: 13px; color: #555; display: block; margin-bottom: 6px; }
+  .form-input { width: 100%; font-family: Georgia, serif; font-size: 14px; padding: 9px 12px; border: 1px solid #ddd; border-radius: 4px; background: #fff; color: #2c2c2c; outline: none; transition: border-color .15s; }
+  .form-input:focus { border-color: #4a7c4a; }
+  .form-hint { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+  /* River selector */
+  .river-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .river-checkbox { display: none; }
+  .river-label {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;
+    background: #fff; cursor: pointer; font-size: 13px; color: #444;
+    transition: all .12s; user-select: none;
+  }
+  .river-label:hover { border-color: #4a7c4a; background: #f5f2ec; }
+  .river-checkbox:checked + .river-label { background: #1a3a1a; color: #fff; border-color: #1a3a1a; }
+  .river-check-icon { width: 14px; height: 14px; border: 1.5px solid #ccc; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .river-checkbox:checked + .river-label .river-check-icon { border-color: #4a7c4a; background: #4a7c4a; color: #fff; }
+  .river-region { font-size: 10px; opacity: .6; display: block; }
+  .selected-count { font-size: 12px; color: #4a7c4a; margin-top: 8px; font-style: italic; }
+
+  /* Submit */
+  .form-submit { margin-top: 22px; }
+  .btn-submit {
+    width: 100%; font-family: Georgia, serif; font-size: 15px;
+    padding: 13px 20px; background: #1a3a1a; color: #fff;
+    border: none; border-radius: 4px; cursor: pointer;
+    transition: background .15s; letter-spacing: .3px;
+  }
+  .btn-submit:hover { background: #2c5f2d; }
+  .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+  .form-secure { font-size: 11px; color: #bbb; text-align: center; margin-top: 8px; }
+
+  .form-error { font-size: 13px; color: #c0392b; background: #fdf0ee; border: 1px solid #e8bbb5; border-radius: 4px; padding: 10px 14px; margin-top: 12px; display: none; }
+  .form-error.visible { display: block; }
+
+  /* What triggers an alert */
+  .conditions-explainer { background: #fff; padding: 28px 0; border-bottom: 1px solid #ddd8cc; }
+  .explainer-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin-bottom: 16px; }
+  .conditions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .condition-item { padding: 12px 14px; border-radius: 5px; border: 1px solid transparent; }
+  .condition-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .condition-emoji { font-size: 18px; }
+  .condition-name { font-size: 15px; font-weight: bold; }
+  .condition-tagline { font-size: 12px; opacity: .8; }
+  .condition-desc { font-size: 12px; color: #666; line-height: 1.5; margin-top: 4px; }
+  .condition-alert { font-size: 11px; font-weight: bold; margin-top: 6px; }
+
+  /* FAQ */
+  .faq-section { background: #fff; padding: 28px 0; border-bottom: 1px solid #ddd8cc; }
+  .faq-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin-bottom: 18px; }
+  .faq-item { margin-bottom: 16px; }
+  .faq-q { font-size: 15px; color: #1a3a1a; margin-bottom: 5px; }
+  .faq-a { font-size: 13px; color: #555; line-height: 1.65; }
+
+  /* Success / Error states */
+  .status-card { background: #fff; border-radius: 6px; padding: 32px; text-align: center; margin: 32px 0; }
+  .status-card.success { border: 2px solid #4a7c4a; }
+  .status-card.error { border: 2px solid #c0392b; }
+  .status-emoji { font-size: 40px; margin-bottom: 14px; }
+  .status-title { font-size: 20px; color: #1a3a1a; margin-bottom: 10px; }
+  .status-body { font-size: 14px; color: #555; line-height: 1.65; }
+
+  /* Unsubscribe */
+  .unsub-section { background: #fff; padding: 32px 0; }
+  .unsub-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 24px; text-align: center; }
+  .unsub-title { font-size: 16px; color: #1a3a1a; margin-bottom: 10px; }
+  .unsub-sub { font-size: 13px; color: #666; margin-bottom: 18px; }
+  .btn-unsub { font-family: Georgia, serif; font-size: 13px; padding: 9px 20px; background: #c0392b; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+  .btn-unsub:hover { background: #a93226; }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; }
+  .site-footer a { color: #4a7c4a; }
+
+  @media (max-width: 500px) {
+    .steps { grid-template-columns: 1fr; }
+    .conditions-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 22px; }
+    .hero-price { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <a href="/" class="back-link">← All Rivers</a>
+    <span class="site-name">Michigan Trout Report</span>
+  </div>
+</header>
+
+<!-- Success / Cancel / Unsubscribe screens handled by JS -->
+<div id="statusScreen" style="display:none">
+  <div class="container" style="padding:32px 16px">
+    <div class="status-card" id="statusCard">
+      <div class="status-emoji" id="statusEmoji"></div>
+      <div class="status-title" id="statusTitle"></div>
+      <div class="status-body" id="statusBody"></div>
+      <div style="margin-top:20px">
+        <a href="/" style="font-size:13px;color:#2c5f2d">← Check today's conditions</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div id="mainContent">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">Premium Condition Alerts</div>
+      <h1>Know Before You Drive.<br>Fish When It's Right.</h1>
+      <p class="hero-sub">Get an email when your rivers hit Prime or Fishing Well conditions — before you load the truck. Powered by live USGS data, checked every morning.</p>
+      <div class="hero-price">$19 <span>/year</span></div>
+      <div class="hero-price-note">One flat annual rate. Cancel anytime.</div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-section">
+    <div class="container">
+      <div class="how-title">How It Works</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-title">Pick your rivers</div>
+          <div class="step-desc">Choose up to 8 Michigan trout streams you fish regularly.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-title">We check daily</div>
+          <div class="step-desc">Every morning at 8am CT, we pull live USGS flow and temperature data for your rivers.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-title">You get the email</div>
+          <div class="step-desc">Only when your rivers hit Prime or Fishing Well. No alerts on bad days.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup form -->
+  <div class="signup-section">
+    <div class="container">
+      <div class="form-card">
+        <div class="form-title">Set Up Your Alerts</div>
+
+        <div class="form-group">
+          <label class="form-label" for="emailInput">Your email address</label>
+          <input type="email" id="emailInput" class="form-input" placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select your rivers <span style="color:#bbb;font-style:italic">(pick up to 8)</span></label>
+          <div class="river-grid" id="riverGrid"></div>
+          <div class="selected-count" id="selectedCount">0 rivers selected</div>
+        </div>
+
+        <div class="form-submit">
+          <button class="btn-submit" id="submitBtn" disabled onclick="startCheckout()">
+            Get Alerts — $19/year →
+          </button>
+          <div class="form-secure">🔒 Secure checkout via Stripe. No card stored on our servers.</div>
+          <div class="form-error" id="formError"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What triggers an alert -->
+  <div class="conditions-explainer">
+    <div class="container">
+      <div class="explainer-title">What Triggers an Alert</div>
+      <div class="conditions-grid">
+        <div class="condition-item" style="background:#e8f5e9;border-color:#c8e6c9">
+          <div class="condition-rating">
+            <span class="condition-emoji">🎣</span>
+            <span class="condition-name" style="color:#2e7d32">Prime</span>
+          </div>
+          <div class="condition-tagline" style="color:#2e7d32">Drop everything and go.</div>
+          <div class="condition-desc">Normal flow, prime temperature range, no concerns.</div>
+          <div class="condition-alert" style="color:#2e7d32">✓ Sends an alert</div>
+        </div>
+        <div class="condition-item" style="background:#f1f8e9;border-color:#dce9c8">
+          <div class="condition-rating">
+            <span class="condition-emoji">✅</span>
+            <span class="condition-name" style="color:#558b2f">Fishing Well</span>
+          </div>
+          <div class="condition-tagline" style="color:#558b2f">Worth the drive.</div>
+          <div class="condition-desc">Good conditions, minor caveats, fish are active.</div>
+          <div class="condition-alert" style="color:#558b2f">✓ Sends an alert</div>
+        </div>
+        <div class="condition-item" style="background:#fffde7;border-color:#f5e879">
+          <div class="condition-rating">
+            <span class="condition-emoji">🟡</span>
+            <span class="condition-name" style="color:#f9a825">Fair</span>
+          </div>
+          <div class="condition-tagline" style="color:#f9a825">Fishable. Pick your spots.</div>
+          <div class="condition-desc">Elevated or low water, some challenge involved.</div>
+          <div class="condition-alert" style="color:#bbb">— No alert</div>
+        </div>
+        <div class="condition-item" style="background:#fff3e0;border-color:#ffcc80">
+          <div class="condition-rating">
+            <span class="condition-emoji">🟠</span>
+            <span class="condition-name" style="color:#e65100">Tough / Blown Out</span>
+          </div>
+          <div class="condition-tagline" style="color:#e65100">Stay home.</div>
+          <div class="condition-desc">High water, thermal stress, or dangerous wading.</div>
+          <div class="condition-alert" style="color:#bbb">— No alert</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <div class="container">
+      <div class="faq-title">Questions</div>
+      <div class="faq-item">
+        <div class="faq-q">How often do alerts send?</div>
+        <div class="faq-a">Once per day, after the 8am CT data pull. If your rivers are fishing well on Tuesday, you get one email Tuesday morning. We only send when conditions are worth your attention — no noise.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if my river doesn't have live data?</div>
+        <div class="faq-a">Alerts only fire when we have actual USGS gauge data for your river. Rivers without live sensors won't generate alerts — they'll still appear on the site but won't trigger notifications until data becomes available.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I change my rivers after subscribing?</div>
+        <div class="faq-a">Email chris@chrisizworski.com with your subscription email and your updated river list. We'll update it same day at no charge.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How do I cancel?</div>
+        <div class="faq-a">Click the unsubscribe link in any alert email, or email chris@chrisizworski.com. No questions asked. Your subscription won't auto-renew without action — you'll get a reminder email before the year ends.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this really $19/year flat?</div>
+        <div class="faq-a">Yes. One payment, one year, up to 8 rivers. No monthly fee, no per-alert charge, no upsell. The goal is to make this genuinely useful and affordable for anglers who fish Michigan regularly.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /mainContent -->
+
+<!-- Unsubscribe section (shown when ?unsubscribe= in URL) -->
+<div id="unsubSection" style="display:none">
+  <div class="unsub-section">
+    <div class="container">
+      <div class="unsub-card">
+        <div class="unsub-title">Unsubscribe from Condition Alerts</div>
+        <div class="unsub-sub" id="unsubEmail"></div>
+        <button class="btn-unsub" id="unsubBtn" onclick="doUnsubscribe()">Yes, unsubscribe me</button>
+        <div style="margin-top:14px"><a href="/alerts.html" style="font-size:13px;color:#888">Cancel — keep my alerts</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <a href="/">Michigan Trout Report</a> &nbsp;·&nbsp;
+  <a href="/map.html">Stream Map</a> &nbsp;·&nbsp;
+  <a href="/directory.html">Guide Directory</a> &nbsp;·&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>
+</footer>
+
+<script>
+const RIVERS = [
+  { id:'ausable',           name:'AuSable River',          region:'NLP' },
+  { id:'manistee',          name:'Manistee River',          region:'NLP' },
+  { id:'pere-marquette',    name:'Pere Marquette',          region:'NLP' },
+  { id:'muskegon',          name:'Muskegon River',          region:'NLP' },
+  { id:'boardman',          name:'Boardman River',          region:'NLP' },
+  { id:'jordan',            name:'Jordan River',            region:'NLP' },
+  { id:'pigeon',            name:'Pigeon River',            region:'NLP' },
+  { id:'little-manistee',   name:'Little Manistee',         region:'NLP' },
+  { id:'pine-river',        name:'Pine River',              region:'NLP' },
+  { id:'betsie-river',      name:'Betsie River',            region:'NLP' },
+  { id:'platte-river',      name:'Platte River',            region:'NLP' },
+  { id:'rifle-river',       name:'Rifle River',             region:'NLP' },
+  { id:'sturgeon-river-nlp',name:'Sturgeon River',          region:'NLP' },
+  { id:'rogue-river',       name:'Rogue River',             region:'WLP' },
+  { id:'white-river',       name:'White River',             region:'WLP' },
+  { id:'looking-glass-river',name:'Looking Glass River',    region:'CLP' },
+  { id:'tahquamenon-river', name:'Tahquamenon River',       region:'UP'  },
+  { id:'black-river-up',    name:'Black River (UP)',        region:'UP'  },
+  { id:'paint-river',       name:'Paint River',             region:'UP'  },
+  { id:'au-train-river',    name:'Au Train River',          region:'UP'  },
+];
+
+const MAX_RIVERS = 8;
+let _selectedRivers = new Set();
+
+function renderRiverGrid() {
+  const grid = document.getElementById('riverGrid');
+  grid.innerHTML = RIVERS.map(r => `
+    <div>
+      <input type="checkbox" class="river-checkbox" id="r_${r.id}" value="${r.id}" onchange="toggleRiver('${r.id}')">
+      <label class="river-label" for="r_${r.id}">
+        <div class="river-check-icon" id="check_${r.id}"></div>
+        <div>
+          <div>${r.name}</div>
+          <span class="river-region">${r.region}</span>
+        </div>
+      </label>
+    </div>`).join('');
+}
+
+function toggleRiver(id) {
+  const cb = document.getElementById(`r_${id}`);
+  const icon = document.getElementById(`check_${id}`);
+  if (cb.checked) {
+    if (_selectedRivers.size >= MAX_RIVERS) {
+      cb.checked = false;
+      showError(`Maximum ${MAX_RIVERS} rivers per subscription.`);
+      return;
+    }
+    _selectedRivers.add(id);
+    icon.textContent = '✓';
+  } else {
+    _selectedRivers.delete(id);
+    icon.textContent = '';
+  }
+  updateState();
+}
+
+function updateState() {
+  const n = _selectedRivers.size;
+  document.getElementById('selectedCount').textContent =
+    n === 0 ? '0 rivers selected'
+    : n === 1 ? '1 river selected'
+    : `${n} rivers selected`;
+
+  const email = document.getElementById('emailInput').value.trim();
+  const valid = email.includes('@') && n > 0;
+  document.getElementById('submitBtn').disabled = !valid;
+  document.getElementById('submitBtn').textContent = valid
+    ? `Get Alerts for ${n} river${n > 1 ? 's' : ''} — $19/year →`
+    : 'Get Alerts — $19/year →';
+}
+
+document.getElementById('emailInput').addEventListener('input', updateState);
+
+function showError(msg) {
+  const el = document.getElementById('formError');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+function clearError() {
+  document.getElementById('formError').classList.remove('visible');
+}
+
+async function startCheckout() {
+  clearError();
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email.includes('@')) { showError('Please enter a valid email address.'); return; }
+  if (_selectedRivers.size === 0) { showError('Please select at least one river.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Connecting to checkout...';
+
+  try {
+    const resp = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, rivers: [..._selectedRivers] }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.url) {
+      throw new Error(data.error || 'Checkout unavailable');
+    }
+    window.location.href = data.url;
+  } catch(e) {
+    showError(`Couldn't start checkout: ${e.message}. Email chris@chrisizworski.com to subscribe manually.`);
+    btn.disabled = false;
+    updateState();
+  }
+}
+
+// ── Handle URL params ─────────────────────────────────────────────────────
+
+function handleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+  const unsubEmail = params.get('unsubscribe');
+
+  if (status === 'success') {
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('statusScreen').style.display = 'block';
+    document.getElementById('statusCard').classList.add('success');
+    document.getElementById('statusEmoji').textContent = '🎣';
+    document.getElementById('statusTitle').textContent = 'Alerts activated.';
+    document.getElementById('statusBody').innerHTML = 'Welcome email is on its way. We\'ll send you a notification the next time any of your rivers hit Prime or Fishing Well conditions — no noise, just signal.<br><br>Check today\'s conditions while you wait.';
+    return;
+  }
+
+  if (status === 'cancel') {
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('statusScreen').style.display = 'block';
+    document.getElementById('statusCard').classList.add('error');
+    document.getElementById('statusEmoji').textContent = '↩';
+    document.getElementById('statusTitle').textContent = 'Payment cancelled.';
+    document.getElementById('statusBody').innerHTML = 'No charge was made. You can <a href="/alerts.html">try again</a> or <a href="/">check current conditions</a>.';
+    return;
+  }
+
+  if (unsubEmail) {
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('unsubSection').style.display = 'block';
+    document.getElementById('unsubEmail').textContent = `Unsubscribe ${unsubEmail} from condition alerts?`;
+    document.getElementById('unsubBtn').dataset.email = unsubEmail;
+    return;
+  }
+}
+
+async function doUnsubscribe() {
+  const email = document.getElementById('unsubBtn').dataset.email;
+  document.getElementById('unsubBtn').disabled = true;
+  document.getElementById('unsubBtn').textContent = 'Unsubscribing...';
+  try {
+    await fetch(`/api/alerts-manage?action=unsubscribe&email=${encodeURIComponent(email)}`);
+  } catch(e) {}
+  document.getElementById('unsubSection').style.display = 'none';
+  document.getElementById('statusScreen').style.display = 'block';
+  document.getElementById('statusCard').classList.add('success');
+  document.getElementById('statusEmoji').textContent = '✓';
+  document.getElementById('statusTitle').textContent = 'Unsubscribed.';
+  document.getElementById('statusBody').textContent = `${email} has been removed from condition alerts. No further emails will be sent.`;
+}
+
+renderRiverGrid();
+handleUrlParams();
+</script>
+</body>
+</html>
