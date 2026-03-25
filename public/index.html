@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Michigan Trout Report — Daily Stream Conditions</title>
-<meta name="description" content="Daily Michigan trout stream conditions: AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Pigeon, Rifle, and Little Manistee. Powered by USGS live data.">
+<title>Michigan Trout Report — Daily Stream Conditions, All Rivers</title>
+<meta name="description" content="Live Michigan trout stream conditions for 40+ rivers and streams. AuSable, Manistee, Pere Marquette, Upper Peninsula brook trout streams and more. Powered by USGS data, updated daily.">
 <link rel="canonical" href="https://michigan-trout-report.vercel.app/">
-<meta property="og:title" content="Michigan Trout Report — Daily Stream Conditions">
-<meta property="og:description" content="Live USGS stream data interpreted for Michigan trout anglers. Updated daily.">
+<meta property="og:title" content="Michigan Trout Report — Where to Fish Today">
+<meta property="og:description" content="Live USGS conditions for 40+ Michigan trout streams. Find out where the fish are biting right now.">
 <meta property="og:type" content="website">
 <script type="application/ld+json">
 {
@@ -17,47 +17,16 @@
       "@type": "Dataset",
       "@id": "https://michigan-trout-report.vercel.app/#dataset",
       "name": "Michigan Trout Report — Live Stream Conditions",
-      "description": "Daily live stream conditions for nine Michigan trout rivers: AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Pigeon, Rifle, and Little Manistee. Data includes USGS flow (cfs), water temperature, gage height, dissolved oxygen, and turbidity with NWS weather forecasts and AI fly fishing recommendations.",
+      "description": "Daily live stream conditions for 40+ Michigan trout rivers covering the Upper Peninsula, Northern Lower Peninsula, Western Lower Peninsula, and Central Lower Michigan. Data includes USGS flow, water temperature, gage height, dissolved oxygen, and turbidity with AI fly fishing recommendations.",
       "url": "https://michigan-trout-report.vercel.app/",
-      "creator": {
-        "@type": "Person",
-        "name": "Chris Izworski",
-        "url": "https://chrisizworski.com",
-        "sameAs": "https://freighterviewfarms.com"
-      },
-      "spatialCoverage": {
-        "@type": "Place",
-        "name": "Michigan Lower Peninsula Trout Rivers",
-        "geo": {
-          "@type": "GeoShape",
-          "description": "AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Pigeon, Rifle, and Little Manistee rivers, Michigan"
-        }
-      },
-      "temporalCoverage": "2026/..",
-      "updateFrequency": "Daily — USGS data updated every 15 minutes, AI brief generated each morning",
-      "variableMeasured": [
-        { "@type": "PropertyValue", "name": "Stream Flow", "unitCode": "CFS", "description": "Cubic feet per second from USGS gauges" },
-        { "@type": "PropertyValue", "name": "Water Temperature", "unitCode": "FAH", "description": "Degrees Fahrenheit from in-stream USGS sensors" },
-        { "@type": "PropertyValue", "name": "Turbidity", "unitCode": "FNU", "description": "Formazin Nephelometric Units from USGS optical sensors" },
-        { "@type": "PropertyValue", "name": "Dissolved Oxygen", "unitCode": "mg/L", "description": "Milligrams per liter from USGS sensors" },
-        { "@type": "PropertyValue", "name": "Gage Height", "unitCode": "FT", "description": "Stream gage height in feet" },
-        { "@type": "PropertyValue", "name": "Conditions Rating", "description": "Five-level fishing conditions scale: Prime / Fishing Well / Fair / Tough / Blown Out" }
-      ],
-      "measurementTechnique": "USGS National Water Information System (NWIS) instantaneous values API; NOAA National Weather Service gridded forecast API; 48-hour sensor staleness check applied",
-      "distribution": {
-        "@type": "DataDownload",
-        "encodingFormat": "application/json",
-        "contentUrl": "https://michigan-trout-report.vercel.app/api/generate",
-        "description": "JSON API returning live conditions for all nine rivers"
-      },
-      "keywords": ["Michigan trout fishing", "AuSable River", "Manistee River", "Pere Marquette River", "stream conditions", "USGS water data", "fly fishing Michigan", "trout stream flow"]
+      "creator": { "@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com" },
+      "keywords": ["Michigan trout fishing", "AuSable River", "Upper Peninsula trout", "brook trout Michigan", "stream conditions", "fly fishing Michigan"]
     },
     {
       "@type": "WebSite",
       "@id": "https://michigan-trout-report.vercel.app/#website",
       "name": "Michigan Trout Report",
-      "url": "https://michigan-trout-report.vercel.app/",
-      "creator": { "@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com" }
+      "url": "https://michigan-trout-report.vercel.app/"
     }
   ]
 }
@@ -76,86 +45,247 @@
   .site-header {
     background: #1a3a1a;
     color: #f0ede6;
-    padding: 24px 20px 20px;
+    padding: 20px 20px 16px;
     text-align: center;
     border-bottom: 3px solid #4a7c4a;
   }
   .site-header h1 {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: normal;
     letter-spacing: 1px;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
   .site-header .tagline {
-    font-size: 14px;
+    font-size: 13px;
     color: #a8c8a8;
-    letter-spacing: .5px;
+    letter-spacing: .4px;
   }
   .site-header .last-updated {
-    font-size: 12px;
-    color: #7a9a7a;
-    margin-top: 8px;
+    font-size: 11px;
+    color: #6a8a6a;
+    margin-top: 6px;
     font-style: italic;
   }
 
   /* ── Layout ── */
   .container {
-    max-width: 960px;
+    max-width: 1040px;
     margin: 0 auto;
     padding: 0 16px;
   }
 
-  /* ── Legend ── */
-  .legend {
-    background: #fff;
-    border-bottom: 1px solid #ddd8cc;
-    padding: 12px 0;
-  }
-  .legend-inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 20px;
-    align-items: center;
+  /* ── Season banner ── */
+  .season-banner {
+    background: #fff8e1;
+    border-bottom: 1px solid #e6c84a;
+    padding: 9px 0;
     font-size: 13px;
-  }
-  .legend-label { color: #666; font-style: italic; margin-right: 4px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-dot {
-    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+    color: #5a4a00;
+    text-align: center;
   }
 
-  /* ── Lead brief ── */
+  /* ── HERO: Best Streams Now ── */
+  .hero-section {
+    background: #1a3a1a;
+    border-bottom: 3px solid #2c5f2d;
+    padding: 20px 0 22px;
+    color: #f0ede6;
+  }
+  .hero-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #7ab87a;
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-size: 22px;
+    font-weight: normal;
+    margin-bottom: 4px;
+  }
+  .hero-subtitle {
+    font-size: 13px;
+    color: #8ab88a;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+  .hero-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .hero-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background .15s;
+    text-decoration: none;
+    display: block;
+  }
+  .hero-card:hover { background: rgba(255,255,255,0.12); }
+  .hero-card-rank {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #7ab87a;
+    margin-bottom: 4px;
+  }
+  .hero-card-name {
+    font-size: 17px;
+    color: #f0ede6;
+    margin-bottom: 2px;
+  }
+  .hero-card-region {
+    font-size: 11px;
+    color: #8ab88a;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .hero-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .hero-rating-emoji { font-size: 18px; }
+  .hero-rating-label { font-size: 15px; font-weight: bold; }
+  .hero-rating-tagline { font-size: 11px; opacity: .75; }
+  .hero-card-stats {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: #a8c8a8;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .hero-stat-item span { color: rgba(255,255,255,0.45); font-size: 10px; display: block; text-transform: uppercase; letter-spacing: .5px; }
+  .hero-species-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .hero-species-tag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+  }
+  .hero-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px;
+    color: #7ab87a;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  /* ── AI Brief ── */
   .brief-section {
     background: #fff;
     border-bottom: 1px solid #ddd8cc;
-    padding: 20px 0;
+    padding: 16px 0;
   }
-  .brief-inner {
-    max-width: 720px;
-  }
+  .brief-inner { max-width: 720px; }
   .brief-inner h2 {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: normal;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: #888;
-    margin-bottom: 10px;
+    color: #999;
+    margin-bottom: 8px;
   }
   .brief-text {
-    font-size: 15px;
+    font-size: 14px;
     color: #3a3a3a;
     line-height: 1.7;
   }
 
-  /* ── River cards grid ── */
-  .rivers-section { padding: 24px 0 40px; }
+  /* ── Legend + Filters ── */
+  .controls-section {
+    background: #fff;
+    border-bottom: 1px solid #ddd8cc;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .controls-inner {
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    font-size: 12px;
+  }
+  .legend-label { color: #888; font-style: italic; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .filter-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: .8px; margin-right: 2px; }
+  .filter-btn {
+    font-family: Georgia, serif;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: #f9f6f0;
+    color: #666;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .filter-btn.active {
+    background: #1a3a1a;
+    color: #fff;
+    border-color: #1a3a1a;
+  }
+  .filter-btn:hover:not(.active) { background: #f0ece4; }
+
+  /* ── River Grid ── */
+  .rivers-section { padding: 20px 0 48px; }
+  .region-group { margin-bottom: 32px; }
+  .region-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8e4dc;
+  }
+  .region-header h2 {
+    font-size: 14px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+  }
+  .region-count {
+    font-size: 11px;
+    color: #bbb;
+    font-style: italic;
+  }
   .rivers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 14px;
   }
 
-  /* ── River card ── */
+  /* ── River Card ── */
   .river-card {
     background: #fff;
     border: 1px solid #ddd8cc;
@@ -164,138 +294,151 @@
     transition: box-shadow .15s;
     cursor: pointer;
   }
-  .river-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .river-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.09); }
+  .river-card.hidden { display: none; }
 
   .card-header {
-    padding: 14px 16px 10px;
+    padding: 12px 14px 8px;
     border-bottom: 1px solid #f0ece4;
   }
+  .card-top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
   .card-river-name {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: normal;
     color: #1a3a1a;
-    margin-bottom: 2px;
   }
   .card-region {
-    font-size: 12px;
-    color: #999;
+    font-size: 11px;
+    color: #bbb;
     font-style: italic;
+    margin-bottom: 6px;
+  }
+  .species-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .species-tag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .species-brook   { background: #e8f5e9; color: #1b5e20; }
+  .species-brown   { background: #fff3e0; color: #e65100; }
+  .species-rainbow { background: #e3f2fd; color: #0d47a1; }
+  .species-steelhead { background: #f3e5f5; color: #6a1b9a; }
+  .tier-badge {
+    font-size: 10px;
+    color: #ccc;
+    font-style: italic;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-top: 2px;
   }
 
   .card-rating {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
+    gap: 8px;
+    padding: 10px 14px;
     border-bottom: 1px solid #f0ece4;
-  }
-  .rating-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 15px;
-    font-weight: normal;
   }
   .rating-emoji { font-size: 18px; }
-  .rating-label { font-weight: bold; }
-  .rating-tagline {
-    font-size: 12px;
-    color: #888;
-    font-style: italic;
-  }
+  .rating-label { font-weight: bold; font-size: 14px; }
+  .rating-tagline { font-size: 11px; color: #999; font-style: italic; }
 
   .card-stats {
-    padding: 10px 16px;
+    padding: 8px 14px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 5px 10px;
     border-bottom: 1px solid #f0ece4;
   }
-  .stat-item { font-size: 13px; }
-  .stat-label { color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; display: block; }
-  .stat-value { color: #2c2c2c; font-size: 14px; }
-  .stat-sub { color: #aaa; font-size: 11px; }
+  .stat-item { font-size: 12px; }
+  .stat-label { color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; display: block; }
+  .stat-value { color: #2c2c2c; font-size: 13px; }
+  .stat-sub { color: #bbb; font-size: 10px; }
 
   .flow-bar-wrap {
-    padding: 8px 16px 10px;
+    padding: 6px 14px 8px;
     border-bottom: 1px solid #f0ece4;
   }
-  .flow-bar-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
-  .flow-bar-track {
-    background: #f0ece4;
-    border-radius: 4px;
-    height: 6px;
-    overflow: hidden;
-  }
-  .flow-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width .3s ease;
-  }
-  .flow-bar-pct { font-size: 11px; color: #999; margin-top: 3px; }
+  .flow-bar-label { font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
+  .flow-bar-track { background: #f0ece4; border-radius: 3px; height: 5px; overflow: hidden; }
+  .flow-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+  .flow-bar-pct { font-size: 10px; color: #bbb; margin-top: 2px; }
 
   .card-note {
-    padding: 10px 16px 14px;
-    font-size: 13px;
-    color: #555;
+    padding: 8px 14px 10px;
+    font-size: 12px;
+    color: #666;
     line-height: 1.55;
     font-style: italic;
   }
+  .card-tap-hint {
+    font-size: 10px;
+    color: #ccc;
+    padding: 4px 14px 10px;
+    text-align: right;
+  }
 
-  /* ── Loading / Error ── */
+  /* ── No data state ── */
+  .no-gauge-state {
+    padding: 12px 14px 14px;
+    font-size: 12px;
+    color: #aaa;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ── Loading/Error ── */
   .loading-state {
     text-align: center;
-    padding: 60px 20px;
-    color: #888;
+    padding: 50px 20px;
+    color: #aaa;
     font-style: italic;
+    grid-column: 1 / -1;
   }
   .loading-spinner {
     display: inline-block;
-    width: 28px; height: 28px;
-    border: 3px solid #ddd;
+    width: 26px; height: 26px;
+    border: 3px solid #eee;
     border-top-color: #4a7c4a;
     border-radius: 50%;
     animation: spin .8s linear infinite;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── Footer ── */
   .site-footer {
     border-top: 1px solid #ddd8cc;
-    padding: 20px;
+    padding: 18px 20px;
     text-align: center;
     font-size: 12px;
-    color: #aaa;
+    color: #bbb;
     background: #fff;
   }
   .site-footer a { color: #4a7c4a; text-decoration: none; }
   .site-footer a:hover { text-decoration: underline; }
 
-  /* ── Season banner ── */
-  .season-banner {
-    background: #fff3cd;
-    border-bottom: 1px solid #e6c84a;
-    padding: 10px 0;
-    font-size: 13px;
-    color: #5a4a00;
-    text-align: center;
-  }
-
-  @media (max-width: 480px) {
-    .site-header h1 { font-size: 22px; }
-    .rivers-grid { grid-template-columns: 1fr; }
-    .legend-inner { gap: 8px 14px; }
-  }
-
   /* ── Modal ── */
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,.5);
+    background: rgba(0,0,0,.55);
     z-index: 1000;
     overflow-y: auto;
-    padding: 24px 16px;
+    padding: 20px 14px;
   }
   .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
   .modal-box {
@@ -303,115 +446,167 @@
     border-radius: 8px;
     max-width: 680px;
     width: 100%;
-    box-shadow: 0 8px 40px rgba(0,0,0,.25);
+    box-shadow: 0 8px 40px rgba(0,0,0,.28);
     overflow: hidden;
     margin: auto;
   }
   .modal-header {
-    background: #1a3a1a;
-    color: #f0ede6;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: #1a3a1a; color: #f0ede6;
+    padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .modal-title { font-size: 18px; font-weight: normal; }
+  .modal-title { font-size: 17px; font-weight: normal; }
   .modal-close {
     background: none; border: none; color: #a8c8a8;
-    font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1;
+    font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1;
   }
   .modal-close:hover { color: #fff; }
-  .modal-body { padding: 20px; }
+  .modal-body { padding: 18px; }
   .modal-rating {
     display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px; border-radius: 5px; margin-bottom: 16px;
+    padding: 12px 14px; border-radius: 5px; margin-bottom: 14px;
   }
-  .modal-rating-emoji { font-size: 28px; }
-  .modal-rating-label { font-size: 20px; font-weight: bold; }
-  .modal-rating-tagline { font-size: 13px; opacity: .85; }
+  .modal-rating-emoji { font-size: 26px; }
+  .modal-rating-label { font-size: 18px; font-weight: bold; }
+  .modal-rating-tagline { font-size: 12px; opacity: .85; }
   .modal-stats {
     display: grid; grid-template-columns: 1fr 1fr 1fr;
     gap: 10px; margin-bottom: 14px;
   }
   .modal-stat { background: #f9f6f0; border-radius: 4px; padding: 10px 12px; }
-  .modal-stat-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
-  .modal-stat-value { font-size: 16px; color: #2c2c2c; }
-  .modal-stat-sub { font-size: 11px; color: #aaa; }
-  .modal-flow-bar { background: #f0ece4; border-radius: 4px; height: 6px; margin-bottom: 4px; overflow: hidden; }
+  .modal-stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+  .modal-stat-value { font-size: 15px; color: #2c2c2c; }
+  .modal-stat-sub { font-size: 10px; color: #bbb; }
+  .modal-flow-bar { background: #f0ece4; border-radius: 4px; height: 5px; margin-bottom: 3px; overflow: hidden; }
   .modal-flow-fill { height: 100%; border-radius: 4px; }
-  .modal-flow-label { font-size: 12px; color: #aaa; margin-bottom: 14px; }
-  .modal-brief { font-size: 14px; color: #555; line-height: 1.65; border-top: 1px solid #f0ece4; padding-top: 14px; font-style: italic; }
+  .modal-flow-label { font-size: 11px; color: #bbb; margin-bottom: 14px; }
+  .modal-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 8px; }
+  .modal-access { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 8px; }
+  .modal-regs { font-size: 12px; color: #888; font-style: italic; line-height: 1.55; }
+  .modal-brief { font-size: 13px; color: #555; line-height: 1.65; border-top: 1px solid #f0ece4; padding-top: 14px; font-style: italic; }
   .modal-actions {
-    display: flex; gap: 10px; margin-top: 18px;
+    display: flex; gap: 10px; margin-top: 16px;
     padding-top: 14px; border-top: 1px solid #f0ece4;
   }
   .modal-btn-full {
     display: inline-block; background: #1a3a1a; color: #fff;
-    padding: 9px 18px; border-radius: 4px; font-size: 13px;
-    text-decoration: none; letter-spacing: .3px;
+    padding: 8px 16px; border-radius: 4px; font-size: 12px;
+    text-decoration: none;
   }
-  .modal-btn-full:hover { background: #2c5f2d; text-decoration: none; }
+  .modal-btn-full:hover { background: #2c5f2d; }
   .modal-btn-close {
     display: inline-block; background: #f0ece4; color: #555;
-    padding: 9px 18px; border-radius: 4px; font-size: 13px;
-    border: none; cursor: pointer; letter-spacing: .3px;
+    padding: 8px 16px; border-radius: 4px; font-size: 12px;
+    border: none; cursor: pointer;
   }
   .modal-btn-close:hover { background: #e0dbd0; }
-  .modal-loading { text-align: center; padding: 30px; color: #888; font-style: italic; }
+  .modal-loading { text-align: center; padding: 28px; color: #aaa; font-style: italic; }
+
+  /* ── Empty filter state ── */
+  .empty-filter {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px 20px;
+    color: #bbb;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  @media (max-width: 500px) {
+    .site-header h1 { font-size: 21px; }
+    .rivers-grid { grid-template-columns: 1fr; }
+    .hero-cards { grid-template-columns: 1fr; }
+    .modal-stats { grid-template-columns: 1fr 1fr; }
+    .controls-inner { gap: 6px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="site-header">
   <h1>Michigan Trout Report</h1>
-  <div class="tagline">Daily stream conditions — AuSable, Manistee, Pere Marquette &amp; more</div>
-  <div class="last-updated" id="lastUpdated">Loading...</div>
+  <div class="tagline">Live conditions — 40+ rivers across Michigan</div>
+  <div class="last-updated" id="lastUpdated">Loading data...</div>
 </div>
 
 <div id="seasonBanner" class="season-banner" style="display:none"></div>
 
-<div class="legend">
+<!-- HERO: Best Streams Now -->
+<div class="hero-section" id="heroSection">
   <div class="container">
-    <div class="legend-inner">
-      <span class="legend-label">Conditions:</span>
-      <span class="legend-item"><span class="legend-dot" style="background:#2e7d32"></span>Prime</span>
-      <span class="legend-item"><span class="legend-dot" style="background:#558b2f"></span>Fishing Well</span>
-      <span class="legend-item"><span class="legend-dot" style="background:#f9a825"></span>Fair</span>
-      <span class="legend-item"><span class="legend-dot" style="background:#e65100"></span>Tough</span>
-      <span class="legend-item"><span class="legend-dot" style="background:#b71c1c"></span>Blown Out</span>
-      <span style="font-size:12px;color:#aaa;margin-left:8px">Flow bar shows % of seasonal median</span>
+    <div class="hero-label">Right Now</div>
+    <div class="hero-title">Best Streams Today</div>
+    <div class="hero-subtitle" id="heroSubtitle">Finding the best conditions across the state...</div>
+    <div class="hero-cards" id="heroCards">
+      <div class="hero-empty">Loading conditions...</div>
     </div>
   </div>
 </div>
 
+<!-- AI Brief -->
 <div class="brief-section" id="briefSection" style="display:none">
   <div class="container">
     <div class="brief-inner">
-      <h2>Today's Conditions</h2>
+      <h2>Today's Report</h2>
       <div class="brief-text" id="briefText"></div>
     </div>
   </div>
 </div>
 
+<!-- Controls: Legend + Filters -->
+<div class="controls-section">
+  <div class="container">
+    <div class="controls-inner">
+      <div class="legend-row">
+        <span class="legend-label">Conditions:</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#2e7d32"></span>Prime</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#558b2f"></span>Fishing Well</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#f9a825"></span>Fair</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#e65100"></span>Tough</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#b71c1c"></span>Blown Out</span>
+      </div>
+      <div class="filter-row" id="regionFilters">
+        <span class="filter-label">Region:</span>
+        <button class="filter-btn active" data-region="ALL" onclick="setRegion('ALL')">All Michigan</button>
+        <button class="filter-btn" data-region="UP" onclick="setRegion('UP')">Upper Peninsula</button>
+        <button class="filter-btn" data-region="NLP" onclick="setRegion('NLP')">Northern LP</button>
+        <button class="filter-btn" data-region="WLP" onclick="setRegion('WLP')">Western LP</button>
+        <button class="filter-btn" data-region="CLP" onclick="setRegion('CLP')">Central LP</button>
+      </div>
+      <div class="filter-row" id="speciesFilters">
+        <span class="filter-label">Species:</span>
+        <button class="filter-btn active" data-species="ALL" onclick="setSpecies('ALL')">All Species</button>
+        <button class="filter-btn" data-species="brook" onclick="setSpecies('brook')">Brook Trout</button>
+        <button class="filter-btn" data-species="brown" onclick="setSpecies('brown')">Brown Trout</button>
+        <button class="filter-btn" data-species="steelhead" onclick="setSpecies('steelhead')">Steelhead</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rivers Grid -->
 <div class="rivers-section">
   <div class="container">
-    <div id="riversGrid" class="rivers-grid">
-      <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <div>Pulling USGS stream data...</div>
+    <div id="riversContainer">
+      <div class="rivers-grid">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <div>Pulling USGS data for all rivers...</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <footer class="site-footer">
-  Stream data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS Water Services</a> &nbsp;·&nbsp;
-  Updated daily at 8am CT &nbsp;·&nbsp;
-  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a> &nbsp;·&nbsp;
-  <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
+  USGS data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">waterservices.usgs.gov</a>
+  &nbsp;·&nbsp; Updated daily at 8am CT
+  &nbsp;·&nbsp; Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>
+  &nbsp;·&nbsp; <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
+  &nbsp;·&nbsp; <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Michigan Trout Streams Guide</a>
 </footer>
 
-<!-- Modal overlay -->
+<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal-box" id="modalBox">
     <div class="modal-header">
@@ -426,14 +621,40 @@
 
 <script>
 const RATINGS = {
-  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', tagline: 'Drop everything and go.' },
-  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', tagline: 'Worth the drive.' },
-  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', tagline: 'Fishable. Pick your spots.' },
-  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', tagline: 'Fish are off. Long leader, small fly.' },
-  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', tagline: 'Stay home. Fish another day.' },
+  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
+  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
+  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
+  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off. Long leader, small fly.' },
+  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home. Fish another day.' },
 };
 
-function formatTimestamp(ts) {
+const RATING_SCORE = { PRIME: 5, FISHING_WELL: 4, FAIR: 3, TOUGH: 2, BLOWN_OUT: 1 };
+
+const SPECIES_COLORS = {
+  brook:     { bg: '#e8f5e9', color: '#1b5e20' },
+  brown:     { bg: '#fff3e0', color: '#bf360c' },
+  rainbow:   { bg: '#e3f2fd', color: '#0d47a1' },
+  steelhead: { bg: '#f3e5f5', color: '#6a1b9a' },
+};
+const SPECIES_LABELS = {
+  brook: 'Brook', brown: 'Brown', rainbow: 'Rainbow', steelhead: 'Steelhead'
+};
+
+const REGION_LABELS = {
+  UP: 'Upper Peninsula',
+  NLP: 'Northern Lower Michigan',
+  WLP: 'Western Lower Michigan',
+  CLP: 'Central Lower Michigan',
+};
+
+let _allRivers = [];
+let _briefRivers = {};
+let _activeRegion = 'ALL';
+let _activeSpecies = 'ALL';
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatTs(ts) {
   if (!ts) return '';
   try {
     const d = new Date(ts);
@@ -448,22 +669,101 @@ function flowBarColor(pct) {
   if (pct > 120) return '#f9a825';
   if (pct > 80)  return '#2e7d32';
   if (pct > 50)  return '#558b2f';
-  return '#888';
+  return '#999';
 }
 
 function flowBarWidth(pct) {
-  if (!pct) return 0;
-  // 80-120% is "normal center" — show that as ~50% bar width visually
-  // Cap at 100% width for blown-out scenarios
-  const normalized = Math.min(pct / 2, 100);
-  return normalized;
+  return Math.min((pct || 0) / 2, 100);
 }
 
-function renderCard(river, briefRivers) {
+function speciesTagsHtml(species, className) {
+  if (!species?.length) return '';
+  return species.map(s => {
+    const sc = SPECIES_COLORS[s] || { bg: '#eee', color: '#666' };
+    return `<span class="${className}" style="background:${sc.bg};color:${sc.color}">${SPECIES_LABELS[s] || s}</span>`;
+  }).join('');
+}
+
+// ── Hero Section ─────────────────────────────────────────────────────────────
+
+function renderHero(rivers) {
+  // Score all rivers and find the best fishable ones
+  const scored = rivers
+    .filter(r => r.conditions?.ratingKey)
+    .map(r => ({ ...r, score: RATING_SCORE[r.conditions.ratingKey] || 0 }))
+    .sort((a, b) => b.score - a.score);
+
+  const top = scored.filter(r => r.score >= 3).slice(0, 4); // FAIR or better
+  const heroCards = document.getElementById('heroCards');
+  const heroSubtitle = document.getElementById('heroSubtitle');
+
+  const primeCount = scored.filter(r => r.score >= 4).length;
+  const totalGood = scored.filter(r => r.score >= 3).length;
+
+  if (primeCount >= 1) {
+    heroSubtitle.textContent = `${primeCount} river${primeCount > 1 ? 's' : ''} fishing Prime or better today across Michigan`;
+  } else if (totalGood > 0) {
+    heroSubtitle.textContent = `${totalGood} river${totalGood > 1 ? 's' : ''} in fishable condition today`;
+  } else {
+    heroSubtitle.textContent = 'Tough conditions statewide — check individual rivers for your best option';
+  }
+
+  if (!top.length) {
+    heroCards.innerHTML = `<div class="hero-empty">No rivers reporting ideal conditions today. Check individual river pages for updates.</div>`;
+    return;
+  }
+
+  const rankLabels = ['#1 Pick', '#2 Pick', '#3 Pick', '#4 Pick'];
+
+  heroCards.innerHTML = top.map((river, i) => {
+    const c = river.conditions;
+    const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+    const speciesTags = speciesTagsHtml(river.species, 'hero-species-tag');
+    return `
+      <div class="hero-card" onclick="openModal('${river.id}', '${river.name.replace(/'/g, "\\'")}')">
+        <div class="hero-card-rank">${rankLabels[i] || ''}</div>
+        <div class="hero-card-name">${river.name}</div>
+        <div class="hero-card-region">${river.region}</div>
+        ${river.species?.length ? `<div class="hero-species-tags">${speciesTags}</div>` : ''}
+        <div class="hero-card-rating">
+          <span class="hero-rating-emoji">${rat.emoji}</span>
+          <span class="hero-rating-label" style="color:${rat.color}">${rat.label}</span>
+        </div>
+        <div class="hero-card-stats">
+          <div class="hero-stat-item">
+            <span>Flow</span>
+            ${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}
+          </div>
+          ${c.tempF !== null ? `<div class="hero-stat-item"><span>Water Temp</span>${c.tempF}°F</div>` : ''}
+          ${c.flowPct ? `<div class="hero-stat-item"><span>vs Median</span>${c.flowPct}%</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── River Cards ───────────────────────────────────────────────────────────────
+
+function renderCard(river) {
   const c = river.conditions;
-  const ratingKey = c.ratingKey || 'FAIR';
-  const rating = RATINGS[ratingKey] || RATINGS.FAIR;
-  const aiNote = briefRivers && briefRivers[river.id] ? briefRivers[river.id] : null;
+  if (!c || !c.ratingKey) {
+    // Tier 3 / no data
+    return `
+      <div class="river-card" data-region="${river.regionCode}" data-species="${(river.species || []).join(',')}" onclick="openModal('${river.id}', '${river.name.replace(/'/g, "\\'")}')">
+        <div class="card-header">
+          <div class="card-top-row">
+            <div class="card-river-name">${river.name}</div>
+            <span class="tier-badge">Est.</span>
+          </div>
+          <div class="card-region">${river.region}</div>
+          <div class="species-tags">${speciesTagsHtml(river.species, 'species-tag')}</div>
+        </div>
+        <div class="no-gauge-state">No live gauge — tap for access info & regulations</div>
+      </div>`;
+  }
+
+  const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+  const aiNote = _briefRivers[river.id] || null;
+  const tierBadge = river.tier === 2 ? '<span class="tier-badge">Flow only</span>' : '';
 
   const flowBar = c.flowPct ? `
     <div class="flow-bar-wrap">
@@ -471,84 +771,131 @@ function renderCard(river, briefRivers) {
       <div class="flow-bar-track">
         <div class="flow-bar-fill" style="width:${flowBarWidth(c.flowPct)}%;background:${flowBarColor(c.flowPct)}"></div>
       </div>
-      <div class="flow-bar-pct">${c.flowPct}% of median — ${c.flowLabel}</div>
+      <div class="flow-bar-pct">${c.flowPct}% — ${c.flowLabel}</div>
     </div>` : '';
 
-  const statsHtml = `
-    <div class="card-stats">
-      <div class="stat-item">
-        <span class="stat-label">Flow</span>
-        <span class="stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Water Temp</span>
-        <span class="stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</span>
-        ${c.tempF !== null ? `<span class="stat-sub">${c.tempLabel}</span>` : ''}
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Gage Height</span>
-        <span class="stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Median (today)</span>
-        <span class="stat-value">${c.stats?.p50 ? c.stats.p50.toLocaleString() + ' cfs' : '—'}</span>
-      </div>
-      ${c.turbidity_fnu !== null ? `<div class="stat-item" style="grid-column:1/-1">
-        <span class="stat-label">Turbidity</span>
-        <span class="stat-value">${c.turbidity_fnu} FNU — ${c.turbidityLabel}</span>
-        <span class="stat-sub">${c.turbidityNote}</span>
-      </div>` : ''}
-      ${c.do_mgl !== null ? `<div class="stat-item">
-        <span class="stat-label">Dissolved O₂</span>
-        <span class="stat-value">${c.do_mgl} mg/L</span>
-        <span class="stat-sub">${c.doLabel}</span>
-      </div>` : ''}
-    </div>`;
-
-  const noteHtml = aiNote ? `<div class="card-note">${aiNote}</div>` : '';
-  const tapHint = `<div style="font-size:11px;color:#bbb;padding:8px 16px 12px;text-align:right">Tap for details →</div>`;
-
   return `
-    <div class="river-card" onclick="openModal('${river.id}', '${river.name.replace(/'/g,"\\'")}')">
+    <div class="river-card" data-region="${river.regionCode}" data-species="${(river.species || []).join(',')}" onclick="openModal('${river.id}', '${river.name.replace(/'/g, "\\'")}')">
       <div class="card-header">
-        <div class="card-river-name">${river.name}</div>
+        <div class="card-top-row">
+          <div class="card-river-name">${river.name}</div>
+          ${tierBadge}
+        </div>
         <div class="card-region">${river.region}</div>
+        <div class="species-tags">${speciesTagsHtml(river.species, 'species-tag')}</div>
       </div>
       <div class="card-rating">
-        <div class="rating-badge" style="color:${rating.color}">
-          <span class="rating-emoji">${rating.emoji}</span>
-          <span class="rating-label">${rating.label}</span>
-        </div>
-        <div class="rating-tagline">${rating.tagline}</div>
+        <span class="rating-emoji">${rat.emoji}</span>
+        <span class="rating-label" style="color:${rat.color}">${rat.label}</span>
+        <span class="rating-tagline">${rat.tagline}</span>
       </div>
-      ${statsHtml}
+      <div class="card-stats">
+        <div class="stat-item">
+          <span class="stat-label">Flow</span>
+          <span class="stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Water Temp</span>
+          <span class="stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</span>
+          ${c.tempF !== null ? `<span class="stat-sub">${c.tempLabel}</span>` : ''}
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Gage</span>
+          <span class="stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Median</span>
+          <span class="stat-value">${c.stats?.p50 ? c.stats.p50.toLocaleString() + ' cfs' : '—'}</span>
+        </div>
+      </div>
       ${flowBar}
-      ${noteHtml}
-      ${tapHint}
+      ${aiNote ? `<div class="card-note">${aiNote}</div>` : ''}
+      <div class="card-tap-hint">Tap for details →</div>
     </div>`;
 }
 
-// ── Modal ──────────────────────────────────────────────────────────────────
-let _briefRivers = {};
+// ── Filtering & Rendering ─────────────────────────────────────────────────────
+
+const REGION_ORDER = ['UP', 'NLP', 'WLP', 'CLP'];
+
+function renderRivers() {
+  const container = document.getElementById('riversContainer');
+
+  // Filter
+  const filtered = _allRivers.filter(r => {
+    const regionOk = _activeRegion === 'ALL' || r.regionCode === _activeRegion;
+    const speciesOk = _activeSpecies === 'ALL' || (r.species || []).includes(_activeSpecies);
+    return regionOk && speciesOk;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="rivers-grid"><div class="empty-filter">No rivers match the current filters.</div></div>`;
+    return;
+  }
+
+  // Group by region
+  const grouped = {};
+  for (const r of filtered) {
+    if (!grouped[r.regionCode]) grouped[r.regionCode] = [];
+    grouped[r.regionCode].push(r);
+  }
+
+  const html = REGION_ORDER
+    .filter(rc => grouped[rc])
+    .map(rc => {
+      const rivers = grouped[rc];
+      const cards = rivers.map(renderCard).join('');
+      return `
+        <div class="region-group">
+          <div class="region-header">
+            <h2>${REGION_LABELS[rc] || rc}</h2>
+            <span class="region-count">${rivers.length} river${rivers.length > 1 ? 's' : ''}</span>
+          </div>
+          <div class="rivers-grid">${cards}</div>
+        </div>`;
+    }).join('');
+
+  container.innerHTML = html;
+}
+
+// ── Filter Handlers ───────────────────────────────────────────────────────────
+
+function setRegion(region) {
+  _activeRegion = region;
+  document.querySelectorAll('[data-region]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.region === region);
+  });
+  renderRivers();
+  window.scrollTo({ top: document.querySelector('.controls-section').offsetTop - 10, behavior: 'smooth' });
+}
+
+function setSpecies(species) {
+  _activeSpecies = species;
+  document.querySelectorAll('[data-species]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.species === species);
+  });
+  renderRivers();
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
 
 function openModal(riverId, riverName) {
   document.getElementById('modalTitle').textContent = riverName;
-  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading conditions and fly recommendations...</div>';
+  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading conditions and recommendations...</div>';
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Fetch river detail and recommendation in parallel
   Promise.all([
     fetch(`/api/river/${riverId}`).then(r => r.json()),
     fetch(`/api/recommend?id=${riverId}`).then(r => r.json()),
   ])
     .then(([riverData, recData]) => {
       if (!riverData.success) throw new Error(riverData.error);
-      renderModal(riverData, _briefRivers[riverId], recData.success ? recData : null);
+      renderModal(riverData, _briefRivers[riverId], recData?.success ? recData : null);
     })
-    .catch(e => {
-      document.getElementById('modalBody').innerHTML = `
-        <div class="modal-loading">Failed to load. <a href="/river.html?id=${riverId}">Open full page instead →</a></div>`;
+    .catch(() => {
+      document.getElementById('modalBody').innerHTML =
+        `<div class="modal-loading">Failed to load. <a href="/river.html?id=${riverId}">Open full page →</a></div>`;
     });
 }
 
@@ -565,167 +912,149 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 function renderModal(data, aiNote, recData) {
   const c   = data.primaryConditions;
-  const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
-  const hist = data.history;
+  const rat = c?.ratingKey ? (RATINGS[c.ratingKey] || RATINGS.FAIR) : null;
+  const river = _allRivers.find(r => r.id === data.id) || {};
+
+  let ratingHtml = '';
+  if (rat && c) {
+    ratingHtml = `
+      <div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}30">
+        <div class="modal-rating-emoji">${rat.emoji}</div>
+        <div>
+          <div class="modal-rating-label" style="color:${rat.color}">${rat.label}</div>
+          <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}</div>
+        </div>
+      </div>
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <div class="modal-stat-label">Flow</div>
+          <div class="modal-stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
+          ${c.flowLabel ? `<div class="modal-stat-sub">${c.flowLabel}</div>` : ''}
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Water Temp</div>
+          <div class="modal-stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</div>
+          ${c.tempLabel ? `<div class="modal-stat-sub">${c.tempLabel}</div>` : ''}
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Gage Ht</div>
+          <div class="modal-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
+          ${c.stats?.p50 ? `<div class="modal-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
+        </div>
+      </div>
+      ${c.flowPct ? `
+        <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${flowBarWidth(c.flowPct)}%;background:${flowBarColor(c.flowPct)}"></div></div>
+        <div class="modal-flow-label">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>` : ''}`;
+  }
+
+  // Species
+  const speciesTags = speciesTagsHtml(river.species, 'species-tag');
+
+  // Access + Regs
+  const accessHtml = river.access || river.regulations ? `
+    <div style="margin-bottom:14px">
+      <div class="modal-section-title">Access &amp; Regulations</div>
+      ${river.access ? `<div class="modal-access">📍 ${river.access}</div>` : ''}
+      ${river.regulations ? `<div class="modal-regs">⚖️ ${river.regulations}</div>` : ''}
+    </div>` : '';
 
   // Guide note
   let guideHtml = '';
   if (data.reports?.synthesis) {
     guideHtml = `<div style="margin-bottom:14px">
-      <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">What the guides are saying</div>
-      <div style="font-size:14px;color:#444;line-height:1.65">${data.reports.synthesis}</div>
+      <div class="modal-section-title">What the guides are saying</div>
+      <div style="font-size:13px;color:#444;line-height:1.65">${data.reports.synthesis}</div>
     </div>`;
   }
 
-  // History snippet
-  let histHtml = '';
-  const daysNeeded = 30;
-  const pct = Math.min(Math.round((hist.totalDays / daysNeeded) * 100), 100);
-  if (!hist.hasEnough) {
-    histHtml = `<div style="font-size:12px;color:#aaa;padding:10px 0;border-top:1px solid #f0ece4;margin-top:10px">
-      <strong style="color:#888">Building history</strong> — ${hist.totalDays} of ~${daysNeeded} days collected.
-      Similar-conditions lookup available soon.
-    </div>`;
-  } else if (hist.similarDays?.length) {
-    const best = hist.similarDays[0];
-    const dr = RATINGS[best.ratingKey] || RATINGS.FAIR;
-    histHtml = `<div style="font-size:12px;color:#aaa;padding:10px 0;border-top:1px solid #f0ece4;margin-top:10px">
-      <strong style="color:#888">On a similar day</strong> (${best.date}):
-      <span style="color:${dr.color};font-weight:bold">${dr.emoji} ${dr.label}</span>
-      ${best.guideNotes ? `— "${best.guideNotes.slice(0, 120)}..."` : ''}
-    </div>`;
-  }
-
-  // AI conditions note
-  const noteHtml = aiNote ? `<div class="modal-brief">${aiNote}</div>` : '';
-
-  // Weather summary for modal
-  let wxModalHtml = '';
-  const wx = recData?.weather;
-  if (wx?.today) {
-    const t = wx.today;
-    const flowWarn = wx.flowTrend !== 'stable' ? `<span style="color:#cc6644;margin-left:8px">⚠ Rain incoming — flow may rise</span>` : '';
-    wxModalHtml = `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0ece4;font-size:13px;color:#555">
-      <span style="color:#8899bb;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">🌤 Forecast</span>
-      <strong>${t.tempF}°F</strong> · ${t.forecast} · ${t.rain}% rain · ${t.wind || 'calm'}
-      ${flowWarn}
-      ${t.cloud?.hatchTip ? `<div style="margin-top:5px;color:#667;font-style:italic">${t.cloud.hatchTip}</div>` : ''}
-      ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div style="margin-top:4px;color:#557">Best window: <strong>${wx.bestWindow.name}</strong> — ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast}</div>` : ''}
-    </div>`;
-  }
+  // Fly recommendations
+  let recHtml = '';
   if (recData?.recommendation) {
-    const topFlies = (recData.staticRec?.topFlies || []).slice(0, 5);
-    const flyTags = topFlies.map(f =>
+    const flies = (recData.staticRec?.topFlies || []).slice(0, 5);
+    const flyTags = flies.map(f =>
       `<span style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px">${f.name} #${f.sizes[0]}</span>`
     ).join('');
-    recHtml = `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0ece4">
-      <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">🎣 What to Tie On</div>
+    recHtml = `<div style="margin-bottom:14px;padding:12px 14px;background:#f9f6f0;border-radius:5px">
+      <div class="modal-section-title" style="margin-bottom:8px">What to tie on</div>
       <div style="font-size:13px;color:#3a3a3a;line-height:1.65;margin-bottom:8px">${recData.recommendation}</div>
-      ${flyTags ? `<div style="margin-top:6px">${flyTags}</div>` : ''}
+      ${flyTags ? `<div>${flyTags}</div>` : ''}
     </div>`;
   }
 
   document.getElementById('modalBody').innerHTML = `
-    <div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}30">
-      <div class="modal-rating-emoji">${rat.emoji}</div>
-      <div>
-        <div class="modal-rating-label" style="color:${rat.color}">${rat.label}</div>
-        <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}</div>
-      </div>
-    </div>
-    <div class="modal-stats">
-      <div class="modal-stat">
-        <div class="modal-stat-label">Flow</div>
-        <div class="modal-stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
-        ${c.flowLabel ? `<div class="modal-stat-sub">${c.flowLabel}</div>` : ''}
-      </div>
-      <div class="modal-stat">
-        <div class="modal-stat-label">Water Temp</div>
-        <div class="modal-stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</div>
-        ${c.tempLabel ? `<div class="modal-stat-sub">${c.tempLabel}</div>` : ''}
-      </div>
-      <div class="modal-stat">
-        <div class="modal-stat-label">Gage Height</div>
-        <div class="modal-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
-        ${c.stats?.p50 ? `<div class="modal-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
-      </div>
-      ${c.turbidity_fnu !== null ? `<div class="modal-stat" style="grid-column:1/-1">
-        <div class="modal-stat-label">Turbidity</div>
-        <div class="modal-stat-value">${c.turbidity_fnu} FNU — ${c.turbidityLabel}</div>
-        <div class="modal-stat-sub">${c.turbidityNote}</div>
-      </div>` : ''}
-      ${c.do_mgl !== null ? `<div class="modal-stat">
-        <div class="modal-stat-label">Dissolved O₂</div>
-        <div class="modal-stat-value">${c.do_mgl} mg/L</div>
-        <div class="modal-stat-sub">${c.doLabel} — ${c.doNote}</div>
-      </div>` : ''}
-    </div>
-    ${c.flowPct ? `
-    <div class="modal-flow-bar"><div class="modal-flow-fill" style="width:${Math.min((c.flowPct||0)/2,100)}%;background:${flowBarColor(c.flowPct)}"></div></div>
-    <div class="modal-flow-label">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>` : ''}
+    ${speciesTags ? `<div style="margin-bottom:12px">${speciesTags}</div>` : ''}
+    ${ratingHtml}
+    ${accessHtml}
     ${guideHtml}
-    ${wxModalHtml}
     ${recHtml}
-    ${noteHtml}
-    ${histHtml}
+    ${aiNote ? `<div class="modal-brief">${aiNote}</div>` : ''}
     <div class="modal-actions">
       <a href="/river.html?id=${data.id}" class="modal-btn-full">Full details + all gauges →</a>
       <button class="modal-btn-close" onclick="closeModal()">Close</button>
     </div>`;
 }
 
+// ── Season Banner ─────────────────────────────────────────────────────────────
+
 function setSeasonBanner() {
-  const month = new Date().getMonth() + 1;
+  const m = new Date().getMonth() + 1;
   const banner = document.getElementById('seasonBanner');
-  let msg = '';
-  if (month <= 3)       msg = '⚠️ Pre-season — General trout season opens the last Saturday of April.';
-  else if (month === 4) msg = '🎣 Opening month — Season is open. Check special regulations for your river.';
-  else if (month <= 6)  msg = '🪰 Peak season — Best hatches of the year. Hex hatch late June on the AuSable.';
-  else if (month <= 8)  msg = '☀️ Summer — Watch water temps. Fish early morning or evening on warm days.';
-  else if (month <= 10) msg = '🍂 Fall season — Brown trout spawning in October. Steelhead entering lower rivers.';
-  else                  msg = '❄️ Late season — Steelhead in lower rivers. Most streams closed or special regs.';
-  if (msg) { banner.textContent = msg; banner.style.display = 'block'; }
+  const msgs = {
+    1:  '❄️ Winter — Steelhead in lower rivers. Most interior streams closed or special regs.',
+    2:  '❄️ Late winter — Midge fishing on tailwaters. Little Black Stonefly emerging. Season opens late April.',
+    3:  '🌱 Pre-season — Season opens last Saturday in April. Scouting and fly-tying time.',
+    4:  '🎣 Opening month — Season is open. Hendrickson hatch underway. Check special regulations.',
+    5:  '🪰 Peak spring — Caddis and March Brown hatches. Best conditions of the year.',
+    6:  '🌙 Hex season — Hexagenia hatch on the AuSable and other NLP rivers. Fish after dark.',
+    7:  '☀️ Summer — Fish early mornings and evenings. Terrestrials and Trico hatches.',
+    8:  '🌿 Late summer — White Fly hatch in August. Fish cooler UP streams.',
+    9:  '🍂 Fall — Brown trout pre-spawn. Fall BWO and caddis hatches. Steelhead entering.',
+    10: '🍂 October — Brown trout spawning. Steelhead in Lake Michigan tributaries.',
+    11: '🌧️ Late fall — Steelhead season in progress on west Michigan rivers.',
+    12: '❄️ December — Season closing on most streams. Tailwater fishing continues.',
+  };
+  if (msgs[m]) { banner.textContent = msgs[m]; banner.style.display = 'block'; }
 }
+
+// ── Main Load ─────────────────────────────────────────────────────────────────
 
 async function loadData() {
   try {
     const resp = await fetch('/api/generate');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
-
     if (!data.success) throw new Error(data.error || 'Unknown error');
 
-    // Update header
-    const ts = data.generated_at ? formatTimestamp(data.generated_at) : 'today';
-    document.getElementById('lastUpdated').textContent = `Data as of ${ts}`;
+    // Header timestamp
+    const ts = data.generated_at ? formatTs(data.generated_at) : 'today';
+    document.getElementById('lastUpdated').textContent = `Updated ${ts} · ${data.rivers?.length || 0} rivers`;
 
     // Brief
     if (data.brief?.lead) {
       document.getElementById('briefText').textContent = data.brief.lead;
       document.getElementById('briefSection').style.display = 'block';
     }
-
-    // Store brief river notes for modal use
     if (data.brief?.rivers) _briefRivers = data.brief.rivers;
 
-    // River cards
-    const grid = document.getElementById('riversGrid');
-    if (data.rivers?.length) {
-      grid.innerHTML = data.rivers
-        .map(r => renderCard(r, data.brief?.rivers))
-        .join('');
-    } else {
-      grid.innerHTML = '<div class="loading-state">No river data available. Try again shortly.</div>';
-    }
+    // Store rivers globally
+    _allRivers = data.rivers || [];
+
+    // Render hero
+    renderHero(_allRivers);
+
+    // Render river grid
+    renderRivers();
 
   } catch(e) {
     console.error('Load failed:', e);
     document.getElementById('lastUpdated').textContent = 'Error loading data';
-    document.getElementById('riversGrid').innerHTML = `
-      <div class="loading-state">
-        Failed to load stream data. USGS may be experiencing delays.
-        <br><br>
-        Check <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" style="color:#4a7c4a" target="_blank">USGS Michigan directly</a>.
+    document.getElementById('heroCards').innerHTML = '<div class="hero-empty">Unable to load conditions.</div>';
+    document.getElementById('riversContainer').innerHTML = `
+      <div class="rivers-grid">
+        <div class="loading-state">
+          Failed to load stream data.<br><br>
+          <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" style="color:#4a7c4a" target="_blank" rel="noopener">Check USGS Michigan directly →</a>
+        </div>
       </div>`;
   }
 }
