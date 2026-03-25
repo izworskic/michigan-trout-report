@@ -623,6 +623,13 @@
 </div>
 
 <script>
+const RIVER_SLUG_MAP = {'ausable':'ausable-river','manistee':'manistee-river','pere-marquette':'pere-marquette-river','muskegon':'muskegon-river','boardman':'boardman-river','jordan':'jordan-river-michigan','pigeon':'pigeon-river-michigan','rifle-river':'rifle-river-michigan','little-manistee':'little-manistee-river','betsie-river':'betsie-river','pine-river':'pine-river-michigan','platte-river':'platte-river-michigan','rogue-river':'rogue-river-michigan','white-river':'white-river-michigan','flat-river':'flat-river-michigan','looking-glass-river':'looking-glass-river','sturgeon-river-nlp':'sturgeon-river-michigan','thunder-bay-river':'thunder-bay-river','black-river-up':'black-river-upper-peninsula','tahquamenon-river':'tahquamenon-river','paint-river':'paint-river-michigan','iron-river':'iron-river-michigan','brule-river':'brule-river-michigan','michigamme-river':'michigamme-river','au-train-river':'au-train-river','miners-river':'miners-river-michigan','salmon-trout-river':'salmon-trout-river','presque-isle-river':'presque-isle-river','trap-rock-river':'trap-rock-river','ontonagon-river':'ontonagon-river','sturgeon-river-up':'sturgeon-river-upper-peninsula','silver-river':'silver-river-michigan','black-river-schoolcraft':'black-river-schoolcraft-county','au-gres-river':'au-gres-river','pine-river-midland':'pine-river-midland-county','little-muskegon-river':'little-muskegon-river','clam-river':'clam-river-michigan','maple-river-lp':'maple-river-michigan','thornapple-river':'thornapple-river'};
+
+function getStreamPageUrl(riverId) {
+  const slug = RIVER_SLUG_MAP[riverId];
+  return slug ? `/stream/${slug}.html` : `/river.html?id=${riverId}`;
+}
+
 const RATINGS = {
   PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
   FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
@@ -1067,4 +1074,5 @@ loadData();
 </script>
 </body>
 </html>
+
 
