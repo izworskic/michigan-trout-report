@@ -102,6 +102,9 @@ html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
 .pu-links { margin-top:9px; display:flex; gap:6px; }
 .pu-link { font-size:11px; color:#2c5f2d; background:#e8f5e9; padding:3px 8px; border-radius:3px; text-decoration:none; border:1px solid #c8e6c9; }
 .pu-link:hover { background:#c8e6c9; }
+.pu-nav { font-size:11px; color:#fff; background:#1565c0; padding:4px 10px; border-radius:3px; text-decoration:none; font-weight:bold; }
+.pu-nav:hover { background:#0d47a1; }
+.sb-nav { font-size:10px; color:#1565c0; text-decoration:none; margin-left:auto; flex-shrink:0; }
 
 /* Mobile */
 @media (max-width:640px) {
@@ -299,8 +302,9 @@ function renderRiverMarkers(rivers){
       ${c?.flow!==null?`<div class="pu-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong>${c.flowPct?' ('+c.flowPct+'% of median)':''}</div>`:''}
       ${c?.tempF!==null?`<div class="pu-stat">Water: <strong>${c.tempF}°F</strong> — ${c.tempLabel}</div>`:''}
       <div class="pu-links">
-        ${slug?`<a href="/stream/${slug}.html" class="pu-link">Stream page →</a>`:''}
-        <a href="/river.html?id=${r.id}" class="pu-link">All gauges →</a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}" target="_blank" rel="noopener" class="pu-nav">Navigate</a>
+        ${slug?`<a href="/stream/${slug}.html" class="pu-link">Stream page</a>`:''}
+        <a href="/river.html?id=${r.id}" class="pu-link">All gauges</a>
       </div>
     </div>`;
 
@@ -397,7 +401,10 @@ function renderAccessMarkers(points){
       <div class="pu-species">${spTags}</div>
       ${pt.d?`<div class="pu-desc">${pt.d}</div>`:''}
       ${pt.dir?`<div class="pu-stat" style="margin-top:6px;font-size:11px">📍 ${pt.dir}</div>`:''}
-      ${slug?`<div class="pu-links"><a href="/stream/${slug}.html" class="pu-link">Full report →</a></div>`:''}
+      <div class="pu-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lon}" target="_blank" rel="noopener" class="pu-nav">Navigate Here</a>
+        ${slug?`<a href="/stream/${slug}.html" class="pu-link">Full report</a>`:''}
+      </div>
     </div>`;
 
     const marker=L.marker([pt.lat,pt.lon],{icon});
@@ -435,6 +442,7 @@ function renderSbList(points){
       <div class="sb-meta">
         <span>${pt.c||''}</span>
         ${rat?`<span style="color:${rat.color};font-weight:bold;font-size:11px">${rat.emoji} ${rat.label}</span>`:''}
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lon}" target="_blank" rel="noopener" class="sb-nav" onclick="event.stopPropagation()" title="Navigate here">Navigate &rarr;</a>
       </div>
       <div class="sb-dots">${dots}</div>
     </div>`;
