@@ -242,25 +242,8 @@
   <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
 </footer>
 
+<script src="/trout-ui.js"></script>
 <script>
-const RATINGS = {
-  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
-  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
-  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
-  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off.' },
-  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home.' },
-};
-
-function flowBarColor(pct) {
-  if (!pct) return '#ccc';
-  if (pct > 200) return '#b71c1c';
-  if (pct > 150) return '#e65100';
-  if (pct > 120) return '#f9a825';
-  if (pct > 80)  return '#2e7d32';
-  if (pct > 50)  return '#558b2f';
-  return '#999';
-}
-
 async function loadConditions() {
   const riverId = 'little-manistee';
   try {
@@ -268,72 +251,20 @@ async function loadConditions() {
       fetch(`/api/river/${riverId}`),
       fetch(`/api/recommend?id=${riverId}`),
     ]);
-    const data   = riverResp.ok ? await riverResp.json() : null;
-    const recData = recResp.ok  ? await recResp.json()  : null;
+    const data = riverResp.ok ? await riverResp.json() : null;
+    const recData = recResp.ok ? await recResp.json() : null;
 
     if (!data?.success || !data.primaryConditions?.ratingKey) {
       document.getElementById('widgetContent').innerHTML =
-        '<span style="color:#bbb;font-size:13px">No live data available for this river today. Check back tomorrow or <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" target="_blank" rel="noopener" style="color:#4a7c4a">check USGS directly</a>.</span>';
+        '<span style="color:#bbb;font-size:13px">No live data available today. <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" target="_blank" rel="noopener" style="color:#4a7c4a">Check USGS directly</a>.</span>';
       return;
     }
-
-    const c   = data.primaryConditions;
-    const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
-    const pct = c.flowPct;
-
-    let fliesHtml = '';
-    if (recData?.success && recData.recommendation) {
-      const flies = (recData.staticRec?.topFlies || []).slice(0, 4);
-      const flyTags = flies.map(f =>
-        `<a href="https://www.amazon.com/s?k=${encodeURIComponent(f.name+' '+f.sizes[0]+' fly fishing flies')}&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px;text-decoration:none;border:1px solid #c8e6c9" title="Buy ${f.name} on Amazon">${f.name} #${f.sizes[0]}</a>`
-      ).join('');
-      fliesHtml = `
-        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e8e4dc">
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">What to tie on today</div>
-          <div style="font-size:13px;color:#3a3a3a;margin-bottom:6px">${recData.recommendation}</div>
-          ${flyTags ? `<div>${flyTags}</div><div style="font-size:9px;color:#ccc;margin-top:4px">Fly links go to Amazon. Commission at no cost to you.</div>` : ''}
-        </div>`;
-    }
-
-    document.getElementById('widgetContent').innerHTML = `
-      <div class="widget-rating" style="background:${rat.bg};border:1px solid ${rat.color}25;padding:10px 14px;border-radius:5px;margin-bottom:12px">
-        <span class="widget-emoji">${rat.emoji}</span>
-        <div>
-          <div class="widget-label-text" style="color:${rat.color}">${rat.label}</div>
-          <div class="widget-tagline" style="color:${rat.color}">${rat.tagline}</div>
-        </div>
-      </div>
-      <div class="widget-stats">
-        <div class="widget-stat">
-          <div class="widget-stat-label">Flow</div>
-          <div class="widget-stat-value">${c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
-          ${c.flowLabel ? `<div class="widget-stat-sub">${c.flowLabel}</div>` : ''}
-        </div>
-        <div class="widget-stat">
-          <div class="widget-stat-label">Water Temp</div>
-          <div class="widget-stat-value">${c.tempF !== null ? c.tempF + '°F' : '—'}</div>
-          ${c.tempLabel ? `<div class="widget-stat-sub">${c.tempLabel}</div>` : ''}
-        </div>
-        <div class="widget-stat">
-          <div class="widget-stat-label">Gage Height</div>
-          <div class="widget-stat-value">${c.gage !== null ? c.gage + ' ft' : '—'}</div>
-          ${c.stats?.p50 ? `<div class="widget-stat-sub">Median: ${c.stats.p50} cfs</div>` : ''}
-        </div>
-      </div>
-      ${pct ? `
-        <div class="flow-bar"><div class="flow-bar-fill" style="width:${Math.min(pct/2,100)}%;background:${flowBarColor(pct)}"></div></div>
-        <div class="flow-bar-label">${pct}% of seasonal median</div>` : ''}
-      ${fliesHtml}
-      <div class="widget-actions">
-        <a href="/river.html?id=${riverId}" class="widget-btn widget-btn-primary">Full report + all gauges →</a>
-        <a href="/map.html" class="widget-btn widget-btn-secondary">View on map</a>
-      </div>`;
+    document.getElementById('widgetContent').innerHTML = renderFullWidget(data.primaryConditions, recData, riverId);
   } catch(e) {
     document.getElementById('widgetContent').innerHTML =
-      '<span style="color:#bbb;font-size:13px">Unable to load live data right now.</span>';
+      '<span style="color:#bbb;font-size:13px">Unable to load data right now.</span>';
   }
 }
-
 loadConditions();
 </script>
 </body>
