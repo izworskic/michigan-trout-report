@@ -15,6 +15,7 @@ import { buildConditions } from '../lib/rater.js';
 import { buildRecommendations, getTempZone, getFlowAdvice, MICHIGAN_HATCHES } from '../lib/hatches.js';
 import { fetchHatchIntel } from '../lib/intel.js';
 import { fetchRiverWeather } from '../lib/weather.js';
+import { buildLureRecommendations } from '../lib/lures.js';
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
@@ -109,8 +110,20 @@ export default async function handler(req, res) {
     // Generate AI recommendation (now includes weather)
     const aiRec = await generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hourET);
 
+    // Build lure recommendations (excluded for fly-only water)
+    const lureRec = buildLureRecommendations({
+      tempF: conditions.tempF,
+      flowPct: conditions.flowPct,
+      turbidityFNU: conditions.turbidity_fnu,
+      ratingKey: conditions.ratingKey,
+      species: river.species || [],
+      forecast: weather?.today?.forecast || null,
+      month,
+      gearType: river.gearType || 'general',
+    });
+
     const payload = {
-      river: { id: river.id, name: river.name },
+      river: { id: river.id, name: river.name, gearType: river.gearType || 'general' },
       conditions: {
         tempF:      conditions.tempF,
         tempLabel:  conditions.tempLabel,
@@ -129,6 +142,7 @@ export default async function handler(req, res) {
         timeAdvice: staticRec.timeAdvice,
         topFlies:   staticRec.topFlies,
       },
+      lureRec,
       intel: {
         items: (intel?.items || []).slice(0, 3).map(i => ({
           title: i.title, date: i.date, url: i.url, source: i.source,

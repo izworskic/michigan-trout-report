@@ -692,16 +692,61 @@ function renderModal(data,aiNote,rec,riverId){
   const c=data.primaryConditions;
   const rat=c?.ratingKey?(RATINGS[c.ratingKey]||RATINGS.FAIR):null;
   const slug=SLUGS[riverId];
+
+  // Fly recommendations
   let fliesHtml='';
   if(rec?.recommendation){
     const flies=(rec.staticRec?.topFlies||[]).slice(0,4);
     fliesHtml=`<div style="margin-top:12px;padding-top:11px;border-top:1px solid #f0ece4">
-      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">What to tie on</div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">🪰 Fly Recommendations</div>
       <div class="modal-rec">${rec.recommendation}</div>
       ${flies.map(f=>`<a href="${flyToAmazon(f.name,f.sizes[0])}" target="_blank" rel="noopener sponsored" class="fly-tag" title="Buy ${f.name} on Amazon">${f.name} #${f.sizes[0]}</a>`).join('')}
-      <div style="font-size:9px;color:#ccc;margin-top:4px">Fly links go to Amazon. Commission at no cost to you.</div>
     </div>`;
   }
+
+  // Lure recommendations (only if allowed on this water)
+  let lureHtml='';
+  const lr=rec?.lureRec;
+  if(lr && lr.allowed && lr.lures?.length){
+    const lureTags=lr.lures.map(l=>{
+      const q=encodeURIComponent(l.amazonQuery);
+      const colorStr=l.colors?.length?` (${l.colors.join(', ')})`:'';
+      return `<a href="https://www.amazon.com/s?k=${q}&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="display:inline-block;background:#fff3e0;color:#bf360c;font-size:11px;padding:3px 8px;border-radius:3px;margin:2px;text-decoration:none;border:1px solid #ffcc80;cursor:pointer" title="Buy ${l.name} on Amazon">${l.category}: ${l.name} ${l.size}${colorStr}</a>`;
+    }).join('');
+    lureHtml=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0ece4">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">🎣 Lure Recommendations</div>
+      <div style="font-size:12px;color:#666;margin-bottom:6px">${lr.advice}</div>
+      ${lureTags}
+    </div>`;
+  } else if(lr && !lr.allowed) {
+    lureHtml=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0ece4">
+      <div style="font-size:11px;color:#999;font-style:italic">⚠ ${lr.reason}</div>
+    </div>`;
+  }
+
+  // Weather
+  let wxHtml='';
+  const wx=rec?.weather;
+  if(wx?.today){
+    const t=wx.today;
+    wxHtml=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0ece4">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">🌤 Weather at River</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <span style="font-size:12px;background:#f0f4ff;padding:3px 8px;border-radius:3px;color:#444">${t.tempF||'?'}°F</span>
+        <span style="font-size:12px;background:#f0f4ff;padding:3px 8px;border-radius:3px;color:#444">${t.forecast||''}</span>
+        ${t.wind?`<span style="font-size:12px;background:#f0f4ff;padding:3px 8px;border-radius:3px;color:#444">Wind: ${t.wind}</span>`:''}
+        ${t.rain>15?`<span style="font-size:12px;background:#fff5f2;padding:3px 8px;border-radius:3px;color:#c62828">Rain: ${t.rain}%</span>`:''}
+      </div>
+      ${t.cloud?.hatchTip?`<div style="font-size:11px;color:#666;margin-bottom:4px">${t.cloud.hatchTip}</div>`:''}
+      ${t.wind_int?.tip?`<div style="font-size:11px;color:#666;margin-bottom:4px">${t.wind_int.tip}</div>`:''}
+      ${wx.flowTrend&&wx.flowTrend!=='stable'?`<div style="font-size:11px;color:#c62828">⚠ Rain incoming. Flow may rise in 12-24h.</div>`:''}
+      ${wx.bestWindow&&wx.bestWindow.name!==t.name?`<div style="font-size:11px;color:#2e7d32;margin-top:4px">Best window: <strong>${wx.bestWindow.name}</strong> (${wx.bestWindow.tempF}°F, ${wx.bestWindow.rain}% rain)</div>`:''}
+    </div>`;
+  }
+
+  // Affiliate disclosure
+  const discl=`<div style="font-size:9px;color:#ccc;margin-top:6px;padding-top:6px;border-top:1px solid #f0ece4">Product links go to Amazon. Commission at no cost to you.</div>`;
+
   const trend = _condMap[riverId]?.trend;
   document.getElementById('modalBody').innerHTML=`
     ${rat?`<div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}20">
@@ -715,7 +760,10 @@ function renderModal(data,aiNote,rec,riverId){
       <div class="ms"><div class="ms-lbl">Gage Height</div><div class="ms-val">${c?.gage!==null?c.gage+' ft':'—'}</div>${c?.stats?.p50?`<div class="ms-sub">Median: ${c.stats.p50} cfs</div>`:''}</div>
     </div>
     ${c?.flowPct?`<div class="modal-bar"><div class="modal-bar-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div><div class="modal-bar-lbl">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>`:''}
+    ${wxHtml}
     ${fliesHtml}
+    ${lureHtml}
+    ${discl}
     ${aiNote?`<div class="modal-note">${aiNote}</div>`:''}
     <div class="modal-actions">
       <a href="/map.html?river=${riverId}" class="modal-btn primary" style="background:#1565c0">🗺 Map + Access</a>
