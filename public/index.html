@@ -153,6 +153,8 @@ a { color:#2c5f2d; text-decoration:none; }
   text-decoration:none; text-align:center; border:1px solid #c8e6c9;
 }
 .row-link:hover { background:#c8e6c9; }
+.row-link.map-link { background:#e3f2fd; color:#1565c0; border-color:#90caf9; font-weight:bold; }
+.row-link.map-link:hover { background:#bbdefb; }
 .row-link.secondary { color:#666; background:#f5f2ec; border-color:#ddd; }
 .share-btn { font-family:Georgia,serif; cursor:pointer; border:1px solid #ddd; font-size:11px; padding:3px 8px; border-radius:3px; background:#f5f2ec; color:#666; }
 .share-btn:hover { background:#e0dbd0; }
@@ -235,21 +237,18 @@ footer a { color:#4a7c4a; }
 <header class="hdr">
   <div class="hdr-title">Michigan Trout Report</div>
   <nav class="hdr-nav">
-    <a href="/map.html">Map</a>
-    
-    
+    <a href="/map.html" style="background:rgba(255,255,255,.12);padding:4px 12px;border-radius:4px;color:#fff;font-size:13px">🗺 Stream Map</a>
+    <a href="/alerts.html">Alerts</a>
   </nav>
 </header>
 
-<!-- Best Rivers Now -->
-<section class="hero">
-  <div class="hero-label">Right Now</div>
-  <div class="hero-heading">Where to Fish Today</div>
-  <div class="hero-sub" id="heroSub">Loading conditions...</div>
-  <div class="hero-grid" id="heroGrid"><div class="hero-empty">Checking rivers...</div></div>
-  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-    <a href="/map.html" style="font-size:12px;color:#a8c8a8;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:6px 14px;border-radius:4px">🗺 Stream Map — 310 access points</a>
-    
+<!-- Planning Bar -->
+<section class="hero" style="padding:16px 16px 14px">
+  <div class="hero-heading" style="font-size:17px;margin-bottom:6px">Where to Fish Today</div>
+  <div class="hero-sub" id="heroSub" style="font-size:13px;margin-bottom:12px">Loading conditions...</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a href="/map.html" style="font-size:13px;color:#fff;background:#2c5f2d;padding:8px 16px;border-radius:5px;text-decoration:none;font-weight:bold">🗺 Stream Map + Access Points</a>
+    <a href="/top-rivers.html" id="topRiversLink" style="font-size:12px;color:#a8c8a8;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 14px;border-radius:5px;text-decoration:none">🏆 Top 10 Rivers Right Now</a>
   </div>
 </section>
 
@@ -502,41 +501,19 @@ function renderYourRivers(){
   document.getElementById('yourRivers').style.display='block';
 }
 
-// ── Hero ─────────────────────────────────────────────────────────────────────
+// ── Hero subtitle ────────────────────────────────────────────────────────────
 function renderHero(){
-  const rivers = Object.values(_condMap);
-  const ranked = rivers
-    .filter(r=>r.conditions?.ratingKey)
-    .sort((a,b)=>(SCORE[b.conditions.ratingKey]||0)-(SCORE[a.conditions.ratingKey]||0));
-  const top = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).slice(0,3);
+  const rivers = Object.values(_condMap).filter(r=>!r.isTributary);
+  const SCORE = {PRIME:5,FISHING_WELL:4,FAIR:3,TOUGH:2,BLOWN_OUT:1};
+  const ranked = rivers.filter(r=>r.conditions?.ratingKey).sort((a,b)=>(SCORE[b.conditions.ratingKey]||0)-(SCORE[a.conditions.ratingKey]||0));
   const primeCount = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=4).length;
+  const fishable = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length;
 
   document.getElementById('heroSub').textContent = primeCount>=1
-    ? `${primeCount} river${primeCount>1?'s':''} fishing ${primeCount===1?'well':'Prime or better'} today`
-    : ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length>0
-    ? `${ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length} rivers in fishable condition`
-    : 'Tough conditions statewide today';
-
-  if(!top.length){
-    document.getElementById('heroGrid').innerHTML='<div class="hero-empty">No rivers reporting ideal conditions today.</div>';
-    return;
-  }
-  const labels=['Top Pick','#2','#3'];
-  document.getElementById('heroGrid').innerHTML = top.map((r,i)=>{
-    const c=r.conditions, rat=RATINGS[c.ratingKey];
-    const slug=SLUGS[r.id];
-    return `<div class="hero-card" onclick="openModal('${r.id}','${r.name.replace(/'/g,"\\'")}')">
-      <div class="hero-rank">${labels[i]}</div>
-      <div class="hero-name">${r.name}</div>
-      <div class="hero-region">${r.region}</div>
-      <div class="hero-badge" style="color:${rat.color}">${rat.emoji} ${rat.label} ${r.trend?trendArrow(r.trend):''}</div>
-      <div class="hero-stats">
-        ${c.flow!=null?`<div class="hero-stat"><span>Flow</span>${c.flow.toLocaleString()} cfs</div>`:''}
-        ${c.tempF!=null?`<div class="hero-stat"><span>Temp</span>${c.tempF}°F</div>`:''}
-        ${c.flowPct!=null?`<div class="hero-stat"><span>vs Median</span>${c.flowPct}%</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
+    ? `${primeCount} river${primeCount>1?'s':''} fishing Prime or better today. ${fishable} total fishable.`
+    : fishable > 0
+    ? `${fishable} rivers in fishable condition today.`
+    : 'Tough conditions statewide today.';
 }
 
 // ── Render a single row ───────────────────────────────────────────────────────
@@ -575,15 +552,21 @@ function renderRow(wb, query){
   // Links
   const links = slug
     ? `<div class="row-links" onclick="event.stopPropagation()">
-        <a href="/stream/${slug}.html" class="row-link">Stream page</a>
-        <a href="/map.html?river=${wb.usgs_id}" class="row-link secondary">📍 Map</a>
+        <a href="/stream/${slug}.html" class="row-link">Details</a>
+        <a href="/map.html?river=${wb.usgs_id}" class="row-link map-link">🗺 Map</a>
         <button class="row-link secondary share-btn" onclick="shareRiver(event,'${wb.usgs_id}','${wb.name.replace(/'/g,"\\'")}')">📋 Share</button>
       </div>`
     : `<div class="row-links" onclick="event.stopPropagation()">
-        <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=12" class="row-link secondary" title="See on map">📍 Map</a>
+        <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=12" class="row-link map-link" title="See on map">🗺 Map</a>
       </div>`;
 
-  return `<div class="river-row" data-rc="${wb.rc}" data-s="${(wb.species||[]).join(',')}" onclick="${usgs?`openModal('${wb.usgs_id}','${wb.name.replace(/'/g,"\\'")}')`:``}">
+  // Tributaries go straight to stream page, not modal
+  const isTrib = usgs && _condMap[wb.usgs_id]?.isTributary;
+  const rowClick = isTrib
+    ? `window.location='/stream/${slug}.html'`
+    : (usgs ? `openModal('${wb.usgs_id}','${wb.name.replace(/'/g,"\\'")}')` : '');
+
+  return `<div class="river-row" data-rc="${wb.rc}" data-s="${(wb.species||[]).join(',')}" onclick="${rowClick}">
     <div class="row-stripe" style="background:${stripeColor}"></div>
     <div class="row-body">
       <div class="row-top">
@@ -728,10 +711,10 @@ function renderModal(data,aiNote,rec,riverId){
     ${fliesHtml}
     ${aiNote?`<div class="modal-note">${aiNote}</div>`:''}
     <div class="modal-actions">
-      ${slug?`<a href="/stream/${slug}.html" class="modal-btn primary">Full stream page →</a>`:''}
-      <a href="/river.html?id=${riverId}" class="modal-btn ${slug?'secondary':'primary'}">All gauges →</a>
+      <a href="/map.html?river=${riverId}" class="modal-btn primary" style="background:#1565c0">🗺 Map + Access</a>
+      ${slug?`<a href="/stream/${slug}.html" class="modal-btn primary">Stream page</a>`:''}
+      <a href="/river.html?id=${riverId}" class="modal-btn secondary">All gauges</a>
       <button class="modal-btn secondary share-btn" onclick="shareRiver(event,'${riverId}','${data.name?.replace(/'/g,"\\'")||''}')">📋 Share</button>
-      <button class="modal-btn secondary" onclick="closeModal()">Close</button>
     </div>`;
 }
 

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top 10 Michigan Trout Rivers Right Now</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8222782620788075" crossorigin="anonymous"></script>
+<meta name="description" content="The 10 best Michigan trout rivers to fish right now, ranked by live USGS conditions. Updated daily.">
+<link rel="canonical" href="https://trout.chrisizworski.com/top-rivers.html">
+<meta property="og:title" content="Top 10 Michigan Trout Rivers Right Now">
+<meta property="og:description" content="The 10 best Michigan trout rivers to fish right now, ranked by live USGS data.">
+<meta property="og:type" content="website">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.65; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 3px solid #4a7c4a; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-link { color: #7ab87a; font-size: 13px; }
+  .back-link:hover { color: #fff; text-decoration: none; }
+  .site-name { font-size: 16px; font-weight: normal; }
+  .header-nav { display: flex; gap: 14px; font-size: 13px; }
+  .header-nav a { color: #7ab87a; }
+  .header-nav a:hover { color: #fff; text-decoration: none; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  .page-hero { background: #fff; border-bottom: 1px solid #ddd8cc; padding: 28px 0 20px; }
+  .page-title { font-size: 26px; font-weight: normal; color: #1a3a1a; margin-bottom: 6px; }
+  .page-sub { font-size: 14px; color: #888; font-style: italic; }
+  .page-updated { font-size: 11px; color: #bbb; margin-top: 8px; }
+
+  .top-list { padding: 0 0 40px; }
+  .top-card { background: #fff; border-bottom: 1px solid #e8e4dc; padding: 20px 0; }
+  .top-card:last-child { border-bottom: none; }
+  .top-rank { font-size: 28px; color: #ddd; font-weight: normal; float: left; width: 40px; line-height: 1; }
+  .top-body { margin-left: 48px; }
+  .top-name { font-size: 18px; color: #1a3a1a; margin-bottom: 4px; }
+  .top-region { font-size: 12px; color: #888; font-style: italic; margin-bottom: 8px; }
+  .top-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: bold; margin-bottom: 8px; }
+  .top-stats { display: flex; gap: 16px; font-size: 13px; color: #555; margin-bottom: 8px; flex-wrap: wrap; }
+  .top-stat span { color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: .3px; display: block; }
+  .top-note { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 10px; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .top-btn { font-family: Georgia, serif; font-size: 12px; padding: 6px 14px; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; }
+  .top-btn-map { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; font-weight: bold; }
+  .top-btn-map:hover { background: #bbdefb; text-decoration: none; }
+  .top-btn-detail { background: #e8f5e9; color: #2c5f2d; border: 1px solid #c8e6c9; }
+  .top-btn-detail:hover { background: #c8e6c9; text-decoration: none; }
+
+  .loading { text-align: center; padding: 60px 20px; color: #888; font-style: italic; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid #ddd; border-top-color: #4a7c4a; border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; margin-top: 2px; }
+  .site-footer a { color: #4a7c4a; }
+
+  @media (max-width: 520px) {
+    .page-title { font-size: 22px; }
+    .top-rank { font-size: 22px; width: 30px; }
+    .top-body { margin-left: 36px; }
+    .top-name { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <a href="/" class="back-link">&larr; All Rivers</a>
+    <span class="site-name">Michigan Trout Report</span>
+  </div>
+  <nav class="header-nav">
+    <a href="/map.html" style="background:rgba(255,255,255,.12);padding:3px 10px;border-radius:4px;color:#fff">🗺 Map</a>
+    <a href="/">Conditions</a>
+  </nav>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <h1 class="page-title">Top 10 Michigan Trout Rivers Right Now</h1>
+    <div class="page-sub">Ranked by live USGS conditions, weather, and time of year</div>
+    <div class="page-updated" id="updatedAt"></div>
+  </div>
+</div>
+
+<div class="top-list">
+  <div class="container" id="topList">
+    <div class="loading"><div class="spinner"></div><div>Loading conditions for 63+ rivers...</div></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  USGS data updated daily &nbsp;&middot;&nbsp;
+  <a href="/">Michigan Trout Report</a> &nbsp;&middot;&nbsp;
+  <a href="/map.html">Stream Map</a> &nbsp;&middot;&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>
+</footer>
+
+<script>
+const RATINGS = {
+  PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
+  FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
+  FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
+  TOUGH:        { label: 'Tough',        emoji: '🟠', color: '#e65100', bg: '#fff3e0', tagline: 'Fish are off.' },
+  BLOWN_OUT:    { label: 'Blown Out',    emoji: '🔴', color: '#b71c1c', bg: '#ffebee', tagline: 'Stay home.' },
+};
+const SCORE = { PRIME: 5, FISHING_WELL: 4, FAIR: 3, TOUGH: 2, BLOWN_OUT: 1 };
+
+const SLUGS = {"ausable":"ausable-river","manistee":"manistee-river","pere-marquette":"pere-marquette-river","muskegon":"muskegon-river","boardman":"boardman-river","jordan":"jordan-river-michigan","pigeon":"pigeon-river-michigan","rifle-river":"rifle-river-michigan","little-manistee":"little-manistee-river","betsie-river":"betsie-river","pine-river":"pine-river-michigan","platte-river":"platte-river-michigan","rogue-river":"rogue-river-michigan","white-river":"white-river-michigan","flat-river":"flat-river-michigan","looking-glass-river":"looking-glass-river","sturgeon-river-nlp":"sturgeon-river-michigan","thunder-bay-river":"thunder-bay-river","black-river-up":"black-river-upper-peninsula","tahquamenon-river":"tahquamenon-river","paint-river":"paint-river-michigan","iron-river":"iron-river-michigan","brule-river":"brule-river-michigan","michigamme-river":"michigamme-river","au-train-river":"au-train-river","miners-river":"miners-river-michigan","salmon-trout-river":"salmon-trout-river","presque-isle-river":"presque-isle-river","trap-rock-river":"trap-rock-river","ontonagon-river":"ontonagon-river","sturgeon-river-up":"sturgeon-river-upper-peninsula","silver-river":"silver-river-michigan","black-river-schoolcraft":"black-river-schoolcraft-county","au-gres-river":"au-gres-river","pine-river-midland":"pine-river-midland-county","little-muskegon-river":"little-muskegon-river","clam-river":"clam-river-michigan","maple-river-lp":"maple-river-michigan","thornapple-river":"thornapple-river","escanaba-river":"escanaba-river","ford-river":"ford-river-michigan","cedar-river-up":"cedar-river-upper-peninsula","paint-river-up":"paint-river-crystal-falls","sturgeon-river-nahma":"sturgeon-river-nahma","salmon-trout-eb":"east-branch-salmon-trout-river","cisco-branch-ontonagon":"cisco-branch-ontonagon","pine-river-rudyard":"pine-river-rudyard","pine-river-oscoda":"pine-river-oscoda","chippewa-creek-evart":"chippewa-creek-evart","muskegon-bridgeton":"muskegon-river-bridgeton","bear-creek-muskegon":"bear-creek-muskegon","east-branch-au-gres":"east-branch-au-gres-river","dowagiac-river":"dowagiac-river-michigan","augusta-creek":"augusta-creek-michigan","black-river-bangor":"black-river-south-haven","red-cedar-river":"red-cedar-river-michigan","thornapple-caledonia":"thornapple-river-caledonia","chippewa-river-mp":"chippewa-river-michigan","wolf-creek":"wolf-creek-michigan","pigeon-river-olive":"pigeon-river-ottawa-county","tittabawassee-river":"tittabawassee-river-michigan","menominee-river":"menominee-river-michigan","sturgeon-river-loretto":"sturgeon-river-loretto"};
+
+// Seasonal context
+function getSeasonNote(month) {
+  const notes = {
+    1: 'Winter. Most inland trout seasons closed. Steelhead in West Michigan rivers.',
+    2: 'Late winter. Steelhead picking up. Pre-season planning time.',
+    3: 'Pre-season. General season opens last Saturday of April. Steelhead running.',
+    4: 'Opening month. Hendricksons hatching. Rivers running high from snowmelt.',
+    5: 'Peak spring. Caddis, Sulphurs, and March Browns. Best month of the year.',
+    6: 'Hex season on the AuSable. Brown Drakes on the Manistee. Fish evenings.',
+    7: 'Summer. Fish mornings and evenings. Seek cold water. Terrestrials productive.',
+    8: 'Late summer. UP streams fishing best. Tricos on spring creeks. Hot afternoons.',
+    9: 'Fall. Brown trout pre-spawn. BWOs hatching. October Caddis starting.',
+    10: 'October. Browns spawning. Steelhead entering rivers. Egg patterns.',
+    11: 'Late fall. Steelhead in full swing. Streamers for big browns.',
+    12: 'Winter. Most inland seasons closed. Steelhead still running.',
+  };
+  return notes[month] || '';
+}
+
+async function load() {
+  try {
+    const resp = await fetch('/api/generate');
+    if (!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error);
+
+    const rivers = data.rivers || [];
+    const ranked = rivers
+      .filter(r => r.conditions?.ratingKey && SCORE[r.conditions.ratingKey] >= 2)
+      .sort((a, b) => {
+        const sa = SCORE[a.conditions.ratingKey] || 0;
+        const sb = SCORE[b.conditions.ratingKey] || 0;
+        if (sa !== sb) return sb - sa;
+        // Tiebreak: prefer rivers with temp data, then by flow closeness to normal
+        const aHasTemp = a.conditions.tempF != null ? 1 : 0;
+        const bHasTemp = b.conditions.tempF != null ? 1 : 0;
+        if (aHasTemp !== bHasTemp) return bHasTemp - aHasTemp;
+        const aDist = Math.abs((a.conditions.flowPct || 100) - 100);
+        const bDist = Math.abs((b.conditions.flowPct || 100) - 100);
+        return aDist - bDist;
+      })
+      .slice(0, 10);
+
+    const month = new Date().getMonth() + 1;
+    const seasonNote = getSeasonNote(month);
+
+    const ts = data.generated_at
+      ? new Date(data.generated_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
+      : 'today';
+    document.getElementById('updatedAt').textContent = 'Updated ' + ts + (seasonNote ? ' · ' + seasonNote : '');
+
+    if (!ranked.length) {
+      document.getElementById('topList').innerHTML = '<div class="loading">No rivers reporting fishable conditions today.</div>';
+      return;
+    }
+
+    document.getElementById('topList').innerHTML = ranked.map((r, i) => {
+      const c = r.conditions;
+      const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+      const slug = SLUGS[r.id];
+      const trend = r.trend;
+      const trendHtml = trend?.overall === 'improving' ? ' <span style="color:#2e7d32">&#9650;</span>'
+        : trend?.overall === 'declining' ? ' <span style="color:#b71c1c">&#9660;</span>' : '';
+
+      return `<div class="top-card">
+        <div class="container">
+          <div class="top-rank">${i + 1}</div>
+          <div class="top-body">
+            <div class="top-name">${r.name}${trendHtml}</div>
+            <div class="top-region">${r.region}</div>
+            <div class="top-badge" style="color:${rat.color}">${rat.emoji} ${rat.label}</div>
+            <div class="top-stats">
+              ${c.flow != null ? `<div class="top-stat"><span>Flow</span>${c.flow.toLocaleString()} cfs</div>` : ''}
+              ${c.tempF != null ? `<div class="top-stat"><span>Water Temp</span>${c.tempF}&deg;F</div>` : ''}
+              ${c.flowPct != null ? `<div class="top-stat"><span>vs Median</span>${c.flowPct}%</div>` : ''}
+              ${c.flowLabel ? `<div class="top-stat"><span>Flow Level</span>${c.flowLabel}</div>` : ''}
+            </div>
+            <div class="top-note">${r.notes || ''}</div>
+            <div class="top-actions">
+              <a href="/map.html?river=${r.id}" class="top-btn top-btn-map">🗺 Map + Access Points</a>
+              ${slug ? `<a href="/stream/${slug}.html" class="top-btn top-btn-detail">Stream Details</a>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch (e) {
+    document.getElementById('topList').innerHTML = '<div class="loading">Failed to load. <a href="/">Back to conditions &rarr;</a></div>';
+  }
+}
+
+load();
+</script>
+</body>
+</html>
