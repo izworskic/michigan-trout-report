@@ -156,6 +156,13 @@ a { color:#2c5f2d; text-decoration:none; }
 .row-link.secondary { color:#666; background:#f5f2ec; border-color:#ddd; }
 .share-btn { font-family:Georgia,serif; cursor:pointer; border:1px solid #ddd; font-size:11px; padding:3px 8px; border-radius:3px; background:#f5f2ec; color:#666; }
 .share-btn:hover { background:#e0dbd0; }
+/* Your Rivers */
+.your-rivers { background:#1a3a1a; border-bottom:2px solid #2c5f2d; }
+.yr-card { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:5px; padding:8px 12px; min-width:160px; flex-shrink:0; cursor:pointer; transition:background .12s; }
+.yr-card:hover { background:rgba(255,255,255,.12); }
+.yr-name { font-size:13px; color:#f0ede6; white-space:nowrap; }
+.yr-badge { font-size:12px; font-weight:bold; margin-top:3px; }
+.yr-stats { font-size:10px; color:#7ab87a; margin-top:3px; }
 
 /* Loading */
 .loading { text-align:center; padding:48px 16px; color:#aaa; font-style:italic; }
@@ -292,6 +299,15 @@ footer a { color:#4a7c4a; }
 
 <div class="count-line" id="countLine"></div>
 
+<!-- Your Rivers (localStorage) -->
+<div class="your-rivers" id="yourRivers" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px 4px">
+    <span style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#5a9a5a">Your Rivers</span>
+    <button onclick="clearFavorites()" style="font-size:10px;color:#bbb;background:none;border:none;cursor:pointer;font-family:Georgia,serif">Clear</button>
+  </div>
+  <div id="yourRiversGrid" style="padding:0 12px 10px;display:flex;gap:8px;overflow-x:auto"></div>
+</div>
+
 <div class="river-list" id="riverList">
   <div class="loading"><div class="spinner"></div><div>Pulling USGS stream data...</div></div>
 </div>
@@ -386,6 +402,29 @@ function shareRiver(e,id,name){
 // State
 let _waterBodies=[], _condMap={}, _brief={};
 let _activeR='ALL', _activeS='ALL', _activeQ='';
+
+// ── Your Rivers (localStorage) ──────────────────────────────────────────────
+function getFavorites(){ try { return JSON.parse(localStorage.getItem('trout_fav_rivers')||'[]'); } catch(e){ return []; } }
+function addFavorite(id){ const f=getFavorites(); if(!f.includes(id)){f.unshift(id); if(f.length>8) f.pop(); localStorage.setItem('trout_fav_rivers',JSON.stringify(f));} renderYourRivers(); }
+function clearFavorites(){ localStorage.removeItem('trout_fav_rivers'); document.getElementById('yourRivers').style.display='none'; }
+function renderYourRivers(){
+  const favs=getFavorites();
+  if(!favs.length || !Object.keys(_condMap).length){ document.getElementById('yourRivers').style.display='none'; return; }
+  const cards=favs.map(id=>{
+    const r=_condMap[id]; if(!r) return '';
+    const c=r.conditions||{};
+    const rat=c.ratingKey?RATINGS[c.ratingKey]:null;
+    const trend=r.trend;
+    return `<div class="yr-card" onclick="openModal('${id}','${r.name.replace(/'/g,"\\'")}')">
+      <div class="yr-name">${r.name}</div>
+      ${rat?`<div class="yr-badge" style="color:${rat.color}">${rat.emoji} ${rat.label} ${trend?trendArrow(trend):''}</div>`:''}
+      <div class="yr-stats">${c.tempF!=null?c.tempF+'°F':''}${c.tempF!=null&&c.flow!=null?' · ':''}${c.flow!=null?c.flow+' cfs':''}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+  if(!cards){ document.getElementById('yourRivers').style.display='none'; return; }
+  document.getElementById('yourRiversGrid').innerHTML=cards;
+  document.getElementById('yourRivers').style.display='block';
+}
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 function renderHero(){
@@ -568,6 +607,7 @@ function closeModal(){
 }
 function openModal(id,name){
   if(!id) return;
+  addFavorite(id);
   document.getElementById('modalTitle').textContent=name;
   document.getElementById('modalBody').innerHTML='<div class="modal-loading">Loading...</div>';
   document.getElementById('modalBg').classList.add('open');
@@ -666,6 +706,7 @@ async function load(){
 
     renderHero();
     renderList();
+    renderYourRivers();
 
   }catch(e){
     document.getElementById('heroSub').textContent='Error loading data';
