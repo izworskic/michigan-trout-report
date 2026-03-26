@@ -1,0 +1,38 @@
+{
+  "name": "Michigan Trout Report",
+  "short_name": "Trout Report",
+  "description": "Live Michigan trout stream conditions. 63+ rivers, weather, fly and lure recommendations. Where to fish today.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a3a1a",
+  "theme_color": "#1a3a1a",
+  "orientation": "any",
+  "categories": ["sports", "weather", "navigation"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Stream Map",
+      "url": "/map.html",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Top 10 Rivers",
+      "url": "/top-rivers.html",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

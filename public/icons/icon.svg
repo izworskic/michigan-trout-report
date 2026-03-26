@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1a3a1a"/>
+  <text x="256" y="200" font-family="Georgia, serif" font-size="180" text-anchor="middle" fill="#f0ede6">🎣</text>
+  <text x="256" y="340" font-family="Georgia, serif" font-size="48" text-anchor="middle" fill="#7ab87a" font-weight="bold">TROUT</text>
+  <text x="256" y="400" font-family="Georgia, serif" font-size="32" text-anchor="middle" fill="#5a9a5a">REPORT</text>
+</svg>
