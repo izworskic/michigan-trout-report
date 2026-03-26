@@ -380,9 +380,9 @@ function renderHero(){
       <div class="hero-region">${r.region}</div>
       <div class="hero-badge" style="color:${rat.color}">${rat.emoji} ${rat.label}</div>
       <div class="hero-stats">
-        ${c.flow!==null?`<div class="hero-stat"><span>Flow</span>${c.flow.toLocaleString()} cfs</div>`:''}
-        ${c.tempF!==null?`<div class="hero-stat"><span>Temp</span>${c.tempF}°F</div>`:''}
-        ${c.flowPct?`<div class="hero-stat"><span>vs Median</span>${c.flowPct}%</div>`:''}
+        ${c.flow!=null?`<div class="hero-stat"><span>Flow</span>${c.flow.toLocaleString()} cfs</div>`:''}
+        ${c.tempF!=null?`<div class="hero-stat"><span>Temp</span>${c.tempF}°F</div>`:''}
+        ${c.flowPct!=null?`<div class="hero-stat"><span>vs Median</span>${c.flowPct}%</div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -402,10 +402,10 @@ function renderRow(wb, query){
 
   // Conditions block (USGS rivers)
   let condBlock = '';
-  if(rat && c.flow!==null||c.tempF!==null||c.flowPct){
+  if(rat && (c.flow!=null||c.tempF!=null||c.flowPct)){
     condBlock = `<div class="row-stats">
-      ${c.flow!==null?`<div class="row-stat"><span class="row-stat-lbl">Flow </span>${c.flow.toLocaleString()} cfs</div>`:''}
-      ${c.tempF!==null?`<div class="row-stat"><span class="row-stat-lbl">Temp </span>${c.tempF}°F</div>`:''}
+      ${c.flow!=null?`<div class="row-stat"><span class="row-stat-lbl">Flow </span>${c.flow.toLocaleString()} cfs</div>`:''}
+      ${c.tempF!=null?`<div class="row-stat"><span class="row-stat-lbl">Temp </span>${c.tempF}°F</div>`:''}
       ${c.flowPct?`<div class="row-stat"><span class="row-stat-lbl">vs Median </span>${c.flowPct}%</div>`:''}
     </div>${flowBar}`;
   } else if(!usgs && wb.county) {
