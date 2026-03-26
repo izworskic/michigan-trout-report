@@ -326,7 +326,9 @@ footer a { color:#4a7c4a; }
 </div>
 
 <script>
-// ── Embedded metadata (regionCode + species per river) ───────────────────────
+
+// ── Embedded USGS metadata ────────────────────────────────────────────────────
+// regionCode + species for the 39 gauged rivers
 const META = {"black-river-up":{"rc":"UP","s":["brook","brown"]},"presque-isle-river":{"rc":"UP","s":["brook","steelhead"]},"sturgeon-river-up":{"rc":"UP","s":["brook"]},"ontonagon-river":{"rc":"UP","s":["brook","brown","steelhead"]},"trap-rock-river":{"rc":"UP","s":["brook","steelhead"]},"silver-river":{"rc":"UP","s":["brook"]},"salmon-trout-river":{"rc":"UP","s":["brook"]},"au-train-river":{"rc":"UP","s":["brook","steelhead"]},"miners-river":{"rc":"UP","s":["brook"]},"tahquamenon-river":{"rc":"UP","s":["brook","steelhead","brown"]},"black-river-schoolcraft":{"rc":"UP","s":["brook"]},"paint-river":{"rc":"UP","s":["brook","brown"]},"iron-river":{"rc":"UP","s":["brook","brown"]},"michigamme-river":{"rc":"UP","s":["brown","brook","steelhead"]},"brule-river":{"rc":"UP","s":["brook","brown"]},"ausable":{"rc":"NLE","s":["brown","rainbow"]},"manistee":{"rc":"NLW","s":["brown","rainbow","steelhead"]},"pere-marquette":{"rc":"NLW","s":["brown","rainbow","steelhead"]},"muskegon":{"rc":"NLW","s":["brown","rainbow","steelhead"]},"boardman":{"rc":"NLW","s":["brown","brook"]},"jordan":{"rc":"NLW","s":["brook","brown"]},"pigeon":{"rc":"NLE","s":["brook","brown"]},"sturgeon-river-nlp":{"rc":"NLE","s":["brown","brook"]},"pine-river":{"rc":"NLW","s":["brown","rainbow","steelhead"]},"platte-river":{"rc":"NLW","s":["brown","rainbow","steelhead"]},"betsie-river":{"rc":"NLW","s":["brown","steelhead"]},"little-manistee":{"rc":"NLW","s":["steelhead","brown"]},"rifle-river":{"rc":"NLE","s":["brown","rainbow","steelhead"]},"thunder-bay-river":{"rc":"NLE","s":["brown","steelhead"]},"white-river":{"rc":"WLP","s":["brown","steelhead"]},"little-muskegon-river":{"rc":"WLP","s":["brown"]},"clam-river":{"rc":"WLP","s":["brown","brook"]},"rogue-river":{"rc":"WLP","s":["brown","steelhead"]},"flat-river":{"rc":"WLP","s":["brown"]},"thornapple-river":{"rc":"WLP","s":["brown"]},"looking-glass-river":{"rc":"CLP","s":["brown"]},"maple-river-lp":{"rc":"CLP","s":["brown"]},"pine-river-midland":{"rc":"CLP","s":["brown"]},"au-gres-river":{"rc":"CLP","s":["brown","steelhead"]}};
 
 const SLUGS = {"ausable":"ausable-river","manistee":"manistee-river","pere-marquette":"pere-marquette-river","muskegon":"muskegon-river","boardman":"boardman-river","jordan":"jordan-river-michigan","pigeon":"pigeon-river-michigan","rifle-river":"rifle-river-michigan","little-manistee":"little-manistee-river","betsie-river":"betsie-river","pine-river":"pine-river-michigan","platte-river":"platte-river-michigan","rogue-river":"rogue-river-michigan","white-river":"white-river-michigan","flat-river":"flat-river-michigan","looking-glass-river":"looking-glass-river","sturgeon-river-nlp":"sturgeon-river-michigan","thunder-bay-river":"thunder-bay-river","black-river-up":"black-river-upper-peninsula","tahquamenon-river":"tahquamenon-river","paint-river":"paint-river-michigan","iron-river":"iron-river-michigan","brule-river":"brule-river-michigan","michigamme-river":"michigamme-river","au-train-river":"au-train-river","miners-river":"miners-river-michigan","salmon-trout-river":"salmon-trout-river","presque-isle-river":"presque-isle-river","trap-rock-river":"trap-rock-river","ontonagon-river":"ontonagon-river","sturgeon-river-up":"sturgeon-river-upper-peninsula","silver-river":"silver-river-michigan","black-river-schoolcraft":"black-river-schoolcraft-county","au-gres-river":"au-gres-river","pine-river-midland":"pine-river-midland-county","little-muskegon-river":"little-muskegon-river","clam-river":"clam-river-michigan","maple-river-lp":"maple-river-michigan","thornapple-river":"thornapple-river"};
@@ -340,23 +342,27 @@ const RATINGS = {
 };
 const SCORE = {PRIME:5,FISHING_WELL:4,FAIR:3,TOUGH:2,BLOWN_OUT:1};
 const SP_COLOR = {brook:'#1b5e20',brown:'#bf360c',rainbow:'#0d47a1',steelhead:'#6a1b9a'};
+const SP_LABEL = {brook:'Brook',brown:'Brown',rainbow:'Rainbow',steelhead:'Steelhead'};
 
 function flowColor(p){if(!p)return'#ccc';if(p>200)return'#b71c1c';if(p>150)return'#e65100';if(p>120)return'#f9a825';if(p>80)return'#2e7d32';if(p>50)return'#558b2f';return'#999';}
 function flowW(p){return Math.min((p||0)/2,100);}
 
-let _rivers=[], _brief={}, _activeR='ALL', _activeS='ALL', _activeQ='';
+// State
+let _waterBodies=[], _condMap={}, _brief={};
+let _activeR='ALL', _activeS='ALL', _activeQ='';
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
-function renderHero(rivers){
-  const ranked = [...rivers]
+function renderHero(){
+  const rivers = Object.values(_condMap);
+  const ranked = rivers
     .filter(r=>r.conditions?.ratingKey)
     .sort((a,b)=>(SCORE[b.conditions.ratingKey]||0)-(SCORE[a.conditions.ratingKey]||0));
   const top = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).slice(0,3);
   const primeCount = ranked.filter(r=>SCORE[r.conditions.ratingKey]>=4).length;
 
-  document.getElementById('heroSub').textContent = primeCount >= 1
+  document.getElementById('heroSub').textContent = primeCount>=1
     ? `${primeCount} river${primeCount>1?'s':''} fishing ${primeCount===1?'well':'Prime or better'} today`
-    : ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length > 0
+    : ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length>0
     ? `${ranked.filter(r=>SCORE[r.conditions.ratingKey]>=3).length} rivers in fishable condition`
     : 'Tough conditions statewide today';
 
@@ -382,72 +388,106 @@ function renderHero(rivers){
   }).join('');
 }
 
-// ── River rows ────────────────────────────────────────────────────────────────
-function renderRow(r, query=""){
-  const c=r.conditions||{};
-  const rat=c.ratingKey?RATINGS[c.ratingKey]:null;
-  const m=META[r.id]||{rc:'',s:[]};
-  const slug=SLUGS[r.id];
-  const stripeColor=rat?rat.color:'#ddd';
-  const aiNote=_brief.rivers?.[r.id]||'';
-  const speciesDots=(m.s||[]).map(s=>`<span class="sp-dot" style="background:${SP_COLOR[s]||'#ccc'}" title="${s}"></span>`).join('');
-  const flowBar=c.flowPct?`<div class="row-flow-bar"><div class="row-flow-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div>`:'';
+// ── Render a single row ───────────────────────────────────────────────────────
+function renderRow(wb, query){
+  const usgs = wb.usgs_id ? _condMap[wb.usgs_id] : null;
+  const c = usgs?.conditions || {};
+  const rat = c.ratingKey ? RATINGS[c.ratingKey] : null;
+  const slug = wb.usgs_id ? SLUGS[wb.usgs_id] : null;
+  const stripeColor = rat ? rat.color : (wb.species?.length ? SP_COLOR[wb.species[0]] : '#ddd');
+  const aiNote = wb.usgs_id ? (_brief.rivers?.[wb.usgs_id]||'') : '';
+  const speciesDots = (wb.species||[]).map(s=>`<span class="sp-dot" style="background:${SP_COLOR[s]||'#ccc'}" title="${SP_LABEL[s]||s}"></span>`).join('');
+  const flowBar = c.flowPct ? `<div class="row-flow-bar"><div class="row-flow-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div>` : '';
+  const displayName = query ? highlight(wb.name, query) : wb.name;
 
-  return `<div class="river-row" data-rc="${m.rc}" data-s="${(m.s||[]).join(',')}" onclick="openModal('${r.id}','${r.name.replace(/'/g,"\\'")}')">
+  // Conditions block (USGS rivers)
+  let condBlock = '';
+  if(rat && c.flow!==null||c.tempF!==null||c.flowPct){
+    condBlock = `<div class="row-stats">
+      ${c.flow!==null?`<div class="row-stat"><span class="row-stat-lbl">Flow </span>${c.flow.toLocaleString()} cfs</div>`:''}
+      ${c.tempF!==null?`<div class="row-stat"><span class="row-stat-lbl">Temp </span>${c.tempF}°F</div>`:''}
+      ${c.flowPct?`<div class="row-stat"><span class="row-stat-lbl">vs Median </span>${c.flowPct}%</div>`:''}
+    </div>${flowBar}`;
+  } else if(!usgs && wb.county) {
+    // DNR-only: show county + access count
+    condBlock = `<div class="row-stats">
+      <div class="row-stat"><span class="row-stat-lbl">County </span>${wb.county}</div>
+      <div class="row-stat"><span class="row-stat-lbl">Access pts </span>${wb.count}</div>
+    </div>`;
+  }
+
+  // Rating badge or "Access info" badge
+  const ratingBadge = rat
+    ? `<div class="row-rating"><span class="row-rating-emoji">${rat.emoji}</span><span class="row-rating-label" style="color:${rat.color}">${rat.label}</span></div>`
+    : `<div class="row-rating" style="color:#aaa;font-size:11px;font-style:italic">DNR access</div>`;
+
+  // Links
+  const links = slug
+    ? `<div class="row-links" onclick="event.stopPropagation()">
+        <a href="/stream/${slug}.html" class="row-link">Stream page</a>
+        <a href="/river.html?id=${wb.usgs_id}" class="row-link secondary">Gauges</a>
+      </div>`
+    : `<div class="row-links" onclick="event.stopPropagation()">
+        <a href="/map.html" class="row-link secondary" title="See on map">📍 Map</a>
+      </div>`;
+
+  return `<div class="river-row" data-rc="${wb.rc}" data-s="${(wb.species||[]).join(',')}" onclick="${usgs?`openModal('${wb.usgs_id}','${wb.name.replace(/'/g,"\\'")}')`:``}">
     <div class="row-stripe" style="background:${stripeColor}"></div>
     <div class="row-body">
       <div class="row-top">
-        <div class="row-name">${query?highlight(r.name,query):r.name}</div>
-        ${rat?`<div class="row-rating"><span class="row-rating-emoji">${rat.emoji}</span><span class="row-rating-label" style="color:${rat.color}">${rat.label}</span></div>`:'<div class="row-rating" style="color:#bbb;font-size:11px">No data</div>'}
+        <div class="row-name">${displayName}</div>
+        ${ratingBadge}
       </div>
-      <div class="row-meta">${r.region}</div>
-      <div class="row-stats">
-        ${c.flow!==null?`<div class="row-stat"><span class="row-stat-lbl">Flow </span>${c.flow.toLocaleString()} cfs</div>`:''}
-        ${c.tempF!==null?`<div class="row-stat"><span class="row-stat-lbl">Temp </span>${c.tempF}°F</div>`:''}
-        ${c.flowPct?`<div class="row-stat"><span class="row-stat-lbl">vs Median </span>${c.flowPct}%</div>`:''}
-      </div>
-      ${flowBar}
+      <div class="row-meta">${wb.region || wb.county || ''}</div>
+      ${condBlock}
       <div class="row-species">${speciesDots}</div>
     </div>
-    ${slug?`<div class="row-links" onclick="event.stopPropagation()">
-      <a href="/stream/${slug}.html" class="row-link">Stream page</a>
-      <a href="/river.html?id=${r.id}" class="row-link secondary">Details</a>
-    </div>`:''}
+    ${links}
   </div>`;
 }
 
+// ── Render full list ──────────────────────────────────────────────────────────
 function renderList(){
-  const list=document.getElementById('riverList');
-  // Sort: best conditions first
-  const sorted=[..._rivers].sort((a,b)=>{
-    const sa=SCORE[a.conditions?.ratingKey]||0;
-    const sb=SCORE[b.conditions?.ratingKey]||0;
-    return sb-sa;
+  const list = document.getElementById('riverList');
+
+  // Sort: USGS + best conditions first, then by conditions score, then alpha
+  const sorted = [..._waterBodies].sort((a,b)=>{
+    const ca = a.usgs_id ? _condMap[a.usgs_id] : null;
+    const cb = b.usgs_id ? _condMap[b.usgs_id] : null;
+    const sa = ca ? (SCORE[ca.conditions?.ratingKey]||0) : 0;
+    const sb = cb ? (SCORE[cb.conditions?.ratingKey]||0) : 0;
+    if(sa!==sb) return sb-sa;
+    // Both USGS: alpha
+    if(sa>0&&sb>0) return a.name.localeCompare(b.name);
+    // One USGS, one not
+    if(sa>0) return -1;
+    if(sb>0) return 1;
+    return a.name.localeCompare(b.name);
   });
-  // Apply filter + render all, use hidden class
-  let visible=0;
-  const html=sorted.map(r=>{
-    const m=META[r.id]||{rc:'',s:[]};
-    const rOk=_activeR==='ALL'||m.rc===_activeR;
-    const sOk=_activeS==='ALL'||(m.s||[]).includes(_activeS);
-    const qOk=!_activeQ||r.name.toLowerCase().includes(_activeQ)||r.region.toLowerCase().includes(_activeQ);
-    const show=rOk&&sOk&&qOk;
-    if(show)visible++;
-    const row=renderRow(r, _activeQ);
+
+  let visible = 0;
+  const html = sorted.map(wb=>{
+    const rOk = _activeR==='ALL' || wb.rc===_activeR;
+    const sOk = _activeS==='ALL' || (wb.species||[]).includes(_activeS);
+    const qOk = !_activeQ || wb.name.toLowerCase().includes(_activeQ) || (wb.county||'').toLowerCase().includes(_activeQ);
+    const show = rOk && sOk && qOk;
+    if(show) visible++;
+    const row = renderRow(wb, _activeQ);
     return show ? row : row.replace('class="river-row"','class="river-row hidden"');
   }).join('');
-  // Show "no results" with search tip if query active
+
   if(!visible && _activeQ){
-    return list.innerHTML=`<div class="empty">No rivers match "<strong>${_activeQ}</strong>" — try a partial name like "au" or "man".</div>`;
+    list.innerHTML=`<div class="empty">No results for "<strong>${_activeQ}</strong>" — try a partial name like "bear" or "pere".</div>`;
+    return;
   }
-  list.innerHTML=html||'<div class="empty">No rivers match the current filters.</div>';
-  document.getElementById('countLine').textContent=
-    visible===_rivers.length?`Showing all ${visible} rivers — sorted by conditions`
-    :`${visible} of ${_rivers.length} rivers`;
+  list.innerHTML = html || '<div class="empty">No rivers match the current filters.</div>';
+  document.getElementById('countLine').textContent =
+    visible===_waterBodies.length
+      ? `${visible} rivers, streams & lakes — live conditions where available`
+      : `${visible} of ${_waterBodies.length} results`;
 }
 
-// ── Filters ───────────────────────────────────────────────────────────────────
-
+// ── Search & filters ──────────────────────────────────────────────────────────
 function setSearch(q){
   _activeQ=q.trim().toLowerCase();
   const clr=document.getElementById('searchClear');
@@ -466,9 +506,7 @@ function highlight(text, query){
   if(!query) return text;
   const idx=text.toLowerCase().indexOf(query);
   if(idx<0) return text;
-  return text.slice(0,idx)
-    +'<mark class="search-highlight">'+text.slice(idx,idx+query.length)+'</mark>'
-    +text.slice(idx+query.length);
+  return text.slice(0,idx)+'<mark class="search-highlight">'+text.slice(idx,idx+query.length)+'</mark>'+text.slice(idx+query.length);
 }
 function setR(v){
   _activeR=v;
@@ -485,13 +523,14 @@ function setS(v){
   renderList();
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
+// ── Modal (USGS rivers only) ──────────────────────────────────────────────────
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 function closeModal(){
   document.getElementById('modalBg').classList.remove('open');
   document.body.style.overflow='';
 }
 function openModal(id,name){
+  if(!id) return;
   document.getElementById('modalTitle').textContent=name;
   document.getElementById('modalBody').innerHTML='<div class="modal-loading">Loading...</div>';
   document.getElementById('modalBg').classList.add('open');
@@ -500,7 +539,7 @@ function openModal(id,name){
     fetch(`/api/river/${id}`).then(r=>r.json()),
     fetch(`/api/recommend?id=${id}`).then(r=>r.json()),
   ]).then(([rd,rec])=>{
-    if(!rd.success)throw new Error(rd.error);
+    if(!rd.success) throw new Error(rd.error);
     renderModal(rd,_brief.rivers?.[id],rec?.success?rec:null,id);
   }).catch(()=>{
     document.getElementById('modalBody').innerHTML=`<div class="modal-loading">Failed to load. <a href="/river.html?id=${id}">Open full page →</a></div>`;
@@ -543,7 +582,7 @@ function renderModal(data,aiNote,rec,riverId){
 // ── Season banner ─────────────────────────────────────────────────────────────
 function setBanner(){
   const m=new Date().getMonth()+1;
-  const msgs={4:'🎣 Opening month — Season is open. Check special regulations.',5:'🪰 Peak spring — Caddis and Hendrickson hatches.',6:'🌙 Hex season — AuSable Hex hatch starts late June.',7:'☀️ Summer — Fish early morning and evening.',8:'🌿 Late summer — UP streams best now.',9:'🍂 Fall — Brown trout pre-spawn. Fall BWO hatches.',10:'🍂 October — Brown trout spawning. Steelhead entering.',11:'🌧️ Late fall — Steelhead in West Michigan rivers.',3:'🌱 Pre-season — General season opens last Saturday of April.'};
+  const msgs={3:'🌱 Pre-season — General season opens last Saturday of April.',4:'🎣 Opening month — Season is open.',5:'🪰 Peak spring — Caddis and Hendrickson hatches.',6:'🌙 Hex season — AuSable Hex hatch starts late June.',7:'☀️ Summer — Fish early morning and evening.',8:'🌿 Late summer — UP streams best now.',9:'🍂 Fall — Brown trout pre-spawn. Fall BWO hatches.',10:'🍂 October — Brown trout spawning. Steelhead entering.',11:'🌧️ Late fall — Steelhead in West Michigan rivers.'};
   const msg=msgs[m];
   if(msg){const b=document.createElement('div');b.style.cssText='background:#fffde7;border-bottom:1px solid #e6c84a;padding:8px 16px;font-size:12px;color:#5a4a00;text-align:center';b.textContent=msg;document.querySelector('.hero').after(b);}
 }
@@ -551,23 +590,44 @@ function setBanner(){
 // ── Load ──────────────────────────────────────────────────────────────────────
 async function load(){
   try{
-    const resp=await fetch('/api/generate');
-    if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
-    const data=await resp.json();
-    if(!data.success)throw new Error(data.error||'Unknown error');
+    // Load both in parallel
+    const [condResp, wbResp] = await Promise.all([
+      fetch('/api/generate'),
+      fetch('/water-bodies.json'),
+    ]);
 
-    const ts=data.generated_at?new Date(data.generated_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'today';
-    document.querySelector('.hdr-title').title=`Updated ${ts}`;
+    if(!condResp.ok) throw new Error(`API ${condResp.status}`);
+    const condData = await condResp.json();
+    if(!condData.success) throw new Error(condData.error);
 
-    if(data.brief?.lead){
-      document.getElementById('briefText').textContent=data.brief.lead;
+    // Build conditions map: usgs_id → river object
+    (condData.rivers||[]).forEach(r=>{ _condMap[r.id]=r; });
+    if(condData.brief?.rivers) _brief=condData.brief;
+    if(condData.brief?.lead){
+      document.getElementById('briefText').textContent=condData.brief.lead;
       document.getElementById('brief').style.display='block';
     }
-    if(data.brief?.rivers)_brief=data.brief;
 
-    _rivers=data.rivers||[];
-    renderHero(_rivers);
+    // Load water bodies registry
+    if(wbResp.ok){
+      _waterBodies = await wbResp.json();
+    } else {
+      // Fallback: use USGS rivers only
+      _waterBodies = (condData.rivers||[]).map(r=>({
+        id:r.id, name:r.name, usgs_id:r.id,
+        species: META[r.id]?.s||[],
+        county:'', region:r.region,
+        rc: META[r.id]?.rc||'NLE',
+        count:0, desc:'', lat:0, lon:0, access_pts:[]
+      }));
+    }
+
+    const ts=condData.generated_at?new Date(condData.generated_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'today';
+    document.querySelector('.hdr-title').title=`Updated ${ts}`;
+
+    renderHero();
     renderList();
+
   }catch(e){
     document.getElementById('heroSub').textContent='Error loading data';
     document.getElementById('riverList').innerHTML=`<div class="loading">Failed to load. <a href="https://waterdata.usgs.gov/mi/nwis/current/?type=flow" target="_blank" rel="noopener">Check USGS directly →</a></div>`;
@@ -577,15 +637,7 @@ async function load(){
 setBanner();
 load();
 
-// Inject inline ad after 10th river row
-setTimeout(()=>{
-  const rows = document.querySelectorAll('.river-row:not(.hidden)');
-  if(rows.length > 10 && rows[9]) {
-    const adDiv = document.createElement('div');
-    adDiv.style.cssText = 'padding:10px 0;text-align:center;';
-    adDiv.innerHTML = `<!-- AdSense in-content unit — uncomment after approval
-    <ins class="adsbygoogle" style="display:block;text-align:center" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->`;
+</script> -->`;
     rows[9].after(adDiv);
   }
 }, 1500);
