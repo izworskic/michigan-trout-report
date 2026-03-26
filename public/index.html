@@ -428,7 +428,7 @@ function renderRow(wb, query){
         <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=11" class="row-link secondary">📍 Map</a>
       </div>`
     : `<div class="row-links" onclick="event.stopPropagation()">
-        <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=11" class="row-link secondary" title="See on map">📍 Map</a>
+        <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=12" class="row-link secondary" title="See on map">📍 Map</a>
       </div>`;
 
   return `<div class="river-row" data-rc="${wb.rc}" data-s="${(wb.species||[]).join(',')}" onclick="${usgs?`openModal('${wb.usgs_id}','${wb.name.replace(/'/g,"\\'")}')`:``}">
@@ -438,7 +438,7 @@ function renderRow(wb, query){
         <div class="row-name">${displayName}</div>
         ${ratingBadge}
       </div>
-      <div class="row-meta">${wb.region || wb.county || ''}</div>
+      <div class="row-meta">${wb.parent ? '↳ ' + wb.parent + ' · ' : ''}${wb.region || wb.county || ''}</div>
       ${condBlock}
       <div class="row-species">${speciesDots}</div>
     </div>
