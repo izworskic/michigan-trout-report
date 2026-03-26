@@ -480,6 +480,19 @@ function setLayer(v){
 // ── Load ──────────────────────────────────────────────────────────────────────
 async function loadAll(){
   initMap();
+  // Zoom to river or coordinates from URL params
+  (function(){
+    const p = new URLSearchParams(window.location.search);
+    const rid = p.get('river');
+    const lat = parseFloat(p.get('lat'));
+    const lon = parseFloat(p.get('lon'));
+    const z   = parseInt(p.get('z')) || 12;
+    if(rid && RIVER_COORDS[rid]){
+      _map.setView(RIVER_COORDS[rid], 11);
+    } else if(!isNaN(lat) && !isNaN(lon) && (lat !== 0 || lon !== 0)){
+      _map.setView([lat, lon], z);
+    }
+  })();
   try{
     // Load conditions + access points in parallel
     const [condResp, accessResp] = await Promise.all([
