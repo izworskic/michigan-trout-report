@@ -154,6 +154,8 @@ a { color:#2c5f2d; text-decoration:none; }
 }
 .row-link:hover { background:#c8e6c9; }
 .row-link.secondary { color:#666; background:#f5f2ec; border-color:#ddd; }
+.share-btn { font-family:Georgia,serif; cursor:pointer; border:1px solid #ddd; font-size:11px; padding:3px 8px; border-radius:3px; background:#f5f2ec; color:#666; }
+.share-btn:hover { background:#e0dbd0; }
 
 /* Loading */
 .loading { text-align:center; padding:48px 16px; color:#aaa; font-style:italic; }
@@ -347,6 +349,40 @@ const SP_LABEL = {brook:'Brook',brown:'Brown',rainbow:'Rainbow',steelhead:'Steel
 function flowColor(p){if(!p)return'#ccc';if(p>200)return'#b71c1c';if(p>150)return'#e65100';if(p>120)return'#f9a825';if(p>80)return'#2e7d32';if(p>50)return'#558b2f';return'#999';}
 function flowW(p){return Math.min((p||0)/2,100);}
 
+// Trend arrows
+function trendArrow(trend){
+  if(!trend) return '';
+  const arrows = {improving:'<span style="color:#2e7d32;font-size:13px" title="Improving">&#9650;</span>',declining:'<span style="color:#b71c1c;font-size:13px" title="Declining">&#9660;</span>',steady:'<span style="color:#999;font-size:11px" title="Steady">&#9654;</span>'};
+  return arrows[trend.overall]||'';
+}
+function trendLabel(trend){
+  if(!trend) return '';
+  const labels = {improving:'Improving',declining:'Declining',steady:'Steady'};
+  return labels[trend.overall]||'';
+}
+
+// Share
+function shareRiver(e,id,name){
+  e.stopPropagation();
+  const r=_condMap[id];
+  if(!r) return;
+  const c=r.conditions||{};
+  const rat=RATINGS[c.ratingKey];
+  const trend=r.trend;
+  const tl=trend?` (${trendLabel(trend).toLowerCase()})`:'';
+  const slug=SLUGS[id];
+  const url=slug?`https://trout.chrisizworski.com/stream/${slug}.html`:'https://trout.chrisizworski.com';
+  const text=`${name}: ${rat?rat.label:''}${tl}${c.tempF!=null?' | '+c.tempF+'F':''}${c.flow!=null?' | '+c.flow+' cfs':''}\n${url}`;
+  if(navigator.share){
+    navigator.share({title:name+' Fishing Conditions',text:text,url:url}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn=e.target.closest('.share-btn');
+      if(btn){btn.textContent='Copied!';setTimeout(()=>{btn.textContent='\u{1F4CB} Share'},1500);}
+    });
+  }
+}
+
 // State
 let _waterBodies=[], _condMap={}, _brief={};
 let _activeR='ALL', _activeS='ALL', _activeQ='';
@@ -378,7 +414,7 @@ function renderHero(){
       <div class="hero-rank">${labels[i]}</div>
       <div class="hero-name">${r.name}</div>
       <div class="hero-region">${r.region}</div>
-      <div class="hero-badge" style="color:${rat.color}">${rat.emoji} ${rat.label}</div>
+      <div class="hero-badge" style="color:${rat.color}">${rat.emoji} ${rat.label} ${r.trend?trendArrow(r.trend):''}</div>
       <div class="hero-stats">
         ${c.flow!=null?`<div class="hero-stat"><span>Flow</span>${c.flow.toLocaleString()} cfs</div>`:''}
         ${c.tempF!=null?`<div class="hero-stat"><span>Temp</span>${c.tempF}°F</div>`:''}
@@ -418,7 +454,7 @@ function renderRow(wb, query){
 
   // Rating badge or "Access info" badge
   const ratingBadge = rat
-    ? `<div class="row-rating"><span class="row-rating-emoji">${rat.emoji}</span><span class="row-rating-label" style="color:${rat.color}">${rat.label}</span></div>`
+    ? `<div class="row-rating"><span class="row-rating-emoji">${rat.emoji}</span><span class="row-rating-label" style="color:${rat.color}">${rat.label}</span>${usgs&&_condMap[wb.usgs_id]?.trend?` ${trendArrow(_condMap[wb.usgs_id].trend)}`:''}</div>`
     : `<div class="row-rating" style="color:#aaa;font-size:11px;font-style:italic">DNR access</div>`;
 
   // Links
@@ -426,6 +462,7 @@ function renderRow(wb, query){
     ? `<div class="row-links" onclick="event.stopPropagation()">
         <a href="/stream/${slug}.html" class="row-link">Stream page</a>
         <a href="/map.html?river=${wb.usgs_id}" class="row-link secondary">📍 Map</a>
+        <button class="row-link secondary share-btn" onclick="shareRiver(event,'${wb.usgs_id}','${wb.name.replace(/'/g,"\\'")}')">📋 Share</button>
       </div>`
     : `<div class="row-links" onclick="event.stopPropagation()">
         <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=12" class="row-link secondary" title="See on map">📍 Map</a>
@@ -558,11 +595,12 @@ function renderModal(data,aiNote,rec,riverId){
       ${flies.map(f=>`<span class="fly-tag">${f.name} #${f.sizes[0]}</span>`).join('')}
     </div>`;
   }
+  const trend = _condMap[riverId]?.trend;
   document.getElementById('modalBody').innerHTML=`
     ${rat?`<div class="modal-rating" style="background:${rat.bg};border:1px solid ${rat.color}20">
       <span class="modal-rating-emoji">${rat.emoji}</span>
-      <div><div class="modal-rating-label" style="color:${rat.color}">${rat.label}</div>
-      <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}</div></div>
+      <div><div class="modal-rating-label" style="color:${rat.color}">${rat.label} ${trend?trendArrow(trend):''}</div>
+      <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}${trend&&trend.overall!=='steady'?' <span style="font-size:11px;opacity:.7">('+trendLabel(trend).toLowerCase()+' since yesterday)</span>':''}</div></div>
     </div>`:''}
     <div class="modal-stats">
       <div class="ms"><div class="ms-lbl">Flow</div><div class="ms-val">${c?.flow!==null?c.flow.toLocaleString()+' cfs':'—'}</div>${c?.flowLabel?`<div class="ms-sub">${c.flowLabel}</div>`:''}</div>
@@ -575,6 +613,7 @@ function renderModal(data,aiNote,rec,riverId){
     <div class="modal-actions">
       ${slug?`<a href="/stream/${slug}.html" class="modal-btn primary">Full stream page →</a>`:''}
       <a href="/river.html?id=${riverId}" class="modal-btn ${slug?'secondary':'primary'}">All gauges →</a>
+      <button class="modal-btn secondary share-btn" onclick="shareRiver(event,'${riverId}','${data.name?.replace(/'/g,"\\'")||''}')">📋 Share</button>
       <button class="modal-btn secondary" onclick="closeModal()">Close</button>
     </div>`;
 }

@@ -37,6 +37,7 @@ export default async function handler(req, res) {
 
   try {
     log.push(`[${ts()}] Cron starting — Michigan Trout Report daily run`);
+    const r = makeRedis();
 
     const [liveReadings, allStats] = await Promise.all([
       fetchLiveReadings(ALL_GAUGE_IDS),
