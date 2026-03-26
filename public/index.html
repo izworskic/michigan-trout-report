@@ -156,8 +156,23 @@ a { color:#2c5f2d; text-decoration:none; }
 .row-link.secondary { color:#666; background:#f5f2ec; border-color:#ddd; }
 .share-btn { font-family:Georgia,serif; cursor:pointer; border:1px solid #ddd; font-size:11px; padding:3px 8px; border-radius:3px; background:#f5f2ec; color:#666; }
 .share-btn:hover { background:#e0dbd0; }
+.nm-chip.nm-active { background:#1565c0; color:#fff; border-color:#1565c0; }
 /* Your Rivers */
 .your-rivers { background:#1a3a1a; border-bottom:2px solid #2c5f2d; }
+
+/* Weekend Outlook */
+.weekend-section { background:#fff; border-bottom:1px solid #ddd8cc; padding:16px 0; }
+.weekend-label { font-size:11px; text-transform:uppercase; letter-spacing:1.8px; color:#2c5f2d; font-weight:bold; }
+.weekend-date { font-size:11px; color:#aaa; }
+.weekend-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:520px){ .weekend-grid { grid-template-columns:1fr; } }
+.wk-col-label { font-size:12px; color:#888; font-style:italic; margin-bottom:8px; }
+.wk-card { background:#f9f6f0; border:1px solid #e0dbd0; border-radius:5px; padding:10px 12px; margin-bottom:6px; cursor:pointer; transition:background .12s; }
+.wk-card:hover { background:#f0ece4; }
+.wk-card-name { font-size:14px; color:#1a3a1a; }
+.wk-card-badge { font-size:13px; font-weight:bold; margin-top:3px; }
+.wk-card-detail { font-size:11px; color:#888; margin-top:3px; }
+.wk-empty { font-size:12px; color:#bbb; font-style:italic; padding:8px 0; }
 .yr-card { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:5px; padding:8px 12px; min-width:160px; flex-shrink:0; cursor:pointer; transition:background .12s; }
 .yr-card:hover { background:rgba(255,255,255,.12); }
 .yr-name { font-size:13px; color:#f0ede6; white-space:nowrap; }
@@ -250,6 +265,17 @@ footer a { color:#4a7c4a; }
   <div id="briefText"></div>
 </div>
 
+<!-- Weekend Outlook -->
+<div class="weekend-section" id="weekendSection" style="display:none">
+  <div style="max-width:860px;margin:0 auto;padding:0 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span class="weekend-label">This Weekend</span>
+      <span class="weekend-date" id="weekendDates"></span>
+    </div>
+    <div class="weekend-grid" id="weekendGrid"></div>
+  </div>
+</div>
+
 <!-- Sticky controls -->
 <div class="controls">
   <!-- Row 1: Search -->
@@ -286,7 +312,18 @@ footer a { color:#4a7c4a; }
     <button class="chip"     data-s="rainbow"   onclick="setS('rainbow')">Rainbow</button>
     <button class="chip"     data-s="steelhead" onclick="setS('steelhead')">Steelhead</button>
   </div>
-  <!-- Row 3: Legend -->
+  <!-- Row 3: Near Me -->
+  <div class="ctrl-row">
+    <button class="chip" onclick="activateNearMe()" style="background:#e3f2fd;border-color:#90caf9;color:#1565c0">📍 Near Me</button>
+    <span id="nearMeLabel" style="font-size:11px;color:#888"></span>
+    <span id="nearMeChips" style="display:none;gap:4px">
+      <button class="chip nm-chip" data-h="1hr" onclick="setNearMe('1hr')">1 hr</button>
+      <button class="chip nm-chip" data-h="2hr" onclick="setNearMe('2hr')">2 hr</button>
+      <button class="chip nm-chip" data-h="3hr" onclick="setNearMe('3hr')">3 hr</button>
+      <button class="chip nm-chip" data-h="OFF" onclick="setNearMe('OFF')" style="color:#999">All</button>
+    </span>
+  </div>
+  <!-- Row 4: Legend -->
   <div class="legend-row" style="margin-top:6px;padding-top:6px;border-top:1px solid #f0ece4">
     <span style="font-size:10px;color:#bbb;text-transform:uppercase;letter-spacing:.6px">Conditions:</span>
     <span class="leg"><span class="dot" style="background:#2e7d32"></span>Prime</span>
@@ -402,6 +439,45 @@ function shareRiver(e,id,name){
 // State
 let _waterBodies=[], _condMap={}, _brief={};
 let _activeR='ALL', _activeS='ALL', _activeQ='';
+let _nearMeIds = null;
+let _nearMeCity = null;
+
+// ── Proximity (pre-computed drive-time zones) ───────────────────────────────
+const PROXIMITY={"detroit":{"1hr":[],"2hr":["red-cedar-river"],"3hr":["ausable","muskegon","pine-river-oscoda","chippewa-creek-evart","muskegon-bridgeton","east-branch-au-gres","dowagiac-river","augusta-creek","black-river-bangor","thornapple-caledonia","chippewa-river-mp","wolf-creek","pigeon-river-olive","tittabawassee-river","looking-glass-river","maple-river-lp","flat-river","thornapple-river","rogue-river","rifle-river"]},"grand_rapids":{"1hr":["muskegon","muskegon-bridgeton","bear-creek-muskegon","augusta-creek","black-river-bangor","thornapple-caledonia","wolf-creek","pigeon-river-olive","rogue-river","flat-river","thornapple-river","white-river","little-muskegon-river","clam-river","dowagiac-creek"],"2hr":["pere-marquette","little-manistee","chippewa-creek-evart","dowagiac-river","red-cedar-river","chippewa-river-mp","tittabawassee-river","pine-river","looking-glass-river","maple-river-lp","betsie-river"],"3hr":["ausable","manistee","boardman","jordan","pigeon","pine-river-oscoda","east-branch-au-gres","platte-river","rifle-river"]},"traverse_city":{"1hr":["manistee","boardman","jordan","little-manistee","betsie-river","platte-river"],"2hr":["ausable","pere-marquette","muskegon","pigeon","ford-river","cedar-river-up","sturgeon-river-nahma","chippewa-creek-evart","muskegon-bridgeton","bear-creek-muskegon","east-branch-au-gres","chippewa-river-mp","wolf-creek","tittabawassee-river","pine-river","sturgeon-river-nlp","clam-river","white-river"],"3hr":["escanaba-river","paint-river-up","pine-river-rudyard","menominee-river","sturgeon-river-loretto","pine-river-oscoda","augusta-creek","black-river-bangor","red-cedar-river","thornapple-caledonia","pigeon-river-olive","little-muskegon-river","thunder-bay-river","rifle-river","au-gres-river"]},"lansing":{"1hr":["augusta-creek","red-cedar-river","thornapple-caledonia","wolf-creek","looking-glass-river","maple-river-lp","thornapple-river","flat-river"],"2hr":["muskegon","chippewa-creek-evart","muskegon-bridgeton","bear-creek-muskegon","east-branch-au-gres","dowagiac-river","black-river-bangor","chippewa-river-mp","pigeon-river-olive","tittabawassee-river","rogue-river","white-river","little-muskegon-river","clam-river","dowagiac-creek","pine-river-midland"],"3hr":["ausable","manistee","pere-marquette","boardman","jordan","pigeon","little-manistee","pine-river-oscoda","pine-river","rifle-river","betsie-river"]},"saginaw":{"1hr":["east-branch-au-gres","red-cedar-river","chippewa-river-mp","wolf-creek","tittabawassee-river","pine-river-midland","au-gres-river","rifle-river","maple-river-lp"],"2hr":["ausable","manistee","muskegon","pine-river-oscoda","chippewa-creek-evart","muskegon-bridgeton","augusta-creek","thornapple-caledonia","looking-glass-river","flat-river","thunder-bay-river"],"3hr":["pere-marquette","boardman","jordan","pigeon","little-manistee","bear-creek-muskegon","dowagiac-river","black-river-bangor","pigeon-river-olive","clam-river","pine-river","rogue-river","white-river","sturgeon-river-nlp","betsie-river"]},"kalamazoo":{"1hr":["dowagiac-river","augusta-creek","black-river-bangor","thornapple-caledonia","pigeon-river-olive","thornapple-river","dowagiac-creek"],"2hr":["muskegon","muskegon-bridgeton","bear-creek-muskegon","red-cedar-river","chippewa-river-mp","wolf-creek","rogue-river","flat-river","white-river","little-muskegon-river","clam-river","looking-glass-river"],"3hr":["pere-marquette","boardman","little-manistee","chippewa-creek-evart","east-branch-au-gres","tittabawassee-river","pine-river","maple-river-lp","pine-river-midland","betsie-river"]},"marquette":{"1hr":["escanaba-river","paint-river-up","sturgeon-river-nahma","salmon-trout-eb","michigamme-river","silver-river","salmon-trout-river","miners-river","au-train-river"],"2hr":["ford-river","cedar-river-up","cisco-branch-ontonagon","menominee-river","sturgeon-river-loretto","ontonagon-river","sturgeon-river-up","black-river-schoolcraft","tahquamenon-river","iron-river","brule-river","paint-river"],"3hr":["boardman","jordan","pine-river-rudyard","black-river-up","presque-isle-river","trap-rock-river"]},"ann_arbor":{"1hr":["red-cedar-river","looking-glass-river"],"2hr":["augusta-creek","thornapple-caledonia","chippewa-river-mp","wolf-creek","tittabawassee-river","maple-river-lp","flat-river","thornapple-river"],"3hr":["ausable","muskegon","pine-river-oscoda","chippewa-creek-evart","muskegon-bridgeton","bear-creek-muskegon","east-branch-au-gres","dowagiac-river","black-river-bangor","pigeon-river-olive","rogue-river","white-river","little-muskegon-river","clam-river","rifle-river","pine-river-midland","au-gres-river"]}};
+const CITY_LABELS={detroit:'Detroit',grand_rapids:'Grand Rapids',traverse_city:'Traverse City',lansing:'Lansing',saginaw:'Saginaw/Bay City',kalamazoo:'Kalamazoo',marquette:'Marquette',ann_arbor:'Ann Arbor'};
+const CITY_COORDS={detroit:[42.33,-83.05],grand_rapids:[42.96,-85.67],traverse_city:[44.76,-85.62],lansing:[42.73,-84.56],saginaw:[43.42,-83.95],kalamazoo:[42.29,-85.59],marquette:[46.54,-87.40],ann_arbor:[42.28,-83.74]};
+
+function nearestCity(lat,lon){let best=null,bestD=Infinity;for(const [c,[la,lo]] of Object.entries(CITY_COORDS)){const d=Math.sqrt((lat-la)**2+(lon-lo)**2);if(d<bestD){bestD=d;best=c;}}return best;}
+function setNearMe(hours){
+  if(!_nearMeCity){activateNearMe();return;}
+  const b=PROXIMITY[_nearMeCity];if(!b) return;
+  if(hours==='OFF'){_nearMeIds=null;document.querySelectorAll('.nm-chip').forEach(c=>c.classList.remove('nm-active'));renderList();return;}
+  let ids=[];
+  if(hours==='1hr') ids=[...b['1hr']];
+  else if(hours==='2hr') ids=[...b['1hr'],...b['2hr']];
+  else ids=[...b['1hr'],...b['2hr'],...b['3hr']];
+  _nearMeIds=new Set(ids);
+  document.querySelectorAll('.nm-chip').forEach(c=>c.classList.toggle('nm-active',c.dataset.h===hours));
+  renderList();
+}
+function activateNearMe(){
+  if(!navigator.geolocation){pickCity();return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    _nearMeCity=nearestCity(pos.coords.latitude,pos.coords.longitude);
+    showNearMeUI();setNearMe('2hr');
+  },()=>pickCity());
+}
+function pickCity(){
+  const city=prompt('Closest city? Detroit, Grand Rapids, Traverse City, Lansing, Saginaw, Kalamazoo, Marquette, Ann Arbor');
+  if(!city) return;
+  const key=city.toLowerCase().replace(/[\s\/]+/g,'_');
+  const match=Object.keys(CITY_COORDS).find(c=>key.includes(c.split('_')[0]));
+  if(match){_nearMeCity=match;showNearMeUI();setNearMe('2hr');}
+}
+function showNearMeUI(){
+  document.getElementById('nearMeLabel').textContent='Near '+CITY_LABELS[_nearMeCity];
+  document.getElementById('nearMeChips').style.display='inline-flex';
+}
 
 // ── Your Rivers (localStorage) ──────────────────────────────────────────────
 function getFavorites(){ try { return JSON.parse(localStorage.getItem('trout_fav_rivers')||'[]'); } catch(e){ return []; } }
@@ -546,7 +622,8 @@ function renderList(){
     const rOk = _activeR==='ALL' || wb.rc===_activeR;
     const sOk = _activeS==='ALL' || (wb.species||[]).includes(_activeS);
     const qOk = !_activeQ || wb.name.toLowerCase().includes(_activeQ) || (wb.county||'').toLowerCase().includes(_activeQ);
-    const show = rOk && sOk && qOk;
+    const nOk = !_nearMeIds || _nearMeIds.has(wb.usgs_id);
+    const show = rOk && sOk && qOk && nOk;
     if(show) visible++;
     const row = renderRow(wb, _activeQ);
     return show ? row : row.replace('class="river-row"','class="river-row hidden"');
@@ -658,6 +735,39 @@ function renderModal(data,aiNote,rec,riverId){
     </div>`;
 }
 
+// ── Weekend Outlook ──────────────────────────────────────────────────────────
+async function loadWeekend(){
+  try {
+    const resp = await fetch('/api/weekend');
+    if(!resp.ok) return;
+    const data = await resp.json();
+    if(!data.success) return;
+
+    const satDate = new Date(data.saturday.date+'T12:00:00');
+    const sunDate = new Date(data.sunday.date+'T12:00:00');
+    const fmt = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    document.getElementById('weekendDates').textContent = fmt(satDate)+' / '+fmt(sunDate);
+
+    function renderDayCol(dayData, label){
+      if(!dayData.topRivers?.length) return `<div><div class="wk-col-label">${label}</div><div class="wk-empty">No rivers projected fishable. Check back tomorrow.</div></div>`;
+      const cards = dayData.topRivers.map((r,i)=>{
+        const rat = RATINGS[r.projectedRating]||RATINGS.FAIR;
+        const slug = SLUGS[r.id];
+        return `<div class="wk-card" onclick="${slug?`window.location='/stream/${slug}.html'`:`openModal('${r.id}','${r.name.replace(/'/g,"\\'")}')`}">
+          <div class="wk-card-name">${i===0?'&#9733; ':''}${r.name}</div>
+          <div class="wk-card-badge" style="color:${rat.color}">${rat.emoji} ${r.projectedRating==='FISHING_WELL'?'Fishing Well':r.projectedRating==='PRIME'?'Prime':r.projectedRating==='FAIR'?'Fair':'?'}</div>
+          <div class="wk-card-detail">${r.forecast||''}${r.rain>20?' | Rain: '+r.rain+'%':''}${r.airTemp?' | Air: '+r.airTemp+'\u00b0F':''}</div>
+        </div>`;
+      }).join('');
+      return `<div><div class="wk-col-label">${label}</div>${cards}</div>`;
+    }
+
+    document.getElementById('weekendGrid').innerHTML =
+      renderDayCol(data.saturday, 'Saturday') + renderDayCol(data.sunday, 'Sunday');
+    document.getElementById('weekendSection').style.display='block';
+  } catch(e){ /* non-fatal */ }
+}
+
 // ── Season banner ─────────────────────────────────────────────────────────────
 function setBanner(){
   const m=new Date().getMonth()+1;
@@ -707,6 +817,7 @@ async function load(){
     renderHero();
     renderList();
     renderYourRivers();
+    loadWeekend();
 
   }catch(e){
     document.getElementById('heroSub').textContent='Error loading data';

@@ -11,6 +11,10 @@
       "destination": "/api/river/[id]"
     },
     {
+      "source": "/api/weekend",
+      "destination": "/api/weekend"
+    },
+    {
       "source": "/api/recommend",
       "destination": "/api/recommend"
     },
