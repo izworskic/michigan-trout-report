@@ -282,13 +282,13 @@ async function loadConditions() {
     if (recData?.success && recData.recommendation) {
       const flies = (recData.staticRec?.topFlies || []).slice(0, 4);
       const flyTags = flies.map(f =>
-        `<span style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px">${f.name} #${f.sizes[0]}</span>`
+        `<a href="https://www.amazon.com/s?k=${encodeURIComponent(f.name+' '+f.sizes[0]+' fly fishing flies')}&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="display:inline-block;background:#e8f5e9;color:#1a3a1a;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px;text-decoration:none;border:1px solid #c8e6c9" title="Buy ${f.name} on Amazon">${f.name} #${f.sizes[0]}</a>`
       ).join('');
       fliesHtml = `
         <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e8e4dc">
           <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">What to tie on today</div>
           <div style="font-size:13px;color:#3a3a3a;margin-bottom:6px">${recData.recommendation}</div>
-          ${flyTags ? `<div>${flyTags}</div>` : ''}
+          ${flyTags ? `<div>${flyTags}</div><div style="font-size:9px;color:#ccc;margin-top:4px">Fly links go to Amazon. Commission at no cost to you.</div>` : ''}
         </div>`;
     }
 

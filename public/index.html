@@ -223,7 +223,8 @@ footer a { color:#4a7c4a; }
 .modal-btn.secondary:hover { background:#e0dbd0; }
 .modal-loading { text-align:center; padding:24px; color:#aaa; font-style:italic; font-size:13px; }
 .modal-rec { font-size:13px; color:#3a3a3a; line-height:1.65; margin-bottom:8px; }
-.fly-tag { display:inline-block; background:#e8f5e9; color:#1a3a1a; font-size:11px; padding:2px 7px; border-radius:3px; margin:2px; }
+.fly-tag { display:inline-block; background:#e8f5e9; color:#1a3a1a; font-size:11px; padding:2px 7px; border-radius:3px; margin:2px; text-decoration:none; cursor:pointer; border:1px solid #c8e6c9; }
+.fly-tag:hover { background:#c8e6c9; text-decoration:none; }
 
 @media (max-width:480px) {
   .hero-grid { grid-template-columns:1fr; }
@@ -411,6 +412,12 @@ function trendLabel(trend){
   if(!trend) return '';
   const labels = {improving:'Improving',declining:'Declining',steady:'Steady'};
   return labels[trend.overall]||'';
+}
+
+// Amazon affiliate fly links
+function flyToAmazon(name, size) {
+  const q = encodeURIComponent(name + ' ' + (size ? '#'+size+' ' : '') + 'fly fishing flies');
+  return `https://www.amazon.com/s?k=${q}&tag=michigantrout-20`;
 }
 
 // Share
@@ -692,7 +699,8 @@ function renderModal(data,aiNote,rec,riverId){
     fliesHtml=`<div style="margin-top:12px;padding-top:11px;border-top:1px solid #f0ece4">
       <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">What to tie on</div>
       <div class="modal-rec">${rec.recommendation}</div>
-      ${flies.map(f=>`<span class="fly-tag">${f.name} #${f.sizes[0]}</span>`).join('')}
+      ${flies.map(f=>`<a href="${flyToAmazon(f.name,f.sizes[0])}" target="_blank" rel="noopener sponsored" class="fly-tag" title="Buy ${f.name} on Amazon">${f.name} #${f.sizes[0]}</a>`).join('')}
+      <div style="font-size:9px;color:#ccc;margin-top:4px">Fly links go to Amazon. Commission at no cost to you.</div>
     </div>`;
   }
   const trend = _condMap[riverId]?.trend;
