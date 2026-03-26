@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Michigan Trout Report — Where to Fish Today</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8222782620782075" crossorigin="anonymous"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8222782620788075" crossorigin="anonymous"></script>
 <meta name="description" content="Live Michigan trout stream conditions for 39 rivers. AuSable, Manistee, Pere Marquette and more. Powered by USGS data, updated daily.">
 <link rel="canonical" href="https://trout.chrisizworski.com/">
 <meta property="og:title" content="Michigan Trout Report — Where to Fish Today">
@@ -68,6 +68,48 @@ a { color:#2c5f2d; text-decoration:none; }
 .legend-row { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; }
 .leg { display:flex; align-items:center; gap:4px; font-size:11px; color:#666; }
 .dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+
+/* Search */
+.search-wrap {
+  position:relative; display:flex; align-items:center;
+  width:100%; max-width:600px;
+}
+.search-icon {
+  position:absolute; left:10px; font-size:14px; pointer-events:none;
+  line-height:1;
+}
+.search-input {
+  font-family:Georgia,serif; font-size:14px;
+  width:100%; padding:8px 36px 8px 34px;
+  border:1.5px solid #ddd; border-radius:6px;
+  background:#fff; color:#2c2c2c; outline:none;
+  transition:border-color .15s;
+  -webkit-appearance:none;
+}
+.search-input:focus { border-color:#4a7c4a; box-shadow:0 0 0 3px rgba(74,124,74,.12); }
+.search-input::placeholder { color:#bbb; }
+.search-input::-webkit-search-cancel-button { display:none; }
+.search-clear {
+  position:absolute; right:8px; background:none; border:none;
+  color:#ccc; font-size:14px; cursor:pointer; padding:2px 4px;
+  line-height:1; display:none;
+}
+.search-clear.visible { display:block; color:#aaa; }
+.search-clear:hover { color:#555; }
+/* Region select */
+.ctrl-select {
+  font-family:Georgia,serif; font-size:11px;
+  padding:4px 8px; border:1px solid #ddd; border-radius:10px;
+  background:#f9f6f0; color:#444; cursor:pointer; outline:none;
+  -webkit-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23aaa'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 8px center;
+  padding-right:22px;
+}
+.ctrl-select:focus { border-color:#4a7c4a; }
+/* Search highlight on river names */
+.search-highlight { background:#fff3cd; border-radius:2px; }
 
 /* Count line */
 .count-line { font-size:11px; color:#aaa; padding:6px 16px 4px; font-style:italic; }
@@ -200,22 +242,40 @@ footer a { color:#4a7c4a; }
 
 <!-- Sticky controls -->
 <div class="controls">
+  <!-- Row 1: Search -->
+  <div class="ctrl-row" style="margin-bottom:7px">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        type="search"
+        id="riverSearch"
+        class="search-input"
+        placeholder="Search rivers — AuSable, Pere Marquette, Jordan..."
+        oninput="setSearch(this.value)"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button class="search-clear" id="searchClear" onclick="clearSearch()" title="Clear search">✕</button>
+    </div>
+  </div>
+  <!-- Row 2: Region + Species -->
   <div class="ctrl-row">
     <span class="ctrl-lbl">Region:</span>
-    <button class="chip on" data-r="ALL"  onclick="setR('ALL')">All</button>
-    <button class="chip"    data-r="UP"   onclick="setR('UP')">Upper Peninsula</button>
-    <button class="chip"    data-r="NLW"  onclick="setR('NLW')">NLP West (L. Michigan)</button>
-        <button class="chip"    data-r="NLE"  onclick="setR('NLE')">NLP East (L. Huron)</button>
-    <button class="chip"    data-r="WLP"  onclick="setR('WLP')">Western LP</button>
-    <button class="chip"    data-r="CLP"  onclick="setR('CLP')">Central LP</button>
+    <select class="ctrl-select" id="regionSelect" onchange="setR(this.value)">
+      <option value="ALL">All Michigan</option>
+      <option value="UP">Upper Peninsula</option>
+      <option value="NLW">NLP West (Lake Michigan)</option>
+      <option value="NLE">NLP East (Lake Huron)</option>
+      <option value="WLP">Western LP</option>
+      <option value="CLP">Central LP</option>
+    </select>
+    <span class="ctrl-lbl" style="margin-left:10px">Species:</span>
+    <button class="chip on"  data-s="ALL"       onclick="setS('ALL')">All</button>
+    <button class="chip"     data-s="brook"     onclick="setS('brook')">Brook</button>
+    <button class="chip"     data-s="brown"     onclick="setS('brown')">Brown</button>
+    <button class="chip"     data-s="steelhead" onclick="setS('steelhead')">Steelhead</button>
   </div>
-  <div class="ctrl-row">
-    <span class="ctrl-lbl">Species:</span>
-    <button class="chip on"         data-s="ALL"       onclick="setS('ALL')">All</button>
-    <button class="chip"            data-s="brook"     onclick="setS('brook')">Brook Trout</button>
-    <button class="chip"            data-s="brown"     onclick="setS('brown')">Brown Trout</button>
-    <button class="chip"            data-s="steelhead" onclick="setS('steelhead')">Steelhead</button>
-  </div>
+  <!-- Row 3: Legend -->
   <div class="legend-row" style="margin-top:6px;padding-top:6px;border-top:1px solid #f0ece4">
     <span style="font-size:10px;color:#bbb;text-transform:uppercase;letter-spacing:.6px">Conditions:</span>
     <span class="leg"><span class="dot" style="background:#2e7d32"></span>Prime</span>
@@ -282,7 +342,7 @@ const SP_COLOR = {brook:'#1b5e20',brown:'#bf360c',rainbow:'#0d47a1',steelhead:'#
 function flowColor(p){if(!p)return'#ccc';if(p>200)return'#b71c1c';if(p>150)return'#e65100';if(p>120)return'#f9a825';if(p>80)return'#2e7d32';if(p>50)return'#558b2f';return'#999';}
 function flowW(p){return Math.min((p||0)/2,100);}
 
-let _rivers=[], _brief={}, _activeR='ALL', _activeS='ALL';
+let _rivers=[], _brief={}, _activeR='ALL', _activeS='ALL', _activeQ='';
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 function renderHero(rivers){
@@ -321,7 +381,7 @@ function renderHero(rivers){
 }
 
 // ── River rows ────────────────────────────────────────────────────────────────
-function renderRow(r){
+function renderRow(r, query=""){
   const c=r.conditions||{};
   const rat=c.ratingKey?RATINGS[c.ratingKey]:null;
   const m=META[r.id]||{rc:'',s:[]};
@@ -335,7 +395,7 @@ function renderRow(r){
     <div class="row-stripe" style="background:${stripeColor}"></div>
     <div class="row-body">
       <div class="row-top">
-        <div class="row-name">${r.name}</div>
+        <div class="row-name">${query?highlight(r.name,query):r.name}</div>
         ${rat?`<div class="row-rating"><span class="row-rating-emoji">${rat.emoji}</span><span class="row-rating-label" style="color:${rat.color}">${rat.label}</span></div>`:'<div class="row-rating" style="color:#bbb;font-size:11px">No data</div>'}
       </div>
       <div class="row-meta">${r.region}</div>
@@ -368,12 +428,16 @@ function renderList(){
     const m=META[r.id]||{rc:'',s:[]};
     const rOk=_activeR==='ALL'||m.rc===_activeR;
     const sOk=_activeS==='ALL'||(m.s||[]).includes(_activeS);
-    const show=rOk&&sOk;
+    const qOk=!_activeQ||r.name.toLowerCase().includes(_activeQ)||r.region.toLowerCase().includes(_activeQ);
+    const show=rOk&&sOk&&qOk;
     if(show)visible++;
-    // Inject hidden into the row
-    const row=renderRow(r);
-    return sOk&&rOk ? row : row.replace('class="river-row"','class="river-row hidden"');
+    const row=renderRow(r, _activeQ);
+    return show ? row : row.replace('class="river-row"','class="river-row hidden"');
   }).join('');
+  // Show "no results" with search tip if query active
+  if(!visible && _activeQ){
+    return list.innerHTML=`<div class="empty">No rivers match "<strong>${_activeQ}</strong>" — try a partial name like "au" or "man".</div>`;
+  }
   list.innerHTML=html||'<div class="empty">No rivers match the current filters.</div>';
   document.getElementById('countLine').textContent=
     visible===_rivers.length?`Showing all ${visible} rivers — sorted by conditions`
@@ -381,11 +445,33 @@ function renderList(){
 }
 
 // ── Filters ───────────────────────────────────────────────────────────────────
+
+function setSearch(q){
+  _activeQ=q.trim().toLowerCase();
+  const clr=document.getElementById('searchClear');
+  if(clr) clr.className='search-clear'+(_activeQ?' visible':'');
+  renderList();
+}
+function clearSearch(){
+  _activeQ='';
+  const inp=document.getElementById('riverSearch');
+  if(inp) inp.value='';
+  const clr=document.getElementById('searchClear');
+  if(clr) clr.className='search-clear';
+  renderList();
+}
+function highlight(text, query){
+  if(!query) return text;
+  const idx=text.toLowerCase().indexOf(query);
+  if(idx<0) return text;
+  return text.slice(0,idx)
+    +'<mark class="search-highlight">'+text.slice(idx,idx+query.length)+'</mark>'
+    +text.slice(idx+query.length);
+}
 function setR(v){
   _activeR=v;
-  document.querySelectorAll('[data-r]').forEach(b=>{
-    b.className='chip'+(b.dataset.r===v?' on':'');
-  });
+  const sel=document.getElementById('regionSelect');
+  if(sel) sel.value=v;
   renderList();
 }
 function setS(v){
@@ -504,5 +590,6 @@ setTimeout(()=>{
 </script>
 </body>
 </html>
+
 
 
