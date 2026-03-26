@@ -425,7 +425,7 @@ function renderRow(wb, query){
   const links = slug
     ? `<div class="row-links" onclick="event.stopPropagation()">
         <a href="/stream/${slug}.html" class="row-link">Stream page</a>
-        <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=11" class="row-link secondary">📍 Map</a>
+        <a href="/map.html?river=${wb.usgs_id}" class="row-link secondary">📍 Map</a>
       </div>`
     : `<div class="row-links" onclick="event.stopPropagation()">
         <a href="/map.html?lat=${wb.lat}&lon=${wb.lon}&z=12" class="row-link secondary" title="See on map">📍 Map</a>
