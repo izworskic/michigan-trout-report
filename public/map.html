@@ -130,9 +130,37 @@ html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
 
 /* Mobile */
 @media (max-width:640px) {
-  .sidebar { display:none; }
+  .sidebar { 
+    display:none; 
+    position:fixed; top:46px; left:0; right:0; bottom:0; 
+    width:100%; z-index:1000; 
+    overflow-y:auto; background:#faf7f2;
+  }
+  .sidebar.open { display:flex; }
   #map { width:100%; }
+  .hdr { padding-top:max(10px, env(safe-area-inset-top)); }
+  .mobile-toggle {
+    display:block; position:fixed; bottom:max(20px, env(safe-area-inset-bottom, 20px)); 
+    left:50%; transform:translateX(-50%); z-index:1001;
+    background:#1a3a1a; color:#fff; border:none; padding:12px 20px; 
+    border-radius:24px; font-family:Georgia,serif; font-size:13px; 
+    cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.3);
+    min-height:48px;
+  }
+  .mobile-toggle:active { background:#2c5f2d; }
+  .best-item, .sb-item { min-height:44px; }
 }
+@media (min-width:641px) {
+  .mobile-toggle { display:none; }
+}
+
+/* Tablet */
+@media (min-width:641px) and (max-width:1024px) {
+  .sidebar { width:240px; }
+}
+
+/* Safe area for all */
+body { padding-bottom: env(safe-area-inset-bottom); }
 </style>
 </head>
 <body>
@@ -199,6 +227,8 @@ html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
 
   <div id="map"></div>
 </div>
+
+<button class="mobile-toggle" onclick="toggleSidebar()">📋 Rivers &amp; Access Points</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
@@ -553,6 +583,19 @@ async function loadAll(){
   }catch(e){
     console.error(e);
     document.getElementById('hdrStatus').textContent='Error loading data';
+  }
+}
+
+// Mobile sidebar toggle
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  const btn = document.querySelector('.mobile-toggle');
+  if (sb.classList.contains('open')) {
+    sb.classList.remove('open');
+    btn.textContent = '📋 Rivers & Access Points';
+  } else {
+    sb.classList.add('open');
+    btn.textContent = '✕ Close List';
   }
 }
 

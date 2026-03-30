@@ -283,6 +283,47 @@ footer a { color:#4a7c4a; }
   .modal-stats { grid-template-columns:1fr 1fr; }
   .hdr-nav { gap:10px; }
 }
+
+/* ── Responsive: all devices ─────────────────────────────────── */
+
+/* Safe area for iPhone notch / Dynamic Island */
+body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.hdr { padding-top: max(12px, env(safe-area-inset-top)); }
+
+/* Touch targets: minimum 44px for all interactive elements */
+.chip { min-height:36px; display:inline-flex; align-items:center; }
+.row-link { min-height:36px; display:inline-flex; align-items:center; padding:8px 12px; }
+.modal-btn { min-height:40px; display:inline-flex; align-items:center; }
+
+/* Tablet (601-1024px) */
+@media (min-width:601px) and (max-width:1024px) {
+  .river-row { flex-direction:row; }
+  .row-links { flex-direction:row; padding:10px 12px; }
+  .modal-content { width:85%; max-width:600px; }
+  .weekend-grid { grid-template-columns:1fr 1fr; gap:14px; }
+}
+
+/* Phone landscape + small tablet (481-600px) */
+@media (max-width:600px) {
+  .river-row { flex-direction:column; }
+  .row-body { padding:10px 12px 6px; }
+  .row-links { flex-direction:row; padding:6px 12px 10px; justify-content:flex-start; gap:8px; }
+  .row-link { font-size:12px; padding:8px 12px; }
+  .modal-content { width:96%; max-width:none; margin:10px auto; border-radius:10px; }
+  .modal-actions { flex-wrap:wrap; }
+  .modal-btn { flex:1 1 auto; text-align:center; justify-content:center; min-width:0; }
+  .hdr-title { font-size:15px; }
+  .weekend-grid { grid-template-columns:1fr; }
+}
+
+/* Phone portrait (under 380px — small iPhones, older Androids) */
+@media (max-width:380px) {
+  .hdr { padding:10px 10px; }
+  .hdr-title { font-size:14px; }
+  .modal-stats { grid-template-columns:1fr; }
+  .row-top { flex-direction:column; gap:4px; }
+  .chip { font-size:10px; padding:4px 8px; }
+}
 </style>
 </head>
 <body>
@@ -299,8 +340,8 @@ footer a { color:#4a7c4a; }
   <div class="hero-heading" style="font-size:17px;margin-bottom:6px">Where to Fish Today</div>
   <div class="hero-sub" id="heroSub" style="font-size:13px;margin-bottom:12px">Loading conditions...</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <a href="/map.html" style="font-size:13px;color:#fff;background:#2c5f2d;padding:8px 16px;border-radius:5px;text-decoration:none;font-weight:bold">🗺 Stream Map + Access Points</a>
-    <a href="/top-rivers.html" id="topRiversLink" style="font-size:12px;color:#a8c8a8;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 14px;border-radius:5px;text-decoration:none">🏆 Top 10 Rivers Right Now</a>
+    <a href="/map.html" style="font-size:13px;color:#fff;background:#2c5f2d;padding:10px 16px;border-radius:5px;text-decoration:none;font-weight:bold;min-height:44px;display:inline-flex;align-items:center">🗺 Stream Map + Access Points</a>
+    <a href="/top-rivers.html" id="topRiversLink" style="font-size:12px;color:#a8c8a8;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:5px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">🏆 Top 10 Rivers Right Now</a>
   </div>
 </section>
 

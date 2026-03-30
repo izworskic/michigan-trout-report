@@ -48,7 +48,7 @@ function renderRating(c) {
 
 // ── Conditions stats (flow, temp, gage) ─────────────────────────────────────
 function renderConditionStats(c) {
-  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px">
     <div style="background:#fff;border-radius:4px;padding:8px 10px;border:1px solid #e8e4dc">
       <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Flow</div>
       <div style="font-size:15px;color:#2c2c2c">${c.flow !== null && c.flow !== undefined ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
@@ -170,9 +170,9 @@ function renderFullWidget(c, recData, riverId) {
     renderFlies(recData),
     renderLures(lr),
     renderDisclosure(),
-    `<div style="display:flex;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid #e8e4dc">
-      <a href="/river.html?id=${riverId}" style="font-family:Georgia,serif;font-size:12px;padding:6px 14px;border-radius:4px;text-decoration:none;background:#1a3a1a;color:#fff">Full report + all gauges →</a>
-      <a href="/map.html?river=${riverId}" style="font-family:Georgia,serif;font-size:12px;padding:6px 14px;border-radius:4px;text-decoration:none;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;font-weight:bold">🗺 Map</a>
+    `<div style="display:flex;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid #e8e4dc;flex-wrap:wrap">
+      <a href="/river.html?id=${riverId}" style="font-family:Georgia,serif;font-size:12px;padding:10px 14px;border-radius:4px;text-decoration:none;background:#1a3a1a;color:#fff;min-height:44px;display:inline-flex;align-items:center">Full report + all gauges →</a>
+      <a href="/map.html?river=${riverId}" style="font-family:Georgia,serif;font-size:12px;padding:10px 14px;border-radius:4px;text-decoration:none;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;font-weight:bold;min-height:44px;display:inline-flex;align-items:center">🗺 Map</a>
     </div>`,
   ].join('');
 }

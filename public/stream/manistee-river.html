@@ -117,12 +117,28 @@
   .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; margin-top: 2px; }
   .site-footer a { color: #4a7c4a; }
 
+  /* Phone */
   @media (max-width: 520px) {
-    .river-h1 { font-size: 23px; }
+    .river-h1 { font-size: 20px; }
     .widget-stats { grid-template-columns: 1fr 1fr; }
     .info-grid { grid-template-columns: 1fr; }
     .header-nav { display: none; }
+    .species-row { gap: 3px; }
   }
+  /* Small phones */
+  @media (max-width: 380px) {
+    .river-h1 { font-size: 18px; }
+    .widget-stats { grid-template-columns: 1fr; }
+    .river-meta-row { flex-direction: column; align-items: flex-start; }
+  }
+  /* Tablet */
+  @media (min-width: 521px) and (max-width: 1024px) {
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .container { padding: 0 24px; }
+  }
+  /* Safe area */
+  body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  .site-header { padding-top: max(16px, env(safe-area-inset-top)); }
 </style>
 </head>
 <body>
