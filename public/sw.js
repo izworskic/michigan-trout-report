@@ -35,6 +35,13 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  // Never intercept non-GET requests
+  if (event.request.method !== 'GET') return;
+
+  // Let crawlers/bots always hit the network directly
+  const ua = event.request.headers.get('User-Agent') || '';
+  if (/Googlebot|bingbot|Baiduspider|Slurp|DuckDuckBot|crawl|spider|bot/i.test(ua)) return;
+
   // API calls: network-first, cache fallback (so last conditions show offline)
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
