@@ -161,7 +161,9 @@ export default async function handler(req, res) {
       } : null,
       context: { month, hourET, dateKey },
       sun: (() => {
-        const grid = RIVER_GRIDS[id] || RIVER_GRIDS[river.id];
+        // Try exact match, then prefix match (RIVER_GRIDS uses short keys like 'rifle', river IDs use 'rifle-river')
+        const grid = RIVER_GRIDS[id] || RIVER_GRIDS[river.id] ||
+          Object.entries(RIVER_GRIDS).find(([k]) => id.startsWith(k) || k.startsWith(id))?.[1];
         if (!grid) return null;
         const sunTimes = calcSunTimes(grid.lat, grid.lon, now);
         const waterTemp = primaryConditions?.tempF ?? null;
