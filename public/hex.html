@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuSable River Hex Hatch Tracker | Live Hexagenia Limbata Conditions</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a1a0a">
+<meta name="description" content="Live hex hatch probability tracker for the AuSable River. Water temperature, moon phase, wind, and emergence window. Know when to be on the Holy Water.">
+<link rel="canonical" href="https://trout.chrisizworski.com/hex.html">
+<meta property="og:title" content="AuSable Hex Hatch Tracker | Live Conditions">
+<meta property="og:description" content="Is tonight a hex night? Live probability score from water temp, moon phase, wind, and sunset. AuSable River, Michigan.">
+<meta property="og:image" content="https://trout.chrisizworski.com/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "AuSable River Hex Hatch Tracker",
+  "description": "Live Hexagenia limbata emergence probability for the AuSable River Holy Water. Water temp, moon phase, sunset, wind conditions updated daily.",
+  "url": "https://trout.chrisizworski.com/hex.html",
+  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"}
+}
+</script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Georgia,'Times New Roman',serif;background:#0d0d06;color:#e8e4d0;line-height:1.7;min-height:100vh}
+  a{color:#c9a84c;text-decoration:none}
+  a:hover{text-decoration:underline;color:#e8c96a}
+
+  /* Header */
+  .hdr{background:#1a1a0a;border-bottom:2px solid #3a3520;padding:14px 20px}
+  .hdr-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .hdr-left{display:flex;align-items:center;gap:14px}
+  .hdr-back{color:#8a7a40;font-size:13px}
+  .hdr-back:hover{color:#c9a84c}
+  .hdr-title{font-size:15px;color:#c9a84c}
+  .hdr-nav{display:flex;gap:14px;font-size:13px}
+  .hdr-nav a{color:#8a7a40}
+  .hdr-nav a:hover{color:#c9a84c}
+
+  .container{max-width:900px;margin:0 auto;padding:0 16px}
+
+  /* Hero */
+  .hero{padding:32px 0 24px;border-bottom:1px solid #2a2a15}
+  .hero-badge{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#8a7a40;margin-bottom:10px}
+  .hero h1{font-size:28px;font-weight:normal;color:#e8c96a;line-height:1.3;margin-bottom:6px}
+  .hero-sub{font-size:15px;color:#8a8060;font-style:italic;max-width:640px}
+
+  /* Score panel */
+  .score-panel{background:#1a1a0a;border:1px solid #3a3520;border-radius:8px;padding:20px;margin:20px 0}
+  .score-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#8a7a40;margin-bottom:12px}
+  .score-row{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+  .score-number{font-size:48px;font-weight:bold;line-height:1}
+  .score-verdict{font-size:20px;margin-bottom:4px}
+  .score-message{font-size:14px;color:#a09870;line-height:1.6}
+
+  .score-bar{height:8px;background:#2a2a15;border-radius:4px;overflow:hidden;margin-bottom:8px}
+  .score-bar-fill{height:100%;border-radius:4px;transition:width .5s}
+
+  /* Components grid */
+  .comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+  .comp{background:#12120a;border:1px solid #2a2a15;border-radius:6px;padding:12px}
+  .comp-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6a6040;margin-bottom:4px}
+  .comp-value{font-size:14px;color:#c9c090}
+  .comp-pts{font-size:11px;color:#8a7a40;margin-top:2px}
+
+  /* Hex window */
+  .hex-window{background:linear-gradient(135deg,#2a200a,#1a1a0a);border:1px solid #4a3a10;border-radius:8px;padding:18px;margin:16px 0}
+  .hw-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#c9a84c;margin-bottom:8px}
+  .hw-times{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+  .hw-time{background:#3a2a08;padding:6px 12px;border-radius:4px;font-size:13px}
+  .hw-time strong{color:#e8c96a}
+  .hw-advice{font-size:13px;color:#a09870}
+
+  /* Content sections */
+  .section{padding:28px 0;border-bottom:1px solid #2a2a15}
+  .section h2{font-size:20px;font-weight:normal;color:#c9a84c;margin-bottom:12px}
+  .section p{font-size:15px;color:#b0a880;margin-bottom:14px}
+
+  /* Spot cards */
+  .spot-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+  .spot{background:#1a1a0a;border:1px solid #3a3520;border-radius:6px;padding:14px}
+  .spot-name{font-size:15px;color:#e8c96a;margin-bottom:4px}
+  .spot-desc{font-size:12px;color:#8a8060;line-height:1.5}
+  .spot-link{font-size:11px;color:#c9a84c;display:inline-block;margin-top:6px;background:#2a2a15;padding:3px 10px;border-radius:3px}
+
+  /* Fly cards */
+  .fly-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .fly{background:#1a1a0a;border:1px solid #3a3520;border-radius:6px;padding:12px}
+  .fly-name{font-size:14px;color:#e8c96a;margin-bottom:3px}
+  .fly-hook{font-size:11px;color:#8a7a40}
+  .fly-when{font-size:12px;color:#8a8060;margin-top:4px}
+  .fly-buy{font-size:11px;color:#c9a84c;background:#2a200a;padding:3px 10px;border-radius:3px;display:inline-block;margin-top:6px;border:1px solid #4a3a10}
+
+  /* Temp trend chart */
+  .trend-chart{background:#1a1a0a;border:1px solid #3a3520;border-radius:6px;padding:16px;margin:14px 0}
+  .trend-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a7a40;margin-bottom:8px}
+  .trend-bars{display:flex;align-items:flex-end;gap:4px;height:80px}
+  .trend-bar{flex:1;border-radius:2px 2px 0 0;position:relative;min-width:20px}
+  .trend-bar-date{font-size:9px;color:#6a6040;text-align:center;margin-top:4px;position:absolute;bottom:-16px;width:100%;left:0}
+  .trend-bar-val{font-size:10px;color:#c9c090;text-align:center;position:absolute;top:-14px;width:100%;left:0}
+
+  /* Related */
+  .related{padding:24px 0}
+  .related-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .rel-link{font-size:13px;padding:6px 14px;background:#1a1a0a;border:1px solid #3a3520;border-radius:4px;color:#c9a84c}
+  .rel-link:hover{background:#2a2a15;text-decoration:none}
+
+  .footer{border-top:1px solid #2a2a15;padding:18px 20px;text-align:center;font-size:12px;color:#6a6040;background:#0d0d06}
+  .footer a{color:#8a7a40}
+
+  /* Dormant state */
+  .dormant-countdown{font-size:40px;color:#c9a84c;margin:20px 0 10px}
+  .dormant-sub{font-size:15px;color:#8a8060;margin-bottom:20px}
+
+  /* Loading */
+  .loading{color:#6a6040;font-style:italic;font-size:14px;padding:20px 0}
+
+  @media(max-width:600px){
+    .hero h1{font-size:22px}
+    .comp-grid{grid-template-columns:1fr 1fr}
+    .spot-grid{grid-template-columns:1fr}
+    .fly-grid{grid-template-columns:1fr}
+    .score-number{font-size:36px}
+    .hdr-nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-left">
+      <a href="/" class="hdr-back">&larr; All Rivers</a>
+      <span class="hdr-title">Michigan Trout Report</span>
+    </div>
+    <nav class="hdr-nav">
+      <a href="/stream/ausable-river.html">AuSable Conditions</a>
+      <a href="/map.html">Stream Map</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="container">
+      <div class="hero-badge">AuSable River &middot; Holy Water &middot; Grayling, Michigan</div>
+      <h1>Hex Hatch Tracker</h1>
+      <p class="hero-sub">Live Hexagenia limbata emergence probability. Water temperature, moon phase, wind, and sunset conditions scored nightly during hex season.</p>
+    </div>
+  </div>
+
+  <!-- Live Score Panel -->
+  <div class="container">
+    <div class="score-panel" id="scorePanel">
+      <div class="loading" id="loadingMsg">Loading live hex data from USGS and NWS...</div>
+    </div>
+  </div>
+
+  <!-- Content: always visible -->
+  <div class="container">
+
+    <div class="section">
+      <h2>The Science of the Hex</h2>
+      <p>Hexagenia limbata is the largest mayfly in North America, with a wingspan approaching two inches. The nymphs live burrowed in the silt and sand bottom of the AuSable for up to two years before crawling out on warm summer evenings to emerge as duns, dry their wings, and fly to the trees. The emergence happens after dark, typically between 9:30 PM and midnight, and draws the largest brown trout in the river to the surface in a feeding event that is audible from 50 feet away.</p>
+
+      <p>The triggers are temperature-dependent. The nymphs will not emerge until water temperature climbs through 62°F toward 65°F. Air temperature at dusk needs to be above 60°F. Calm evenings produce the heaviest emergences; strong wind suppresses them. Darker nights fish better because trout feed with less caution when they cannot see the leader. A new moon night in late June with 65°F water and no wind is the combination anglers plan their entire year around.</p>
+
+      <p>The hex hatch on the AuSable Holy Water between Grayling and Mio is ground zero for this event in Michigan. The gravel-and-silt bottom provides ideal nymph habitat, the cold spring-fed water reaches emergence temperature later than other rivers (protecting the hatch from starting too early), and the catch-and-release regulations have allowed the brown trout population to reach trophy size. Fish over 20 inches are caught annually during the hex.</p>
+    </div>
+
+    <div class="section">
+      <h2>Where to Be</h2>
+      <p>Position matters more during the hex than at any other time on the AuSable. You are fishing in the dark, wading water you cannot see, casting to sounds. Know your water in daylight.</p>
+      <div class="spot-grid">
+        <div class="spot">
+          <div class="spot-name">Burton's Landing</div>
+          <div class="spot-desc">Classic hex water. Wade upstream from the landing. The deep bend 200 yards up holds the biggest fish. Gets crowded opening nights.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=44.6430,-84.7153" target="_blank" rel="noopener" class="spot-link">Navigate &rarr;</a>
+        </div>
+        <div class="spot">
+          <div class="spot-name">Wakeley Bridge</div>
+          <div class="spot-desc">Less pressure than Burton's. Walk downstream to the cedar-lined bends. The soft water on river left below the bridge holds risers.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=44.6268,-84.6453" target="_blank" rel="noopener" class="spot-link">Navigate &rarr;</a>
+        </div>
+        <div class="spot">
+          <div class="spot-name">Canoe Harbor</div>
+          <div class="spot-desc">Flies-only water. The gravel runs above and below the campground produce consistent emergences. Good for wading anglers who want space.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=44.6115,-84.5888" target="_blank" rel="noopener" class="spot-link">Navigate &rarr;</a>
+        </div>
+        <div class="spot">
+          <div class="spot-name">Parmalee Bridge</div>
+          <div class="spot-desc">Downstream of the main hex pressure. The water is wider and deeper here. Best fished from a drift boat anchored in position before dark.</div>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=44.5922,-84.5397" target="_blank" rel="noopener" class="spot-link">Navigate &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>The Flies</h2>
+      <p>Hex patterns are big, visible even in the dark, and impressionistic. The fish are eating by sound and silhouette, not by inspecting your tying. Tie or buy these in advance: the shops sell out.</p>
+      <div class="fly-grid">
+        <div class="fly">
+          <div class="fly-name">Extended Body Hex Dun</div>
+          <div class="fly-hook">Hook: #6-8 2XL &middot; Body: pale yellow deer hair</div>
+          <div class="fly-when">The primary pattern. Fish it dead drift on the surface during the dun phase.</div>
+          <a href="https://www.amazon.com/s?k=hex+hatch+dry+fly+size+6&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="fly-buy">Buy on Amazon</a>
+        </div>
+        <div class="fly">
+          <div class="fly-name">Roberts Yellow Drake</div>
+          <div class="fly-hook">Hook: #6 &middot; Wing: mallard flank</div>
+          <div class="fly-when">A Michigan classic. The yellow body and upright wing work in the last light and into full dark.</div>
+          <a href="https://www.amazon.com/s?k=roberts+yellow+drake+fly&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="fly-buy">Buy on Amazon</a>
+        </div>
+        <div class="fly">
+          <div class="fly-name">Hex Spinner</div>
+          <div class="fly-hook">Hook: #6-8 &middot; Body: pale yellow &middot; Wings: spent</div>
+          <div class="fly-when">Switch to this after midnight when spinners fall. The spent wings sit flush on the surface.</div>
+          <a href="https://www.amazon.com/s?k=hex+spinner+fly+pattern&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="fly-buy">Buy on Amazon</a>
+        </div>
+        <div class="fly">
+          <div class="fly-name">Hex Wiggle Nymph</div>
+          <div class="fly-hook">Hook: #6 2XL &middot; Articulated</div>
+          <div class="fly-when">Fish subsurface before the emergence starts. The nymphs swim to the surface. Strip slowly.</div>
+          <a href="https://www.amazon.com/s?k=hex+nymph+fly+articulated&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="fly-buy">Buy on Amazon</a>
+        </div>
+      </div>
+      <div style="font-size:9px;color:#4a4a30;margin-top:6px">Affiliate links: commission at no cost to you.</div>
+    </div>
+
+    <div class="section">
+      <h2>What You Need</h2>
+      <p>The hex is a night game with specific gear requirements. A headlamp with a red filter is essential: white light spooks fish and ruins your night vision. Heavy tippet (2X-3X) is necessary because you are setting the hook on sounds, not sights, and a 20-inch brown on 5X in the dark is a lost fish. Bring a large net with a long handle. Wading boots with felt soles grip better on the AuSable's rounded gravel in the dark. Bug spray is not optional: the mosquitoes during hex season are legendary.</p>
+
+      <p>Arrive at your spot at least 45 minutes before sunset. Wade to your position in daylight and mark the landmarks you will navigate by in the dark. Once the hex starts, do not wade. Stay in your position and let the fish come to you. The sound of a large brown trout eating a hex dun off the surface is unmistakable: a deep, deliberate slurp, not a splash. Cast to the sound. Strip-set. Hold on.</p>
+    </div>
+
+    <div class="section">
+      <h2>Reading the Hex</h2>
+      <p>Not all rises during the hex are feeding fish. The splashy, dramatic rises are usually small fish or fish that missed. The largest browns feed with a slow, confident sip that barely breaks the surface. Listen for the rhythm: a big fish will set up in a feeding lane and eat every few seconds with metronomic timing. That is the fish you cast to.</p>
+
+      <p>If you hear rises everywhere but cannot get a take, you are likely fishing the dun when they have switched to spinners, or vice versa. The dun phase happens first as the insects emerge and float on the surface drying their wings. An hour or two later, the spinners (adults that have mated in the air) fall back to the water to die. A dun pattern rides high on the water; a spinner pattern lies flush. Carry both and switch when the takes stop.</p>
+    </div>
+
+    <div class="section" id="faqSection">
+      <h2>Frequently Asked Questions</h2>
+      <div style="margin-bottom:16px">
+        <div style="font-size:15px;color:#e8c96a;margin-bottom:4px">When does the hex hatch start on the AuSable?</div>
+        <div style="font-size:14px;color:#a09870;line-height:1.6">Typically mid-June, triggered by water temperature climbing through 62-65°F. The exact start varies year to year by a week or more depending on spring weather. The hatch runs through mid-July on the main stem, with the best fishing concentrated in the last two weeks of June. This tracker monitors live water temperature to detect when conditions are approaching the emergence threshold.</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:15px;color:#e8c96a;margin-bottom:4px">What time do hex start hatching?</div>
+        <div style="font-size:14px;color:#a09870;line-height:1.6">After dark, typically 30 to 90 minutes after sunset depending on water temperature. On warm nights (65°F+ water), the emergence starts later, closer to 10 PM. On cooler nights near the start of the season, the first bugs may appear by 9:15 PM. The estimated emergence window above is calculated from today's sunset time and current water temperature.</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:15px;color:#e8c96a;margin-bottom:4px">Is the hex hatch flies-only on the AuSable?</div>
+        <div style="font-size:14px;color:#a09870;line-height:1.6">The Holy Water between Burton's Landing and Wakeley Bridge is designated flies-only, artificial, catch-and-release year-round. Other sections of the AuSable have different regulations. Check the Michigan DNR Fishing Guide for exact boundaries before you fish.</div>
+      </div>
+      <div>
+        <div style="font-size:15px;color:#e8c96a;margin-bottom:4px">Does the moon affect the hex hatch?</div>
+        <div style="font-size:14px;color:#a09870;line-height:1.6">Yes. The hex emerges regardless of moon phase, but the fishing is dramatically better on dark nights. During a full moon, trout can see fly patterns, tippet, and anglers much more clearly, making them far more selective. New moon and crescent phases produce the most aggressive surface feeding. The hex score above factors in tonight's moon illumination percentage.</div>
+      </div>
+    </div>
+
+    <!-- Related links -->
+    <div class="related">
+      <div class="related-links">
+        <a href="/stream/ausable-river.html" class="rel-link">AuSable River Conditions</a>
+        <a href="/map.html?river=ausable" class="rel-link">AuSable on Map</a>
+        <a href="/top-rivers.html" class="rel-link">Top 10 Rivers</a>
+        <a href="/" class="rel-link">All Michigan Rivers &rarr;</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  Michigan Trout Stream Conditions by <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Chris Izworski</a>
+  &middot; <a href="/stream/ausable-river.html">AuSable River</a>
+  &middot; <a href="https://chrisizworski.com" target="_blank" rel="noopener">chrisizworski.com</a>
+</footer>
+
+<script>
+// ── Color helpers ──────────────────────────────────────────────────────────
+function scoreColor(score) {
+  if (score >= 80) return '#e8c96a';
+  if (score >= 60) return '#c9a84c';
+  if (score >= 40) return '#8a7a40';
+  if (score >= 20) return '#6a5a30';
+  return '#4a4a30';
+}
+
+function statusColor(status) {
+  return status === 'prime' ? '#c9a84c' : status === 'ok' ? '#8a8060' : status === 'fair' ? '#6a6040' : status === 'building' ? '#8a7a40' : '#4a3a20';
+}
+
+function verdictEmoji(verdict) {
+  return verdict === 'tonight' ? '🔥' : verdict === 'likely' ? '✅' : verdict === 'possible' ? '🟡' : verdict === 'unlikely' ? '🟠' : verdict === 'building' ? '📈' : verdict === 'dormant' ? '💤' : '❌';
+}
+
+function verdictLabel(verdict) {
+  return verdict === 'tonight' ? 'TONIGHT IS A HEX NIGHT' : verdict === 'likely' ? 'STRONG PROBABILITY' : verdict === 'possible' ? 'POSSIBLE EMERGENCE' : verdict === 'unlikely' ? 'UNLIKELY TONIGHT' : verdict === 'building' ? 'CONDITIONS BUILDING' : verdict === 'dormant' ? 'OFF SEASON' : verdict === 'winding_down' ? 'WINDING DOWN' : 'NOT ACTIVE';
+}
+
+// ── Render Functions ───────────────────────────────────────────────────────
+function renderScore(data) {
+  const r = data.report;
+  const panel = document.getElementById('scorePanel');
+
+  if (r.phase === 'dormant') {
+    panel.innerHTML = `
+      <div class="score-label">Hex Season Status</div>
+      <div class="dormant-countdown">${r.daysUntil} days</div>
+      <div class="dormant-sub">Until hex season opens on the AuSable. Water temp needs to climb through 62°F. Bookmark this page and check back in June.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <div class="comp" style="flex:1;min-width:120px">
+          <div class="comp-label">${r.moon.emoji} Moon Tonight</div>
+          <div class="comp-value">${r.moon.name}</div>
+          <div class="comp-pts">${r.moon.illumination}% illuminated</div>
+        </div>
+        <div class="comp" style="flex:1;min-width:120px">
+          <div class="comp-label">☀️ Sunset</div>
+          <div class="comp-value">${r.sun.sunset}</div>
+          <div class="comp-pts">${r.sun.dayLength} daylight</div>
+        </div>
+        ${data.conditions?.waterTempF ? `<div class="comp" style="flex:1;min-width:120px">
+          <div class="comp-label">🌡 Water Temp</div>
+          <div class="comp-value">${data.conditions.waterTempF}°F</div>
+          <div class="comp-pts">Needs 62°F+</div>
+        </div>` : ''}
+      </div>
+    `;
+    return;
+  }
+
+  // Active / building / winding down
+  const sc = scoreColor(r.score);
+  panel.innerHTML = `
+    <div class="score-label">Hex Probability Score</div>
+    <div class="score-row">
+      <div class="score-number" style="color:${sc}">${r.score}</div>
+      <div>
+        <div class="score-verdict" style="color:${sc}">${verdictEmoji(r.verdict)} ${verdictLabel(r.verdict)}</div>
+        <div class="score-message">${r.message}</div>
+      </div>
+    </div>
+    <div class="score-bar"><div class="score-bar-fill" style="width:${r.score}%;background:${sc}"></div></div>
+
+    <div class="comp-grid">
+      ${Object.entries(r.components).map(([key, c]) => `
+        <div class="comp">
+          <div class="comp-label">${compIcon(key)} ${compName(key)}</div>
+          <div class="comp-value" style="color:${statusColor(c.status)}">${c.label}</div>
+          <div class="comp-pts">${c.pts} / ${compMax(key)} pts</div>
+        </div>
+      `).join('')}
+      <div class="comp">
+        <div class="comp-label">${r.moon.emoji} Moon Phase</div>
+        <div class="comp-value">${r.moon.name}</div>
+        <div class="comp-pts">${r.moon.illumination}% illuminated</div>
+      </div>
+      <div class="comp">
+        <div class="comp-label">☀️ Sunset</div>
+        <div class="comp-value">${r.sun.sunset}</div>
+        <div class="comp-pts">${r.sun.dayLength} daylight</div>
+      </div>
+    </div>
+
+    ${r.hexWindow ? `
+      <div class="hex-window">
+        <div class="hw-label">🪰 Estimated Emergence Window</div>
+        <div class="hw-times">
+          <div class="hw-time">First bugs: <strong>${r.hexWindow.start}</strong></div>
+          <div class="hw-time">Peak: <strong>${r.hexWindow.peak}</strong></div>
+          <div class="hw-time">Winds down: <strong>${r.hexWindow.end}</strong></div>
+        </div>
+        <div class="hw-advice">${r.hexWindow.advice}</div>
+      </div>
+    ` : ''}
+  `;
+
+  // Temp trend chart
+  if (data.tempTrend?.length >= 2) {
+    const trendDiv = document.createElement('div');
+    trendDiv.className = 'trend-chart';
+    const maxT = Math.max(...data.tempTrend.map(d => d.tempF));
+    const minT = Math.min(...data.tempTrend.map(d => d.tempF));
+    const range = Math.max(maxT - minT, 5);
+
+    trendDiv.innerHTML = `
+      <div class="trend-label">Water Temperature Trend (7 Days)</div>
+      <div class="trend-bars" style="padding-bottom:20px">
+        ${data.tempTrend.map(d => {
+          const pct = ((d.tempF - minT) / range) * 80 + 20;
+          const hexZone = d.tempF >= 62;
+          return `<div class="trend-bar" style="height:${pct}%;background:${hexZone ? '#c9a84c' : '#3a3520'}">
+            <div class="trend-bar-val">${d.tempF}°</div>
+            <div class="trend-bar-date">${d.date.slice(5)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:11px;color:#6a6040;margin-top:18px">Gold bars = hex emergence zone (62°F+). Target: 65°F for peak activity.</div>
+    `;
+    panel.appendChild(trendDiv);
+  }
+}
+
+function compIcon(key) {
+  return key === 'waterTemp' ? '🌡' : key === 'airTemp' ? '🌤' : key === 'wind' ? '💨' : key === 'moon' ? '🌙' : key === 'season' ? '📅' : key === 'flow' ? '🌊' : '';
+}
+function compName(key) {
+  return key === 'waterTemp' ? 'Water Temp' : key === 'airTemp' ? 'Air at Sunset' : key === 'wind' ? 'Wind' : key === 'moon' ? 'Moon' : key === 'season' ? 'Season' : key === 'flow' ? 'Flow' : key;
+}
+function compMax(key) {
+  return key === 'waterTemp' ? 30 : key === 'airTemp' ? 15 : key === 'wind' ? 20 : key === 'moon' ? 15 : key === 'season' ? 10 : key === 'flow' ? 10 : 10;
+}
+
+// ── Load ───────────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const resp = await fetch('/api/hex');
+    if (!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+    if (!data.success && !data.report) throw new Error('No data');
+    document.getElementById('loadingMsg')?.remove();
+    renderScore(data);
+  } catch (e) {
+    document.getElementById('loadingMsg').textContent =
+      'Unable to load live data. Check back soon or visit the AuSable conditions page.';
+  }
+}
+load();
+</script>
+</body>
+</html>
