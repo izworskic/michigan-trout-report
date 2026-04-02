@@ -166,7 +166,7 @@ export default async function handler(req, res) {
           Object.entries(RIVER_GRIDS).find(([k]) => id.startsWith(k) || k.startsWith(id))?.[1];
         if (!grid) return null;
         const sunTimes = calcSunTimes(grid.lat, grid.lon, now);
-        const waterTemp = primaryConditions?.tempF ?? null;
+        const waterTemp = conditions?.tempF ?? null;
         const spinner = sunTimes.sunsetMin ? estimateSpinnerFall(sunTimes.sunsetMin, waterTemp) : null;
         return { ...sunTimes, spinner };
       })(),
