@@ -2,7 +2,7 @@
 // Strategy: cache shell (HTML/CSS/JS) for instant load + offline
 // Network-first for API data (always try fresh, fall back to cached)
 
-const CACHE_NAME = 'trout-v4';
+const CACHE_NAME = 'trout-v5';
 
 // Shell files: cache on install for offline access
 const SHELL = [

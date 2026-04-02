@@ -14,8 +14,9 @@ import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
 import { buildRecommendations, getTempZone, getFlowAdvice, MICHIGAN_HATCHES } from '../lib/hatches.js';
 import { fetchHatchIntel } from '../lib/intel.js';
-import { fetchRiverWeather } from '../lib/weather.js';
+import { fetchRiverWeather, RIVER_GRIDS } from '../lib/weather.js';
 import { buildLureRecommendations } from '../lib/lures.js';
+import { calcSunTimes, estimateSpinnerFall } from '../lib/sun.js';
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
@@ -159,6 +160,14 @@ export default async function handler(req, res) {
         hourly:      weather.hourly?.slice(0, 8),
       } : null,
       context: { month, hourET, dateKey },
+      sun: (() => {
+        const grid = RIVER_GRIDS[id] || RIVER_GRIDS[river.id];
+        if (!grid) return null;
+        const sunTimes = calcSunTimes(grid.lat, grid.lon, now);
+        const waterTemp = primaryConditions?.tempF ?? null;
+        const spinner = sunTimes.sunsetMin ? estimateSpinnerFall(sunTimes.sunsetMin, waterTemp) : null;
+        return { ...sunTimes, spinner };
+      })(),
       generatedAt: now.toISOString(),
     };
 

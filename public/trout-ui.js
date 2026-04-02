@@ -146,6 +146,32 @@ function renderLures(lureRec) {
   </div>`;
 }
 
+// ── Sun times + Spinner fall ────────────────────────────────────────────────
+function renderSunTimes(recData) {
+  const sun = recData?.sun;
+  if (!sun?.sunrise) return '';
+
+  const spinner = sun.spinner;
+  const spinnerHtml = spinner?.start ? `
+    <div style="margin-top:8px;padding:8px 10px;background:#fff8e1;border-radius:4px;border:1px solid #ffe082">
+      <div style="font-size:11px;color:#f57f17;font-weight:bold;margin-bottom:2px">🪰 Estimated Spinner Fall</div>
+      <div style="font-size:12px;color:#555">Starts ~${spinner.start}, peak ~${spinner.peak}</div>
+      <div style="font-size:11px;color:#888;margin-top:2px">${spinner.advice}</div>
+    </div>` : (spinner?.advice ? `<div style="font-size:11px;color:#999;margin-top:4px">${spinner.advice}</div>` : '');
+
+  return `${sectionDivider()}
+    ${sectionLabel('☀️', 'Sun & Fishing Windows')}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+      <span style="font-size:12px;background:#fff8e1;padding:3px 8px;border-radius:3px;color:#e65100">🌅 ${sun.sunrise}</span>
+      <span style="font-size:12px;background:#e8eaf6;padding:3px 8px;border-radius:3px;color:#283593">🌇 ${sun.sunset}</span>
+      <span style="font-size:12px;background:#f5f5f5;padding:3px 8px;border-radius:3px;color:#666">${sun.dayLength} daylight</span>
+    </div>
+    ${sun.goldenMorning ? `<div style="font-size:11px;color:#666;margin-bottom:2px">🎣 Morning window: <strong>${sun.goldenMorning}</strong></div>` : ''}
+    ${sun.goldenEvening ? `<div style="font-size:11px;color:#666;margin-bottom:2px">🎣 Evening window: <strong>${sun.goldenEvening}</strong></div>` : ''}
+    ${spinnerHtml}
+  </div>`;
+}
+
 // ── Affiliate disclosure ────────────────────────────────────────────────────
 function renderDisclosure() {
   return `<div style="font-size:9px;color:#ccc;margin-top:8px;padding-top:6px;border-top:1px solid #f0ece4">Product links go to Amazon. Commission at no cost to you.</div>`;
@@ -188,6 +214,7 @@ function renderFullWidget(c, recData, riverId) {
     renderConditionStats(c),
     renderFlowBar(pct),
     renderWeather(wx),
+    renderSunTimes(recData),
     renderFlies(recData),
     renderLures(lr),
     renderDisclosure(),
