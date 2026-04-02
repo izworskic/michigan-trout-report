@@ -332,7 +332,7 @@
 <script>
 // ── Recreation Area Map ─────────────────────────────────────────────────────
 const map = L.map('rrra-map', {
-  center: [44.403, -84.028],
+  center: [44.405, -84.027],
   zoom: 14,
   scrollWheelZoom: false,
 });
@@ -358,11 +358,11 @@ function icon(color, size) {
 // ── Trout Stream Access Points (green) ──────────────────────────────────────
 const streams = [
   { name: 'Ranch Road Bridge', desc: 'Primary trout access. Canoe launch NE side. Type 1 trout stream. Best fishing at opener.', lat: 44.3996, lon: -84.0356 },
-  { name: 'Rifle River below Devoe Lake', desc: 'River exits Devoe Lake here. Smaller water, cold headwaters.', lat: 44.3955, lon: -84.0295 },
-  { name: 'Rifle River at Spruce Campground', desc: 'Wade access from campground. Gravel runs, deeper bends.', lat: 44.3935, lon: -84.0325 },
+  { name: 'Rifle River below Devoe Lake', desc: 'River exits Devoe Lake here. Smaller water, cold headwaters.', lat: 44.3960, lon: -84.0300 },
+  { name: 'Rifle River at Spruce Campground', desc: 'Wade access from campground. Gravel runs, deeper bends.', lat: 44.3887, lon: -84.0330 },
   { name: 'Houghton Creek Rd Crossing', desc: 'Primary Houghton Creek access off M-55. Walk upstream for best trout water.', lat: 44.3850, lon: -84.0450 },
-  { name: 'Gamble Creek (park roads)', desc: 'Access from internal park roads. Less traffic than Rifle. Similar trout populations.', lat: 44.3980, lon: -84.0230 },
-  { name: 'Rifle River at Group Campground', desc: 'Trail access to river near group use area. Less pressured stretch.', lat: 44.4050, lon: -84.0280 },
+  { name: 'Gamble Creek (park roads)', desc: 'Access from internal park roads. Less traffic than Rifle. Similar trout populations.', lat: 44.4010, lon: -84.0200 },
+  { name: 'Rifle River near Group Camp', desc: 'Trail access to river near group use area. Less pressured stretch.', lat: 44.4080, lon: -84.0260 },
 ];
 streams.forEach(s => {
   L.marker([s.lat, s.lon], { icon: icon('#2e7d32', 16) })
@@ -372,11 +372,11 @@ streams.forEach(s => {
 
 // ── Lakes (blue) ────────────────────────────────────────────────────────────
 const lakes = [
-  { name: 'Devoe Lake', desc: 'Headwater lake. Rainbow trout, perch, bass, bluegill. No motors. Skid pier launch.', lat: 44.3985, lon: -84.0275 },
-  { name: 'Grousehaven Lake', desc: 'Brown trout, rainbow trout, perch, bass. Modern campground, swim beach. Skid pier.', lat: 44.4142, lon: -84.0244 },
-  { name: 'Jewett Lake', desc: 'Catch and release only, no live bait. DNR research lake since 1945.', lat: 44.4055, lon: -84.0250 },
-  { name: 'Lodge Lake', desc: 'Bass, bluegill, pike. Smaller and quieter.', lat: 44.4080, lon: -84.0140 },
-  { name: 'Grebe Lake', desc: 'Pike, bass, perch, crappie, bluegill. Accessible boat launch.', lat: 44.4065, lon: -84.0170 },
+  { name: 'Devoe Lake', desc: 'Headwater lake. Rainbow trout, perch, bass, bluegill. No motors. Skid pier launch.', lat: 44.3990, lon: -84.0265 },
+  { name: 'Grousehaven Lake', desc: 'Brown trout, rainbow trout, perch, bass. Modern campground, swim beach. Skid pier.', lat: 44.4116, lon: -84.0207 },
+  { name: 'Jewett Lake', desc: 'Catch and release only, no live bait. DNR research lake since 1945.', lat: 44.4035, lon: -84.0210 },
+  { name: 'Lodge Lake', desc: 'Bass, bluegill, pike. Smaller and quieter.', lat: 44.4060, lon: -84.0150 },
+  { name: 'Grebe Lake', desc: 'Pike, bass, perch, crappie, bluegill. Accessible boat launch.', lat: 44.4090, lon: -84.0170 },
 ];
 lakes.forEach(l => {
   L.marker([l.lat, l.lon], { icon: icon('#1565c0', 14) })
@@ -386,10 +386,10 @@ lakes.forEach(l => {
 
 // ── Campgrounds (brown/red) ─────────────────────────────────────────────────
 const camps = [
-  { name: 'Grousehaven Modern Campground', desc: '75 sites. Electric, showers, swim beach on Grousehaven Lake. Reserve at MiDNRReservations.com.', lat: 44.4142, lon: -84.0244 },
-  { name: 'Ranch Road Rustic Campground', desc: 'Rustic sites on the Rifle River. Walk to trout water. Popular opening weekend.', lat: 44.3990, lon: -84.0370 },
-  { name: 'Spruce Rustic Campground', desc: '25 sites along the river. Grassy, wooded. Close to good wading.', lat: 44.3930, lon: -84.0340 },
-  { name: 'Devoe Lake Rustic Campground', desc: '16 sites near Devoe Lake. Wooded, quiet. Close to headwater fishing.', lat: 44.3981, lon: -84.0286 },
+  { name: 'Grousehaven Modern Campground', desc: '75 sites. Electric, showers, swim beach on Grousehaven Lake. Reserve at MiDNRReservations.com.', lat: 44.4140, lon: -84.0230 },
+  { name: 'Ranch Road Rustic Campground', desc: 'Rustic sites on the Rifle River. Walk to trout water. Popular opening weekend.', lat: 44.3980, lon: -84.0360 },
+  { name: 'Spruce Rustic Campground', desc: '25 sites along the river. Grassy, wooded. Close to good wading.', lat: 44.3887, lon: -84.0330 },
+  { name: 'Devoe Lake Rustic Campground', desc: '16 sites near Devoe Lake. Wooded, quiet. Close to headwater fishing.', lat: 44.3974, lon: -84.0286 },
 ];
 camps.forEach(c => {
   L.marker([c.lat, c.lon], { icon: icon('#bf360c', 14) })
@@ -399,8 +399,8 @@ camps.forEach(c => {
 
 // ── Parking / Day-Use (gray) ────────────────────────────────────────────────
 const parking = [
-  { name: 'Park Headquarters / Day-Use', desc: 'Main entrance area. Day visitors park here. Contact station.', lat: 44.4020, lon: -84.0220 },
-  { name: 'Observation Tower (Ridge Road)', desc: 'Park here for the tower. Overlooks river valley and lakes. Worth the climb for scouting.', lat: 44.4000, lon: -84.0200 },
+  { name: 'Park Headquarters / Contact Station', desc: 'Main entrance off Rose City Rd. Day visitors park here. Boat rentals at Rollway Resort nearby.', lat: 44.4177, lon: -84.0215 },
+  { name: 'Day-Use Area & Picnic Grounds', desc: 'Picnic shelter, restrooms, day-use beach. Park in designated lots, not vacant campsites.', lat: 44.4100, lon: -84.0190 },
 ];
 parking.forEach(p => {
   L.marker([p.lat, p.lon], { icon: icon('#555', 12) })

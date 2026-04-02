@@ -200,13 +200,12 @@ body { padding-bottom: env(safe-area-inset-bottom); }
         <button class="chip"    data-sp="rainbow"   onclick="setSp('rainbow')">Rainbow</button>
         <button class="chip"    data-sp="steelhead" onclick="setSp('steelhead')">Steelhead</button>
       </div>
-      <div class="sb-label" style="margin-bottom:6px;margin-top:10px">Regulation type</div>
+      <div class="sb-label" style="margin-bottom:6px;margin-top:10px">Regulations</div>
       <div class="chip-row" id="regFilter">
         <button class="chip on" data-reg="all" onclick="setReg('all')">All</button>
-        <button class="chip" data-reg="Type 1" onclick="setReg('Type 1')" style="border-color:#2e7d32;color:#2e7d32">Type 1</button>
-        <button class="chip" data-reg="Type 2" onclick="setReg('Type 2')" style="border-color:#f9a825;color:#f9a825">Type 2</button>
-        <button class="chip" data-reg="GR" onclick="setReg('GR')" style="border-color:#c62828;color:#c62828">Gear Restricted</button>
-        <button class="chip" data-reg="wild" onclick="setReg('wild')">Wild Only</button>
+        <button class="chip" data-reg="Type 1" onclick="setReg('Type 1')">Special Limits</button>
+        <button class="chip" data-reg="GR" onclick="setReg('GR')">Artificial Only</button>
+        <button class="chip" data-reg="wild" onclick="setReg('wild')">Wild Trout</button>
       </div>
     </div>
 
@@ -462,9 +461,9 @@ function renderAccessMarkers(points){
     })() : '';
 
     // Regulation badge
-    const regBadge = pt.reg ? (() => {
+    const regBadge = pt.regLabel ? (() => {
       const rc = REG_COLORS[pt.reg] || {bg:'#f5f5f5',color:'#666'};
-      return `<span class="pu-reg" style="background:${rc.bg};color:${rc.color}">${pt.reg}</span>`;
+      return `<span class="pu-reg" style="background:${rc.bg};color:${rc.color}">${pt.regLabel}</span>`;
     })() : '';
 
     // Stocking status
@@ -517,9 +516,9 @@ function renderSbList(points){
     const cond=riverId?_condMap[riverId]:null;
     const rat=cond?.conditions?.ratingKey?RATINGS[cond.conditions.ratingKey]:null;
     const dots=(pt.s||[]).map(s=>`<span class="sb-dot" style="background:${SP_COLOR[s]||'#ccc'}"></span>`).join('');
-    const regPill = pt.reg ? (() => {
+    const regPill = pt.regLabel ? (() => {
       const rc = REG_COLORS[pt.reg] || {bg:'#f5f5f5',color:'#666'};
-      return `<span style="font-size:9px;background:${rc.bg};color:${rc.color};padding:1px 5px;border-radius:2px;text-transform:uppercase;letter-spacing:.3px">${pt.reg}</span>`;
+      return `<span style="font-size:9px;background:${rc.bg};color:${rc.color};padding:1px 5px;border-radius:2px;letter-spacing:.3px">${pt.regLabel}</span>`;
     })() : '';
     return `<div class="sb-item" onclick="_map.flyTo([${pt.lat},${pt.lon}],13,{duration:0.7})">
       <div class="sb-name">${pt.n}</div>
