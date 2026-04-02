@@ -120,7 +120,9 @@ html, body { height:100%; font-family:Georgia,'Times New Roman',serif; }
 .pu-species { display:flex; flex-wrap:wrap; gap:3px; margin:5px 0; }
 .pu-sp { font-size:10px; padding:1px 6px; border-radius:3px; text-transform:uppercase; }
 .pu-desc { font-size:11px; color:#777; line-height:1.5; border-top:1px solid #f0ece4; padding-top:7px; margin-top:7px; max-height:72px; overflow:hidden; }
-.pu-links { margin-top:9px; display:flex; gap:6px; }
+.pu-reg { display:inline-block; font-size:9px; text-transform:uppercase; letter-spacing:.5px; padding:2px 6px; border-radius:3px; margin-right:4px; }
+.pu-stock { font-size:10px; color:#888; margin-top:3px; }
+.pu-links { margin-top:9px; display:flex; gap:6px; flex-wrap:wrap; }
 .pu-link { font-size:11px; color:#2c5f2d !important; background:#e8f5e9 !important; padding:3px 8px; border-radius:3px; text-decoration:none !important; border:1px solid #c8e6c9; display:inline-block; }
 .pu-link:hover { background:#c8e6c9 !important; text-decoration:none !important; }
 .pu-nav { font-size:11px !important; color:#fff !important; background:#1b5e20 !important; padding:5px 12px !important; border-radius:4px !important; text-decoration:none !important; font-weight:bold !important; display:inline-block !important; }
@@ -198,6 +200,14 @@ body { padding-bottom: env(safe-area-inset-bottom); }
         <button class="chip"    data-sp="rainbow"   onclick="setSp('rainbow')">Rainbow</button>
         <button class="chip"    data-sp="steelhead" onclick="setSp('steelhead')">Steelhead</button>
       </div>
+      <div class="sb-label" style="margin-bottom:6px;margin-top:10px">Regulation type</div>
+      <div class="chip-row" id="regFilter">
+        <button class="chip on" data-reg="all" onclick="setReg('all')">All</button>
+        <button class="chip" data-reg="Type 1" onclick="setReg('Type 1')" style="border-color:#2e7d32;color:#2e7d32">Type 1</button>
+        <button class="chip" data-reg="Type 2" onclick="setReg('Type 2')" style="border-color:#f9a825;color:#f9a825">Type 2</button>
+        <button class="chip" data-reg="GR" onclick="setReg('GR')" style="border-color:#c62828;color:#c62828">Gear Restricted</button>
+        <button class="chip" data-reg="wild" onclick="setReg('wild')">Wild Only</button>
+      </div>
     </div>
 
     <!-- Layer toggle -->
@@ -242,9 +252,10 @@ const RATINGS = {
   BLOWN_OUT:    {label:'Blown Out',    emoji:'🔴', color:'#b71c1c', bg:'#ffebee', tagline:'Stay home.'},
 };
 const SCORE = {PRIME:5,FISHING_WELL:4,FAIR:3,TOUGH:2,BLOWN_OUT:1};
-const SP_COLOR = {brook:'#1b5e20',brown:'#bf360c',rainbow:'#0d47a1',steelhead:'#6a1b9a'};
-const SP_BG    = {brook:'#e8f5e9',brown:'#fff3e0',rainbow:'#e3f2fd',steelhead:'#f3e5f5'};
-const SP_LABEL = {brook:'Brook',brown:'Brown',rainbow:'Rainbow',steelhead:'Steelhead'};
+const SP_COLOR = {brook:'#1b5e20',brown:'#bf360c',rainbow:'#0d47a1',steelhead:'#6a1b9a',splake:'#00695c',lake_trout:'#37474f',grayling:'#e65100'};
+const SP_BG    = {brook:'#e8f5e9',brown:'#fff3e0',rainbow:'#e3f2fd',steelhead:'#f3e5f5',splake:'#e0f2f1',lake_trout:'#eceff1',grayling:'#fff3e0'};
+const SP_LABEL = {brook:'Brook',brown:'Brown',rainbow:'Rainbow',steelhead:'Steelhead',splake:'Splake',lake_trout:'Lake Trout',grayling:'Grayling'};
+const REG_COLORS = {'Type 1':{bg:'#e8f5e9',color:'#2e7d32'},'Type 2':{bg:'#fffde7',color:'#f9a825'},'Type 3':{bg:'#fff3e0',color:'#e65100'},'Type 4':{bg:'#e3f2fd',color:'#1565c0'},'GR':{bg:'#ffebee',color:'#c62828'},'BTRA':{bg:'#f3e5f5',color:'#6a1b9a'},'Type A':{bg:'#e3f2fd',color:'#1565c0'},'Type B':{bg:'#e3f2fd',color:'#0d47a1'}};
 
 // Hardcoded river center coordinates — all verified
 const RIVER_COORDS = {
@@ -292,7 +303,7 @@ const RIVER_COORDS = {
 const RIVER_SLUGS = {"ausable":"ausable-river","manistee":"manistee-river","pere-marquette":"pere-marquette-river","muskegon":"muskegon-river","boardman":"boardman-river","jordan":"jordan-river-michigan","pigeon":"pigeon-river-michigan","rifle-river":"rifle-river-michigan","little-manistee":"little-manistee-river","betsie-river":"betsie-river","pine-river":"pine-river-michigan","platte-river":"platte-river-michigan","rogue-river":"rogue-river-michigan","white-river":"white-river-michigan","flat-river":"flat-river-michigan","looking-glass-river":"looking-glass-river","sturgeon-river-nlp":"sturgeon-river-michigan","thunder-bay-river":"thunder-bay-river","black-river-up":"black-river-upper-peninsula","tahquamenon-river":"tahquamenon-river","paint-river":"paint-river-michigan","iron-river":"iron-river-michigan","brule-river":"brule-river-michigan","michigamme-river":"michigamme-river","au-train-river":"au-train-river","miners-river":"miners-river-michigan","salmon-trout-river":"salmon-trout-river","presque-isle-river":"presque-isle-river","trap-rock-river":"trap-rock-river","ontonagon-river":"ontonagon-river","sturgeon-river-up":"sturgeon-river-upper-peninsula","silver-river":"silver-river-michigan","black-river-schoolcraft":"black-river-schoolcraft-county","au-gres-river":"au-gres-river","pine-river-midland":"pine-river-midland-county","little-muskegon-river":"little-muskegon-river","clam-river":"clam-river-michigan","maple-river-lp":"maple-river-michigan","thornapple-river":"thornapple-river"};
 
 let _map, _riverLayer, _accessLayer, _allPoints=[], _condMap={};
-let _activeSp='all', _activeLayer='all';
+let _activeSp='all', _activeLayer='all', _activeReg='all';
 
 // ── Map init ──────────────────────────────────────────────────────────────────
 function initMap(){
@@ -399,8 +410,12 @@ function renderAccessMarkers(points){
   if(_accessLayer) _map.removeLayer(_accessLayer);
 
   const filtered = points.filter(p=>{
-    if(_activeSp==='all')return true;
-    return p.s.includes(_activeSp);
+    // Species filter
+    if(_activeSp!=='all' && !p.s.includes(_activeSp)) return false;
+    // Regulation filter
+    if(_activeReg==='all') return true;
+    if(_activeReg==='wild') return p.wild === true;
+    return p.reg === _activeReg;
   });
 
   _accessLayer = L.markerClusterGroup({
@@ -446,12 +461,25 @@ function renderAccessMarkers(points){
       ${c2.tempF!==null?`<div class="pu-stat">Water: <strong>${c2.tempF}°F</strong></div>`:''}`;
     })() : '';
 
+    // Regulation badge
+    const regBadge = pt.reg ? (() => {
+      const rc = REG_COLORS[pt.reg] || {bg:'#f5f5f5',color:'#666'};
+      return `<span class="pu-reg" style="background:${rc.bg};color:${rc.color}">${pt.reg}</span>`;
+    })() : '';
+
+    // Stocking status
+    const stockInfo = pt.stocked && pt.wild ? '🟢 Wild + Stocked'
+      : pt.wild ? '🟢 Wild / Natural Reproduction'
+      : pt.stocked ? '🔵 DNR Stocked'
+      : '';
+
     const popup=`<div class="pu">
-      <div class="pu-type">DNR Trout Trail · ${pt.c||''}</div>
+      <div class="pu-type">DNR Trout Trail · ${pt.c||''} ${regBadge}</div>
       <div class="pu-name">${pt.n}</div>
       ${condHtml}
       <div class="pu-species">${spTags}</div>
-      ${pt.d?`<div class="pu-desc">${pt.d}</div>`:''}
+      ${stockInfo ? `<div class="pu-stock">${stockInfo}</div>` : ''}
+      ${pt.sd?`<div class="pu-desc">${pt.sd}</div>`:(pt.d?`<div class="pu-desc">${pt.d}</div>`:'')}
       ${pt.dir?`<div class="pu-stat" style="margin-top:6px;font-size:11px">📍 ${pt.dir}</div>`:''}
       <div class="pu-links">
         <a href="https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lon}" target="_blank" rel="noopener" class="pu-nav">Navigate Here</a>
@@ -489,10 +517,15 @@ function renderSbList(points){
     const cond=riverId?_condMap[riverId]:null;
     const rat=cond?.conditions?.ratingKey?RATINGS[cond.conditions.ratingKey]:null;
     const dots=(pt.s||[]).map(s=>`<span class="sb-dot" style="background:${SP_COLOR[s]||'#ccc'}"></span>`).join('');
+    const regPill = pt.reg ? (() => {
+      const rc = REG_COLORS[pt.reg] || {bg:'#f5f5f5',color:'#666'};
+      return `<span style="font-size:9px;background:${rc.bg};color:${rc.color};padding:1px 5px;border-radius:2px;text-transform:uppercase;letter-spacing:.3px">${pt.reg}</span>`;
+    })() : '';
     return `<div class="sb-item" onclick="_map.flyTo([${pt.lat},${pt.lon}],13,{duration:0.7})">
       <div class="sb-name">${pt.n}</div>
       <div class="sb-meta">
         <span>${pt.c||''}</span>
+        ${regPill}
         ${rat?`<span style="color:${rat.color};font-weight:bold;font-size:11px">${rat.emoji} ${rat.label}</span>`:''}
         <a href="https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lon}" target="_blank" rel="noopener" class="sb-nav" onclick="event.stopPropagation()" title="Navigate here">Navigate &rarr;</a>
       </div>
@@ -527,6 +560,11 @@ function renderBest(rivers){
 function setSp(v){
   _activeSp=v;
   document.querySelectorAll('[data-sp]').forEach(b=>{b.className='chip'+(b.dataset.sp===v?' on':'');});
+  renderAccessMarkers(_allPoints);
+}
+function setReg(v){
+  _activeReg=v;
+  document.querySelectorAll('[data-reg]').forEach(b=>{b.className='chip'+(b.dataset.reg===v?' on':'');});
   renderAccessMarkers(_allPoints);
 }
 function setLayer(v){

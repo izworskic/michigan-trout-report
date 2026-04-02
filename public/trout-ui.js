@@ -151,6 +151,26 @@ function renderDisclosure() {
   return `<div style="font-size:9px;color:#ccc;margin-top:8px;padding-top:6px;border-top:1px solid #f0ece4">Product links go to Amazon. Commission at no cost to you.</div>`;
 }
 
+// ── Regulation badge ────────────────────────────────────────────────────────
+function renderRegulationBadge(recData) {
+  const gt = recData?.river?.gearType;
+  if (!gt || gt === 'general') return '';
+  
+  const badges = {
+    'artificial': { label: 'Artificial Lures Only', bg: '#fffde7', color: '#f9a825', icon: '⚠', desc: 'No live bait allowed on this water. Flies, spinners, and hard lures only.' },
+    'flies_only': { label: 'Flies Only', bg: '#ffebee', color: '#c62828', icon: '🪰', desc: 'Artificial flies only. No spinning gear, no bait.' },
+    'gear_restricted': { label: 'Gear Restricted', bg: '#ffebee', color: '#c62828', icon: '⚠', desc: 'DNR gear restricted water. Artificial flies only, no scented lures.' },
+  };
+  
+  const b = badges[gt];
+  if (!b) return '';
+  
+  return `<div style="margin-bottom:10px;padding:8px 12px;background:${b.bg};border-left:3px solid ${b.color};border-radius:0 4px 4px 0">
+    <div style="font-size:12px;color:${b.color};font-weight:bold">${b.icon} ${b.label}</div>
+    <div style="font-size:11px;color:#666;margin-top:2px">${b.desc} Check the <a href="https://www.michigan.gov/dnr/things-to-do/fishing/maps" target="_blank" rel="noopener" style="color:#2c5f2d">DNR Fishing Guide</a> for boundaries.</div>
+  </div>`;
+}
+
 // ── Full conditions widget (used by stream pages) ───────────────────────────
 // Call this with conditions data + recommend API data
 function renderFullWidget(c, recData, riverId) {
@@ -164,6 +184,7 @@ function renderFullWidget(c, recData, riverId) {
 
   return [
     renderRating(c),
+    renderRegulationBadge(recData),
     renderConditionStats(c),
     renderFlowBar(pct),
     renderWeather(wx),
