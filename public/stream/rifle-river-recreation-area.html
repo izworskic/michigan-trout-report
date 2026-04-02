@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rifle River Recreation Area Trout Fishing Guide | Michigan Trout Report</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a3a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="Trout fishing guide for Rifle River Recreation Area near Rose City, Michigan. Live stream conditions, access points map, Houghton Creek, Gamble Creek, campgrounds, and seasonal hatch calendar. Free.">
+<link rel="canonical" href="https://trout.chrisizworski.com/stream/rifle-river-recreation-area.html">
+<meta property="og:title" content="Rifle River Recreation Area Trout Fishing | Michigan Trout Report">
+<meta property="og:description" content="Trout fishing guide for the RRRA. Live conditions, access map, three fishable waters, campgrounds. Free.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://trout.chrisizworski.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TouristAttraction",
+  "name": "Rifle River Recreation Area Trout Fishing",
+  "description": "4,449-acre state recreation area in Ogemaw County with trout fishing on the Rifle River, Houghton Creek, and Gamble Creek.",
+  "url": "https://trout.chrisizworski.com/stream/rifle-river-recreation-area.html",
+  "geo": {"@type": "GeoCoordinates", "latitude": 44.385, "longitude": -84.07},
+  "address": {"@type": "PostalAddress", "addressLocality": "Rose City", "addressRegion": "MI"},
+  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"}
+}
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.75; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 14px 20px; border-bottom: 3px solid #4a7c4a; }
+  .header-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-link { color: #7ab87a; font-size: 13px; text-decoration: none; }
+  .back-link:hover { color: #fff; }
+  .site-name { font-size: 16px; }
+  .header-nav { display: flex; gap: 14px; font-size: 13px; }
+  .header-nav a { color: #7ab87a; }
+  .header-nav a:hover { color: #fff; text-decoration: none; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+  /* Hero */
+  .page-hero { background: #fff; border-bottom: 1px solid #ddd8cc; padding: 28px 0 20px; }
+  .park-badge { display: inline-block; font-size: 11px; background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 3px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+  .page-title { font-size: 28px; font-weight: normal; color: #1a3a1a; margin-bottom: 6px; line-height: 1.3; }
+  .page-sub { font-size: 15px; color: #666; font-style: italic; margin-bottom: 16px; max-width: 640px; }
+
+  /* Map */
+  .map-section { background: #fff; border-bottom: 1px solid #ddd8cc; }
+  .map-header { padding: 16px 0 8px; display: flex; align-items: center; justify-content: space-between; }
+  .map-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #aaa; }
+  #rrra-map { height: 420px; border-radius: 6px; border: 1px solid #e0dbd0; margin-bottom: 16px; }
+
+  /* Legend */
+  .map-legend { display: flex; flex-wrap: wrap; gap: 12px; padding-bottom: 16px; font-size: 12px; color: #666; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Waters section */
+  .waters-section { background: #fff; padding: 28px 0; border-bottom: 1px solid #e8e4dc; }
+  .waters-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .water-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 16px; }
+  .water-card-name { font-size: 17px; color: #1a3a1a; margin-bottom: 4px; }
+  .water-card-type { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .water-card p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px; }
+  .water-card-link { font-size: 12px; color: #2c5f2d; background: #e8f5e9; padding: 5px 12px; border-radius: 4px; text-decoration: none; display: inline-block; border: 1px solid #c8e6c9; }
+  .water-card-link:hover { background: #c8e6c9; text-decoration: none; }
+
+  /* Content */
+  .content-section { background: #fff; padding: 28px 0; border-bottom: 1px solid #e8e4dc; }
+  .content-section h2 { font-size: 20px; font-weight: normal; color: #1a3a1a; margin: 24px 0 12px; }
+  .content-section h2:first-child { margin-top: 0; }
+  .content-section p { font-size: 15px; color: #3a3a3a; margin-bottom: 16px; }
+
+  /* Season calendar */
+  .season-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .season-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 5px; padding: 12px 14px; }
+  .season-name { font-size: 14px; color: #1a3a1a; margin-bottom: 4px; }
+  .season-months { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .season-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+  /* Conditions widget */
+  .conditions-widget { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 16px 18px; margin: 20px 0; }
+  .widget-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 10px; }
+
+  /* Info grid */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .info-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 5px; padding: 14px 16px; }
+  .info-card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #aaa; margin-bottom: 6px; }
+  .info-card-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+  .related-section { background: #fff; padding: 24px 0; border-bottom: 1px solid #e8e4dc; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .related-link { font-size: 13px; padding: 6px 14px; background: #f5f2ec; border: 1px solid #ddd8cc; border-radius: 4px; color: #1a3a1a; text-decoration: none; }
+  .related-link:hover { background: #e8e4dc; text-decoration: none; }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; margin-top: 2px; }
+  .site-footer a { color: #4a7c4a; }
+
+  /* Leaflet popup overrides */
+  .leaflet-popup-content-wrapper { border-radius: 6px; }
+  .leaflet-popup-content { margin: 10px 12px; font-family: Georgia, serif; font-size: 13px; }
+  .pu-name { font-size: 14px; color: #1a3a1a; margin-bottom: 4px; }
+  .pu-type { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .pu-desc { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 8px; }
+  .pu-nav { font-size: 11px !important; color: #fff !important; background: #1b5e20 !important; padding: 5px 12px !important; border-radius: 4px !important; text-decoration: none !important; font-weight: bold !important; display: inline-block !important; }
+  .pu-nav:hover { background: #145218 !important; }
+
+  @media (max-width: 640px) {
+    .page-title { font-size: 22px; }
+    .waters-grid { grid-template-columns: 1fr; }
+    .season-grid { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+    #rrra-map { height: 320px; }
+    .header-nav { display: none; }
+  }
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .waters-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <a href="/" class="back-link">&larr; All Rivers</a>
+      <span class="site-name">Michigan Trout Report</span>
+    </div>
+    <nav class="header-nav">
+      <a href="/map.html">Stream Map</a>
+      <a href="/top-rivers.html">Top 10</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="container">
+      <span class="park-badge">Michigan State Recreation Area</span>
+      <h1 class="page-title">Rifle River Recreation Area: Trout Fishing Guide</h1>
+      <p class="page-sub">4,449 acres of public trout water in Ogemaw County. Three fishable streams, 10 lakes, campgrounds on the river. Live conditions updated daily.</p>
+
+      <div class="conditions-widget">
+        <div class="widget-label">Live Rifle River Conditions</div>
+        <div id="widgetContent" style="font-size:13px;color:#aaa;font-style:italic">Loading USGS data...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breakout Map -->
+  <div class="map-section">
+    <div class="container">
+      <div class="map-header">
+        <span class="map-label">Recreation Area Fishing Map</span>
+      </div>
+      <div id="rrra-map"></div>
+      <div class="map-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#2e7d32"></div> Trout stream access</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div> Lake / pond</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#bf360c"></div> Campground</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#555"></div> Parking / day-use</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three Waters -->
+  <div class="waters-section">
+    <div class="container">
+      <h2 style="font-size:20px;font-weight:normal;color:#1a3a1a;margin-bottom:4px">Three Trout Waters in the Recreation Area</h2>
+      <p style="font-size:14px;color:#888;font-style:italic;margin-bottom:0">Each has its own character. Click through for full conditions.</p>
+      <div class="waters-grid">
+        <div class="water-card">
+          <div class="water-card-name">Rifle River (Main Stem)</div>
+          <div class="water-card-type">Freestone &middot; Brown & Rainbow Trout</div>
+          <p>The river flows through the heart of the Rec Area from Devoe Lake south past Ranch Road Bridge. Gravel runs, deeper bends, and log-studded pools. Type 1 designated trout stream. Best fishing is immediately after the opener and again in September.</p>
+          <a href="/stream/rifle-river-michigan.html" class="water-card-link">Rifle River conditions &rarr;</a>
+        </div>
+        <div class="water-card">
+          <div class="water-card-name">Houghton Creek</div>
+          <div class="water-card-type">Spring Creek &middot; Brown & Brook Trout</div>
+          <p>The Rifle's most famous tributary. A 37-inch brown caught here in 1952 held the state record for years. Cold spring water, excellent spawning habitat. Access from Houghton Creek Road off M-55. Less pressured than the main stem.</p>
+          <a href="/stream/houghton-creek-michigan.html" class="water-card-link">Houghton Creek conditions &rarr;</a>
+        </div>
+        <div class="water-card">
+          <div class="water-card-name">Gamble Creek</div>
+          <div class="water-card-type">Spring Creek &middot; Brown & Brook Trout</div>
+          <p>Flows through the park with similar trout populations to Klacking Creek but far less traffic. DNR research since the 1950s tracks fish here. Hike upstream from the park roads for water most anglers never see.</p>
+          <a href="/stream/gamble-creek-michigan.html" class="water-card-link">Gamble Creek conditions &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-section">
+    <div class="container">
+      <h2>Fishing the Recreation Area</h2>
+      <p>The Rifle River Recreation Area is one of the most accessible trout fishing destinations in Michigan's Lower Peninsula. Unlike rivers where most good water borders private land, the Rec Area puts nearly five miles of the upper Rifle River and two quality tributaries on public ground with maintained access, campgrounds within walking distance of the water, and no need to ask permission or paddle past posted signs.</p>
+
+      <p>The upper Rifle through the park is small enough to wade comfortably but holds browns and rainbows that will test your approach. The water runs clear over gravel and sand, which means the fish can see you before you see them. Polarized glasses, a careful approach from downstream, and light tippet are not optional here. The reward is wild brown trout in a beautiful, forested setting with an observation tower and swinging bridge nearby for non-fishing family members.</p>
+
+      <h2>Reading the Conditions in the Rec Area</h2>
+      <p>The USGS gauge near Sterling reflects the mid-river Rifle, downstream of the park. The Rec Area water runs slightly lower and colder than the gauge reading because it is closer to the springs that feed Devoe Lake. When the Sterling gauge reads 150 to 250 cfs, the Rec Area water is in its sweet spot. The gravel runs are ankle to knee deep, the water is clear, and the fish are on the feed.</p>
+
+      <p>Above 350 cfs at Sterling, the Rec Area will be running stronger than normal. The main stem gets off-color first while the tributaries (Houghton Creek, Gamble Creek) stay clearer longer because their spring sources dilute the runoff. High water in the park is the time to focus on the smaller creeks.</p>
+
+      <p>Below 100 cfs (late summer), the main stem warms in the afternoon. The tributaries stay cold year-round. Morning fishing on the main stem and afternoon fishing on Houghton or Gamble is the smart play in August.</p>
+
+      <h2>Seasonal Calendar</h2>
+      <div class="season-grid">
+        <div class="season-card">
+          <div class="season-name">Opening Day Through May</div>
+          <div class="season-months">Late April to May</div>
+          <div class="season-text">Best fishing of the year in the Rec Area. Hendricksons hatch on warm afternoons. Water is cold, fish are hungry after winter. The rustic campground fills up opening weekend; reserve early. Worms, spinners, and small streamers all produce.</div>
+        </div>
+        <div class="season-card">
+          <div class="season-name">Early Summer</div>
+          <div class="season-months">June to mid-July</div>
+          <div class="season-text">Caddis and Sulphur hatches bring fish to the surface. Evening fishing is best. Canoe and kayak traffic picks up on the main stem during the day. Fish the tributaries for solitude. Light terrestrials (ants, beetles) start working along the banks.</div>
+        </div>
+        <div class="season-card">
+          <div class="season-name">Mid-Summer</div>
+          <div class="season-months">Mid-July to August</div>
+          <div class="season-text">Main stem warms in the afternoon. Focus on Houghton and Gamble creeks where spring water keeps temperatures in the trout zone. Fish mornings on the main stem. Terrestrials (hoppers, crickets, ants) are the top producers. The Rebel Crickhopper is deadly.</div>
+        </div>
+        <div class="season-card">
+          <div class="season-name">Fall</div>
+          <div class="season-months">September to close</div>
+          <div class="season-text">Brown trout become aggressive as they approach the spawn. Streamer fishing picks up. BWOs hatch on overcast afternoons. The Rec Area is quiet after Labor Day. Some of the best fishing of the year happens in September and October with minimal competition.</div>
+        </div>
+      </div>
+
+      <h2>Access and Logistics</h2>
+      <p>The Rec Area is located five miles east of Rose City on Rose City Road. A Michigan Recreation Passport ($17 for residents, $34 for non-residents) is required for vehicle entry. The park has 75 modern sites at Grousehaven Campground (electricity, showers) and 99 rustic sites across three loops. The rustic sites along Ranch Road are the closest to the river and are popular with anglers.</p>
+
+      <p>Ranch Road Bridge is the primary trout fishing access with a canoe launch. The observation tower on Ridge Road overlooks the river valley and is worth the climb for scouting water. Day-use visitors should park in the designated lots, not vacant campsites. There is a camp store (seasonal) and boat rentals through Rollway Resort near the contact station.</p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">Regulations</div>
+          <div class="info-card-text">Rifle River through the park is Type 1 designated trout stream. General trout regulations apply. Check the current <a href="https://www.michigan.gov/dnr/things-to-do/fishing/maps" target="_blank" rel="noopener">Michigan DNR Fishing Guide</a> for season dates and limits.</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Wading</div>
+          <div class="info-card-text">Easy to moderate on the main stem. Gravel and sand bottom. Hip waders are sufficient most of the year. Chest waders in spring when water is higher. Felt soles recommended. Tributaries are wade-only, hip waders or wet-wading.</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Getting There</div>
+          <div class="info-card-text">From West Branch: M-55 east to Rose City, then east on Rose City Road for 5 miles. From I-75: Exit 202 (Sterling), north on M-33, then west on Rose City Road. GPS: 44.385, -84.07.</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Campground Reservations</div>
+          <div class="info-card-text"><a href="https://midnrreservations.com" target="_blank" rel="noopener">MiDNRReservations.com</a> or call 1-800-44-PARKS. Book early for opening weekend. Rustic sites along Ranch Road fill first.</div>
+        </div>
+      </div>
+
+      <!-- Gear -->
+      <div style="background:#f9f6f0;border:1px solid #e0dbd0;border-radius:5px;padding:14px 16px;margin:20px 0">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;margin-bottom:9px">Gear for the Rec Area</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <a href="https://www.amazon.com/s?k=small+stream+fly+rod+7+foot&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#2c5f2d;background:#e8f5e9;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #c8e6c9">Small Stream Rod (7')</a>
+          <a href="https://www.amazon.com/s?k=simms+hip+waders&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#4a2c7a;background:#f3e5f5;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #ce93d8">Hip Waders</a>
+          <a href="https://www.amazon.com/s?k=Mepps+Aglia+spinner+trout&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#5a3a1a;background:#fff3e0;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #ffcc80">Mepps Spinners</a>
+          <a href="https://www.amazon.com/s?k=Rapala+Original+Floater+F05+trout&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#5a3a1a;background:#fff3e0;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #ffcc80">Rapala F05</a>
+          <a href="https://www.amazon.com/s?k=fly+fishing+michigan+trout&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#2c5f2d;background:#e8f5e9;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #c8e6c9">Fly Gear</a>
+          <a href="https://www.michigan.gov/dnr/buy-and-apply" target="_blank" rel="noopener" style="font-size:12px;color:#555;background:#f5f2ec;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #ddd">MI Fishing License</a>
+        </div>
+        <div style="font-size:9px;color:#ccc;margin-top:6px">Affiliate links: commission at no cost to you.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="content-section">
+    <div class="container">
+      <h2>Frequently Asked Questions</h2>
+      <div style="margin-bottom:18px">
+        <div style="font-size:15px;color:#1a3a1a;margin-bottom:6px"><strong>Is the Rifle River in the Recreation Area good for trout fishing?</strong></div>
+        <div style="font-size:14px;color:#555;line-height:1.65">Yes. The upper Rifle River through the Rec Area is a Type 1 designated trout stream with wild brown trout and stocked rainbows. The best fishing is right after the opener in late April and again in September when pressure drops. The tributaries (Houghton Creek, Gamble Creek) hold excellent brown trout and brook trout year-round.</div>
+      </div>
+      <div style="margin-bottom:18px">
+        <div style="font-size:15px;color:#1a3a1a;margin-bottom:6px"><strong>Do I need a Recreation Passport to fish in the park?</strong></div>
+        <div style="font-size:14px;color:#555;line-height:1.65">Yes. A Michigan Recreation Passport is required for vehicle entry to the Rifle River Recreation Area. It costs $17 for residents (can be added when you register your vehicle) or $34 for non-residents. You also need a valid Michigan fishing license.</div>
+      </div>
+      <div style="margin-bottom:18px">
+        <div style="font-size:15px;color:#1a3a1a;margin-bottom:6px"><strong>Can I camp near the trout fishing?</strong></div>
+        <div style="font-size:14px;color:#555;line-height:1.65">Yes. The rustic campground along Ranch Road is directly on the Rifle River. You can walk from your campsite to the water. Reserve at MiDNRReservations.com. The Grousehaven Modern Campground offers electricity and showers but is further from the prime trout water.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related -->
+  <div class="related-section">
+    <div class="container">
+      <h2 style="font-size:14px;font-weight:normal;text-transform:uppercase;letter-spacing:1px;color:#888">Explore More</h2>
+      <div class="related-links">
+        <a href="/stream/rifle-river-michigan.html" class="related-link">Rifle River (full report)</a>
+        <a href="/stream/klacking-creek-michigan.html" class="related-link">Klacking Creek</a>
+        <a href="/stream/houghton-creek-michigan.html" class="related-link">Houghton Creek</a>
+        <a href="/stream/gamble-creek-michigan.html" class="related-link">Gamble Creek</a>
+        <a href="/stream/wilkins-creek-michigan.html" class="related-link">Wilkins Creek</a>
+        <a href="/stream/eddy-creek-michigan.html" class="related-link">Eddy Creek</a>
+        <a href="/stream/au-gres-river.html" class="related-link">Au Gres River</a>
+        <a href="/" class="related-link">All Michigan Rivers &rarr;</a>
+        <a href="/map.html" class="related-link">Statewide Stream Map &rarr;</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  Michigan Trout Stream Conditions by <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Chris Izworski</a>
+  &nbsp;&middot;&nbsp; Data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS</a> + <a href="https://www.weather.gov" target="_blank" rel="noopener">NWS</a>
+  &nbsp;&middot;&nbsp; <a href="/map.html">Stream Map</a>
+  &nbsp;&middot;&nbsp; <a href="https://chrisizworski.com" target="_blank" rel="noopener">chrisizworski.com</a>
+</footer>
+
+<!-- Leaflet Map -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="/trout-ui.js"></script>
+<script>
+// ── Recreation Area Map ─────────────────────────────────────────────────────
+const map = L.map('rrra-map', {
+  center: [44.385, -84.07],
+  zoom: 13,
+  scrollWheelZoom: false,
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap',
+  maxZoom: 18,
+}).addTo(map);
+
+// Enable scroll zoom after first click
+map.once('click', () => map.scrollWheelZoom.enable());
+
+function icon(color, size) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2],
+    popupAnchor: [0, -size/2],
+  });
+}
+
+// ── Trout Stream Access Points (green) ──────────────────────────────────────
+const streams = [
+  { name: 'Ranch Road Bridge', desc: 'Primary trout access. Canoe launch. Type 1 trout stream. Best fishing at opener.', lat: 44.3996, lon: -84.0356 },
+  { name: 'Rifle River at Devoe Lake Outlet', desc: 'River originates here. Smaller water, brook trout in cold headwaters.', lat: 44.405, lon: -84.085 },
+  { name: 'Rifle River Swinging Bridge', desc: 'Suspension bridge crossing. Wade upstream or downstream from here.', lat: 44.393, lon: -84.055 },
+  { name: 'Houghton Creek at Houghton Creek Rd', desc: 'Primary Houghton Creek access. Walk upstream for best trout water.', lat: 44.378, lon: -84.08 },
+  { name: 'Houghton Creek (upper park)', desc: 'Inside the Rec Area. Cold spring water, wild browns.', lat: 44.388, lon: -84.075 },
+  { name: 'Gamble Creek (park interior)', desc: 'Access from park roads. Less traffic than the Rifle. Similar trout populations.', lat: 44.382, lon: -84.068 },
+];
+streams.forEach(s => {
+  L.marker([s.lat, s.lon], { icon: icon('#2e7d32', 16) })
+    .bindPopup(`<div class="pu-type">Trout Stream Access</div><div class="pu-name">${s.name}</div><div class="pu-desc">${s.desc}</div><a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}" target="_blank" rel="noopener" class="pu-nav">Navigate Here</a>`)
+    .addTo(map);
+});
+
+// ── Lakes (blue) ────────────────────────────────────────────────────────────
+const lakes = [
+  { name: 'Devoe Lake', desc: 'Headwater lake. Rainbow trout, perch, bass, bluegill. No motors.', lat: 44.407, lon: -84.087 },
+  { name: 'Grousehaven Lake', desc: 'Brown trout, rainbow trout, perch, bass. Campground swim beach.', lat: 44.396, lon: -84.072 },
+  { name: 'Jewett Lake', desc: 'Catch and release only, no live bait. DNR research lake since 1945.', lat: 44.389, lon: -84.082 },
+  { name: 'Lodge Lake', desc: 'Bass, bluegill, pike. Smaller and quieter.', lat: 44.392, lon: -84.063 },
+  { name: 'Grebe Lake', desc: 'Pike, bass, perch, crappie, bluegill.', lat: 44.399, lon: -84.062 },
+];
+lakes.forEach(l => {
+  L.marker([l.lat, l.lon], { icon: icon('#1565c0', 14) })
+    .bindPopup(`<div class="pu-type">Lake</div><div class="pu-name">${l.name}</div><div class="pu-desc">${l.desc}</div><a href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lon}" target="_blank" rel="noopener" class="pu-nav">Navigate Here</a>`)
+    .addTo(map);
+});
+
+// ── Campgrounds (brown/red) ─────────────────────────────────────────────────
+const camps = [
+  { name: 'Grousehaven Modern Campground', desc: '75 sites. Electric, showers, swim beach. Reserve at MiDNRReservations.com.', lat: 44.397, lon: -84.075 },
+  { name: 'Ranch Road Rustic Campground', desc: 'Rustic sites on the Rifle River. Walk to trout water. Popular opening weekend.', lat: 44.400, lon: -84.038 },
+  { name: 'Spruce Rustic Campground', desc: '25 sites along the river. Grassy, wooded.', lat: 44.394, lon: -84.045 },
+  { name: 'Devoe Lake Rustic Campground', desc: '16 sites near Devoe Lake. Wooded, quiet. Close to headwater fishing.', lat: 44.404, lon: -84.09 },
+];
+camps.forEach(c => {
+  L.marker([c.lat, c.lon], { icon: icon('#bf360c', 14) })
+    .bindPopup(`<div class="pu-type">Campground</div><div class="pu-name">${c.name}</div><div class="pu-desc">${c.desc}</div><a href="https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lon}" target="_blank" rel="noopener" class="pu-nav">Navigate Here</a>`)
+    .addTo(map);
+});
+
+// ── Parking / Day-Use (gray) ────────────────────────────────────────────────
+const parking = [
+  { name: 'Contact Station / Day-Use Parking', desc: 'Main entrance. Day visitors park here. Boat rentals available.', lat: 44.39, lon: -84.06 },
+  { name: 'Observation Tower Parking', desc: 'Park here for the tower and Ridge Road trails. Overlooks the valley.', lat: 44.386, lon: -84.055 },
+];
+parking.forEach(p => {
+  L.marker([p.lat, p.lon], { icon: icon('#555', 12) })
+    .bindPopup(`<div class="pu-type">Parking</div><div class="pu-name">${p.name}</div><div class="pu-desc">${p.desc}</div><a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}" target="_blank" rel="noopener" class="pu-nav">Navigate Here</a>`)
+    .addTo(map);
+});
+
+// ── Conditions Widget ───────────────────────────────────────────────────────
+async function loadConditions() {
+  const riverId = 'rifle-river';
+  try {
+    const [riverResp, recResp] = await Promise.all([
+      fetch(`/api/river/${riverId}`),
+      fetch(`/api/recommend?id=${riverId}`),
+    ]);
+    const data = riverResp.ok ? await riverResp.json() : null;
+    const recData = recResp.ok ? await recResp.json() : null;
+
+    if (!data?.success || !data.primaryConditions?.ratingKey) {
+      document.getElementById('widgetContent').innerHTML =
+        '<span style="color:#bbb;font-size:13px">No live data available today. <a href="/stream/rifle-river-michigan.html" style="color:#4a7c4a">Check Rifle River page</a>.</span>';
+      return;
+    }
+    document.getElementById('widgetContent').innerHTML = renderFullWidget(data.primaryConditions, recData, riverId);
+  } catch(e) {
+    document.getElementById('widgetContent').innerHTML =
+      '<span style="color:#bbb;font-size:13px">Unable to load data. <a href="/stream/rifle-river-michigan.html" style="color:#4a7c4a">Check Rifle River page</a>.</span>';
+  }
+}
+loadConditions();
+</script>
+</body>
+</html>
