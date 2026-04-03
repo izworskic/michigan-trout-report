@@ -172,17 +172,19 @@
   <!-- STOP 2: HORTON BAY & HORTON CREEK -->
   <div class="stop" id="stop2">
     <div class="stop-num">Stop 2</div>
-    <div class="stop-name">Horton Bay &amp; Horton Creek</div>
-    <div class="stop-loc">Charlevoix County &middot; Brook Trout</div>
-    <p>Hemingway lived in Horton Bay as a young writer and married Hadley Richardson in the town's Methodist church in 1921. The Horton Bay General Store (still operating) is where he gathered with friends. Horton Creek, a small spring-fed brook trout stream, is where he learned to fish. The Little Traverse Conservancy maintains the Nick Adams Nature Preserve along the creek today.</p>
-    <p>The creek is technical water: gin-clear, marl bottom that is difficult to wade, heavy brush, and spooky fish. Hemingway's son Jack later wrote that his father was "a pretty straightforward wet-fly fisherman" who fished the McGinty, a colorful bee imitation, across and downstream. The creek rewards the same patient approach today.</p>
+    <div class="stop-name">Horton Creek &amp; Horton Bay</div>
+    <div class="stop-loc">Charlevoix County &middot; Brook Trout &middot; Spring Creek</div>
+    <p>Horton Creek is where Ernest Hemingway learned to fly fish. The creek is a cold, spring-fed brook trout stream that flows through cedar swamp north of Horton Bay before emptying into Lake Charlevoix. It is small water, rarely more than 15 feet wide, with a marl and gravel bottom so clear you can read a newspaper through two feet of it. The fish see everything. This is some of the most technical small-stream fishing in northern Michigan.</p>
+    <p>The Little Traverse Conservancy maintains the Nick Adams Nature Preserve along the creek with public fishing access off Horton Creek Road (a seasonal dirt road, passable in summer). The wadeable section below town is mostly private. In the Preserve, the marl bottom is soft and difficult to wade, the brush is heavy, and the brook trout are educated. Hemingway's son Jack wrote that his father fished a McGinty wet fly, cast across and downstream. A size 12 McGinty or Royal Coachman fished the same way still works.</p>
+    <p>Horton Bay itself is a tiny community on Boyne City Road. The Horton Bay General Store (still operating, now with an inn) is where Hemingway gathered with friends and set scenes in "The End of Something" and "The Three-Day Blow." He married Hadley Richardson in the Horton Bay Community Church on September 3, 1921.</p>
     <div class="stop-story">
       <div class="stop-story-label">In the Stories</div>
       <p>"The End of Something," "The Three-Day Blow," "Summer People." The general store, the creek, the roads between Horton Bay and Charlevoix: this is Nick Adams's home ground as a young man. The spring at the halfway point of the gravel road from town to the lake appears in "Summer People."</p>
     </div>
     <div class="stop-links">
-      <a href="https://www.google.com/maps/dir/?api=1&destination=45.2851,-85.0797" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to General Store</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.3141,-85.1001" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to Horton Creek</a>
       <a href="https://www.google.com/maps/dir/?api=1&destination=45.3029,-85.0927" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Nick Adams Preserve</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.2851,-85.0797" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">General Store</a>
       <a href="https://www.google.com/maps/dir/?api=1&destination=45.2842,-85.0754" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Horton Bay Church</a>
     </div>
   </div>
@@ -355,8 +357,8 @@ const stops = [
   // All coordinates verified via Google Places API
   { n: 1, name: 'Walloon Lake', lat: 45.2663, lon: -84.9334, color: '#1565c0',
     popup: '<b>Walloon Lake</b><br>Hemingway family summers<br><small>"Indian Camp," "Ten Indians"</small>' },
-  { n: 2, name: 'Horton Bay', lat: 45.2851, lon: -85.0797, color: '#6b4423',
-    popup: '<b>Horton Bay General Store</b><br>Where Hemingway gathered with friends<br><small>"The End of Something," "The Three-Day Blow"</small>' },
+  { n: 2, name: 'Horton Creek', lat: 45.3004, lon: -85.0884, color: '#2e7d32',
+    popup: '<b>Horton Creek</b><br>Brook trout. Where Hemingway learned to fish.<br><small>Nick Adams Preserve, Horton Bay General Store</small>' },
   { n: 3, name: 'Petoskey', lat: 45.3748, lon: -84.9543, color: '#6b4423',
     popup: '<b>Hemingway Statue, Petoskey</b><br>Pennsylvania Park, bronze statue (2017)<br><small>Eva Potter House, Carnegie Library</small>' },
   { n: 4, name: 'Pigeon River', lat: 45.1698, lon: -84.4394, color: '#2e7d32',
@@ -377,20 +379,24 @@ stops.forEach(s => {
 
 // ── Detail markers (smaller dots at specific sites within each stop) ─────
 const details = [
-  // Stop 1 area
+  // Stop 1: Walloon Lake
   { lat: 45.2806, lon: -85.0011, color: '#1565c0', size: 10,
-    popup: '<b>Windemere Cottage</b><br><small>Hemingway family cottage. Private, not open to public.<br>6502 Lake Grove Rd</small>' },
-  // Stop 2 area: Horton Creek
+    popup: '<b>Windemere Cottage</b><br><small>Hemingway family cottage (1899). Private residence.<br>6502 Lake Grove Rd</small>' },
+  // Stop 2: Horton Bay & Horton Creek
+  { lat: 45.2851, lon: -85.0797, color: '#6b4423', size: 12,
+    popup: '<b>Horton Bay General Store</b><br><small>5115 Boyne City Rd. Where Hemingway gathered with friends.<br>"The End of Something," "The Three-Day Blow"</small>' },
+  { lat: 45.3141, lon: -85.1001, color: '#2e7d32', size: 14,
+    popup: '<b>Horton Creek</b><br>Brook trout. Gin-clear spring creek.<br><small>Hemingway learned to fish here with a McGinty wet fly.<br>One of the most technical small streams in northern Michigan.</small>' },
   { lat: 45.3029, lon: -85.0927, color: '#2e7d32', size: 12,
-    popup: '<b>Nick Adams Nature Preserve</b><br>Horton Creek. Brook trout. Gin-clear water.<br><small>Little Traverse Conservancy. Public access.<br>Horton Creek Rd (seasonal road, may need 4WD)</small>' },
+    popup: '<b>Nick Adams Nature Preserve</b><br>Public access to Horton Creek.<br><small>Little Traverse Conservancy. Horton Creek Rd<br>(seasonal dirt road, may need 4WD in spring)</small>' },
   { lat: 45.2842, lon: -85.0754, color: '#6b4423', size: 10,
-    popup: '<b>Horton Bay Community Church</b><br><small>Hemingway married Hadley Richardson here, Sept 3, 1921.</small>' },
-  // Stop 3 area
+    popup: '<b>Horton Bay Community Church</b><br><small>Hemingway married Hadley Richardson here<br>September 3, 1921. 4961 Boyne City Rd</small>' },
+  // Stop 3: Petoskey
   { lat: 45.3756, lon: -84.9589, color: '#6b4423', size: 10,
-    popup: '<b>Little Traverse History Museum</b><br><small>100 Depot Ct. Hemingway exhibits. Petoskey stones.</small>' },
-  // Stop 6 area
-  { lat: 46.3993, lon: -86.0318, color: '#2e7d32', size: 12,
-    popup: '<b>Fox River State Forest Campground</b><br>East Branch of the Fox. Where Hemingway camped.<br><small>MOWA memorial marker. King\'s Pond. Brook trout.<br>7 miles north of Seney on M-77</small>' },
+    popup: '<b>Little Traverse History Museum</b><br><small>100 Depot Ct. Hemingway exhibits.</small>' },
+  // Stop 6: Fox River / Seney
+  { lat: 46.3993, lon: -86.0318, color: '#2e7d32', size: 14,
+    popup: '<b>Fox River Campground</b><br>East Branch of the Fox. Hemingway camped here 1919.<br><small>MOWA memorial. Brook trout in King Pond.<br>7 miles north of Seney on M-77</small>' },
 ];
 
 details.forEach(d => {
