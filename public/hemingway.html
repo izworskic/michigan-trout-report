@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hemingway Michigan Trout Trail | Fish the Nick Adams Waters</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a1a0a">
+<meta name="description" content="Fish the rivers Ernest Hemingway wrote about. Seven stops from Walloon Lake to the Two-Hearted River. Live stream conditions, access points, and Navigate buttons. The literary angler's guide to Michigan.">
+<link rel="canonical" href="https://trout.chrisizworski.com/hemingway.html">
+<meta property="og:title" content="Hemingway Michigan Trout Trail | Fish the Nick Adams Waters">
+<meta property="og:description" content="Seven stops from Walloon Lake to the Two-Hearted River. Live conditions on the rivers Hemingway fished. The literary angler's guide to Michigan.">
+<meta property="og:image" content="https://trout.chrisizworski.com/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "name": "Hemingway Michigan Trout Trail",
+  "description": "A seven-stop literary fishing trail across Michigan's trout waters, following the rivers Ernest Hemingway fished and wrote about in the Nick Adams stories.",
+  "touristType": "Literary tourism, Fly fishing",
+  "url": "https://trout.chrisizworski.com/hemingway.html",
+  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"}
+}
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Georgia,'Times New Roman',serif;background:#f7f4ee;color:#2c2a24;line-height:1.8}
+  a{color:#6b4423;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .hdr{background:#2c2a24;color:#d4c9b0;padding:14px 20px;border-bottom:2px solid #4a4538}
+  .hdr-inner{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .hdr-left{display:flex;align-items:center;gap:14px}
+  .hdr-back{color:#a09878;font-size:13px}
+  .hdr-title{font-size:15px;color:#d4c9b0}
+  .hdr-nav{display:flex;gap:14px;font-size:13px}
+  .hdr-nav a{color:#a09878}
+
+  .container{max-width:920px;margin:0 auto;padding:0 16px}
+
+  /* Hero */
+  .hero{background:#2c2a24;padding:36px 0 28px;color:#d4c9b0}
+  .hero-kicker{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8a8068;margin-bottom:10px}
+  .hero h1{font-size:30px;font-weight:normal;color:#e8dcc4;line-height:1.3;margin-bottom:8px}
+  .hero-quote{font-size:16px;font-style:italic;color:#a09878;max-width:640px;margin-bottom:6px}
+  .hero-attr{font-size:12px;color:#6a6450}
+
+  /* Map */
+  .map-section{background:#fff;border-bottom:1px solid #ddd8cc;padding:0 0 16px}
+  .map-bar{padding:14px 0 8px;display:flex;align-items:center;justify-content:space-between}
+  .map-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa}
+  #trailMap{height:420px;border-radius:6px;border:1px solid #ddd8cc}
+  .map-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:#888}
+  .leg-dot{width:12px;height:12px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px}
+
+  /* Stop cards */
+  .stop{background:#fff;border-bottom:1px solid #e8e4dc;padding:28px 0}
+  .stop-num{font-size:12px;color:#a09878;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+  .stop-name{font-size:24px;font-weight:normal;color:#2c2a24;margin-bottom:4px}
+  .stop-loc{font-size:13px;color:#999;font-style:italic;margin-bottom:14px}
+  .stop p{font-size:15px;color:#4a4538;margin-bottom:14px}
+  .stop-story{background:#f9f6f0;border-left:3px solid #c4a86c;padding:12px 16px;margin:14px 0;border-radius:0 4px 4px 0}
+  .stop-story-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#c4a86c;margin-bottom:4px}
+  .stop-story p{font-size:14px;color:#6a6450;margin-bottom:0;font-style:italic}
+
+  .stop-conditions{background:#f5f2ec;border:1px solid #e0dbd0;border-radius:6px;padding:14px 16px;margin:14px 0}
+  .stop-cond-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;margin-bottom:8px}
+
+  .stop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .stop-nav{font-size:12px;padding:6px 14px;border-radius:4px;text-decoration:none;display:inline-block}
+  .stop-nav-green{background:#1b5e20;color:#fff}
+  .stop-nav-green:hover{background:#145218;text-decoration:none}
+  .stop-nav-outline{background:#f5f2ec;border:1px solid #ddd8cc;color:#6b4423}
+  .stop-nav-outline:hover{background:#e8e4dc;text-decoration:none}
+
+  .section{padding:28px 0;border-bottom:1px solid #e8e4dc;background:#fff}
+  .section h2{font-size:20px;font-weight:normal;color:#2c2a24;margin-bottom:12px}
+  .section p{font-size:15px;color:#4a4538;margin-bottom:14px}
+
+  .gear-box{background:#f9f6f0;border:1px solid #e0dbd0;border-radius:5px;padding:14px 16px;margin:16px 0}
+  .gear-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;margin-bottom:9px}
+  .gear-tags{display:flex;flex-wrap:wrap;gap:7px}
+  .gear-tag{font-size:12px;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid}
+
+  .related{background:#fff;padding:24px 0}
+  .related-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .rel{font-size:13px;padding:6px 14px;background:#f5f2ec;border:1px solid #ddd8cc;border-radius:4px;color:#6b4423}
+
+  .footer{border-top:1px solid #ddd8cc;padding:18px 20px;text-align:center;font-size:12px;color:#bbb;background:#fff}
+  .footer a{color:#6b4423}
+
+  .leaflet-popup-content{font-family:Georgia,serif;font-size:13px}
+
+  @media(max-width:600px){
+    .hero h1{font-size:22px}
+    #trailMap{height:300px}
+    .stop-name{font-size:20px}
+    .hdr-nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-left">
+      <a href="/" class="hdr-back">&larr; All Rivers</a>
+      <span class="hdr-title">Michigan Trout Report</span>
+    </div>
+    <nav class="hdr-nav">
+      <a href="/map.html">Stream Map</a>
+      <a href="/top-rivers.html">Top 10</a>
+      <a href="/hex.html">Hex Tracker</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-kicker">Literary Fishing Trail &middot; 7 Stops &middot; Northern Michigan to Upper Peninsula</div>
+    <h1>Hemingway Michigan Trout Trail</h1>
+    <p class="hero-quote">"The river was there. It swirled against the log spiles of the bridge. Nick looked down into the clear, brown water, colored from the pebbly bottom, and watched the trout keeping themselves steady in the current with wavering fins."</p>
+    <p class="hero-attr">"Big Two-Hearted River," 1925</p>
+  </div>
+</div>
+
+<!-- Trail Map -->
+<div class="map-section">
+  <div class="container">
+    <div class="map-bar">
+      <span class="map-label">Hemingway Trail Map</span>
+    </div>
+    <div id="trailMap"></div>
+    <div class="map-legend">
+      <span><span class="leg-dot" style="background:#6b4423"></span> Literary site</span>
+      <span><span class="leg-dot" style="background:#2e7d32"></span> Fishable water (live data)</span>
+      <span><span class="leg-dot" style="background:#1565c0"></span> Lake / landmark</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="section" style="border-bottom:none;padding-bottom:10px">
+    <p>Ernest Hemingway spent his boyhood summers at the family cottage on Walloon Lake. He learned to fish in Horton Creek, took camping trips to the Sturgeon and Black Rivers, married his first wife in the Horton Bay church, and boarded in a Petoskey rooming house as a struggling young writer. In the summer of 1919, still recovering from shrapnel wounds suffered in Italy, he took a train to Seney in the Upper Peninsula with two friends. They fished the Fox River for a week, catching over 200 brook trout. Five years later, writing in Paris, he turned that trip into "Big Two-Hearted River," one of the most celebrated fishing stories ever written.</p>
+    <p>This trail follows the rivers and places Hemingway fished and wrote about. Where we have USGS gauges, you get live conditions. Where we do not, you get the literary context, the access points, and the Navigate buttons to get you there. This is trout fishing as Hemingway knew it: cold water, wild fish, and the north country.</p>
+  </div>
+
+  <!-- STOP 1: WALLOON LAKE -->
+  <div class="stop" id="stop1">
+    <div class="stop-num">Stop 1</div>
+    <div class="stop-name">Walloon Lake &amp; Windemere Cottage</div>
+    <div class="stop-loc">Petoskey area, Charlevoix County</div>
+    <p>The Hemingway family built Windemere Cottage on the north shore of Walloon Lake in 1899, the year Ernest was born. He spent every summer here through his teenage years, fishing, swimming, and exploring the surrounding forests with the Ojibway families who lived nearby. The cottage is still standing (privately owned, not open to the public) and the lake remains one of the clearest in northern Michigan.</p>
+    <div class="stop-story">
+      <div class="stop-story-label">In the Stories</div>
+      <p>"Indian Camp," "The Doctor and the Doctor's Wife," "Ten Indians," "Wedding Day." The lake and cottage are the setting for Nick Adams's childhood. The rowboat crossings, the mill at the creek mouth, the Indian camps on the far shore: all drawn from this place.</p>
+    </div>
+    <div class="stop-links">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.2720,-84.9830" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to Walloon Lake</a>
+    </div>
+  </div>
+
+  <!-- STOP 2: HORTON BAY & HORTON CREEK -->
+  <div class="stop" id="stop2">
+    <div class="stop-num">Stop 2</div>
+    <div class="stop-name">Horton Bay &amp; Horton Creek</div>
+    <div class="stop-loc">Charlevoix County &middot; Brook Trout</div>
+    <p>Hemingway lived in Horton Bay as a young writer and married Hadley Richardson in the town's Methodist church in 1921. The Horton Bay General Store (still operating) is where he gathered with friends. Horton Creek, a small spring-fed brook trout stream, is where he learned to fish. The Little Traverse Conservancy maintains the Nick Adams Nature Preserve along the creek today.</p>
+    <p>The creek is technical water: gin-clear, marl bottom that is difficult to wade, heavy brush, and spooky fish. Hemingway's son Jack later wrote that his father was "a pretty straightforward wet-fly fisherman" who fished the McGinty, a colorful bee imitation, across and downstream. The creek rewards the same patient approach today.</p>
+    <div class="stop-story">
+      <div class="stop-story-label">In the Stories</div>
+      <p>"The End of Something," "The Three-Day Blow," "Summer People." The general store, the creek, the roads between Horton Bay and Charlevoix: this is Nick Adams's home ground as a young man. The spring at the halfway point of the gravel road from town to the lake appears in "Summer People."</p>
+    </div>
+    <div class="stop-links">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.2680,-85.1050" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to Horton Bay</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.2750,-85.1100" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Nick Adams Preserve</a>
+    </div>
+  </div>
+
+  <!-- STOP 3: PETOSKEY -->
+  <div class="stop" id="stop3">
+    <div class="stop-num">Stop 3</div>
+    <div class="stop-name">Petoskey</div>
+    <div class="stop-loc">Emmet County</div>
+    <p>After the summer of 1919, Hemingway stayed on in northern Michigan while his family returned to Oak Park. He boarded at the Eva Potter Rooming House in Petoskey, gave a war talk at the Carnegie Library, and wrote. A bronze statue of the young Hemingway stands in Pennsylvania Park in downtown Petoskey, erected in 2017. The Little Traverse History Museum has Hemingway exhibits. Petoskey is the natural base camp for fishing the Hemingway trail: the Bear River runs through town, and the Pigeon River Country is an hour east.</p>
+    <div class="stop-links">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.3733,-84.9553" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to Petoskey</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.3744,-84.9570" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Hemingway Statue</a>
+    </div>
+  </div>
+
+  <!-- STOP 4: PIGEON RIVER COUNTRY -->
+  <div class="stop" id="stop4">
+    <div class="stop-num">Stop 4</div>
+    <div class="stop-name">Pigeon River Country &amp; the Black River</div>
+    <div class="stop-loc">Cheboygan / Otsego County &middot; Brook &amp; Brown Trout</div>
+    <p>Hemingway called this "the last good country" and made it the setting for his posthumously published story of the same name. The Pigeon River Country State Forest covers 106,000 acres of wild land with elk, bear, and some of the best brook trout streams in the Lower Peninsula. The Black River (eastern) was one of Hemingway's favorites: he took camping trips here from Horton Bay. The Pigeon River itself holds wild brook trout in its upper reaches and browns below.</p>
+    <div class="stop-conditions" id="pigeonCond">
+      <div class="stop-cond-label">Live Pigeon River Conditions</div>
+      <div style="font-size:13px;color:#aaa;font-style:italic">Loading...</div>
+    </div>
+    <div class="stop-story">
+      <div class="stop-story-label">In the Stories</div>
+      <p>"The Last Good Country": Nick and his sister Littless flee into the deep forest to escape game wardens who want to arrest Nick for poaching trout. "This is the way forests were in the olden days. This is about the last good country there is left." The woods near the Pigeon and Black Rivers are that forest.</p>
+    </div>
+    <div class="stop-links">
+      <a href="/stream/pigeon-river-michigan.html" class="stop-nav stop-nav-green">Pigeon River Conditions</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.1561,-84.4675" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Navigate to Pigeon River</a>
+      <a href="/map.html?river=pigeon" class="stop-nav stop-nav-outline">View on Map</a>
+    </div>
+  </div>
+
+  <!-- STOP 5: STURGEON RIVER -->
+  <div class="stop" id="stop5">
+    <div class="stop-num">Stop 5</div>
+    <div class="stop-name">Sturgeon River</div>
+    <div class="stop-loc">Wolverine, Cheboygan County &middot; Brook, Brown &amp; Rainbow Trout</div>
+    <p>Hemingway took camping trips to the Sturgeon River from Horton Bay. This is one of the coldest and fastest rivers in northern Michigan, holding all three trout species: brook trout in the upper sections near Wolverine, browns and rainbows below. The Sturgeon gets a fraction of the pressure the AuSable receives despite comparable fish quality. Hemingway would recognize it today.</p>
+    <div class="stop-conditions" id="sturgeonCond">
+      <div class="stop-cond-label">Live Sturgeon River Conditions</div>
+      <div style="font-size:13px;color:#aaa;font-style:italic">Loading...</div>
+    </div>
+    <div class="stop-links">
+      <a href="/stream/sturgeon-river-michigan.html" class="stop-nav stop-nav-green">Sturgeon River Conditions</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=45.2745,-84.6000" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Navigate to Wolverine</a>
+      <a href="/map.html?river=sturgeon-river-nlp" class="stop-nav stop-nav-outline">View on Map</a>
+    </div>
+  </div>
+
+  <!-- STOP 6: FOX RIVER / SENEY -->
+  <div class="stop" id="stop6">
+    <div class="stop-num">Stop 6</div>
+    <div class="stop-name">Fox River &amp; Seney</div>
+    <div class="stop-loc">Schoolcraft County, Upper Peninsula &middot; Brook Trout</div>
+    <p>In August 1919, Hemingway and two friends arrived at Seney by rail. He was twenty years old, still favoring his right leg from an Austrian mortar wound in Italy. They walked north from the train depot to the East Branch of the Fox River and camped for a week, catching over 200 brook trout. The trip became "Big Two-Hearted River," though he borrowed the name of another UP river "because it had more poetry."</p>
+    <p>The Michigan Outdoor Writers Association dedicated a heritage memorial marker at the East Branch Fox River State Forest Campground in 2013, seven miles north of Seney on M-77. The Seney Museum and Historic Railroad Depot (the same depot where Hemingway stepped off the train) is open by appointment. The Fox River still holds brook trout. The Steeb Pathway near the campground loops around King's Pond, where DNR-stocked brook trout rise to mayflies on calm evenings, just as they did a century ago.</p>
+    <div class="stop-story">
+      <div class="stop-story-label">In the Stories</div>
+      <p>"Big Two-Hearted River," Parts I and II. Nick Adams steps off the train at Seney, finds the town burned, hikes north to the river, makes camp, and fishes. The burned town, the grasshoppers covered in soot, the big trout in the deep pool that breaks his line: all drawn from the Fox River and the country around Seney. Hemingway said the story was "about a boy coming home beat to the wide from a war." The war is never mentioned. The river does the healing.</p>
+    </div>
+    <div class="stop-links">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=46.3580,-86.0790" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to Seney</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=46.4150,-86.0600" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Fox River Campground (M-77)</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=46.3630,-86.0810" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Seney Railroad Depot</a>
+    </div>
+  </div>
+
+  <!-- STOP 7: TWO-HEARTED RIVER -->
+  <div class="stop" id="stop7">
+    <div class="stop-num">Stop 7</div>
+    <div class="stop-name">Two-Hearted River</div>
+    <div class="stop-loc">Luce County, Upper Peninsula &middot; Brook &amp; Steelhead</div>
+    <p>The river Hemingway named his story after but never actually fished. The Two-Hearted flows north through the Lake Superior State Forest to Lake Superior, passing through some of the most remote country in Michigan's Upper Peninsula. It holds native brook trout in its upper reaches and steelhead runs from Lake Superior. The river mouth at the Lake Superior shore is accessible via County Road 412 from Newberry. The upper river requires hiking or canoeing to reach.</p>
+    <p>Hemingway chose the name over "Fox River" because "Big Two-Hearted River is poetry." He was right. The river lives up to its borrowed reputation: cold, wild, and far from everything.</p>
+    <div class="stop-links">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=46.6920,-85.4050" target="_blank" rel="noopener" class="stop-nav stop-nav-green">Navigate to Two-Hearted River Mouth</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=46.5880,-85.5500" target="_blank" rel="noopener" class="stop-nav stop-nav-outline">Two-Hearted River Campground</a>
+    </div>
+  </div>
+
+  <!-- Planning section -->
+  <div class="section">
+    <h2>Planning the Trail</h2>
+    <p>The full trail runs roughly 250 miles from Walloon Lake to the Two-Hearted River mouth. You can drive it in a long day, but it deserves at least a long weekend. Stops 1 through 5 (Walloon Lake to the Sturgeon River) cluster within an hour of Petoskey and can be done in a day. Stops 6 and 7 require crossing the Mackinac Bridge into the Upper Peninsula: Seney is 90 minutes north of the bridge, and the Two-Hearted River mouth is another 45 minutes beyond Seney.</p>
+    <p>For anglers, the Pigeon River Country (Stop 4) and the Sturgeon River (Stop 5) offer the best fishing of the trail and have live conditions on this site. The Fox River (Stop 6) is a pilgrimage for Hemingway readers, and the brook trout are still there. Horton Creek (Stop 2) is tiny, technical, and humbling. The Two-Hearted (Stop 7) is remote and wild.</p>
+    <p>Hemingway fished wet flies: the McGinty, a Royal Coachman, and live grasshoppers. You can fish his patterns or bring modern gear. The trout do not care about literary history. They care about the fly.</p>
+
+    <div class="gear-box">
+      <div class="gear-label">Gear for the Hemingway Trail</div>
+      <div class="gear-tags">
+        <a href="https://www.amazon.com/s?k=small+stream+fly+rod+7+foot+3+weight&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="gear-tag" style="color:#2c5f2d;background:#e8f5e9;border-color:#c8e6c9">Small Stream Rod (7' 3wt)</a>
+        <a href="https://www.amazon.com/s?k=McGinty+wet+fly&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="gear-tag" style="color:#6b4423;background:#fef3e8;border-color:#e0c9a8">McGinty Wet Fly</a>
+        <a href="https://www.amazon.com/s?k=Royal+Coachman+wet+fly&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="gear-tag" style="color:#6b4423;background:#fef3e8;border-color:#e0c9a8">Royal Coachman</a>
+        <a href="https://www.amazon.com/s?k=Adams+fly+dry+trout+size+14&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="gear-tag" style="color:#6b4423;background:#fef3e8;border-color:#e0c9a8">Adams Dry Fly</a>
+        <a href="https://www.amazon.com/s?k=Mepps+Aglia+spinner+trout&tag=michigantrout-20" target="_blank" rel="noopener sponsored" class="gear-tag" style="color:#5a3a1a;background:#fff3e0;border-color:#ffcc80">Mepps Aglia Spinner</a>
+        <a href="https://www.michigan.gov/dnr/buy-and-apply" target="_blank" rel="noopener" class="gear-tag" style="color:#555;background:#f5f2ec;border-color:#ddd">MI Fishing License</a>
+      </div>
+      <div style="font-size:9px;color:#ccc;margin-top:6px">Affiliate links: commission at no cost to you.</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <h2>Frequently Asked Questions</h2>
+    <div style="margin-bottom:16px">
+      <div style="font-size:15px;color:#2c2a24;margin-bottom:4px"><strong>Did Hemingway actually fish the Two-Hearted River?</strong></div>
+      <div style="font-size:14px;color:#555;line-height:1.65">No. He fished the Fox River near Seney in August 1919 and borrowed the name "Two-Hearted River" for the story because it was more poetic. He said so himself: "The river was the Fox River, by Seney, Michigan, not the Big Two-Hearted. The change of name was made purposely, not from ignorance or carelessness but because Big Two-Hearted River is poetry."</div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:15px;color:#2c2a24;margin-bottom:4px"><strong>Can I still fish Horton Creek?</strong></div>
+      <div style="font-size:14px;color:#555;line-height:1.65">Yes, but it is challenging. The Nick Adams Nature Preserve (maintained by the Little Traverse Conservancy) provides public access to a section of the creek. The water is gin-clear with a marl bottom that is difficult to wade. Brook trout are present but extremely wary. Heavy brush makes casting technical. This is water that will humble experienced anglers.</div>
+    </div>
+    <div>
+      <div style="font-size:15px;color:#2c2a24;margin-bottom:4px"><strong>Where is the MOWA memorial marker?</strong></div>
+      <div style="font-size:14px;color:#555;line-height:1.65">At the East Branch Fox River State Forest Campground, 7 miles north of Seney on M-77. The marker bears a photo of the young Hemingway in his Red Cross uniform and commemorates the 1919 fishing trip. The campground itself is a good base for fishing the Fox River. King's Pond, adjacent to the campground, is stocked with brook trout by the DNR.</div>
+    </div>
+  </div>
+
+  <!-- Related -->
+  <div class="related">
+    <div class="related-links">
+      <a href="/stream/pigeon-river-michigan.html" class="rel">Pigeon River</a>
+      <a href="/stream/sturgeon-river-michigan.html" class="rel">Sturgeon River</a>
+      <a href="/stream/ausable-river.html" class="rel">AuSable River</a>
+      <a href="/hex.html" class="rel">Hex Hatch Tracker</a>
+      <a href="/stream/rifle-river-recreation-area.html" class="rel">RRRA Guide</a>
+      <a href="/map.html" class="rel">Stream Map</a>
+      <a href="/" class="rel">All Michigan Rivers &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  Michigan Trout Stream Conditions by <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Chris Izworski</a>
+  &middot; <a href="https://chrisizworski.com" target="_blank" rel="noopener">chrisizworski.com</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="/trout-ui.js"></script>
+<script>
+// ── Trail Map ──────────────────────────────────────────────────────────────
+const map = L.map('trailMap', { center: [45.5, -85.5], zoom: 7, scrollWheelZoom: false });
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap', maxZoom: 18
+}).addTo(map);
+map.once('click', () => map.scrollWheelZoom.enable());
+
+function dot(color, size) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`,
+    iconSize: [size, size], iconAnchor: [size/2, size/2], popupAnchor: [0, -size/2],
+  });
+}
+
+function numIcon(n, color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:28px;height:28px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:13px;color:#fff;font-weight:bold">${n}</div>`,
+    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14],
+  });
+}
+
+const stops = [
+  { n: 1, name: 'Walloon Lake', lat: 45.2720, lon: -84.9830, color: '#1565c0',
+    popup: 'Walloon Lake &middot; Windemere Cottage<br><small>Hemingway family summers, "Indian Camp"</small>' },
+  { n: 2, name: 'Horton Bay', lat: 45.2680, lon: -85.1050, color: '#6b4423',
+    popup: 'Horton Bay &middot; Horton Creek<br><small>General Store, Nick Adams Preserve, brook trout</small>' },
+  { n: 3, name: 'Petoskey', lat: 45.3733, lon: -84.9553, color: '#6b4423',
+    popup: 'Petoskey<br><small>Hemingway statue, Eva Potter House, Carnegie Library</small>' },
+  { n: 4, name: 'Pigeon River', lat: 45.1561, lon: -84.4675, color: '#2e7d32',
+    popup: 'Pigeon River Country<br><small>"The Last Good Country" &middot; <a href="/stream/pigeon-river-michigan.html">Live conditions</a></small>' },
+  { n: 5, name: 'Sturgeon River', lat: 45.2745, lon: -84.6000, color: '#2e7d32',
+    popup: 'Sturgeon River, Wolverine<br><small>Camping trips from Horton Bay &middot; <a href="/stream/sturgeon-river-michigan.html">Live conditions</a></small>' },
+  { n: 6, name: 'Fox River / Seney', lat: 46.3580, lon: -86.0790, color: '#6b4423',
+    popup: 'Fox River &middot; Seney<br><small>1919 trip, "Big Two-Hearted River" &middot; MOWA memorial</small>' },
+  { n: 7, name: 'Two-Hearted River', lat: 46.6920, lon: -85.4050, color: '#6b4423',
+    popup: 'Two-Hearted River<br><small>"Big Two-Hearted River is poetry" &middot; Brook trout &amp; steelhead</small>' },
+];
+
+stops.forEach(s => {
+  L.marker([s.lat, s.lon], { icon: numIcon(s.n, s.color) })
+    .bindPopup(s.popup, { maxWidth: 220 })
+    .addTo(map);
+});
+
+// Draw the trail line
+const trailCoords = stops.map(s => [s.lat, s.lon]);
+L.polyline(trailCoords, { color: '#6b4423', weight: 2, opacity: 0.5, dashArray: '8,8' }).addTo(map);
+
+// ── Live Conditions for Pigeon & Sturgeon ──────────────────────────────────
+async function loadCond(riverId, elId) {
+  try {
+    const [rResp, recResp] = await Promise.all([
+      fetch('/api/river/' + riverId),
+      fetch('/api/recommend?id=' + riverId),
+    ]);
+    const data = rResp.ok ? await rResp.json() : null;
+    const rec = recResp.ok ? await recResp.json() : null;
+    if (data?.success && data.primaryConditions?.ratingKey) {
+      document.querySelector('#' + elId + ' div:last-child').innerHTML = renderFullWidget(data.primaryConditions, rec, riverId);
+    } else {
+      document.querySelector('#' + elId + ' div:last-child').innerHTML =
+        '<span style="color:#bbb;font-size:13px">No live data today. <a href="/stream/' + (riverId === 'pigeon' ? 'pigeon-river-michigan' : 'sturgeon-river-michigan') + '.html" style="color:#6b4423">Check river page</a>.</span>';
+    }
+  } catch(e) {
+    document.querySelector('#' + elId + ' div:last-child').innerHTML =
+      '<span style="color:#bbb;font-size:13px">Unable to load conditions.</span>';
+  }
+}
+loadCond('pigeon', 'pigeonCond');
+loadCond('sturgeon-river-nlp', 'sturgeonCond');
+</script>
+</body>
+</html>
