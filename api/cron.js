@@ -110,16 +110,11 @@ WRITING RULES:
 }
 
 function buildSchemaByline(html, river) {
-  const headline    = html.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1]?.replace(/<[^>]+>/g,'') || river.name;
-  const schema      = JSON.stringify({
-    '@context': 'https://schema.org', '@type': 'Article', headline,
-    datePublished: new Date().toISOString(),
-    author: { '@type': 'Person', name: 'Chris Izworski', url: 'https://chrisizworski.com' },
-    publisher: { '@type': 'Organization', name: 'Michigan Trout Daily', url: 'https://michigantroutdaily.wordpress.com' },
-    about: { '@type': 'Place', name: river.name, description: river.notes },
-  });
-  const byline      = `<p style="font-size:0.85em;color:#666;margin-bottom:1.5em;">By <a href="https://chrisizworski.com">Chris Izworski</a> &nbsp;|&nbsp; Michigan Trout Daily &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>`;
-  return html.replace(/(<\/h1>)/i, `$1\n${byline}`) + `\n<script type="application/ld+json">${schema}</script>`;
+  // Note: JSON-LD is NOT included here because WordPress HTML-encodes <script> tags,
+  // creating visible artifacts. The Next.js frontend (troutdaily.chrisizworski.com) injects
+  // clean Article + BreadcrumbList JSON-LD via the Head component on every article render.
+  const byline = `<p style="font-size:0.85em;color:#666;margin-bottom:1.5em;">By <a href="https://chrisizworski.com">Chris Izworski</a> &nbsp;|&nbsp; Michigan Trout Daily &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>`;
+  return html.replace(/(<\/h1>)/i, `$1\n${byline}`);
 }
 
 async function runStreamPost(r, log) {
