@@ -45,7 +45,37 @@ function getActiveHatches(month, tempF) {
   });
 }
 
-async function generatePost(river, conditions, hatches) {
+async function wrapWithSchema(html, river) {
+  const datePublished = new Date().toISOString();
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": html.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1]?.replace(/<[^>]+>/g,'') || river.name,
+    "datePublished": datePublished,
+    "author": {
+      "@type": "Person",
+      "name": "Chris Izworski",
+      "url": "https://chrisizworski.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Michigan Trout Daily",
+      "url": "https://michigantroutdaily.wordpress.com"
+    },
+    "about": {
+      "@type": "Place",
+      "name": river.name,
+      "description": river.notes
+    }
+  };
+
+  const schemaBlock = `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+  const byline = `<p style="font-size:0.85em;color:#666;margin-bottom:1.5em;">By <a href="https://chrisizworski.com">Chris Izworski</a> &nbsp;|&nbsp; Michigan Trout Daily &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>`;
+
+  // Insert byline after opening <h1>, schema at end
+  return html.replace(/(<\/h1>)/i, `$1\n${byline}`) + '\n' + schemaBlock;
+}
+
   const today      = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const tempF      = conditions.tempC !== null ? (conditions.tempC * 9/5 + 32).toFixed(1) : null;
 
@@ -185,10 +215,13 @@ export default async function handler(req, res) {
     const html = await generatePost(river, conditions, hatches);
     log.push(`[${ts()}] Post generated — ${html.length} chars`);
 
+    // ── Wrap with author schema + byline ─────────────────────────────────
+    const wrappedHtml = await wrapWithSchema(html, river);
+
     // ── Extract title from <h1> ───────────────────────────────────────────
-    const titleMatch = html.match(/<h1[^>]*>(.*?)<\/h1>/i);
+    const titleMatch = wrappedHtml.match(/<h1[^>]*>(.*?)<\/h1>/i);
     const title      = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '') : `${river.name} — Today's Conditions`;
-    const body       = html.replace(/<h1[^>]*>.*?<\/h1>/i, '').trim();
+    const body       = wrappedHtml.replace(/<h1[^>]*>.*?<\/h1>/i, '').trim();
 
     // ── Build tags ────────────────────────────────────────────────────────
     const tags = [
