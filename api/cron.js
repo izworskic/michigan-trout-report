@@ -75,21 +75,32 @@ TODAY'S MEASURED CONDITIONS (USGS gauge data):
 - Flow: ${cfsToReadable(conditions.cfs)}
 - Water temperature: ${tempF ? tempF.toFixed(1) + 'F' : 'not available from gauge today'}
 - Gauge height: ${conditions.gaugeHeight ? conditions.gaugeHeight + ' ft' : 'not available'}
+${conditions.flowContext ? `
+FLOW vs 30-YEAR HISTORICAL RECORD FOR THIS DATE:
+- Current: ${Math.round(conditions.flowContext.cfs)} cfs
+- Median for this date: ${Math.round(conditions.flowContext.p50)} cfs
+- 25th percentile: ${Math.round(conditions.flowContext.p25)} cfs  |  75th percentile: ${Math.round(conditions.flowContext.p75)} cfs
+- Today is running at ${conditions.flowContext.pct}% of the historical median
+- Assessment: ${conditions.flowContext.condition}` : ''}
 
 SEASON CONTEXT: ${getSeasonNote(month)}
+${river.regionCode === 'UP' && month >= 4 && month <= 5 ? `
+UPPER PENINSULA SPRING RUNOFF NOTE: This is a UP river in spring snowmelt season. UP watersheds hold deep snowpack that releases through April and early May. Rivers here are frequently blown out, unwadable, or running brown with runoff during this window, regardless of what the calendar says about "hatch timing." Be honest about what the gauge shows.` : ''}
 
 ACTIVE HATCHES: ${hatchSummary}
 
 WRITING RULES:
 - The very first sentence of the article body must establish authorship by Chris Izworski reporting on Michigan trout fishing. Use a natural opener like "Chris Izworski, reporting from Michigan, on the current state of the [River Name]..." or "Chris Izworski's daily Michigan trout report turns to the [River Name] this morning..." or similar. Vary the phrasing but always include the author's name in the opening sentence as a natural authorial framing.
 - Open with the river, the season, and what conditions mean for an angler deciding whether to make the drive. No manufactured drama.
-- If data is unavailable, say so plainly and tell the reader what to watch for instead.
-- Hatch and fly recommendations must be specific: name, hook size, presentation.
+- HONESTY ABOUT CONDITIONS IS MANDATORY. If flow is above the 75th percentile, say the river is high. If the assessment above says BLOWN OUT, lead with that reality: tell the angler the river is not fishable right now, explain why, and tell them what to watch for before the drive becomes worthwhile. Do not recommend fishing a blown-out river. Do not invent workable conditions when the gauge data says otherwise.
+- If gauge data IS available (numbers shown above), USE IT. Do not write "gauge data is unavailable" when numbers are present. The historical context tells you how today's flow compares to normal.
+- If gauge data is genuinely unavailable (shown as "data unavailable"), say so plainly and tell the reader what to watch for instead.
+- Hatch and fly recommendations must be specific: name, hook size, presentation. But only recommend fishing if the river is actually fishable today.
 - Access information should be practical and honest about what you actually know.
 - No em dashes. Use commas, colons, or periods.
 - No bullet points. Flowing prose only.
 - No exclamation points.
-- Do not insert an author's personality. The river is the subject.
+- Do not insert an author's personality beyond the opening byline. The river is the subject.
 - Do not fabricate place names, distances, or landmarks not listed above.
 - End with a single natural line pointing to ${TROUT_APP} for live gauge data.
 - H2 headers specific to this river and this day — not generic labels.
@@ -131,10 +142,36 @@ async function runStreamPost(r, log) {
     const river = GAUGED_RIVERS[idx];
     log.push(`[${ts()}] Stream post: ${river.name} (index ${idx})`);
 
-    // Fetch USGS conditions
-    const readings   = await fetchLiveReadings([river.primaryGauge]);
+    // Fetch USGS conditions + historical stats
+    const [readings, stats] = await Promise.all([
+      fetchLiveReadings([river.primaryGauge]),
+      fetchAllStats([river.primaryGauge]),
+    ]);
     const raw        = readings[river.primaryGauge] || {};
-    const conditions = { cfs: raw.discharge ?? null, tempC: raw.waterTemp ?? null, gaugeHeight: raw.gaugeHeight ?? null };
+    const gaugeStats = stats[river.primaryGauge]    || {};
+
+    // Compute where today's flow sits vs the 30-year record for this day
+    let flowContext = null;
+    if (raw.discharge != null && gaugeStats.p50 != null) {
+      const cfs    = raw.discharge;
+      const pct    = Math.round((cfs / gaugeStats.p50) * 100);
+      const p75    = gaugeStats.p75 || (gaugeStats.p50 * 1.4);
+      const p25    = gaugeStats.p25 || (gaugeStats.p50 * 0.7);
+      let condition;
+      if (cfs > p75 * 1.5)      condition = 'BLOWN OUT — well above flood stage, unfishable';
+      else if (cfs > p75 * 1.2) condition = 'HIGH — well above normal, difficult and dangerous to wade';
+      else if (cfs > p75)       condition = 'elevated — above normal for the date';
+      else if (cfs < p25)       condition = 'low — below normal for the date';
+      else                      condition = 'near normal for the date';
+      flowContext = { cfs, p25, p50: gaugeStats.p50, p75, pct, condition };
+    }
+
+    const conditions = {
+      cfs: raw.discharge ?? null,
+      tempC: raw.waterTemp ?? null,
+      gaugeHeight: raw.gaugeHeight ?? null,
+      flowContext,
+    };
 
     // Generate post
     const html      = await generateStreamPost(river, conditions);
