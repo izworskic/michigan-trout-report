@@ -81,6 +81,7 @@ SEASON CONTEXT: ${getSeasonNote(month)}
 ACTIVE HATCHES: ${hatchSummary}
 
 WRITING RULES:
+- The very first sentence of the article body must establish authorship by Chris Izworski reporting on Michigan trout fishing. Use a natural opener like "Chris Izworski, reporting from Michigan, on the current state of the [River Name]..." or "Chris Izworski's daily Michigan trout report turns to the [River Name] this morning..." or similar. Vary the phrasing but always include the author's name in the opening sentence as a natural authorial framing.
 - Open with the river, the season, and what conditions mean for an angler deciding whether to make the drive. No manufactured drama.
 - If data is unavailable, say so plainly and tell the reader what to watch for instead.
 - Hatch and fly recommendations must be specific: name, hook size, presentation.
