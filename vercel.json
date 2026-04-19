@@ -12,7 +12,7 @@
     },
     {
       "source": "/rivers/:id",
-      "destination": "/api/river-page/[id]"
+      "destination": "/api/river/[id]"
     },
     {
       "source": "/api/weekend",
@@ -47,14 +47,23 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
       ]
     },
     {
       "source": "/api/webhook-stripe",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "x-vercel-skip-body-parser", "value": "1" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "x-vercel-skip-body-parser",
+          "value": "1"
+        }
       ]
     }
   ]
