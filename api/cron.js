@@ -5,6 +5,9 @@
 import { Redis } from '@upstash/redis';
 import { RIVERS, ALL_GAUGE_IDS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
+import { fetchRiverWeather, RIVER_GRIDS } from '../lib/weather.js';
+import { rateConditions, RATINGS } from '../lib/rater.js';
+import { calcSunTimes } from '../lib/sun.js';
 import { buildConditions } from '../lib/rater.js';
 import { generateBrief } from '../lib/generator.js';
 import { fetchAllRiverReports } from '../lib/outfitters.js';
@@ -82,6 +85,23 @@ FLOW vs 30-YEAR HISTORICAL RECORD FOR THIS DATE:
 - 25th percentile: ${Math.round(conditions.flowContext.p25)} cfs  |  75th percentile: ${Math.round(conditions.flowContext.p75)} cfs
 - Today is running at ${conditions.flowContext.pct}% of the historical median
 - Assessment: ${conditions.flowContext.condition}` : ''}
+${conditions.rating ? `
+SYSTEMATIC CONDITIONS RATING (from Michigan Trout Report rater):
+- Rating: ${conditions.rating.label} ${conditions.rating.emoji}
+- Tagline: ${conditions.rating.tagline}` : ''}
+${conditions.weather ? `
+NWS WEATHER FORECAST FOR THIS RIVER:
+- Today: ${conditions.weather.today.tempF}°F, ${conditions.weather.today.forecast}, rain chance ${conditions.weather.today.rain}%, wind ${conditions.weather.today.wind}
+- Tonight: ${conditions.weather.tonight ? `low ${conditions.weather.tonight.tempF}°F, ${conditions.weather.tonight.forecast}` : 'data unavailable'}
+- 48-hour rain outlook: ${conditions.weather.maxRainNext48}% max chance, flow trend likely ${conditions.weather.flowTrend.replace(/_/g, ' ')}
+- Next 3 days: ${conditions.weather.week.slice(1, 4).map(d => `${d.name} ${d.tempF}°F (low ${d.tempLow || '?'}°F), rain ${d.rain}%`).join(' | ')}
+- Best upcoming window: ${conditions.weather.bestWindow ? `${conditions.weather.bestWindow.name} — ${conditions.weather.bestWindow.reason}` : 'no clear standout day in the forecast'}` : ''}
+${conditions.sunTimes ? `
+SUN TIMES FOR THIS RIVER TODAY:
+- Sunrise: ${conditions.sunTimes.sunrise}  |  Sunset: ${conditions.sunTimes.sunset}
+- Day length: ${conditions.sunTimes.dayLength}
+- Golden hour evening (best dry-fly window): ${conditions.sunTimes.goldenEvening || 'unavailable'}
+- Spinner fall window: ${conditions.sunTimes.spinnerWindow || 'unavailable'}` : ''}
 
 SEASON CONTEXT: ${getSeasonNote(month)}
 ${river.regionCode === 'UP' && month >= 4 && month <= 5 ? `
@@ -92,8 +112,11 @@ ACTIVE HATCHES: ${hatchSummary}
 WRITING RULES:
 - The very first sentence of the article body must establish authorship by Chris Izworski reporting on Michigan trout fishing. Use a natural opener like "Chris Izworski, reporting from Michigan, on the current state of the [River Name]..." or "Chris Izworski's daily Michigan trout report turns to the [River Name] this morning..." or similar. Vary the phrasing but always include the author's name in the opening sentence as a natural authorial framing.
 - Open with the river, the season, and what conditions mean for an angler deciding whether to make the drive. No manufactured drama.
-- HONESTY ABOUT CONDITIONS IS MANDATORY. If flow is above the 75th percentile, say the river is high. If the assessment above says BLOWN OUT, lead with that reality: tell the angler the river is not fishable right now, explain why, and tell them what to watch for before the drive becomes worthwhile. Do not recommend fishing a blown-out river. Do not invent workable conditions when the gauge data says otherwise.
-- If gauge data IS available (numbers shown above), USE IT. Do not write "gauge data is unavailable" when numbers are present. The historical context tells you how today's flow compares to normal.
+- HONESTY ABOUT CONDITIONS IS MANDATORY. Use the SYSTEMATIC CONDITIONS RATING above as your ground truth: if it says BLOWN OUT, lead with that reality. Tell the angler the river is not fishable right now, explain why, and tell them what to watch for before the drive becomes worthwhile. Do not recommend fishing a blown-out river. Do not invent workable conditions when the gauge data says otherwise.
+- WEATHER REASONING: Use the NWS forecast meaningfully. Examples — if rain is in the forecast and flow is already elevated, the river will rise further; if it's been warm and sunny on a UP river in April, snowmelt accelerates and water will rise; cold front ahead of a hatch window kills the bug emergence; sustained warm overcast afternoons are prime hatch conditions. Cite specific forecast numbers (rain %, day high/low) when explaining your read.
+- USE THE BEST WINDOW: If conditions today are marginal but the forecast shows a better day in the next 3-5, name that day specifically and tell the reader to plan around it.
+- USE SUN TIMES: For dry-fly rivers in late spring through fall, mention the golden-hour evening window or spinner fall window when relevant to the hatch you're discussing.
+- If gauge data IS available (numbers shown above), USE IT. Do not write "gauge data is unavailable" when numbers are present.
 - If gauge data is genuinely unavailable (shown as "data unavailable"), say so plainly and tell the reader what to watch for instead.
 - Hatch and fly recommendations must be specific: name, hook size, presentation. But only recommend fishing if the river is actually fishable today.
 - Access information should be practical and honest about what you actually know.
@@ -142,10 +165,11 @@ async function runStreamPost(r, log) {
     const river = GAUGED_RIVERS[idx];
     log.push(`[${ts()}] Stream post: ${river.name} (index ${idx})`);
 
-    // Fetch USGS conditions + historical stats
-    const [readings, stats] = await Promise.all([
+    // Fetch USGS conditions, historical stats, weather forecast in parallel
+    const [readings, stats, weather] = await Promise.all([
       fetchLiveReadings([river.primaryGauge]),
       fetchAllStats([river.primaryGauge]),
+      RIVER_GRIDS[river.id] ? fetchRiverWeather(river.id).catch(() => null) : Promise.resolve(null),
     ]);
     const raw        = readings[river.primaryGauge] || {};
     const gaugeStats = stats[river.primaryGauge]    || {};
@@ -166,11 +190,28 @@ async function runStreamPost(r, log) {
       flowContext = { cfs, p25, p50: gaugeStats.p50, p75, pct, condition };
     }
 
+    // Systematic conditions rating from the trout report's rater
+    let rating = null;
+    if (raw.flow != null) {
+      const ratingKey = rateConditions(raw.flow, gaugeStats, raw.temp_c);
+      rating = RATINGS[ratingKey] ? { key: ratingKey, ...RATINGS[ratingKey] } : null;
+    }
+
+    // Sun times for spinner-fall context (if river has weather grid we know its lat/lon)
+    let sunTimes = null;
+    const grid = RIVER_GRIDS[river.id];
+    if (grid) {
+      try { sunTimes = calcSunTimes(grid.lat, grid.lon, new Date()); } catch(e) {}
+    }
+
     const conditions = {
       cfs: raw.flow ?? null,
       tempC: raw.temp_c ?? null,
       gaugeHeight: raw.gage ?? null,
       flowContext,
+      weather,
+      rating,
+      sunTimes,
     };
 
     // Generate post
