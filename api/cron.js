@@ -152,8 +152,8 @@ async function runStreamPost(r, log) {
 
     // Compute where today's flow sits vs the 30-year record for this day
     let flowContext = null;
-    if (raw.discharge != null && gaugeStats.p50 != null) {
-      const cfs    = raw.discharge;
+    if (raw.flow != null && gaugeStats.p50 != null) {
+      const cfs    = raw.flow;
       const pct    = Math.round((cfs / gaugeStats.p50) * 100);
       const p75    = gaugeStats.p75 || (gaugeStats.p50 * 1.4);
       const p25    = gaugeStats.p25 || (gaugeStats.p50 * 0.7);
@@ -167,9 +167,9 @@ async function runStreamPost(r, log) {
     }
 
     const conditions = {
-      cfs: raw.discharge ?? null,
-      tempC: raw.waterTemp ?? null,
-      gaugeHeight: raw.gaugeHeight ?? null,
+      cfs: raw.flow ?? null,
+      tempC: raw.temp_c ?? null,
+      gaugeHeight: raw.gage ?? null,
       flowContext,
     };
 

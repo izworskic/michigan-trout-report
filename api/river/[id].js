@@ -223,7 +223,7 @@ export default async function handler(req, res) {
       const stats    = await fetchAllStats([river.primaryGauge]);
       const raw      = readings[river.primaryGauge] || {};
       const s        = stats[river.primaryGauge] || {};
-      conditions     = { ...buildConditions(raw, s), cfs: raw.discharge, tempC: raw.waterTemp, gaugeHeight: raw.gaugeHeight };
+      conditions     = { ...buildConditions(raw, s), cfs: raw.flow, tempC: raw.temp_c, gaugeHeight: raw.gage };
     } catch(e) {}
 
     const month   = new Date().getMonth() + 1;
