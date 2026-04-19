@@ -46,47 +46,62 @@ function getActiveHatches(month, tempF) {
 }
 
 async function generatePost(river, conditions, hatches) {
-  const month      = new Date().toLocaleString('en-US', { month: 'long' });
   const today      = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const tempF      = conditions.tempC !== null ? (conditions.tempC * 9/5 + 32).toFixed(1) : null;
-  const tempZone   = tempF ? getTempZone(parseFloat(tempF)) : 'unknown';
 
   const hatchSummary = hatches.length > 0
     ? hatches.map(h => `${h.name} (${h.latin}) — ${h.presentation}. Top patterns: ${h.patterns.slice(0,3).map(p => `${p.name} #${p.sizes[0]}`).join(', ')}.`).join('\n')
     : 'No major hatches active. Nymphs and streamers recommended.';
 
-  const prompt = `You are writing for Michigan Trout Daily, a site dedicated to daily conditions and stream profiles for Michigan trout anglers. Write a 700-900 word post about fishing the ${river.name} today, ${today}.
+  const seasonNote = (() => {
+    const m = new Date().getMonth() + 1;
+    if (m <= 3)  return 'Early season. Cold water, slow fishing, but the river is alive with possibility. Stoneflies and midges. Anglers willing to be patient.';
+    if (m === 4) return 'April. Hendricksons coming. Water still cold but warming. The first real hatch fishing of the year for many Michigan anglers.';
+    if (m === 5) return 'May. Caddis and sulphurs building. Trout are active. One of the best months on Michigan rivers.';
+    if (m === 6) return 'June. The Hex hatch approaches or is happening on the right rivers. Evening fishing. The air smells like summer.';
+    if (m === 7) return 'July. Terrestrial season. Hoppers, ants, beetles. Fish early and late. Midday heat pushes fish deep.';
+    if (m === 8) return 'August. Trico mornings. Hot afternoons. The rivers are low and clear. Stealth and small flies.';
+    if (m === 9) return 'September. The best kept secret in Michigan trout fishing. Cooler water, fewer anglers, brown trout moving toward spawn.';
+    if (m === 10) return 'October. Brown trout season. The maples are going. Streamers and egg patterns. A different kind of fishing.';
+    return 'Late season. The crowds are gone. Cold mornings. The river belongs to whoever shows up.';
+  })();
 
-RIVER DATA:
+  const prompt = `You are writing a post for Michigan Trout Daily, a site for serious Michigan trout anglers. Today is ${today}.
+
+Write 700-900 words about the ${river.name}. This is a conditions and fishing report post. Write it the way a knowledgeable local angler would write it — honest, specific, literary without being precious. Think John Gierach or Nick Lyons, not a tourism brochure. The reader is already a trout fisherman. Do not explain what trout fishing is.
+
+WHAT YOU KNOW ABOUT THIS RIVER (use only what is confirmed here, do not invent details):
 - Region: ${river.region}
-- Species: ${river.species.join(', ')}
-- Stream type: ${river.type}
+- Species present: ${river.species.join(', ')}
+- Stream character: ${river.type}
 - Access: ${river.access}
-- Regulations: ${river.regulations}
-- Notes: ${river.notes}
+- Regulations note: ${river.regulations}
+- River character: ${river.notes}
 
-TODAY'S CONDITIONS:
+TODAY'S MEASURED CONDITIONS (USGS gauge data):
 - Flow: ${cfsToReadable(conditions.cfs)}
-- Water temperature: ${tempF ? tempF + '°F (' + tempZone + ')' : 'data unavailable'}
-- Gauge height: ${conditions.gaugeHeight ? conditions.gaugeHeight + ' ft' : 'unavailable'}
+- Water temperature: ${tempF ? tempF + 'F' : 'not available from gauge today'}
+- Gauge height: ${conditions.gaugeHeight ? conditions.gaugeHeight + ' ft' : 'not available'}
 
-ACTIVE HATCHES FOR ${month.toUpperCase()}:
+SEASON CONTEXT:
+${seasonNote}
+
+ACTIVE HATCHES THIS TIME OF YEAR AT THIS WATER TEMPERATURE:
 ${hatchSummary}
 
-WRITING RULES:
-- Write in a literary, unhurried Michigan outdoors voice — specific, sensory, grounded in place
-- No em dashes (use commas, colons, or periods instead)
-- No bullet points — flowing prose only
-- Open with a scene that puts the reader on the river bank at dawn
-- Include a section on current conditions and what they mean for fishing
-- Include a section on what is hatching and specific fly recommendations with hook sizes
-- Include a section on access, where to park, and how to approach the river
-- End with a quiet reflection and a link to ${TROUT_APP} for real-time data
-- Do NOT use the word "journey"
-- Do NOT use exclamation points
-- Structure with H2 headers: Current Conditions, What's Hatching, Getting There, and one creative H2 of your choice
-- Output clean HTML only — no markdown, no backticks, no preamble
-- First line should be the post title in an <h1> tag`;
+WRITING RULES — follow these exactly:
+- Open with the river, the season, and what the conditions mean for an angler deciding whether to make the drive. No manufactured drama.
+- If data is unavailable, say so plainly and tell the reader what to watch for instead.
+- Hatch and fly information should be specific: name, hook size, presentation. Write it like advice from someone who fishes this water, not a catalog entry.
+- Access information should be practical and honest about what you actually know.
+- No em dashes anywhere. Use commas, colons, or periods.
+- No bullet points. Flowing prose only.
+- No exclamation points.
+- Do not insert an author's personality or voice into the piece. The river and the fishing are the subject.
+- Do not fabricate place names, distances, landmark names, or conditions not in the data above.
+- End with a single line pointing to ${TROUT_APP} for live gauge data, worded naturally.
+- H2 headers for sections. Make the section headers specific to this river and this day, not generic.
+- Output clean HTML only. First line is the post title in an <h1> tag. No markdown, no backticks, no preamble.`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
