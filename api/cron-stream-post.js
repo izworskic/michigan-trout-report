@@ -1,0 +1,198 @@
+// Daily stream post — 11am ET (15:00 UTC), set in vercel.json
+// Picks the next Michigan river in rotation, fetches live USGS data + hatch
+// conditions, generates a full post via Claude API, publishes to
+// michigantroutdaily.wordpress.com (site ID 254267068).
+
+import { Redis } from '@upstash/redis';
+import { RIVERS } from '../lib/rivers.js';
+import { fetchLiveReadings } from '../lib/usgs.js';
+import { MICHIGAN_HATCHES, getTempZone } from '../lib/hatches.js';
+
+const WP_SITE_ID  = '254267068';
+const WP_API_BASE = `https://public-api.wordpress.com/rest/v1.1/sites/${WP_SITE_ID}`;
+const TROUT_APP   = 'https://trout.chrisizworski.com';
+
+function makeRedis() {
+  const url   = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  return new Redis({ url, token });
+}
+
+// Only rivers with a live gauge (tier 1 or 2)
+const GAUGED_RIVERS = RIVERS.filter(r => r.tier <= 2 && r.primaryGauge);
+
+function cfsToReadable(cfs) {
+  if (!cfs || isNaN(cfs)) return 'data unavailable';
+  if (cfs < 50)  return `${Math.round(cfs)} cfs (very low)`;
+  if (cfs < 150) return `${Math.round(cfs)} cfs (low)`;
+  if (cfs < 400) return `${Math.round(cfs)} cfs (normal)`;
+  if (cfs < 800) return `${Math.round(cfs)} cfs (elevated)`;
+  return `${Math.round(cfs)} cfs (high)`;
+}
+
+function tempToReadable(tempC) {
+  if (tempC === null || tempC === undefined) return null;
+  const f = (tempC * 9/5 + 32).toFixed(1);
+  return `${f}°F`;
+}
+
+function getActiveHatches(month, tempF) {
+  return MICHIGAN_HATCHES.filter(h => {
+    const inMonth = h.months.includes(month);
+    const inTemp  = tempF ? (tempF >= h.tempRange[0] && tempF <= h.tempRange[1]) : inMonth;
+    return inMonth && inTemp;
+  });
+}
+
+async function generatePost(river, conditions, hatches) {
+  const month      = new Date().toLocaleString('en-US', { month: 'long' });
+  const today      = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const tempF      = conditions.tempC !== null ? (conditions.tempC * 9/5 + 32).toFixed(1) : null;
+  const tempZone   = tempF ? getTempZone(parseFloat(tempF)) : 'unknown';
+
+  const hatchSummary = hatches.length > 0
+    ? hatches.map(h => `${h.name} (${h.latin}) — ${h.presentation}. Top patterns: ${h.patterns.slice(0,3).map(p => `${p.name} #${p.sizes[0]}`).join(', ')}.`).join('\n')
+    : 'No major hatches active. Nymphs and streamers recommended.';
+
+  const prompt = `You are writing for Michigan Trout Daily, a site dedicated to daily conditions and stream profiles for Michigan trout anglers. Write a 700-900 word post about fishing the ${river.name} today, ${today}.
+
+RIVER DATA:
+- Region: ${river.region}
+- Species: ${river.species.join(', ')}
+- Stream type: ${river.type}
+- Access: ${river.access}
+- Regulations: ${river.regulations}
+- Notes: ${river.notes}
+
+TODAY'S CONDITIONS:
+- Flow: ${cfsToReadable(conditions.cfs)}
+- Water temperature: ${tempF ? tempF + '°F (' + tempZone + ')' : 'data unavailable'}
+- Gauge height: ${conditions.gaugeHeight ? conditions.gaugeHeight + ' ft' : 'unavailable'}
+
+ACTIVE HATCHES FOR ${month.toUpperCase()}:
+${hatchSummary}
+
+WRITING RULES:
+- Write in a literary, unhurried Michigan outdoors voice — specific, sensory, grounded in place
+- No em dashes (use commas, colons, or periods instead)
+- No bullet points — flowing prose only
+- Open with a scene that puts the reader on the river bank at dawn
+- Include a section on current conditions and what they mean for fishing
+- Include a section on what is hatching and specific fly recommendations with hook sizes
+- Include a section on access, where to park, and how to approach the river
+- End with a quiet reflection and a link to ${TROUT_APP} for real-time data
+- Do NOT use the word "journey"
+- Do NOT use exclamation points
+- Structure with H2 headers: Current Conditions, What's Hatching, Getting There, and one creative H2 of your choice
+- Output clean HTML only — no markdown, no backticks, no preamble
+- First line should be the post title in an <h1> tag`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  const data = await res.json();
+  const raw  = data.content?.find(b => b.type === 'text')?.text || '';
+  return raw.trim();
+}
+
+async function publishToWordPress(title, content, tags) {
+  const token = process.env.WP_TROUT_DAILY_TOKEN;
+  const res = await fetch(`${WP_API_BASE}/posts/new`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title,
+      content,
+      status: 'publish',
+      tags: tags.join(','),
+      format: 'standard',
+    }),
+  });
+  return res.json();
+}
+
+export default async function handler(req, res) {
+  const auth = req.headers['authorization'];
+  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const log = [];
+  const ts  = () => new Date().toISOString();
+
+  try {
+    log.push(`[${ts()}] Stream post cron starting`);
+
+    // ── Pick next river in rotation ──────────────────────────────────────
+    const r     = makeRedis();
+    const key   = 'trout:stream-post:index';
+    let   idx   = 0;
+    if (r) {
+      const stored = await r.get(key);
+      idx = stored ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
+      await r.set(key, String(idx));
+    }
+    const river = GAUGED_RIVERS[idx];
+    log.push(`[${ts()}] River selected: ${river.name} (index ${idx})`);
+
+    // ── Fetch live USGS conditions ────────────────────────────────────────
+    const readings = await fetchLiveReadings([river.primaryGauge]);
+    const raw      = readings[river.primaryGauge] || {};
+    const conditions = {
+      cfs:         raw.discharge   ?? null,
+      tempC:       raw.waterTemp   ?? null,
+      gaugeHeight: raw.gaugeHeight ?? null,
+    };
+    log.push(`[${ts()}] USGS: cfs=${conditions.cfs} tempC=${conditions.tempC}`);
+
+    // ── Match active hatches ──────────────────────────────────────────────
+    const month  = new Date().getMonth() + 1;
+    const tempF  = conditions.tempC !== null ? conditions.tempC * 9/5 + 32 : null;
+    const hatches = getActiveHatches(month, tempF);
+    log.push(`[${ts()}] Active hatches: ${hatches.map(h => h.name).join(', ') || 'none'}`);
+
+    // ── Generate post content via Claude ─────────────────────────────────
+    const html = await generatePost(river, conditions, hatches);
+    log.push(`[${ts()}] Post generated — ${html.length} chars`);
+
+    // ── Extract title from <h1> ───────────────────────────────────────────
+    const titleMatch = html.match(/<h1[^>]*>(.*?)<\/h1>/i);
+    const title      = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '') : `${river.name} — Today's Conditions`;
+    const body       = html.replace(/<h1[^>]*>.*?<\/h1>/i, '').trim();
+
+    // ── Build tags ────────────────────────────────────────────────────────
+    const tags = [
+      river.name,
+      river.region,
+      ...river.species.map(s => `${s} trout`),
+      'michigan trout',
+      'fly fishing michigan',
+      'trout stream conditions',
+    ];
+
+    // ── Publish to WordPress ──────────────────────────────────────────────
+    const wpResult = await publishToWordPress(title, body, tags);
+    log.push(`[${ts()}] Published: ${wpResult.URL || wpResult.error}`);
+
+    return res.status(200).json({ success: true, river: river.name, post: wpResult.URL, log });
+
+  } catch(e) {
+    log.push(`[${ts()}] ERROR: ${e.message}`);
+    return res.status(500).json({ success: false, error: e.message, log });
+  }
+}
