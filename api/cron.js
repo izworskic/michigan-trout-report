@@ -93,7 +93,7 @@ WRITING RULES:
 - Do not fabricate place names, distances, or landmarks not listed above.
 - End with a single natural line pointing to ${TROUT_APP} for live gauge data.
 - H2 headers specific to this river and this day — not generic labels.
-- Output raw HTML only. Start your response with the opening < of the <h1> tag. Do not write ```html, do not write ```, do not include any text before the first HTML tag. The very first character of your response must be <.`;
+- Output raw HTML only. Start your response with the opening < of the <h1> tag. Do not write code fences, do not include any text before the first HTML tag. The very first character of your response must be <.`;
 
   const res  = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
