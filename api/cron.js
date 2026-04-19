@@ -176,6 +176,33 @@ function secondsUntilMidnight() {
   return Math.floor((midnight - now) / 1000);
 }
 
+async function runRiverPage(r, log) {
+  const ts = () => new Date().toISOString();
+  try {
+    const key = 'trout:river-page:index';
+    let idx = 0;
+    if (r) {
+      const stored = await r.get(key);
+      idx = stored ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
+      await r.set(key, String(idx));
+    }
+    const river = GAUGED_RIVERS[idx];
+
+    // Bust cache so page rebuilds fresh this morning
+    if (r) await r.del(`trout:river-page:${river.id}`);
+
+    // Warm the page by fetching it (populates Redis cache)
+    const base = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'https://trout.chrisizworski.com';
+    await fetch(`${base}/rivers/${river.id}`);
+
+    log.push(`[${ts()}] River SEO page warmed: ${river.name} → /rivers/${river.id}`);
+  } catch(e) {
+    log.push(`[${ts()}] River page warm error (non-fatal): ${e.message}`);
+  }
+}
+
 export default async function handler(req, res) {
   const auth = req.headers['authorization'];
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -244,6 +271,9 @@ export default async function handler(req, res) {
 
     // Run daily stream post for Michigan Trout Daily (non-fatal)
     await runStreamPost(r, log);
+
+    // Warm daily river SEO page (non-fatal)
+    await runRiverPage(r, log);
 
     return res.status(200).json({ success: true, log });
   } catch(e) {
