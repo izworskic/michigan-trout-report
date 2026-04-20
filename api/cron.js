@@ -231,6 +231,33 @@ async function runStreamPost(r, log) {
     });
     const wp = await wpRes.json();
     log.push(`[${ts()}] Stream post published: ${wp.URL || wp.error || 'unknown'}`);
+
+    // Build the canonical troutdaily URL for the new post
+    if (wp.slug) {
+      const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
+      const archiveUrl = `https://troutdaily.chrisizworski.com/chris-izworski/`;
+
+      // IndexNow ping (Bing/Yandex/etc) — submit new post + refresh archive
+      try {
+        await fetch('https://api.indexnow.org/indexnow', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
+          body: JSON.stringify({
+            host:        'troutdaily.chrisizworski.com',
+            key:         'b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e',
+            keyLocation: 'https://troutdaily.chrisizworski.com/b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e.txt',
+            urlList:     [postUrl, archiveUrl],
+          }),
+        });
+        log.push(`[${ts()}] IndexNow pinged for post + archive`);
+      } catch(e) { log.push(`[${ts()}] IndexNow error: ${e.message}`); }
+
+      // Ping Google sitemap (legacy but still works)
+      try {
+        await fetch(`https://www.google.com/ping?sitemap=https://troutdaily.chrisizworski.com/sitemap.xml`);
+        log.push(`[${ts()}] Google sitemap pinged`);
+      } catch(e) {}
+    }
   } catch(e) {
     log.push(`[${ts()}] Stream post error (non-fatal): ${e.message}`);
   }
