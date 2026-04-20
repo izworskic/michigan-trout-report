@@ -38,5 +38,5 @@ Rating is based on flow (% of seasonal median), water temperature, and gage heig
 ## Related
 
 - [Freighter View Farms](https://freighterviewfarms.com) — Great Lakes gardening blog
-- [Great Lakes Gazette](https://great-lakes-gazette.vercel.app) — daily maritime newsletter
+- [Great Lakes Gazette](https://gazette.chrisizworski.com) — daily maritime newsletter
 - [chrisizworski.com](https://chrisizworski.com)
