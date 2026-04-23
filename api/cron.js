@@ -180,15 +180,31 @@ function buildSchemaByline(html, river) {
 async function runStreamPost(r, log) {
   const ts = () => new Date().toISOString();
   try {
+    // IDEMPOTENCY GUARD: if a daily post already exists for today, skip.
+    // Prevents duplicate publishes if cron runs twice (manual test, retry, scheduled + manual).
+    const todayKey = `trout:stream-post:published:${todayUTC()}`;
+    if (r) {
+      const alreadyPublished = await r.get(todayKey);
+      if (alreadyPublished) {
+        log.push(`[${ts()}] Stream post: already published today (${alreadyPublished}), skipping`);
+        return;
+      }
+    }
+
     // Pick next river in rotation
     const key = 'trout:stream-post:index';
     let idx = 0;
     if (r) {
       const stored = await r.get(key);
-      idx = stored ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
+      idx = stored !== null && stored !== undefined ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
+      if (isNaN(idx) || idx < 0) idx = 0;
       await r.set(key, String(idx));
     }
     const river = GAUGED_RIVERS[idx];
+    if (!river) {
+      log.push(`[${ts()}] Stream post: no river at index ${idx}, skipping`);
+      return;
+    }
     log.push(`[${ts()}] Stream post: ${river.name} (index ${idx})`);
 
     // Fetch USGS conditions, historical stats, weather forecast in parallel
@@ -258,6 +274,14 @@ async function runStreamPost(r, log) {
     const wp = await wpRes.json();
     log.push(`[${ts()}] Stream post published: ${wp.URL || wp.error || 'unknown'}`);
 
+    // Mark today as published so a repeat cron run won't duplicate.
+    // Only mark on a successful publish (wp.URL present); expire after 7 days.
+    if (r && wp && wp.URL) {
+      try {
+        await r.set(todayKey, wp.URL, { ex: 7 * 24 * 60 * 60 });
+      } catch(e) { /* non-fatal */ }
+    }
+
     // Build the canonical troutdaily URL for the new post
     if (wp.slug) {
       const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
@@ -293,6 +317,17 @@ async function runStreamPost(r, log) {
 // Generates a "State of Michigan Trout" post with regional rollup, not a single river.
 async function runWeeklyOverview(r, riverData, log) {
   const ts = () => new Date().toISOString();
+
+  // IDEMPOTENCY GUARD
+  const weeklyKey = `trout:weekly-overview:published:${todayUTC()}`;
+  if (r) {
+    const already = await r.get(weeklyKey);
+    if (already) {
+      log.push(`[${ts()}] Weekly overview: already published today, skipping`);
+      return;
+    }
+  }
+
   log.push(`[${ts()}] Weekly overview: generating Michigan-wide state of trout`);
 
   // Bucket rivers by region
@@ -413,6 +448,11 @@ WRITING RULES:
   });
   const wp = await wpRes.json();
   log.push(`[${ts()}] Weekly overview published: ${wp.URL || wp.error || 'unknown'}`);
+
+  // Mark published to prevent duplicate weekly overview on retries
+  if (r && wp && wp.URL) {
+    try { await r.set(weeklyKey, wp.URL, { ex: 14 * 24 * 60 * 60 }); } catch(e) {}
+  }
 
   if (wp.slug) {
     const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
