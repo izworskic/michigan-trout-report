@@ -21,7 +21,33 @@ import { MICHIGAN_HATCHES } from '../lib/hatches.js';
 const WP_SITE_ID  = '254267068';
 const WP_API_BASE = `https://public-api.wordpress.com/rest/v1.1/sites/${WP_SITE_ID}`;
 const TROUT_APP   = 'https://trout.chrisizworski.com';
-const GAUGED_RIVERS = RIVERS.filter(r => r.tier <= 2 && r.primaryGauge);
+const GAUGED_RIVERS_ALL = RIVERS.filter(r => r.tier <= 2 && r.primaryGauge);
+
+// Curated rotation order — famous/high-demand rivers first, UP rivers interleaved, smaller rivers last.
+// The goal: a new reader seeing the first 10-15 posts should recognize the rivers.
+// Rivers not in this list get appended to the end in their natural order.
+const ROTATION_PRIORITY = [
+  // Week 1: the famous ones every Michigan angler knows
+  'ausable', 'manistee', 'pere-marquette', 'muskegon', 'boardman',
+  'jordan', 'rifle-river', 'pigeon', 'little-manistee', 'pine-river',
+  // Week 2: UP gems + next LP tier
+  'tahquamenon', 'ontonagon', 'platte-river', 'betsie-river', 'sturgeon-river-nlp',
+  'escanaba-river', 'white-river', 'black-river-up', 'thunder-bay-river', 'au-train-river',
+  // Week 3: more UP + LP variety
+  'sturgeon-river-up', 'presque-isle-river', 'menominee-river', 'michigamme-river', 'brule-river',
+  'ford-river', 'miners-river', 'salmon-trout-river', 'paint-river', 'iron-river',
+  // Week 4: smaller LP + remainder
+  'rogue-river', 'flat-river', 'clam-river', 'little-muskegon-river', 'looking-glass-river',
+  'dowagiac-river', 'pine-river-midland', 'trap-rock-river', 'silver-river', 'cedar-river-up',
+];
+
+// Build the ordered rotation: priority list first, then the rest
+const GAUGED_RIVERS = [
+  ...ROTATION_PRIORITY
+    .map(id => GAUGED_RIVERS_ALL.find(r => r.id === id))
+    .filter(Boolean),
+  ...GAUGED_RIVERS_ALL.filter(r => !ROTATION_PRIORITY.includes(r.id)),
+];
 
 function cfsToReadable(cfs) {
   if (!cfs || isNaN(cfs)) return 'data unavailable';
@@ -263,6 +289,149 @@ async function runStreamPost(r, log) {
   }
 }
 
+// Weekly Michigan-wide overview — runs Sundays only.
+// Generates a "State of Michigan Trout" post with regional rollup, not a single river.
+async function runWeeklyOverview(r, riverData, log) {
+  const ts = () => new Date().toISOString();
+  log.push(`[${ts()}] Weekly overview: generating Michigan-wide state of trout`);
+
+  // Bucket rivers by region
+  const buckets = { UP: [], NLP: [], SLP: [] };
+  for (const rd of riverData) {
+    const region = rd.region || '';
+    const key = region.includes('Upper Peninsula') ? 'UP'
+              : region.includes('Southern Lower')   ? 'SLP'
+              : 'NLP';
+    buckets[key].push(rd);
+  }
+
+  // For each region, compute quick rollup: how many blown out, how many prime, etc.
+  function rollup(rivers) {
+    const out = { total: rivers.length, blownOut: [], high: [], normal: [], low: [], noData: [], tempRange: [] };
+    for (const rv of rivers) {
+      const c = rv.conditions || {};
+      if (c.flow == null) { out.noData.push(rv.name); continue; }
+      const pct = c.flowPct || (c.flow && c.p50 ? Math.round((c.flow / c.p50) * 100) : null);
+      if (pct == null) { out.noData.push(rv.name); continue; }
+      if (pct > 180)      out.blownOut.push({ name: rv.name, pct });
+      else if (pct > 130) out.high.push({ name: rv.name, pct });
+      else if (pct < 70)  out.low.push({ name: rv.name, pct });
+      else                out.normal.push({ name: rv.name, pct });
+      if (c.tempF != null) out.tempRange.push({ name: rv.name, tempF: c.tempF });
+    }
+    return out;
+  }
+
+  const upRoll = rollup(buckets.UP);
+  const nlpRoll = rollup(buckets.NLP);
+  const slpRoll = rollup(buckets.SLP);
+
+  const today   = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const month   = new Date().getMonth() + 1;
+  const season  = getSeasonNote(month);
+
+  const fmtList = (arr, field = 'pct', suffix = '%') => arr.slice(0, 6).map(r => `${r.name} (${r[field]}${suffix})`).join(', ') || 'none';
+  const fmtTemps = (arr) => {
+    if (!arr.length) return 'no gauge temps reporting';
+    const sorted = [...arr].sort((a,b) => a.tempF - b.tempF);
+    return `coldest ${sorted[0].name} at ${sorted[0].tempF.toFixed(0)}F, warmest ${sorted[sorted.length-1].name} at ${sorted[sorted.length-1].tempF.toFixed(0)}F`;
+  };
+
+  const prompt = `You are writing a weekly Michigan-wide trout fishing overview for Michigan Trout Daily. Today is ${today}, and this is the Sunday weekly state-of-Michigan-trout roundup. Not a single river report. A state-level overview drawing on all 62 gauged rivers in the Michigan Trout Report network.
+
+Write 700-900 words covering what the data actually shows across Michigan right now, region by region. This is the post a Michigan angler reads Sunday morning with their coffee to plan the week ahead.
+
+SEASON CONTEXT: ${season}
+
+STATE-WIDE ROLLUP (from all 62 gauged Michigan trout rivers):
+
+UPPER PENINSULA (${upRoll.total} gauged rivers):
+- Blown out (>180% of median): ${fmtList(upRoll.blownOut)}
+- Running high (130-180%): ${fmtList(upRoll.high)}
+- Near normal (70-130%): ${fmtList(upRoll.normal)}
+- Running low (<70%): ${fmtList(upRoll.low)}
+- Temperatures: ${fmtTemps(upRoll.tempRange)}
+- Gauges offline: ${upRoll.noData.length}
+
+NORTHERN LOWER PENINSULA (${nlpRoll.total} gauged rivers, includes AuSable, Manistee, Pere Marquette, Boardman, Jordan):
+- Blown out: ${fmtList(nlpRoll.blownOut)}
+- Running high: ${fmtList(nlpRoll.high)}
+- Near normal: ${fmtList(nlpRoll.normal)}
+- Running low: ${fmtList(nlpRoll.low)}
+- Temperatures: ${fmtTemps(nlpRoll.tempRange)}
+- Gauges offline: ${nlpRoll.noData.length}
+
+SOUTHERN LOWER PENINSULA (${slpRoll.total} gauged rivers):
+- Blown out: ${fmtList(slpRoll.blownOut)}
+- Running high: ${fmtList(slpRoll.high)}
+- Near normal: ${fmtList(slpRoll.normal)}
+- Running low: ${fmtList(slpRoll.low)}
+- Temperatures: ${fmtTemps(slpRoll.tempRange)}
+- Gauges offline: ${slpRoll.noData.length}
+
+WRITING RULES:
+- First sentence must establish authorship by Chris Izworski. Example: "Chris Izworski's Michigan Trout Daily weekly overview for [Sunday, Month Day]: here is what the gauges actually show across the state..."
+- Structure: opening paragraph frames the week, then one H2 section per region (Upper Peninsula, Northern Lower Peninsula, Southern Lower Peninsula), then a closing H2 with "Where I would go this week" giving 1-2 specific recommendations grounded in the data.
+- Name specific rivers with specific conditions. Do not generalize. If the AuSable is at 105% of median and the Manistee is blown out, say both facts.
+- Use the real percentile numbers from the data above. Cite them.
+- Be honest. If most of the state is blown out, say it. If it is a great week, say it.
+- Season-appropriate hatch context where relevant (Hendricksons in late April, Hex in late June, etc) but only at a state-wide level.
+- No em dashes. Use commas, colons, periods, semicolons.
+- No bullets. Flowing prose only.
+- No exclamations.
+- End with one sentence pointing readers to ${TROUT_APP} for individual river conditions.
+- Output raw HTML only starting with <h1>. The first character must be <.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2500,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+  if (!res.ok) throw new Error(`Haiku ${res.status}: ${await res.text()}`);
+  const body  = await res.json();
+  let   html  = body.content[0].text.trim();
+  html = html.replace(/^```html?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+
+  const titleMatch = html.match(/<h1[^>]*>(.*?)<\/h1>/i);
+  const title      = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '').trim() : `Michigan Trout Weekly Overview: ${new Date().toISOString().slice(0, 10)}`;
+  const bodyHtml   = html.replace(/<h1[^>]*>.*?<\/h1>/i, '').trim();
+
+  const tags = ['michigan trout weekly overview', 'michigan trout fishing', 'state of michigan trout', 'fly fishing michigan', 'chris izworski', 'weekly report'];
+
+  const wpRes = await fetch(`${WP_API_BASE}/posts/new`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${process.env.WP_TROUT_DAILY_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, content: bodyHtml, status: 'publish', tags: tags.join(','), format: 'standard' }),
+  });
+  const wp = await wpRes.json();
+  log.push(`[${ts()}] Weekly overview published: ${wp.URL || wp.error || 'unknown'}`);
+
+  if (wp.slug) {
+    const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
+    try {
+      await fetch('https://api.indexnow.org/indexnow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify({
+          host: 'troutdaily.chrisizworski.com',
+          key: 'b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e',
+          keyLocation: 'https://troutdaily.chrisizworski.com/b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e.txt',
+          urlList: [postUrl, 'https://troutdaily.chrisizworski.com/chris-izworski/'],
+        }),
+      });
+      log.push(`[${ts()}] IndexNow pinged for weekly overview`);
+    } catch(e) {}
+  }
+}
+
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -372,6 +541,14 @@ export default async function handler(req, res) {
 
     // Run daily stream post for Michigan Trout Daily (non-fatal)
     await runStreamPost(r, log);
+
+    // On Sundays, also publish a weekly Michigan-wide overview
+    const isSunday = new Date().getUTCDay() === 0;
+    if (isSunday) {
+      await runWeeklyOverview(r, riverData, log).catch(e => {
+        log.push(`[${ts()}] Weekly overview error (non-fatal): ${e.message}`);
+      });
+    }
 
     // Warm daily river SEO page (non-fatal)
     await runRiverPage(r, log);
