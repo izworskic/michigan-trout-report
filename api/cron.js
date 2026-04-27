@@ -171,7 +171,7 @@ WRITING RULES:
 
 function buildSchemaByline(html, river) {
   // Note: JSON-LD is NOT included here because WordPress HTML-encodes <script> tags,
-  // creating visible artifacts. The Next.js frontend (troutdaily.chrisizworski.com) injects
+  // creating visible artifacts. The Next.js frontend (daily.michigantroutreport.com) injects
   // clean Article + BreadcrumbList JSON-LD via the Head component on every article render.
   const byline = `<p style="font-size:0.85em;color:#666;margin-bottom:1.5em;">By <a href="/chris-izworski">Chris Izworski</a> &nbsp;|&nbsp; Michigan Trout Daily &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>`;
   return html.replace(/(<\/h1>)/i, `$1\n${byline}`);
@@ -284,8 +284,8 @@ async function runStreamPost(r, log) {
 
     // Build the canonical troutdaily URL for the new post
     if (wp.slug) {
-      const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
-      const archiveUrl = `https://troutdaily.chrisizworski.com/chris-izworski/`;
+      const postUrl = `https://daily.michigantroutreport.com/post/${wp.slug}`;
+      const archiveUrl = `https://daily.michigantroutreport.com/chris-izworski/`;
 
       // IndexNow ping (Bing/Yandex/etc): submit new post + refresh archive
       try {
@@ -293,9 +293,9 @@ async function runStreamPost(r, log) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json; charset=utf-8' },
           body: JSON.stringify({
-            host:        'troutdaily.chrisizworski.com',
+            host:        'daily.michigantroutreport.com',
             key:         'b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e',
-            keyLocation: 'https://troutdaily.chrisizworski.com/b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e.txt',
+            keyLocation: 'https://daily.michigantroutreport.com/b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e.txt',
             urlList:     [postUrl, archiveUrl],
           }),
         });
@@ -304,7 +304,7 @@ async function runStreamPost(r, log) {
 
       // Ping Google sitemap (legacy but still works)
       try {
-        await fetch(`https://www.google.com/ping?sitemap=https://troutdaily.chrisizworski.com/sitemap.xml`);
+        await fetch(`https://www.google.com/ping?sitemap=https://daily.michigantroutreport.com/sitemap.xml`);
         log.push(`[${ts()}] Google sitemap pinged`);
       } catch(e) {}
     }
@@ -455,16 +455,16 @@ WRITING RULES:
   }
 
   if (wp.slug) {
-    const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
+    const postUrl = `https://daily.michigantroutreport.com/post/${wp.slug}`;
     try {
       await fetch('https://api.indexnow.org/indexnow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify({
-          host: 'troutdaily.chrisizworski.com',
+          host: 'daily.michigantroutreport.com',
           key: 'b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e',
-          keyLocation: 'https://troutdaily.chrisizworski.com/b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e.txt',
-          urlList: [postUrl, 'https://troutdaily.chrisizworski.com/chris-izworski/'],
+          keyLocation: 'https://daily.michigantroutreport.com/b7e8f4c2a1d94f6c8e1d2f3a4b5c6d7e.txt',
+          urlList: [postUrl, 'https://daily.michigantroutreport.com/chris-izworski/'],
         }),
       });
       log.push(`[${ts()}] IndexNow pinged for weekly overview`);

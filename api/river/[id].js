@@ -14,7 +14,7 @@ import { MICHIGAN_HATCHES } from '../../lib/hatches.js';
 const SITE       = 'https://michigantroutreport.com';
 const AUTHOR     = 'Chris Izworski';
 const AUTHOR_URL = `${SITE}/chris-izworski`;
-const DAILY      = 'https://troutdaily.chrisizworski.com';
+const DAILY      = 'https://daily.michigantroutreport.com';
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
