@@ -22,6 +22,8 @@ const WP_SITE_ID  = '254267068';
 const WP_API_BASE = `https://public-api.wordpress.com/rest/v1.1/sites/${WP_SITE_ID}`;
 const TROUT_APP   = 'https://michigantroutreport.com';
 const GAUGED_RIVERS_ALL = RIVERS.filter(r => r.tier <= 2 && r.primaryGauge);
+const STREAM_POST_MAX_FLOW_PCT = 180;
+const STREAM_POST_MAX_RAIN_RISK = 80;
 
 // Curated rotation order: famous/high-demand rivers first, UP rivers interleaved, smaller rivers last.
 // The goal: a new reader seeing the first 10-15 posts should recognize the rivers.
@@ -177,6 +179,112 @@ function buildSchemaByline(html, river) {
   return html.replace(/(<\/h1>)/i, `$1\n${byline}`);
 }
 
+function buildStreamFlowContext(raw, gaugeStats) {
+  if (raw.flow == null || gaugeStats.p50 == null) return null;
+
+  const cfs = raw.flow;
+  const pct = Math.round((cfs / gaugeStats.p50) * 100);
+  const p75 = gaugeStats.p75 || (gaugeStats.p50 * 1.4);
+  const p25 = gaugeStats.p25 || (gaugeStats.p50 * 0.7);
+  let condition;
+  if (cfs > p75 * 1.5)      condition = 'BLOWN OUT: well above flood stage, unfishable';
+  else if (cfs > p75 * 1.2) condition = 'HIGH: well above normal, difficult and dangerous to wade';
+  else if (cfs > p75)       condition = 'elevated: above normal for the date';
+  else if (cfs < p25)       condition = 'low: below normal for the date';
+  else                      condition = 'near normal for the date';
+
+  return { cfs, p25, p50: gaugeStats.p50, p75, pct, condition };
+}
+
+function buildStreamRating(raw, gaugeStats) {
+  if (raw.flow == null) return null;
+  const ratingKey = rateConditions(raw.flow, gaugeStats, raw.temp_c);
+  return RATINGS[ratingKey] ? { key: ratingKey, ...RATINGS[ratingKey] } : null;
+}
+
+function getStreamPostSkipReason({ river, raw, flowContext, rating, weather }) {
+  if (raw.flow == null) {
+    return 'primary USGS flow unavailable';
+  }
+  if (rating?.key === 'BLOWN_OUT') {
+    return 'rating is blown out';
+  }
+  if (flowContext?.condition?.startsWith('BLOWN OUT')) {
+    return flowContext.condition.toLowerCase();
+  }
+  if (flowContext?.pct != null && flowContext.pct >= STREAM_POST_MAX_FLOW_PCT) {
+    return `flow is ${flowContext.pct}% of median`;
+  }
+  if (weather?.maxRainNext48 >= STREAM_POST_MAX_RAIN_RISK && weather?.flowTrend === 'rising_likely') {
+    return `heavy rain risk (${weather.maxRainNext48}% chance next 48h)`;
+  }
+  if (river.regionCode === 'UP' && weather?.maxRainNext48 >= 70 && flowContext?.pct >= 130) {
+    return `UP runoff/rain risk with flow at ${flowContext.pct}% of median`;
+  }
+  return null;
+}
+
+async function evaluateStreamPostRiver(river) {
+  const [readings, stats, weather] = await Promise.all([
+    fetchLiveReadings([river.primaryGauge]),
+    fetchAllStats([river.primaryGauge]),
+    RIVER_GRIDS[river.id] ? fetchRiverWeather(river.id).catch(() => null) : Promise.resolve(null),
+  ]);
+  const raw = readings[river.primaryGauge] || {};
+  const gaugeStats = stats[river.primaryGauge] || {};
+  const flowContext = buildStreamFlowContext(raw, gaugeStats);
+  const rating = buildStreamRating(raw, gaugeStats);
+
+  let sunTimes = null;
+  const grid = RIVER_GRIDS[river.id];
+  if (grid) {
+    try { sunTimes = calcSunTimes(grid.lat, grid.lon, new Date()); } catch(e) {}
+  }
+
+  const conditions = {
+    cfs: raw.flow ?? null,
+    tempC: raw.temp_c ?? null,
+    gaugeHeight: raw.gage ?? null,
+    flowContext,
+    weather,
+    rating,
+    sunTimes,
+  };
+
+  return { river, raw, gaugeStats, flowContext, rating, weather, sunTimes, conditions };
+}
+
+async function selectStreamPostRiver(r, log) {
+  const ts = () => new Date().toISOString();
+  const key = 'trout:stream-post:index';
+  let startIdx = 0;
+  if (r) {
+    const stored = await r.get(key);
+    startIdx = stored !== null && stored !== undefined ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
+    if (isNaN(startIdx) || startIdx < 0) startIdx = 0;
+  }
+
+  for (let offset = 0; offset < GAUGED_RIVERS.length; offset++) {
+    const idx = (startIdx + offset) % GAUGED_RIVERS.length;
+    const river = GAUGED_RIVERS[idx];
+    if (!river) continue;
+
+    const candidate = await evaluateStreamPostRiver(river);
+    const skipReason = getStreamPostSkipReason(candidate);
+    if (skipReason) {
+      log.push(`[${ts()}] Stream post: skipping ${river.name} (${skipReason})`);
+      continue;
+    }
+
+    if (r) await r.set(key, String(idx));
+    log.push(`[${ts()}] Stream post: selected ${river.name} (index ${idx}, rating ${candidate.rating?.label || 'unknown'}, flow ${candidate.flowContext?.pct ?? 'unknown'}% of median)`);
+    return candidate;
+  }
+
+  log.push(`[${ts()}] Stream post: no eligible river found, skipping daily publish rather than posting a flood report`);
+  return null;
+}
+
 async function runStreamPost(r, log) {
   const ts = () => new Date().toISOString();
   try {
@@ -191,70 +299,11 @@ async function runStreamPost(r, log) {
       }
     }
 
-    // Pick next river in rotation
-    const key = 'trout:stream-post:index';
-    let idx = 0;
-    if (r) {
-      const stored = await r.get(key);
-      idx = stored !== null && stored !== undefined ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
-      if (isNaN(idx) || idx < 0) idx = 0;
-      await r.set(key, String(idx));
-    }
-    const river = GAUGED_RIVERS[idx];
-    if (!river) {
-      log.push(`[${ts()}] Stream post: no river at index ${idx}, skipping`);
+    const selected = await selectStreamPostRiver(r, log);
+    if (!selected) {
       return;
     }
-    log.push(`[${ts()}] Stream post: ${river.name} (index ${idx})`);
-
-    // Fetch USGS conditions, historical stats, weather forecast in parallel
-    const [readings, stats, weather] = await Promise.all([
-      fetchLiveReadings([river.primaryGauge]),
-      fetchAllStats([river.primaryGauge]),
-      RIVER_GRIDS[river.id] ? fetchRiverWeather(river.id).catch(() => null) : Promise.resolve(null),
-    ]);
-    const raw        = readings[river.primaryGauge] || {};
-    const gaugeStats = stats[river.primaryGauge]    || {};
-
-    // Compute where today's flow sits vs the 30-year record for this day
-    let flowContext = null;
-    if (raw.flow != null && gaugeStats.p50 != null) {
-      const cfs    = raw.flow;
-      const pct    = Math.round((cfs / gaugeStats.p50) * 100);
-      const p75    = gaugeStats.p75 || (gaugeStats.p50 * 1.4);
-      const p25    = gaugeStats.p25 || (gaugeStats.p50 * 0.7);
-      let condition;
-      if (cfs > p75 * 1.5)      condition = 'BLOWN OUT: well above flood stage, unfishable';
-      else if (cfs > p75 * 1.2) condition = 'HIGH: well above normal, difficult and dangerous to wade';
-      else if (cfs > p75)       condition = 'elevated: above normal for the date';
-      else if (cfs < p25)       condition = 'low: below normal for the date';
-      else                      condition = 'near normal for the date';
-      flowContext = { cfs, p25, p50: gaugeStats.p50, p75, pct, condition };
-    }
-
-    // Systematic conditions rating from the trout report's rater
-    let rating = null;
-    if (raw.flow != null) {
-      const ratingKey = rateConditions(raw.flow, gaugeStats, raw.temp_c);
-      rating = RATINGS[ratingKey] ? { key: ratingKey, ...RATINGS[ratingKey] } : null;
-    }
-
-    // Sun times for spinner-fall context (if river has weather grid we know its lat/lon)
-    let sunTimes = null;
-    const grid = RIVER_GRIDS[river.id];
-    if (grid) {
-      try { sunTimes = calcSunTimes(grid.lat, grid.lon, new Date()); } catch(e) {}
-    }
-
-    const conditions = {
-      cfs: raw.flow ?? null,
-      tempC: raw.temp_c ?? null,
-      gaugeHeight: raw.gage ?? null,
-      flowContext,
-      weather,
-      rating,
-      sunTimes,
-    };
+    const { river, conditions } = selected;
 
     // Generate post
     const html      = await generateStreamPost(river, conditions);
