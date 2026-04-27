@@ -83,7 +83,7 @@ function buildSEOPage(river, conditions, hatches) {
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${river.name} Fly Fishing Conditions ${monthName} ${year}: Michigan Trout Report</title>
-<meta name="description" content="${AUTHOR} reports live ${river.name} trout fishing conditions for ${monthName} ${year}. USGS flow data, water temperature, active hatches, and fly recommendations. Updated daily.">
+<meta name="description" content="Live ${river.name} trout fishing conditions for ${monthName} ${year}, with USGS flow data, water temperature, active hatches, and fly recommendations by ${AUTHOR}. Updated daily.">
 <meta name="author" content="${AUTHOR}">
 <link rel="canonical" href="${SITE}/rivers/${river.id}">
 <link rel="author" href="${AUTHOR_URL}">

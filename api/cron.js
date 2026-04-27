@@ -136,7 +136,7 @@ UPPER PENINSULA SPRING RUNOFF NOTE: This is a UP river in spring snowmelt season
 ACTIVE HATCHES: ${hatchSummary}
 
 WRITING RULES:
-- The very first sentence of the article body must establish authorship by Chris Izworski reporting on Michigan trout fishing. Use a natural opener like "Chris Izworski, reporting from Michigan, on the current state of the [River Name]..." or "Chris Izworski's daily Michigan trout report turns to the [River Name] this morning..." or similar. Vary the phrasing but always include the author's name in the opening sentence as a natural authorial framing.
+- Keep the title, H1, and opening sentence river-first. Do not start with "Chris Izworski" or "Chris Izworski's." Authorship is handled by the byline, author schema, and author page. Mention Chris Izworski only if it fits naturally later in the article.
 - Open with the river, the season, and what conditions mean for an angler deciding whether to make the drive. No manufactured drama.
 - HONESTY ABOUT CONDITIONS IS MANDATORY. Use the SYSTEMATIC CONDITIONS RATING above as your ground truth: if it says BLOWN OUT, lead with that reality. Tell the angler the river is not fishable right now, explain why, and tell them what to watch for before the drive becomes worthwhile. Do not recommend fishing a blown-out river. Do not invent workable conditions when the gauge data says otherwise.
 - WEATHER REASONING: Use the NWS forecast meaningfully. Examples: if rain is in the forecast and flow is already elevated, the river will rise further; if it's been warm and sunny on a UP river in April, snowmelt accelerates and water will rise; cold front ahead of a hatch window kills the bug emergence; sustained warm overcast afternoons are prime hatch conditions. Cite specific forecast numbers (rain %, day high/low) when explaining your read.
@@ -405,7 +405,7 @@ SOUTHERN LOWER PENINSULA (${slpRoll.total} gauged rivers):
 - Gauges offline: ${slpRoll.noData.length}
 
 WRITING RULES:
-- First sentence must establish authorship by Chris Izworski. Example: "Chris Izworski's Michigan Trout Daily weekly overview for [Sunday, Month Day]: here is what the gauges actually show across the state..."
+- Keep the title, H1, and opening sentence topic-first. Do not start with "Chris Izworski" or "Chris Izworski's." Authorship is handled by the byline, author schema, and author page.
 - Structure: opening paragraph frames the week, then one H2 section per region (Upper Peninsula, Northern Lower Peninsula, Southern Lower Peninsula), then a closing H2 with "Where I would go this week" giving 1-2 specific recommendations grounded in the data.
 - Name specific rivers with specific conditions. Do not generalize. If the AuSable is at 105% of median and the Manistee is blown out, say both facts.
 - Use the real percentile numbers from the data above. Cite them.
