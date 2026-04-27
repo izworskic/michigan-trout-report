@@ -1,4 +1,4 @@
-// Michigan Trout Report — Service Worker
+// Michigan Trout Report: Service Worker
 // Strategy: cache shell (HTML/CSS/JS) for instant load + offline
 // Network-first for API data (always try fresh, fall back to cached)
 

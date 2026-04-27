@@ -1,7 +1,7 @@
 {
   "name": "michigan-trout-report",
   "version": "1.0.0",
-  "description": "Daily Michigan trout stream conditions — powered by USGS live data and AI interpretation",
+  "description": "Daily Michigan trout stream conditions: powered by USGS live data and AI interpretation",
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

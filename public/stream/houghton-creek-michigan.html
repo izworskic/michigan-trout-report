@@ -11,21 +11,21 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<link rel="canonical" href="https://trout.chrisizworski.com/stream/houghton-creek-michigan.html">
+<link rel="canonical" href="https://michigantroutreport.com/stream/houghton-creek-michigan.html">
 <meta property="og:title" content="Chris Izworski's Houghton Creek Michigan Trout Fishing | Tributary of Rifle River">
 <meta property="og:description" content="Houghton Creek fishing conditions and access points. Tributary of the Rifle River. Updated daily.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://trout.chrisizworski.com/og-image.png">
+<meta property="og:image" content="https://michigantroutreport.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta property="og:url" content="https://trout.chrisizworski.com/stream/houghton-creek-michigan.html">
+<meta property="og:url" content="https://michigantroutreport.com/stream/houghton-creek-michigan.html">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Dataset",
   "name": "Houghton Creek Michigan Trout Fishing Conditions",
   "description": "Houghton Creek tributary of the Rifle River. Fishing conditions and access points. Updated daily.",
-  "url": "https://trout.chrisizworski.com/stream/houghton-creek-michigan.html",
-  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"},
+  "url": "https://michigantroutreport.com/stream/houghton-creek-michigan.html",
+  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://michigantroutreport.com/chris-izworski"},
   "keywords": ["Houghton Creek", "Rifle River tributary", "Michigan trout fishing", "stream conditions", "Northeast Lower Michigan"]
 }
 </script>
@@ -220,7 +220,7 @@
   USGS data updated daily &middot;
   <a href="/">Michigan Trout Report</a> &middot;
   <a href="/map.html">Stream Map</a> &middot;
-  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a> &middot;
+  Built by <a href="/chris-izworski">Chris Izworski</a> &middot;
   <a href="https://freighterviewfarms.com" target="_blank" rel="noopener">Freighter View Farms</a>
 </footer>
 
@@ -273,8 +273,8 @@ async function loadConditions() {
         '<div><div class="widget-label-text" style="color:' + rat.color + '">~' + rat.label + '</div>' +
         '<div class="widget-tagline" style="color:' + rat.color + '">' + rat.tagline + ' (estimated)</div></div></div>' +
       '<div class="widget-stats">' +
-        '<div class="widget-stat"><div class="widget-stat-label">Rifle River Flow</div><div class="widget-stat-value">' + (c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '—') + '</div>' + (c.flowLabel ? '<div class="widget-stat-sub">' + c.flowLabel + '</div>' : '') + '</div>' +
-        '<div class="widget-stat"><div class="widget-stat-label">Rifle River Temp</div><div class="widget-stat-value">' + (c.tempF !== null ? c.tempF + '°F' : '—') + '</div>' + (c.tempLabel ? '<div class="widget-stat-sub">' + c.tempLabel + '</div>' : '') + '</div>' +
+        '<div class="widget-stat"><div class="widget-stat-label">Rifle River Flow</div><div class="widget-stat-value">' + (c.flow !== null ? c.flow.toLocaleString() + ' cfs' : '-') + '</div>' + (c.flowLabel ? '<div class="widget-stat-sub">' + c.flowLabel + '</div>' : '') + '</div>' +
+        '<div class="widget-stat"><div class="widget-stat-label">Rifle River Temp</div><div class="widget-stat-value">' + (c.tempF !== null ? c.tempF + '°F' : '-') + '</div>' + (c.tempLabel ? '<div class="widget-stat-sub">' + c.tempLabel + '</div>' : '') + '</div>' +
         '<div class="widget-stat"><div class="widget-stat-label">Tributary Note</div><div class="widget-stat-value" style="font-size:12px">Typically 2-5°F colder</div><div class="widget-stat-sub">Lower flow, clearer water</div></div>' +
       '</div>' +
       (pct ? '<div class="flow-bar"><div class="flow-bar-fill" style="width:' + Math.min(pct/2,100) + '%;background:' + flowBarColor(pct) + '"></div></div><div class="flow-bar-label">Rifle River: ' + pct + '% of seasonal median</div>' : '') +

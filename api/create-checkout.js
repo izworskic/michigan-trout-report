@@ -1,7 +1,7 @@
 // POST /api/create-checkout
 // Creates a Stripe Checkout Session for the Premium Alerts subscription ($19/year)
 // Body: { email, rivers: ['ausable', 'manistee', ...] }
-// Returns: { url } — redirect to Stripe hosted checkout
+// Returns: { url }: redirect to Stripe hosted checkout
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Maximum 8 rivers per subscription' });
   }
 
-  const BASE = 'https://michigan-trout-report.vercel.app';
+  const BASE = 'https://michigantroutreport.com';
 
   try {
     const body = new URLSearchParams({

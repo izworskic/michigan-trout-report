@@ -5,7 +5,57 @@
       "schedule": "0 13 * * *"
     }
   ],
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "trout.chrisizworski.com"
+        }
+      ],
+      "destination": "https://michigantroutreport.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "trout.chrisizworski.com"
+        }
+      ],
+      "destination": "https://michigantroutreport.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "michigan-trout-report.vercel.app"
+        }
+      ],
+      "destination": "https://michigantroutreport.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "michigan-trout-report.vercel.app"
+        }
+      ],
+      "destination": "https://michigantroutreport.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/chris-izworski",
+      "destination": "/chris-izworski.html"
+    },
     {
       "source": "/api/river/:id",
       "destination": "/api/river/[id]"

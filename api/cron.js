@@ -1,4 +1,4 @@
-// Daily cron — 8am CT (13:00 UTC), set in vercel.json
+// Daily cron: 8am CT (13:00 UTC), set in vercel.json
 // Fetches USGS data, generates AI brief, caches to Redis.
 // Also fetches guide reports and stores daily history snapshots.
 
@@ -16,14 +16,14 @@ import { storeSnapshot } from '../lib/history.js';
 import { sendConditionAlerts } from '../lib/alerts.js';
 import { MICHIGAN_HATCHES } from '../lib/hatches.js';
 
-// ── Michigan Trout Daily — daily stream post ─────────────────────────────────
+// ── Michigan Trout Daily: daily stream post ─────────────────────────────────
 
 const WP_SITE_ID  = '254267068';
 const WP_API_BASE = `https://public-api.wordpress.com/rest/v1.1/sites/${WP_SITE_ID}`;
-const TROUT_APP   = 'https://trout.chrisizworski.com';
+const TROUT_APP   = 'https://michigantroutreport.com';
 const GAUGED_RIVERS_ALL = RIVERS.filter(r => r.tier <= 2 && r.primaryGauge);
 
-// Curated rotation order — famous/high-demand rivers first, UP rivers interleaved, smaller rivers last.
+// Curated rotation order: famous/high-demand rivers first, UP rivers interleaved, smaller rivers last.
 // The goal: a new reader seeing the first 10-15 posts should recognize the rivers.
 // Rivers not in this list get appended to the end in their natural order.
 const ROTATION_PRIORITY = [
@@ -85,12 +85,12 @@ async function generateStreamPost(river, conditions) {
   const today   = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
   const hatchSummary = hatches.length > 0
-    ? hatches.map(h => `${h.name} (${h.latin}) — ${h.presentation}. Top patterns: ${h.patterns.slice(0,3).map(p => `${p.name} #${p.sizes[0]}`).join(', ')}.`).join('\n')
+    ? hatches.map(h => `${h.name} (${h.latin}): ${h.presentation}. Top patterns: ${h.patterns.slice(0,3).map(p => `${p.name} #${p.sizes[0]}`).join(', ')}.`).join('\n')
     : 'No major hatches active. Nymphs and streamers recommended.';
 
   const prompt = `You are writing a post for Michigan Trout Daily, a site for serious Michigan trout anglers. Today is ${today}.
 
-Write 700-900 words about the ${river.name}. Write it the way a knowledgeable local angler would — honest, specific, literary without being precious. Think John Gierach or Nick Lyons, not a tourism brochure. The reader is already a trout fisherman. Do not explain what trout fishing is.
+Write 700-900 words about the ${river.name}. Write it the way a knowledgeable local angler would: honest, specific, literary without being precious. Think John Gierach or Nick Lyons, not a tourism brochure. The reader is already a trout fisherman. Do not explain what trout fishing is.
 
 WHAT YOU KNOW ABOUT THIS RIVER (use only what is confirmed here, do not invent details):
 - Region: ${river.region}
@@ -121,7 +121,7 @@ NWS WEATHER FORECAST FOR THIS RIVER:
 - Tonight: ${conditions.weather.tonight ? `low ${conditions.weather.tonight.tempF}°F, ${conditions.weather.tonight.forecast}` : 'data unavailable'}
 - 48-hour rain outlook: ${conditions.weather.maxRainNext48}% max chance, flow trend likely ${conditions.weather.flowTrend.replace(/_/g, ' ')}
 - Next 3 days: ${conditions.weather.week.slice(1, 4).map(d => `${d.name} ${d.tempF}°F (low ${d.tempLow || '?'}°F), rain ${d.rain}%`).join(' | ')}
-- Best upcoming window: ${conditions.weather.bestWindow ? `${conditions.weather.bestWindow.name} — ${conditions.weather.bestWindow.reason}` : 'no clear standout day in the forecast'}` : ''}
+- Best upcoming window: ${conditions.weather.bestWindow ? `${conditions.weather.bestWindow.name}: ${conditions.weather.bestWindow.reason}` : 'no clear standout day in the forecast'}` : ''}
 ${conditions.sunTimes ? `
 SUN TIMES FOR THIS RIVER TODAY:
 - Sunrise: ${conditions.sunTimes.sunrise}  |  Sunset: ${conditions.sunTimes.sunset}
@@ -139,7 +139,7 @@ WRITING RULES:
 - The very first sentence of the article body must establish authorship by Chris Izworski reporting on Michigan trout fishing. Use a natural opener like "Chris Izworski, reporting from Michigan, on the current state of the [River Name]..." or "Chris Izworski's daily Michigan trout report turns to the [River Name] this morning..." or similar. Vary the phrasing but always include the author's name in the opening sentence as a natural authorial framing.
 - Open with the river, the season, and what conditions mean for an angler deciding whether to make the drive. No manufactured drama.
 - HONESTY ABOUT CONDITIONS IS MANDATORY. Use the SYSTEMATIC CONDITIONS RATING above as your ground truth: if it says BLOWN OUT, lead with that reality. Tell the angler the river is not fishable right now, explain why, and tell them what to watch for before the drive becomes worthwhile. Do not recommend fishing a blown-out river. Do not invent workable conditions when the gauge data says otherwise.
-- WEATHER REASONING: Use the NWS forecast meaningfully. Examples — if rain is in the forecast and flow is already elevated, the river will rise further; if it's been warm and sunny on a UP river in April, snowmelt accelerates and water will rise; cold front ahead of a hatch window kills the bug emergence; sustained warm overcast afternoons are prime hatch conditions. Cite specific forecast numbers (rain %, day high/low) when explaining your read.
+- WEATHER REASONING: Use the NWS forecast meaningfully. Examples: if rain is in the forecast and flow is already elevated, the river will rise further; if it's been warm and sunny on a UP river in April, snowmelt accelerates and water will rise; cold front ahead of a hatch window kills the bug emergence; sustained warm overcast afternoons are prime hatch conditions. Cite specific forecast numbers (rain %, day high/low) when explaining your read.
 - USE THE BEST WINDOW: If conditions today are marginal but the forecast shows a better day in the next 3-5, name that day specifically and tell the reader to plan around it.
 - USE SUN TIMES: For dry-fly rivers in late spring through fall, mention the golden-hour evening window or spinner fall window when relevant to the hatch you're discussing.
 - If gauge data IS available (numbers shown above), USE IT. Do not write "gauge data is unavailable" when numbers are present.
@@ -152,7 +152,7 @@ WRITING RULES:
 - Do not insert an author's personality beyond the opening byline. The river is the subject.
 - Do not fabricate place names, distances, or landmarks not listed above.
 - End with a single natural line pointing to ${TROUT_APP} for live gauge data.
-- H2 headers specific to this river and this day — not generic labels.
+- H2 headers specific to this river and this day: not generic labels.
 - Output raw HTML only. Start your response with the opening < of the <h1> tag. Do not write code fences, do not include any text before the first HTML tag. The very first character of your response must be <.`;
 
   const res  = await fetch('https://api.anthropic.com/v1/messages', {
@@ -173,7 +173,7 @@ function buildSchemaByline(html, river) {
   // Note: JSON-LD is NOT included here because WordPress HTML-encodes <script> tags,
   // creating visible artifacts. The Next.js frontend (troutdaily.chrisizworski.com) injects
   // clean Article + BreadcrumbList JSON-LD via the Head component on every article render.
-  const byline = `<p style="font-size:0.85em;color:#666;margin-bottom:1.5em;">By <a href="https://chrisizworski.com">Chris Izworski</a> &nbsp;|&nbsp; Michigan Trout Daily &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>`;
+  const byline = `<p style="font-size:0.85em;color:#666;margin-bottom:1.5em;">By <a href="/chris-izworski">Chris Izworski</a> &nbsp;|&nbsp; Michigan Trout Daily &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>`;
   return html.replace(/(<\/h1>)/i, `$1\n${byline}`);
 }
 
@@ -224,10 +224,10 @@ async function runStreamPost(r, log) {
       const p75    = gaugeStats.p75 || (gaugeStats.p50 * 1.4);
       const p25    = gaugeStats.p25 || (gaugeStats.p50 * 0.7);
       let condition;
-      if (cfs > p75 * 1.5)      condition = 'BLOWN OUT — well above flood stage, unfishable';
-      else if (cfs > p75 * 1.2) condition = 'HIGH — well above normal, difficult and dangerous to wade';
-      else if (cfs > p75)       condition = 'elevated — above normal for the date';
-      else if (cfs < p25)       condition = 'low — below normal for the date';
+      if (cfs > p75 * 1.5)      condition = 'BLOWN OUT: well above flood stage, unfishable';
+      else if (cfs > p75 * 1.2) condition = 'HIGH: well above normal, difficult and dangerous to wade';
+      else if (cfs > p75)       condition = 'elevated: above normal for the date';
+      else if (cfs < p25)       condition = 'low: below normal for the date';
       else                      condition = 'near normal for the date';
       flowContext = { cfs, p25, p50: gaugeStats.p50, p75, pct, condition };
     }
@@ -260,7 +260,7 @@ async function runStreamPost(r, log) {
     const html      = await generateStreamPost(river, conditions);
     const wrapped   = buildSchemaByline(html, river);
     const titleMatch = wrapped.match(/<h1[^>]*>(.*?)<\/h1>/i);
-    const title     = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '') : `${river.name} — Today's Conditions`;
+    const title     = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '') : `${river.name}: Today's Conditions`;
     const body      = wrapped.replace(/<h1[^>]*>.*?<\/h1>/i, '').trim();
 
     const tags = [river.name, river.region, ...river.species.map(s => `${s} trout`), 'michigan trout', 'fly fishing michigan', 'trout stream conditions'];
@@ -287,7 +287,7 @@ async function runStreamPost(r, log) {
       const postUrl = `https://troutdaily.chrisizworski.com/post/${wp.slug}`;
       const archiveUrl = `https://troutdaily.chrisizworski.com/chris-izworski/`;
 
-      // IndexNow ping (Bing/Yandex/etc) — submit new post + refresh archive
+      // IndexNow ping (Bing/Yandex/etc): submit new post + refresh archive
       try {
         await fetch('https://api.indexnow.org/indexnow', {
           method: 'POST',
@@ -313,7 +313,7 @@ async function runStreamPost(r, log) {
   }
 }
 
-// Weekly Michigan-wide overview — runs Sundays only.
+// Weekly Michigan-wide overview: runs Sundays only.
 // Generates a "State of Michigan Trout" post with regional rollup, not a single river.
 async function runWeeklyOverview(r, riverData, log) {
   const ts = () => new Date().toISOString();
@@ -504,7 +504,7 @@ async function runRiverPage(r, log) {
     // Warm the page by fetching it (populates Redis cache)
     const base = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : 'https://trout.chrisizworski.com';
+      : 'https://michigantroutreport.com';
     await fetch(`${base}/rivers/${river.id}`);
 
     log.push(`[${ts()}] River SEO page warmed: ${river.name} → /rivers/${river.id}`);
@@ -523,14 +523,14 @@ export default async function handler(req, res) {
   const ts  = () => new Date().toISOString();
 
   try {
-    log.push(`[${ts()}] Cron starting — Michigan Trout Report daily run`);
+    log.push(`[${ts()}] Cron starting: Michigan Trout Report daily run`);
     const r = makeRedis();
 
     const [liveReadings, allStats] = await Promise.all([
       fetchLiveReadings(ALL_GAUGE_IDS),
       fetchAllStats(ALL_GAUGE_IDS),
     ]);
-    log.push(`[${ts()}] USGS data fetched — ${Object.keys(liveReadings).length} gauges`);
+    log.push(`[${ts()}] USGS data fetched: ${Object.keys(liveReadings).length} gauges`);
 
     const riverData = RIVERS.map(river => {
       const reading  = liveReadings[river.primaryGauge] || {};

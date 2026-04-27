@@ -1,4 +1,4 @@
-// trout-ui.js — Shared rendering for all Michigan Trout Report pages
+// trout-ui.js: Shared rendering for all Michigan Trout Report pages
 // One file, one standard. Every stream page, modal, and detail view
 // uses these functions for consistent presentation.
 
@@ -51,17 +51,17 @@ function renderConditionStats(c) {
   return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px">
     <div style="background:#fff;border-radius:4px;padding:8px 10px;border:1px solid #e8e4dc">
       <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Flow</div>
-      <div style="font-size:15px;color:#2c2c2c">${c.flow !== null && c.flow !== undefined ? c.flow.toLocaleString() + ' cfs' : '—'}</div>
+      <div style="font-size:15px;color:#2c2c2c">${c.flow !== null && c.flow !== undefined ? c.flow.toLocaleString() + ' cfs' : '-'}</div>
       ${c.flowLabel ? `<div style="font-size:10px;color:#bbb">${c.flowLabel}</div>` : ''}
     </div>
     <div style="background:#fff;border-radius:4px;padding:8px 10px;border:1px solid #e8e4dc">
       <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Water Temp</div>
-      <div style="font-size:15px;color:#2c2c2c">${c.tempF !== null && c.tempF !== undefined ? c.tempF + '°F' : '—'}</div>
+      <div style="font-size:15px;color:#2c2c2c">${c.tempF !== null && c.tempF !== undefined ? c.tempF + '°F' : '-'}</div>
       ${c.tempLabel ? `<div style="font-size:10px;color:#bbb">${c.tempLabel}</div>` : ''}
     </div>
     <div style="background:#fff;border-radius:4px;padding:8px 10px;border:1px solid #e8e4dc">
       <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Gage Height</div>
-      <div style="font-size:15px;color:#2c2c2c">${c.gage !== null && c.gage !== undefined ? c.gage + ' ft' : '—'}</div>
+      <div style="font-size:15px;color:#2c2c2c">${c.gage !== null && c.gage !== undefined ? c.gage + ' ft' : '-'}</div>
       ${c.stats?.p50 ? `<div style="font-size:10px;color:#bbb">Median: ${c.stats.p50} cfs</div>` : ''}
     </div>
   </div>`;

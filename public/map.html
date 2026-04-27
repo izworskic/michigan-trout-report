@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chris Izworski's Michigan Trout Stream Map — Live Conditions</title>
+<title>Chris Izworski's Michigan Trout Stream Map: Live Conditions</title>
 <meta name="description" content="Interactive Michigan trout stream map with live USGS conditions. Color-coded by today's fishing rating. 310 DNR access points. Navigate to any put-in.">
-<link rel="canonical" href="https://trout.chrisizworski.com/map.html">
-<meta property="og:title" content="Chris Izworski's Michigan Trout Stream Map — Live Conditions + Access Points">
+<link rel="canonical" href="https://michigantroutreport.com/map.html">
+<meta property="og:title" content="Chris Izworski's Michigan Trout Stream Map: Live Conditions + Access Points">
 <meta property="og:description" content="Interactive map: 63+ trout rivers color-coded by conditions, 310 access points with Google Maps navigation.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://trout.chrisizworski.com/map.html">
+<meta property="og:url" content="https://michigantroutreport.com/map.html">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Michigan Trout Stream Map",
   "description": "Interactive map of Michigan trout streams with live USGS conditions, 310 DNR access points, and Google Maps navigation to put-in spots.",
-  "url": "https://trout.chrisizworski.com/map.html",
+  "url": "https://michigantroutreport.com/map.html",
   "applicationCategory": "SportsApplication",
   "operatingSystem": "Any",
-  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"}
+  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://michigantroutreport.com/chris-izworski"}
 }
 </script>
 <link rel="manifest" href="/manifest.json">
@@ -256,7 +256,7 @@ const SP_BG    = {brook:'#e8f5e9',brown:'#fff3e0',rainbow:'#e3f2fd',steelhead:'#
 const SP_LABEL = {brook:'Brook',brown:'Brown',rainbow:'Rainbow',steelhead:'Steelhead',splake:'Splake',lake_trout:'Lake Trout',grayling:'Grayling'};
 const REG_COLORS = {'Type 1':{bg:'#e8f5e9',color:'#2e7d32'},'Type 2':{bg:'#fffde7',color:'#f9a825'},'Type 3':{bg:'#fff3e0',color:'#e65100'},'Type 4':{bg:'#e3f2fd',color:'#1565c0'},'GR':{bg:'#ffebee',color:'#c62828'},'BTRA':{bg:'#f3e5f5',color:'#6a1b9a'},'Type A':{bg:'#e3f2fd',color:'#1565c0'},'Type B':{bg:'#e3f2fd',color:'#0d47a1'}};
 
-// Hardcoded river center coordinates — all verified
+// Hardcoded river center coordinates: all verified
 const RIVER_COORDS = {
   'ausable':              [44.655, -84.132],
   'manistee':             [44.580, -85.760],
@@ -362,7 +362,7 @@ function renderRiverMarkers(rivers){
         <div class="pu-tagline" style="color:${rat.color}">${rat.tagline}</div></div>
       </div>
       ${c?.flow!==null?`<div class="pu-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong>${c.flowPct?' ('+c.flowPct+'% of median)':''}</div>`:''}
-      ${c?.tempF!==null?`<div class="pu-stat">Water: <strong>${c.tempF}°F</strong> — ${c.tempLabel}</div>`:''}
+      ${c?.tempF!==null?`<div class="pu-stat">Water: <strong>${c.tempF}°F</strong>: ${c.tempLabel}</div>`:''}
       <div class="pu-links">
         <a href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}" target="_blank" rel="noopener" class="pu-nav">Navigate</a>
         ${slug?`<a href="/stream/${slug}.html" class="pu-link">Stream page</a>`:''}
@@ -616,7 +616,7 @@ async function loadAll(){
       fetch('/trout-access-points.json'),
     ]);
 
-    // Conditions — render river markers first (fast, high value)
+    // Conditions: render river markers first (fast, high value)
     if(condResp.ok){
       const cd=await condResp.json();
       if(cd.success && cd.rivers){
@@ -628,7 +628,7 @@ async function loadAll(){
       }
     }
 
-    // Access points — render after conditions so conditions stay on top
+    // Access points: render after conditions so conditions stay on top
     if(accessResp.ok){
       _allPoints=await accessResp.json();
       renderAccessMarkers(_allPoints);

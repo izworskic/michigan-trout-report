@@ -1,5 +1,5 @@
-// GET /api/river/[id] — JSON data API (default)
-// GET /rivers/:id (rewritten to this) — HTML SEO page
+// GET /api/river/[id]: JSON data API (default)
+// GET /rivers/:id (rewritten to this): HTML SEO page
 // Behavior switches on req.url path.
 
 import { Redis } from '@upstash/redis';
@@ -11,9 +11,9 @@ import { synthesizeReports } from '../../lib/synthesizer.js';
 import { findSimilarDays } from '../../lib/history.js';
 import { MICHIGAN_HATCHES } from '../../lib/hatches.js';
 
-const SITE       = 'https://trout.chrisizworski.com';
+const SITE       = 'https://michigantroutreport.com';
 const AUTHOR     = 'Chris Izworski';
-const AUTHOR_URL = 'https://chrisizworski.com';
+const AUTHOR_URL = `${SITE}/chris-izworski`;
 const DAILY      = 'https://troutdaily.chrisizworski.com';
 
 function makeRedis() {
@@ -28,11 +28,11 @@ const CACHE_TTL = 6 * 60 * 60;
 // ── SEO HTML PAGE BUILDER ───────────────────────────────────────────────
 function cfsLabel(cfs) {
   if (!cfs || isNaN(cfs)) return null;
-  if (cfs < 50)  return `${Math.round(cfs)} cfs — very low`;
-  if (cfs < 150) return `${Math.round(cfs)} cfs — low`;
-  if (cfs < 400) return `${Math.round(cfs)} cfs — normal`;
-  if (cfs < 800) return `${Math.round(cfs)} cfs — elevated`;
-  return `${Math.round(cfs)} cfs — high`;
+  if (cfs < 50)  return `${Math.round(cfs)} cfs: very low`;
+  if (cfs < 150) return `${Math.round(cfs)} cfs: low`;
+  if (cfs < 400) return `${Math.round(cfs)} cfs: normal`;
+  if (cfs < 800) return `${Math.round(cfs)} cfs: elevated`;
+  return `${Math.round(cfs)} cfs: high`;
 }
 
 function buildSEOPage(river, conditions, hatches) {
@@ -53,11 +53,11 @@ function buildSEOPage(river, conditions, hatches) {
     '@context': 'https://schema.org',
     '@graph': [{
       '@type': 'Article',
-      headline: `${river.name} Fly Fishing Conditions — ${monthName} ${year}`,
+      headline: `${river.name} Fly Fishing Conditions: ${monthName} ${year}`,
       description: `Live ${river.name} trout fishing conditions. USGS flow ${flow || 'data'}, water temperature, active hatches, and fly recommendations for ${monthName} ${year}. By ${AUTHOR}.`,
       dateModified: new Date().toISOString(),
       datePublished: new Date().toISOString(),
-      author: { '@type': 'Person', name: AUTHOR, url: AUTHOR_URL, sameAs: [AUTHOR_URL, DAILY, 'https://www.wikidata.org/wiki/Q138283432'] },
+      author: { '@type': 'Person', name: AUTHOR, url: AUTHOR_URL, sameAs: ['https://chrisizworski.com', DAILY, 'https://www.wikidata.org/wiki/Q138283432'] },
       publisher: { '@type': 'Organization', name: 'Michigan Trout Report', url: SITE },
       about: { '@type': 'Place', name: river.name, description: river.notes },
       keywords: `${river.name}, michigan trout fishing, fly fishing michigan, ${river.species.join(', ')} trout, USGS stream conditions, ${AUTHOR}`,
@@ -82,13 +82,13 @@ function buildSEOPage(river, conditions, hatches) {
   return `<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${AUTHOR}: ${river.name} Fly Fishing Conditions ${monthName} ${year} — Michigan Trout Report</title>
+<title>${river.name} Fly Fishing Conditions ${monthName} ${year}: Michigan Trout Report</title>
 <meta name="description" content="${AUTHOR} reports live ${river.name} trout fishing conditions for ${monthName} ${year}. USGS flow data, water temperature, active hatches, and fly recommendations. Updated daily.">
 <meta name="author" content="${AUTHOR}">
 <link rel="canonical" href="${SITE}/rivers/${river.id}">
 <link rel="author" href="${AUTHOR_URL}">
 <meta property="og:type" content="article">
-<meta property="og:title" content="${AUTHOR}: ${river.name} Conditions — ${monthName} ${year}">
+<meta property="og:title" content="${river.name} Conditions: ${monthName} ${year}">
 <meta property="og:description" content="Live USGS conditions, active hatches, and fly recommendations for the ${river.name}.">
 <meta property="og:url" content="${SITE}/rivers/${river.id}">
 <meta property="og:site_name" content="Michigan Trout Report">
@@ -150,10 +150,10 @@ p{font-size:16px;color:var(--ink2);line-height:1.78;margin-bottom:18px}
 </header>
 <div class="wrap">
   <div class="breadcrumb"><a href="${AUTHOR_URL}">${AUTHOR}</a> &rsaquo; <a href="/">Michigan Trout Report</a> &rsaquo; ${river.name}</div>
-  <h1>${river.name} — Fly Fishing Conditions &amp; Hatch Report</h1>
+  <h1>${river.name}: Fly Fishing Conditions &amp; Hatch Report</h1>
   <div class="byline">By <a href="${AUTHOR_URL}">${AUTHOR}</a> &nbsp;&#183;&nbsp; Updated ${dateStr} &nbsp;&#183;&nbsp; <a href="${DAILY}" target="_blank">Daily reports at Michigan Trout Daily</a></div>
   <div class="conditions-bar">
-    <div><div class="cond-label">Flow</div><div class="cond-value">${flow ? flow.split(' — ')[0] : 'N/A'}</div><div class="cond-sub">${flow ? flow.split(' — ')[1] || '' : 'gauge unavailable'}</div></div>
+    <div><div class="cond-label">Flow</div><div class="cond-value">${flow ? flow.split(': ')[0] : 'N/A'}</div><div class="cond-sub">${flow ? flow.split(': ')[1] || '' : 'gauge unavailable'}</div></div>
     <div><div class="cond-label">Water Temp</div><div class="cond-value">${temp || 'N/A'}</div><div class="cond-sub">${conditions?.tempC != null ? ((conditions.tempC * 9/5 + 32) < 50 ? 'cold' : (conditions.tempC * 9/5 + 32) < 60 ? 'prime' : (conditions.tempC * 9/5 + 32) < 68 ? 'warm' : 'hot') : 'unavailable'}</div></div>
     <div><div class="cond-label">Gauge Height</div><div class="cond-value">${conditions?.gaugeHeight ? conditions.gaugeHeight + ' ft' : 'N/A'}</div><div class="cond-sub">USGS gauge</div></div>
     <div><div class="cond-label">Conditions</div><div class="cond-value" style="font-size:16px;text-transform:capitalize;">${rating || 'check app'}</div><div class="cond-sub">as of ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}</div></div>
@@ -162,7 +162,7 @@ p{font-size:16px;color:var(--ink2);line-height:1.78;margin-bottom:18px}
   <h2>${river.name}, ${river.region}</h2>
   <p>${river.notes}</p>
   <p>Species present: ${river.species.map(s => s.charAt(0).toUpperCase() + s.slice(1) + ' trout').join(', ')}. Stream type: ${river.type.replace('_', ' ')}.</p>
-  <div class="section-head">Active Hatches — ${monthName} ${year}</div>
+  <div class="section-head">Active Hatches: ${monthName} ${year}</div>
   <h2>What's Hatching Now</h2>
   ${hatches.length > 0 ? `<p>Based on current water temperature${temp ? ` (${temp})` : ''} and time of year, the following insects are active or expected on the ${river.name}.</p>
   <table class="hatch-table"><thead><tr><th>Hatch</th><th>Latin</th><th>Top Patterns</th><th>Time of Day</th></tr></thead><tbody>${hatchRows}</tbody></table>` : `<p>No major hatches active at current conditions. Nymphs, streamers, and midges are the recommended approach.</p>`}
@@ -287,8 +287,8 @@ export default async function handler(req, res) {
       reports: { sources: rawReports, synthesis: synthesis || null, fetchedAt: new Date().toISOString() },
       history: { similarDays, totalDays, hasEnough,
         message: hasEnough ? `Based on ${totalDays} days of data`
-          : totalDays === 0 ? 'Building historical data — check back after a few weeks'
-          : `${totalDays} day${totalDays === 1 ? '' : 's'} of data collected — more coming`,
+          : totalDays === 0 ? 'Building historical data: check back after a few weeks'
+          : `${totalDays} day${totalDays === 1 ? '' : 's'} of data collected: more coming`,
       },
       generatedAt: new Date().toISOString(),
     };
