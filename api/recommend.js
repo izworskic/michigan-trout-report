@@ -5,7 +5,7 @@
 //   - Current hatch intel from RSS feeds (lib/intel.js)
 //   - Time of day and time of year
 //
-// Cached 4 hours in Redis — recommendations don't change that fast.
+// Cached 4 hours in Redis: recommendations don't change that fast.
 
 import { Redis } from '@upstash/redis';
 import Anthropic from '@anthropic-ai/sdk';
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
             const c = await redis.get(wxKey);
             if (c) {
               const parsed = typeof c === 'string' ? JSON.parse(c) : c;
-              // weather endpoint stores {weather:{...}, id, fetchedAt} — unwrap
+              // weather endpoint stores {weather:{...}, id, fetchedAt}: unwrap
               return parsed.weather ?? parsed;
             }
           } catch(e) {}
@@ -208,24 +208,24 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, wea
   else lines.push('  Water temp: unavailable');
 
   if (conditions.flow !== null) {
-    lines.push(`  Flow: ${conditions.flow} cfs (${conditions.flowPct}% of seasonal median — ${conditions.flowLabel})`);
+    lines.push(`  Flow: ${conditions.flow} cfs (${conditions.flowPct}% of seasonal median: ${conditions.flowLabel})`);
   } else {
     lines.push('  Flow: unavailable');
   }
   lines.push(`  Conditions rating: ${conditions.ratingKey}`);
 
   if (conditions.turbidity_fnu !== null) {
-    lines.push(`  Turbidity: ${conditions.turbidity_fnu} FNU (${conditions.turbidityLabel}) — ${conditions.turbidityNote}`);
+    lines.push(`  Turbidity: ${conditions.turbidity_fnu} FNU (${conditions.turbidityLabel}): ${conditions.turbidityNote}`);
   }
   if (conditions.do_mgl !== null) {
-    lines.push(`  Dissolved oxygen: ${conditions.do_mgl} mg/L (${conditions.doLabel}) — ${conditions.doNote}`);
+    lines.push(`  Dissolved oxygen: ${conditions.do_mgl} mg/L (${conditions.doLabel}): ${conditions.doNote}`);
   }
 
   // Active hatches from chart
   lines.push('', 'ACTIVE HATCHES FROM MICHIGAN HATCH CHART:');
   if (staticRec.activeHatches.length) {
     for (const h of staticRec.activeHatches) {
-      lines.push(`  • ${h.name} (${h.timeOfDay}) — patterns: ${h.patterns.map(p => `${p.name} #${p.sizes[0]}`).join(', ')}`);
+      lines.push(`  • ${h.name} (${h.timeOfDay}): patterns: ${h.patterns.map(p => `${p.name} #${p.sizes[0]}`).join(', ')}`);
       lines.push(`    ${h.presentation}`);
     }
   } else {
@@ -246,11 +246,11 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, wea
     const w = weather.today;
     lines.push('', 'NWS WEATHER FORECAST (river location):');
     lines.push(`  Today: ${w.tempF}°F | ${w.forecast} | Wind: ${w.wind || 'calm'}`);
-    lines.push(`  Rain chance: ${w.rain}% — ${w.precip?.flowImpact || ''}`);
+    lines.push(`  Rain chance: ${w.rain}%: ${w.precip?.flowImpact || ''}`);
     lines.push(`  Cloud cover: ${w.cloud?.hatchTip || ''}`);
     if (w.wind_int) lines.push(`  Wind: ${w.wind_int.tip}`);
     if (weather.tonight) lines.push(`  Tonight: ${weather.tonight.tempF}°F | ${weather.tonight.forecast}`);
-    if (weather.flowTrend !== 'stable') lines.push(`  ⚠ Flow trend: ${weather.flowTrend.replace('_', ' ')} — rain incoming`);
+    if (weather.flowTrend !== 'stable') lines.push(`  ⚠ Flow trend: ${weather.flowTrend.replace('_', ' ')}: rain incoming`);
     if (weather.bestWindow && weather.bestWindow.name !== weather.today.name) {
       lines.push(`  Best upcoming window: ${weather.bestWindow.name} (${weather.bestWindow.tempF}°F, ${weather.bestWindow.forecast}, ${weather.bestWindow.rain}% rain)`);
     }
@@ -261,7 +261,7 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, wea
   if (goodIntel.length) {
     lines.push('', 'CURRENT HATCH INTEL (from Hatch Magazine / MidCurrent):');
     for (const item of goodIntel) {
-      lines.push(`  [${item.source} — ${item.date}] ${item.title}`);
+      lines.push(`  [${item.source}: ${item.date}] ${item.title}`);
       if (item.content) lines.push(`    ${item.content.slice(0, 200)}`);
     }
   }
@@ -269,7 +269,7 @@ async function generateAIRecommendation(river, conditions, staticRec, intel, wea
   const SYSTEM = `You are an expert Michigan trout guide writing a specific fly recommendation for an angler checking conditions before a trip.
 
 Write 3-4 tight paragraphs:
-1. Lead with the most important thing — is it worth going, and why? Be direct.
+1. Lead with the most important thing: is it worth going, and why? Be direct.
 2. Specific flies and sizes for TODAY's conditions. Always give pattern name + size. Be specific: not "a nymph" but "Pheasant Tail #16 with split shot."
 3. Presentation advice: where on the river to fish, how to fish it, what time of day if the angler has flexibility.
 4. One honest note about what might surprise them or what to watch for.

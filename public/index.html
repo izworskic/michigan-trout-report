@@ -78,7 +78,7 @@ a { color:#2c5f2d; text-decoration:none; }
 .hdr-nav a { color:#7ab87a; font-size:12px; }
 .hdr-nav a:hover { color:#fff; }
 
-/* Hero — best rivers now */
+/* Hero: best rivers now */
 .hero { background:#1a3a1a; padding:20px 16px 24px; border-bottom:3px solid #2c5f2d; }
 .hero-label { font-size:10px; text-transform:uppercase; letter-spacing:2px; color:#5a9a5a; margin-bottom:8px; }
 .hero-heading { font-size:20px; color:#f0ede6; font-weight:normal; margin-bottom:4px; }
@@ -101,7 +101,7 @@ a { color:#2c5f2d; text-decoration:none; }
 .brief { background:#fff; padding:12px 16px; border-bottom:1px solid #ddd8cc; font-size:13px; color:#444; line-height:1.7; max-width:720px; display:none; }
 .brief-label { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; color:#bbb; margin-bottom:5px; }
 
-/* Controls — sticky */
+/* Controls: sticky */
 .controls {
   background:#fff; border-bottom:1px solid #ddd8cc;
   position:sticky; top:0; z-index:100;
@@ -171,7 +171,7 @@ a { color:#2c5f2d; text-decoration:none; }
 /* Count line */
 .count-line { font-size:11px; color:#aaa; padding:6px 16px 4px; font-style:italic; }
 
-/* River list — single column on mobile, 2 col on desktop */
+/* River list: single column on mobile, 2 col on desktop */
 .river-list { padding:8px 16px 48px; }
 .river-row {
   background:#fff; border:1px solid #e4e0d8; border-radius:5px;
@@ -320,7 +320,7 @@ footer a { color:#4a7c4a; }
   .weekend-grid { grid-template-columns:1fr; }
 }
 
-/* Phone portrait (under 380px — small iPhones, older Androids) */
+/* Phone portrait (under 380px: small iPhones, older Androids) */
 @media (max-width:380px) {
   .hdr { padding:10px 10px; }
   .hdr-title { font-size:14px; }
@@ -411,7 +411,7 @@ footer a { color:#4a7c4a; }
         type="search"
         id="riverSearch"
         class="search-input"
-        placeholder="Search rivers — AuSable, Pere Marquette, Jordan..."
+        placeholder="Search rivers: AuSable, Pere Marquette, Jordan..."
         oninput="setSearch(this.value)"
         autocomplete="off"
         spellcheck="false"
@@ -484,7 +484,7 @@ footer a { color:#4a7c4a; }
     <a href="https://www.michigan.gov/dnr/buy-and-apply" target="_blank" rel="noopener" style="font-size:12px;color:#555;background:#f5f2ec;padding:5px 11px;border-radius:4px;text-decoration:none;border:1px solid #ddd">📋 MI Fishing License</a>
     <a href="https://www.amazon.com/s?k=fly+tying+materials+michigan+hatches&tag=michigantrout-20" target="_blank" rel="noopener sponsored" style="font-size:12px;color:#1b5e20;background:#e8f5e9;padding:5px 11px;border-radius:4px;text-decoration:none;border:1px solid #c8e6c9">🪁 Fly Tying Materials</a>
   </div>
-  <div style="font-size:10px;color:#ccc;margin-top:6px">Affiliate links — we earn a small commission at no cost to you.</div>
+  <div style="font-size:10px;color:#ccc;margin-top:6px">Affiliate links: we earn a small commission at no cost to you.</div>
 </div>
 <!-- Static river index: crawlable by search engines without JS -->
 <div style="background:#fff;border-top:1px solid #e8e4dc;padding:24px 16px">
@@ -797,13 +797,13 @@ function renderList(){
   }).join('');
 
   if(!visible && _activeQ){
-    list.innerHTML=`<div class="empty">No results for "<strong>${_activeQ}</strong>" — try a partial name like "bear" or "pere".</div>`;
+    list.innerHTML=`<div class="empty">No results for "<strong>${_activeQ}</strong>": try a partial name like "bear" or "pere".</div>`;
     return;
   }
   list.innerHTML = html || '<div class="empty">No rivers match the current filters.</div>';
   document.getElementById('countLine').textContent =
     visible===_waterBodies.length
-      ? `${visible} rivers, streams & lakes — live conditions where available`
+      ? `${visible} rivers, streams & lakes: live conditions where available`
       : `${visible} of ${_waterBodies.length} results`;
 }
 
@@ -933,11 +933,11 @@ function renderModal(data,aiNote,rec,riverId){
       <div class="modal-rating-tagline" style="color:${rat.color}">${rat.tagline}${trend&&trend.overall!=='steady'?' <span style="font-size:11px;opacity:.7">('+trendLabel(trend).toLowerCase()+' since yesterday)</span>':''}</div></div>
     </div>`:''}
     <div class="modal-stats">
-      <div class="ms"><div class="ms-lbl">Flow</div><div class="ms-val">${c?.flow!==null?c.flow.toLocaleString()+' cfs':'—'}</div>${c?.flowLabel?`<div class="ms-sub">${c.flowLabel}</div>`:''}</div>
-      <div class="ms"><div class="ms-lbl">Water Temp</div><div class="ms-val">${c?.tempF!==null?c.tempF+'°F':'—'}</div>${c?.tempLabel?`<div class="ms-sub">${c.tempLabel}</div>`:''}</div>
-      <div class="ms"><div class="ms-lbl">Gage Height</div><div class="ms-val">${c?.gage!==null?c.gage+' ft':'—'}</div>${c?.stats?.p50?`<div class="ms-sub">Median: ${c.stats.p50} cfs</div>`:''}</div>
+      <div class="ms"><div class="ms-lbl">Flow</div><div class="ms-val">${c?.flow!==null?c.flow.toLocaleString()+' cfs':'-'}</div>${c?.flowLabel?`<div class="ms-sub">${c.flowLabel}</div>`:''}</div>
+      <div class="ms"><div class="ms-lbl">Water Temp</div><div class="ms-val">${c?.tempF!==null?c.tempF+'°F':'-'}</div>${c?.tempLabel?`<div class="ms-sub">${c.tempLabel}</div>`:''}</div>
+      <div class="ms"><div class="ms-lbl">Gage Height</div><div class="ms-val">${c?.gage!==null?c.gage+' ft':'-'}</div>${c?.stats?.p50?`<div class="ms-sub">Median: ${c.stats.p50} cfs</div>`:''}</div>
     </div>
-    ${c?.flowPct?`<div class="modal-bar"><div class="modal-bar-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div><div class="modal-bar-lbl">${c.flowPct}% of seasonal median — ${c.flowLabel}</div>`:''}
+    ${c?.flowPct?`<div class="modal-bar"><div class="modal-bar-fill" style="width:${flowW(c.flowPct)}%;background:${flowColor(c.flowPct)}"></div></div><div class="modal-bar-lbl">${c.flowPct}% of seasonal median: ${c.flowLabel}</div>`:''}
     ${wxHtml}
     ${fliesHtml}
     ${lureHtml}
@@ -987,7 +987,7 @@ async function loadWeekend(){
 // ── Season banner ─────────────────────────────────────────────────────────────
 function setBanner(){
   const m=new Date().getMonth()+1;
-  const msgs={3:'🌱 Pre-season — General season opens last Saturday of April.',4:'🎣 Opening month — Season is open.',5:'🪰 Peak spring — Caddis and Hendrickson hatches.',6:'🌙 Hex season — AuSable Hex hatch starts late June.',7:'☀️ Summer — Fish early morning and evening.',8:'🌿 Late summer — UP streams best now.',9:'🍂 Fall — Brown trout pre-spawn. Fall BWO hatches.',10:'🍂 October — Brown trout spawning. Steelhead entering.',11:'🌧️ Late fall — Steelhead in West Michigan rivers.'};
+  const msgs={3:'🌱 Pre-season: General season opens last Saturday of April.',4:'🎣 Opening month: Season is open.',5:'🪰 Peak spring: Caddis and Hendrickson hatches.',6:'🌙 Hex season: AuSable Hex hatch starts late June.',7:'☀️ Summer: Fish early morning and evening.',8:'🌿 Late summer: UP streams best now.',9:'🍂 Fall: Brown trout pre-spawn. Fall BWO hatches.',10:'🍂 October: Brown trout spawning. Steelhead entering.',11:'🌧️ Late fall: Steelhead in West Michigan rivers.'};
   const msg=msgs[m];
   if(msg){const b=document.createElement('div');b.style.cssText='background:#fffde7;border-bottom:1px solid #e6c84a;padding:8px 16px;font-size:12px;color:#5a4a00;text-align:center';b.textContent=msg;document.querySelector('.hero').after(b);}
 }

@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   }
 
   if (action === 'count') {
-    // Protected — requires CRON_SECRET
+    // Protected: requires CRON_SECRET
     const auth = req.headers['authorization'];
     if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ error: 'Unauthorized' });

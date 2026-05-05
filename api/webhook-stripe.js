@@ -4,7 +4,7 @@
 
 import { addSubscriber, sendWelcomeEmail } from '../lib/alerts.js';
 
-// Stripe signature verification (no SDK needed — manual HMAC)
+// Stripe signature verification (no SDK needed: manual HMAC)
 async function verifyStripeSignature(payload, sigHeader, secret) {
   const parts = sigHeader.split(',');
   const tPart = parts.find(p => p.startsWith('t='));
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
       console.log(`[webhook] Activated subscriber: ${email} rivers=${rivers.join(',')}`);
     } catch(e) {
       console.error('[webhook] Failed to activate subscriber:', e.message);
-      // Still return 200 so Stripe doesn't retry — log the failure
+      // Still return 200 so Stripe doesn't retry: log the failure
     }
   }
 

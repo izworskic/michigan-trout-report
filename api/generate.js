@@ -1,6 +1,6 @@
 // GET /api/generate
 // Fetches USGS data, rates conditions, generates AI brief.
-// Cached in Upstash Redis until midnight — one AI call per day.
+// Cached in Upstash Redis until midnight: one AI call per day.
 
 import { Redis } from '@upstash/redis';
 import { RIVERS, ALL_GAUGE_IDS } from '../lib/rivers.js';

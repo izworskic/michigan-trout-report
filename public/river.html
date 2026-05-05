@@ -169,7 +169,7 @@ function renderPage(data, recData) {
   const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
 
   // Update meta
-  document.getElementById('pageTitle').textContent = `${r.name} Conditions — Michigan Trout Report`;
+  document.getElementById('pageTitle').textContent = `${r.name} Conditions: Michigan Trout Report`;
   document.getElementById('pageDesc').content = `Live stream conditions for the ${r.name}: ${rat.label}. Flow ${c.flow ? c.flow + ' cfs' : 'N/A'}, water temp ${c.tempF ? c.tempF + '°F' : 'N/A'}.`;
 
   // Build recommendation section
@@ -181,7 +181,7 @@ function renderPage(data, recData) {
     ).join('');
     const hatches = (recData.staticRec?.activeHatches || []).slice(0, 2).map(h => `
       <div class="rec-hatch">
-        <div class="rec-hatch-name">${h.name} <span style="font-weight:normal;color:#888;font-size:12px">— peaks ${h.timeOfDay}</span></div>
+        <div class="rec-hatch-name">${h.name} <span style="font-weight:normal;color:#888;font-size:12px">- peaks ${h.timeOfDay}</span></div>
         <div class="rec-hatch-detail">${h.presentation}</div>
       </div>`).join('');
     const intel = (recData.intel?.items || []).slice(0, 2).map(i =>
@@ -232,10 +232,10 @@ function renderPage(data, recData) {
           <div class="wx-stat-sub">${t.wind_int?.level || ''}</div>
         </div>
       </div>
-      <div class="wx-tip">${t.forecast}${t.cloud?.hatchTip ? ' — ' + t.cloud.hatchTip : ''}</div>
-      ${wx.flowTrend !== 'stable' ? `<div class="${rainClass}">⚠ Rain incoming — flow may rise in the next 24-48h. Check conditions before heading out.</div>` : ''}
+      <div class="wx-tip">${t.forecast}${t.cloud?.hatchTip ? ': ' + t.cloud.hatchTip : ''}</div>
+      ${wx.flowTrend !== 'stable' ? `<div class="${rainClass}">⚠ Rain incoming: flow may rise in the next 24-48h. Check conditions before heading out.</div>` : ''}
       ${t.wind_int?.level === 'high' ? `<div class="wx-tip">${t.wind_int.tip}</div>` : ''}
-      ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div class="wx-tip">Best upcoming window: <strong>${wx.bestWindow.name}</strong> — ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast} (${wx.bestWindow.rain}% rain)</div>` : ''}
+      ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div class="wx-tip">Best upcoming window: <strong>${wx.bestWindow.name}</strong>: ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast} (${wx.bestWindow.rain}% rain)</div>` : ''}
       ${weekCards ? `<div class="wx-week">${weekCards}</div>` : ''}
     </div>`;
   }
@@ -244,11 +244,11 @@ function renderPage(data, recData) {
     const gr  = RATINGS[gc.ratingKey] || RATINGS.FAIR;
     return `<div class="gauge-card">
       <div class="gauge-name">${g.name}</div>
-      <div class="gauge-stat"><span>Flow</span> ${gc.flow !== null ? gc.flow.toLocaleString() + ' cfs' : '—'}</div>
-      <div class="gauge-stat"><span>Temp</span> ${gc.tempF !== null ? gc.tempF + '°F' : '—'}</div>
-      <div class="gauge-stat"><span>Gage</span> ${gc.gage !== null ? gc.gage + ' ft' : '—'}</div>
-      ${gc.turbidity_fnu !== null ? `<div class="gauge-stat"><span>Turbidity</span> ${gc.turbidity_fnu} FNU — <em>${gc.turbidityLabel}</em></div>` : ''}
-      ${gc.do_mgl !== null ? `<div class="gauge-stat"><span>Dissolved O₂</span> ${gc.do_mgl} mg/L — <em>${gc.doLabel}</em></div>` : ''}
+      <div class="gauge-stat"><span>Flow</span> ${gc.flow !== null ? gc.flow.toLocaleString() + ' cfs' : '-'}</div>
+      <div class="gauge-stat"><span>Temp</span> ${gc.tempF !== null ? gc.tempF + '°F' : '-'}</div>
+      <div class="gauge-stat"><span>Gage</span> ${gc.gage !== null ? gc.gage + ' ft' : '-'}</div>
+      ${gc.turbidity_fnu !== null ? `<div class="gauge-stat"><span>Turbidity</span> ${gc.turbidity_fnu} FNU: <em>${gc.turbidityLabel}</em></div>` : ''}
+      ${gc.do_mgl !== null ? `<div class="gauge-stat"><span>Dissolved O₂</span> ${gc.do_mgl} mg/L: <em>${gc.doLabel}</em></div>` : ''}
       ${gc.flowPct ? `<div class="flow-mini"><div class="flow-mini-fill" style="width:${flowBarW(gc.flowPct)}%;background:${flowBarColor(gc.flowPct)}"></div></div>` : ''}
       ${gc.flowPct ? `<div style="font-size:11px;color:#aaa;margin-top:2px">${gc.flowPct}% of median</div>` : ''}
       <div class="gauge-rating" style="background:${gr.color}">${gr.emoji} ${gr.label}</div>
@@ -287,7 +287,7 @@ function renderPage(data, recData) {
   } else {
     const month = new Date().getMonth() + 1;
     const msg = month <= 3
-      ? 'Pre-season — guide shops post reports starting in April when the season opens.'
+      ? 'Pre-season: guide shops post reports starting in April when the season opens.'
       : 'No reports found today. Check back tomorrow or visit guide shop sites directly.';
     reportsHtml = `<div class="reports-section"><div class="no-reports">${msg}</div></div>`;
   }
@@ -306,7 +306,7 @@ function renderPage(data, recData) {
         <div class="history-bar"><div class="history-bar-fill" style="width:${pct}%"></div></div>
         <div class="history-bar-label">${hist.totalDays} of ~${daysNeeded} days collected</div>
         <div class="history-placeholder-text" style="margin-top:10px">
-          ${hist.message} — once we have enough data, this section will show what guides reported
+          ${hist.message}: once we have enough data, this section will show what guides reported
           on past days when the ${r.name} had similar flow and temperature conditions.
         </div>
       </div>`;
@@ -330,7 +330,7 @@ function renderPage(data, recData) {
     }).join('');
     historyHtml = `
       <div>
-        <p style="font-size:13px;color:#888;margin-bottom:12px">${hist.message} — past days with similar flow and temperature in the same season:</p>
+        <p style="font-size:13px;color:#888;margin-bottom:12px">${hist.message}: past days with similar flow and temperature in the same season:</p>
         <div class="similar-days">${dayCards}</div>
       </div>`;
   }
@@ -373,7 +373,7 @@ function renderPage(data, recData) {
       </div>
 
       <div class="section">
-        <div class="section-title">On Similar Days — Historical Conditions</div>
+        <div class="section-title">On Similar Days: Historical Conditions</div>
         ${historyHtml}
       </div>
     </div>`;

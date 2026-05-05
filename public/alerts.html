@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chris Izworski's Michigan Trout Condition Alerts: Get Notified When Your Rivers Are Fishing</title>
+<title>Michigan Trout Condition Alerts: Get Notified When Your Rivers Are Fishing</title>
 <meta name="description" content="Get email alerts when your Michigan trout rivers hit Prime or Fishing Well conditions. $19/year. Powered by live USGS data.">
 <link rel="canonical" href="https://michigan-trout-report.vercel.app/alerts.html">
 <style>
@@ -157,7 +157,7 @@
     <div class="container">
       <div class="hero-eyebrow">Premium Condition Alerts</div>
       <h1>Know Before You Drive.<br>Fish When It's Right.</h1>
-      <p class="hero-sub">Get an email when your rivers hit Prime or Fishing Well conditions — before you load the truck. Powered by live USGS data, checked every morning.</p>
+      <p class="hero-sub">Get an email when your rivers hit Prime or Fishing Well conditions: before you load the truck. Powered by live USGS data, checked every morning.</p>
       <div class="hero-price">$19 <span>/year</span></div>
       <div class="hero-price-note">One flat annual rate. Cancel anytime.</div>
     </div>
@@ -206,7 +206,7 @@
 
         <div class="form-submit">
           <button class="btn-submit" id="submitBtn" disabled onclick="startCheckout()">
-            Get Alerts — $19/year →
+            Get Alerts: $19/year →
           </button>
           <div class="form-secure">🔒 Secure checkout via Stripe. No card stored on our servers.</div>
           <div class="form-error" id="formError"></div>
@@ -245,7 +245,7 @@
           </div>
           <div class="condition-tagline" style="color:#f9a825">Fishable. Pick your spots.</div>
           <div class="condition-desc">Elevated or low water, some challenge involved.</div>
-          <div class="condition-alert" style="color:#bbb">— No alert</div>
+          <div class="condition-alert" style="color:#bbb">- No alert</div>
         </div>
         <div class="condition-item" style="background:#fff3e0;border-color:#ffcc80">
           <div class="condition-rating">
@@ -254,7 +254,7 @@
           </div>
           <div class="condition-tagline" style="color:#e65100">Stay home.</div>
           <div class="condition-desc">High water, thermal stress, or dangerous wading.</div>
-          <div class="condition-alert" style="color:#bbb">— No alert</div>
+          <div class="condition-alert" style="color:#bbb">- No alert</div>
         </div>
       </div>
     </div>
@@ -266,11 +266,11 @@
       <div class="faq-title">Questions</div>
       <div class="faq-item">
         <div class="faq-q">How often do alerts send?</div>
-        <div class="faq-a">Once per day, after the 8am CT data pull. If your rivers are fishing well on Tuesday, you get one email Tuesday morning. We only send when conditions are worth your attention — no noise.</div>
+        <div class="faq-a">Once per day, after the 8am CT data pull. If your rivers are fishing well on Tuesday, you get one email Tuesday morning. We only send when conditions are worth your attention: no noise.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">What if my river doesn't have live data?</div>
-        <div class="faq-a">Alerts only fire when we have actual USGS gauge data for your river. Rivers without live sensors won't generate alerts — they'll still appear on the site but won't trigger notifications until data becomes available.</div>
+        <div class="faq-a">Alerts only fire when we have actual USGS gauge data for your river. Rivers without live sensors won't generate alerts: they'll still appear on the site but won't trigger notifications until data becomes available.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Can I change my rivers after subscribing?</div>
@@ -278,7 +278,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">How do I cancel?</div>
-        <div class="faq-a">Click the unsubscribe link in any alert email, or email chris@chrisizworski.com. No questions asked. Your subscription won't auto-renew without action — you'll get a reminder email before the year ends.</div>
+        <div class="faq-a">Click the unsubscribe link in any alert email, or email chris@chrisizworski.com. No questions asked. Your subscription won't auto-renew without action: you'll get a reminder email before the year ends.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Is this really $19/year flat?</div>
@@ -297,7 +297,7 @@
         <div class="unsub-title">Unsubscribe from Condition Alerts</div>
         <div class="unsub-sub" id="unsubEmail"></div>
         <button class="btn-unsub" id="unsubBtn" onclick="doUnsubscribe()">Yes, unsubscribe me</button>
-        <div style="margin-top:14px"><a href="/alerts.html" style="font-size:13px;color:#888">Cancel — keep my alerts</a></div>
+        <div style="margin-top:14px"><a href="/alerts.html" style="font-size:13px;color:#888">Cancel: keep my alerts</a></div>
       </div>
     </div>
   </div>
@@ -381,8 +381,8 @@ function updateState() {
   const valid = email.includes('@') && n > 0;
   document.getElementById('submitBtn').disabled = !valid;
   document.getElementById('submitBtn').textContent = valid
-    ? `Get Alerts for ${n} river${n > 1 ? 's' : ''} — $19/year →`
-    : 'Get Alerts — $19/year →';
+    ? `Get Alerts for ${n} river${n > 1 ? 's' : ''}: $19/year →`
+    : 'Get Alerts: $19/year →';
 }
 
 document.getElementById('emailInput').addEventListener('input', updateState);
@@ -437,7 +437,7 @@ function handleUrlParams() {
     document.getElementById('statusCard').classList.add('success');
     document.getElementById('statusEmoji').textContent = '🎣';
     document.getElementById('statusTitle').textContent = 'Alerts activated.';
-    document.getElementById('statusBody').innerHTML = 'Welcome email is on its way. We\'ll send you a notification the next time any of your rivers hit Prime or Fishing Well conditions — no noise, just signal.<br><br>Check today\'s conditions while you wait.';
+    document.getElementById('statusBody').innerHTML = 'Welcome email is on its way. We\'ll send you a notification the next time any of your rivers hit Prime or Fishing Well conditions: no noise, just signal.<br><br>Check today\'s conditions while you wait.';
     return;
   }
 

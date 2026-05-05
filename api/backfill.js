@@ -1,7 +1,7 @@
 // GET /api/backfill?secret=CRON_SECRET&days=14
 // One-time endpoint to seed Redis with real historical USGS data.
 // Fetches daily mean flow + temp for past N days, rates each day,
-// stores in same format the cron uses — nothing downstream breaks.
+// stores in same format the cron uses: nothing downstream breaks.
 //
 // Safe to call multiple times: existing snapshots are overwritten with
 // the same data (idempotent). Does NOT touch today's live cache.
@@ -60,7 +60,7 @@ async function fetchDailyMeans(gaugeIds, startDate, endDate) {
   }
 }
 
-// Store a snapshot — same logic as lib/history.js storeSnapshot
+// Store a snapshot: same logic as lib/history.js storeSnapshot
 async function storeSnapshot(redis, riverId, date, conditions, guideNotes = null) {
   const key = `trout:history:${riverId}:${date}`;
   const snapshot = {
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
   const ts  = () => new Date().toISOString();
 
   try {
-    // Date range: from N days ago to yesterday (not today — don't touch live data)
+    // Date range: from N days ago to yesterday (not today: don't touch live data)
     const today     = new Date();
     const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
     const startDay  = new Date(today); startDay.setDate(today.getDate() - days);
@@ -131,7 +131,7 @@ export default async function handler(req, res) {
       fetchAllStats(primaryGauges),
     ]);
 
-    log.push(`[${ts()}] USGS data fetched — ${Object.keys(dailyMeans).length} gauges returned`);
+    log.push(`[${ts()}] USGS data fetched: ${Object.keys(dailyMeans).length} gauges returned`);
 
     // Generate all dates in range
     const dates = [];
@@ -172,7 +172,7 @@ export default async function handler(req, res) {
       }
     }
 
-    log.push(`[${ts()}] Done — ${stored} snapshots stored, ${skipped} skipped (no data)`);
+    log.push(`[${ts()}] Done: ${stored} snapshots stored, ${skipped} skipped (no data)`);
 
     return res.status(200).json({
       success: true,
