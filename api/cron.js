@@ -20,7 +20,7 @@ import { MICHIGAN_HATCHES } from '../lib/hatches.js';
 
 const WP_SITE_ID  = '254267068';
 const WP_API_BASE = `https://public-api.wordpress.com/rest/v1.1/sites/${WP_SITE_ID}`;
-const TROUT_APP   = 'https://trout.chrisizworski.com';
+const TROUT_APP   = 'https://michigantroutreport.com';
 const GAUGED_RIVERS_ALL = RIVERS.filter(r => r.tier <= 2 && r.primaryGauge);
 
 // Curated rotation order: famous/high-demand rivers first, UP rivers interleaved, smaller rivers last.
@@ -504,7 +504,7 @@ async function runRiverPage(r, log) {
     // Warm the page by fetching it (populates Redis cache)
     const base = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : 'https://trout.chrisizworski.com';
+      : 'https://michigantroutreport.com';
     await fetch(`${base}/rivers/${river.id}`);
 
     log.push(`[${ts()}] River SEO page warmed: ${river.name} → /rivers/${river.id}`);

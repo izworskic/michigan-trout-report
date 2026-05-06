@@ -5,6 +5,19 @@
       "schedule": "0 13 * * *"
     }
   ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "trout.chrisizworski.com"
+        }
+      ],
+      "destination": "https://michigantroutreport.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/river/:id",

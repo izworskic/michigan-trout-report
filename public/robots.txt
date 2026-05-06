@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://trout.chrisizworski.com/sitemap.xml
+Sitemap: https://michigantroutreport.com/sitemap.xml

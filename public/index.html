@@ -21,7 +21,7 @@
       "@type": "WebSite",
       "name": "Michigan Trout Stream Conditions",
       "alternateName": "Michigan Trout Report",
-      "url": "https://trout.chrisizworski.com",
+      "url": "https://michigantroutreport.com",
       "description": "Daily Michigan trout stream conditions with live USGS flow, water temperature, weather forecasts, fly and lure recommendations for 63+ rivers.",
       "creator": {"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com","sameAs":["https://www.wikidata.org/wiki/Q138283432","https://chrisizworski.com","https://troutdaily.chrisizworski.com","https://birding.chrisizworski.com","https://birdingdaily.chrisizworski.com","https://gazette.chrisizworski.com","https://lawn.chrisizworski.com","https://freighterviewfarms.com"]},
       "keywords": "Michigan trout fishing, Michigan trout stream conditions, MI trout report, trout fishing Michigan"
@@ -29,7 +29,7 @@
     {
       "@type": "WebApplication",
       "name": "Michigan Trout Report",
-      "url": "https://trout.chrisizworski.com",
+      "url": "https://michigantroutreport.com",
       "applicationCategory": "SportsApplication",
       "operatingSystem": "Any",
       "browserRequirements": "Requires JavaScript",
@@ -38,14 +38,14 @@
   ]
 }
 </script>
-<link rel="canonical" href="https://trout.chrisizworski.com/">
+<link rel="canonical" href="https://michigantroutreport.com/">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Michigan Trout Report",
   "description": "Live Michigan trout stream conditions for 63+ rivers with weather forecasts, fly and lure recommendations, and access point maps. Updated daily from USGS data.",
-  "url": "https://trout.chrisizworski.com",
+  "url": "https://michigantroutreport.com",
   "applicationCategory": "SportsApplication",
   "operatingSystem": "Any",
   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
@@ -60,11 +60,11 @@
 <meta property="og:title" content="Chris Izworski's Michigan Trout Report: Live Stream Conditions">
 <meta property="og:description" content="Live USGS flow, water temp, and weather for 63+ Michigan trout streams. Fly and lure recommendations that change with conditions. Free. Built by Chris Izworski.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://trout.chrisizworski.com/og-image.png">
+<meta property="og:image" content="https://michigantroutreport.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://trout.chrisizworski.com/og-image.png">
+<meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
 <style>
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -607,7 +607,7 @@ function shareRiver(e,id,name){
   const trend=r.trend;
   const tl=trend?` (${trendLabel(trend).toLowerCase()})`:'';
   const slug=SLUGS[id];
-  const url=slug?`https://trout.chrisizworski.com/stream/${slug}.html`:'https://trout.chrisizworski.com';
+  const url=slug?`https://michigantroutreport.com/stream/${slug}.html`:'https://michigantroutreport.com';
   const text=`${name}: ${rat?rat.label:''}${tl}${c.tempF!=null?' | '+c.tempF+'F':''}${c.flow!=null?' | '+c.flow+' cfs':''}\n${url}`;
   if(navigator.share){
     navigator.share({title:name+' Fishing Conditions',text:text,url:url}).catch(()=>{});

@@ -11,7 +11,7 @@ import { synthesizeReports } from '../../lib/synthesizer.js';
 import { findSimilarDays } from '../../lib/history.js';
 import { MICHIGAN_HATCHES } from '../../lib/hatches.js';
 
-const SITE       = 'https://trout.chrisizworski.com';
+const SITE       = 'https://michigantroutreport.com';
 const AUTHOR     = 'Chris Izworski';
 const AUTHOR_URL = 'https://chrisizworski.com';
 const DAILY      = 'https://troutdaily.chrisizworski.com';
