@@ -7,14 +7,14 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "trout.chrisizworski.com"
         }
       ],
-      "destination": "https://michigantroutreport.com/:path*",
+      "destination": "https://michigantroutreport.com/$1",
       "permanent": true
     }
   ],
