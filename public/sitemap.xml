@@ -110,4 +110,10 @@
   <url><loc>https://michigantroutreport.com/hatches/bwo-hatch.html</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://michigantroutreport.com/hatches/caddis-hatches-michigan.html</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://michigantroutreport.com/hatches/isonychia-slate-drake.html</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url>
+    <loc>https://michigantroutreport.com/chris-izworski/</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
