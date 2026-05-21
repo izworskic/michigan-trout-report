@@ -15,7 +15,6 @@ const SITE       = 'https://michigantroutreport.com';
 const AUTHOR     = 'Chris Izworski';
 const AUTHOR_URL = 'https://chrisizworski.com';
 const DAILY      = 'https://troutdaily.chrisizworski.com';
-const STREAM_CANONICAL = {"black-river-up": "black-river-upper-peninsula", "presque-isle-river": "presque-isle-river", "sturgeon-river-up": "sturgeon-river-upper-peninsula", "ontonagon-river": "ontonagon-river", "trap-rock-river": "trap-rock-river", "silver-river": "silver-river-michigan", "salmon-trout-river": "salmon-trout-river", "au-train-river": "au-train-river", "miners-river": "miners-river-michigan", "tahquamenon-river": "tahquamenon-river", "black-river-schoolcraft": "black-river-schoolcraft-county", "iron-river": "iron-river-michigan", "michigamme-river": "michigamme-river", "brule-river": "brule-river-michigan", "ausable": "ausable-river", "manistee": "manistee-river", "pere-marquette": "pere-marquette-river", "boardman": "boardman-river", "jordan": "jordan-river-michigan", "platte-river": "platte-river-michigan", "betsie-river": "betsie-river", "little-manistee": "little-manistee-river", "rifle-river": "rifle-river-michigan", "thunder-bay-river": "thunder-bay-river", "white-river": "white-river-michigan", "little-muskegon-river": "little-muskegon-river", "clam-river": "clam-river-michigan", "rogue-river": "rogue-river-michigan", "flat-river": "flat-river-michigan", "looking-glass-river": "looking-glass-river", "maple-river-lp": "maple-river-michigan", "au-gres-river": "au-gres-river", "escanaba-river": "escanaba-river", "ford-river": "ford-river-michigan", "cedar-river-up": "cedar-river-upper-peninsula", "salmon-trout-eb": "east-branch-salmon-trout-river", "cisco-branch-ontonagon": "cisco-branch-ontonagon", "menominee-river": "menominee-river-michigan", "chippewa-creek-evart": "chippewa-creek-evart", "bear-creek-muskegon": "bear-creek-muskegon", "east-branch-au-gres": "east-branch-au-gres-river", "dowagiac-river": "dowagiac-river-michigan", "augusta-creek": "augusta-creek-michigan", "red-cedar-river": "red-cedar-river-michigan", "chippewa-river-mp": "chippewa-river-michigan", "wolf-creek": "wolf-creek-michigan", "tittabawassee-river": "tittabawassee-river-michigan"};
 
 function makeRedis() {
   const url   = process.env.UPSTASH_REDIS_REST_URL;
@@ -37,7 +36,6 @@ function cfsLabel(cfs) {
 }
 
 function buildSEOPage(river, conditions, hatches) {
-  const canonUrl = STREAM_CANONICAL[river.id] ? `${SITE}/stream/${STREAM_CANONICAL[river.id]}.html` : `${SITE}/rivers/${river.id}`;
   const monthName = new Date().toLocaleString('en-US', { month: 'long' });
   const year      = new Date().getFullYear();
   const dateStr   = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -63,19 +61,19 @@ function buildSEOPage(river, conditions, hatches) {
       publisher: { '@type': 'Organization', name: 'Michigan Trout Report', url: SITE },
       about: { '@type': 'Place', name: river.name, description: river.notes },
       keywords: `${river.name}, michigan trout fishing, fly fishing michigan, ${river.species.join(', ')} trout, USGS stream conditions, ${AUTHOR}`,
-      mainEntityOfPage: `${canonUrl}`,
+      mainEntityOfPage: `${SITE}/rivers/${river.id}`,
     }, {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: AUTHOR, item: AUTHOR_URL },
         { '@type': 'ListItem', position: 2, name: 'Michigan Trout Report', item: SITE },
-        { '@type': 'ListItem', position: 3, name: river.name, item: `${canonUrl}` },
+        { '@type': 'ListItem', position: 3, name: river.name, item: `${SITE}/rivers/${river.id}` },
       ]
     }, {
       '@type': 'Dataset',
       name: `${river.name} Live Conditions`,
       description: `Real-time USGS gauge data for the ${river.name}`,
-      url: `${canonUrl}`,
+      url: `${SITE}/rivers/${river.id}`,
       creator: { '@type': 'Person', name: AUTHOR, url: AUTHOR_URL },
       variableMeasured: ['stream discharge', 'water temperature', 'gauge height'],
     }]
@@ -87,12 +85,12 @@ function buildSEOPage(river, conditions, hatches) {
 <title>${AUTHOR}: ${river.name} Fly Fishing Conditions ${monthName} ${year}: Michigan Trout Report</title>
 <meta name="description" content="${AUTHOR} reports live ${river.name} trout fishing conditions for ${monthName} ${year}. USGS flow data, water temperature, active hatches, and fly recommendations. Updated daily.">
 <meta name="author" content="${AUTHOR}">
-<link rel="canonical" href="${canonUrl}">
+<link rel="canonical" href="${SITE}/rivers/${river.id}">
 <link rel="author" href="${AUTHOR_URL}">
 <meta property="og:type" content="article">
 <meta property="og:title" content="${AUTHOR}: ${river.name} Conditions: ${monthName} ${year}">
 <meta property="og:description" content="Live USGS conditions, active hatches, and fly recommendations for the ${river.name}.">
-<meta property="og:url" content="${canonUrl}">
+<meta property="og:url" content="${SITE}/rivers/${river.id}">
 <meta property="og:site_name" content="Michigan Trout Report">
 <meta property="og:image" content="${SITE}/og-image.png">
 <meta property="article:author" content="${AUTHOR_URL}">
