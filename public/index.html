@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chris Izworski's Michigan Trout Report: Daily Stream Conditions, Flow, Temp & Fishing Report</title>
-<meta name="description" content="Michigan trout stream conditions updated daily. Live USGS flow, water temperature, and weather for 63+ rivers. AuSable, Manistee, Pere Marquette, Muskegon, and more. Free fly and lure recommendations. Built by Chris Izworski.">
+<title>Chris Izworski's Michigan Trout Report: Daily Stream Conditions & Flow</title>
+<meta name="description" content="Live Michigan trout stream conditions: USGS flow, water temp, and weather for 63+ rivers with daily fly and lure picks. Free, updated every morning.">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1a3a1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,47 +23,126 @@
       "alternateName": "Michigan Trout Report",
       "url": "https://michigantroutreport.com",
       "description": "Daily Michigan trout stream conditions with live USGS flow, water temperature, weather forecasts, fly and lure recommendations for 63+ rivers.",
-      "creator": {"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com","sameAs":["https://www.wikidata.org/wiki/Q138283432","https://chrisizworski.com","https://ausable.chrisizworski.com","https://daily.michigantroutreport.com","https://michiganbirdingreport.com","https://daily.michiganbirdingreport.com","https://gazette.chrisizworski.com","https://lawn.chrisizworski.com","https://freighterviewfarms.com","https://www.youtube.com/@izworskic"]},
-      "keywords": "Michigan trout fishing, Michigan trout stream conditions, MI trout report, trout fishing Michigan"
+      "creator": {
+        "@type": "Person",
+        "@id": "https://chrisizworski.com/#person",
+        "name": "Chris Izworski",
+        "url": "https://chrisizworski.com",
+        "sameAs": [
+          "https://www.wikidata.org/wiki/Q138283432",
+          "https://chrisizworski.com",
+          "https://ausable.chrisizworski.com",
+          "https://daily.michigantroutreport.com",
+          "https://michiganbirdingreport.com",
+          "https://daily.michiganbirdingreport.com",
+          "https://gazette.chrisizworski.com",
+          "https://lawn.chrisizworski.com",
+          "https://freighterviewfarms.com",
+          "https://www.youtube.com/@izworskic"
+        ]
+      },
+      "keywords": "Michigan trout fishing, Michigan trout stream conditions, MI trout report, trout fishing Michigan",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://michigantroutreport.com/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
     },
     {
       "@type": "WebApplication",
       "name": "Michigan Trout Report",
       "url": "https://michigantroutreport.com",
+      "description": "Live Michigan trout stream conditions for 63+ rivers with weather forecasts, fly and lure recommendations, and access point maps. Updated daily from USGS data.",
       "applicationCategory": "SportsApplication",
       "operatingSystem": "Any",
       "browserRequirements": "Requires JavaScript",
-      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Person",
+        "@id": "https://chrisizworski.com/#person",
+        "name": "Chris Izworski",
+        "url": "https://chrisizworski.com",
+        "sameAs": [
+          "https://www.wikidata.org/wiki/Q138283432",
+          "https://chrisizworski.com",
+          "https://ausable.chrisizworski.com",
+          "https://daily.michigantroutreport.com",
+          "https://michiganbirdingreport.com",
+          "https://daily.michiganbirdingreport.com",
+          "https://gazette.chrisizworski.com",
+          "https://lawn.chrisizworski.com",
+          "https://freighterviewfarms.com",
+          "https://www.youtube.com/@izworskic"
+        ]
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Michigan trout fishing",
+        "description": "Daily conditions for Michigan trout streams including the AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Rifle, Dowagiac, Escanaba, and 50+ more rivers."
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How often is the report updated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Conditions are scored every morning around 9am Eastern from live USGS gauge readings and National Weather Service forecasts. Flow and temperature figures on river pages refresh from USGS each time you open them."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What do the condition ratings mean?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each gauged river is rated Prime, Fishing Well, Fair, Tough, or Blown Out by comparing current flow and water temperature against that river's normal ranges. Green means go, amber means workable, red means stay home or pick another river."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where does the data come from?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Streamflow and water temperature come from USGS gauges. Weather comes from the National Weather Service. Ratings, fly picks, and lure picks are computed from those readings, not written by hand."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it cover spin fishing or just fly fishing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Both. Every gauged river gets fly recommendations and lure recommendations that change with conditions, so spin and bait anglers get the same daily read as fly anglers."
+          }
+        }
+      ]
     }
   ]
 }
 </script>
 <link rel="canonical" href="https://michigantroutreport.com/">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Michigan Trout Report",
-  "description": "Live Michigan trout stream conditions for 63+ rivers with weather forecasts, fly and lure recommendations, and access point maps. Updated daily from USGS data.",
-  "url": "https://michigantroutreport.com",
-  "applicationCategory": "SportsApplication",
-  "operatingSystem": "Any",
-  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-  "creator": {"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com","sameAs":["https://www.wikidata.org/wiki/Q138283432","https://chrisizworski.com","https://ausable.chrisizworski.com","https://daily.michigantroutreport.com","https://michiganbirdingreport.com","https://daily.michiganbirdingreport.com","https://gazette.chrisizworski.com","https://lawn.chrisizworski.com","https://freighterviewfarms.com","https://www.youtube.com/@izworskic"]},
-  "about": {
-    "@type": "Thing",
-    "name": "Michigan trout fishing",
-    "description": "Daily conditions for Michigan trout streams including the AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Rifle, Dowagiac, Escanaba, and 50+ more rivers."
-  }
-}
-</script>
+<link rel="preload" href="/api/generate" as="fetch">
+<link rel="preload" href="/water-bodies.json" as="fetch">
+
 <meta property="og:title" content="Chris Izworski's Michigan Trout Report: Live Stream Conditions">
 <meta property="og:description" content="Live USGS flow, water temp, and weather for 63+ Michigan trout streams. Fly and lure recommendations that change with conditions. Free. Built by Chris Izworski.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://michigantroutreport.com/">
+<meta property="og:site_name" content="Michigan Trout Report">
 <meta property="og:image" content="https://michigantroutreport.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Chris Izworski's Michigan Trout Report: Live Stream Conditions">
+<meta name="twitter:description" content="Live USGS flow, water temp, and weather for 63+ Michigan trout streams with daily fly and lure picks. Free.">
 <meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
 <style>
 
@@ -96,6 +175,28 @@ a { color:#2c5f2d; text-decoration:none; }
 .hero-stats { font-size:11px; color:#7ab87a; display:flex; gap:12px; border-top:1px solid rgba(255,255,255,.08); padding-top:7px; margin-top:4px; }
 .hero-stat span { color:rgba(255,255,255,.35); display:block; font-size:10px; text-transform:uppercase; letter-spacing:.4px; }
 .hero-empty { color:#5a9a5a; font-style:italic; font-size:13px; padding:12px 0; }
+
+/* Intro + persona quick starts */
+.intro { background:#fff; padding:12px 16px 2px; font-size:13px; color:#555; line-height:1.65; border-bottom:0; }
+.intro p { max-width:760px; margin:0; }
+.persona-bar { background:#fff; padding:10px 16px 12px; display:flex; flex-wrap:wrap; gap:6px 8px; align-items:center; border-bottom:1px solid #ddd8cc; }
+.persona-chip { border-left:4px solid #ccc; border-radius:4px 10px 10px 4px; font-size:12px; padding:5px 12px 5px 10px; }
+.persona-chip[data-p="best"]{border-left-color:#2e7d32}.persona-chip[data-p="brook"]{border-left-color:#1b5e20}
+.persona-chip[data-p="steelhead"]{border-left-color:#6a1b9a}.persona-chip[data-p="weekend"]{border-left-color:#f9a825}
+.persona-chip[data-p="near"]{border-left-color:#1565c0}
+.persona-chip[aria-pressed="true"]{background:#1a3a1a;color:#fff;border-color:#1a3a1a;border-left-width:4px}
+.persona-chip[data-p="best"][aria-pressed="true"]{border-left-color:#2e7d32}
+.persona-chip[data-p="brook"][aria-pressed="true"]{border-left-color:#4caf50}
+.persona-chip[data-p="steelhead"][aria-pressed="true"]{border-left-color:#ba68c8}
+.persona-chip[data-p="weekend"][aria-pressed="true"]{border-left-color:#f9a825}
+.persona-chip[data-p="near"][aria-pressed="true"]{border-left-color:#64b5f6}
+/* FAQ */
+.faq { background:#fff; border-top:1px solid #ddd8cc; padding:18px 16px 22px; }
+.faq h2 { font-size:15px; font-weight:normal; letter-spacing:.5px; color:#1a3a1a; margin:0 0 10px; }
+.faq details { max-width:760px; border-bottom:1px solid #f0ece4; padding:7px 0; }
+.faq summary { cursor:pointer; font-size:13px; color:#2c5f2d; list-style-position:inside; }
+.faq summary:hover { color:#1a3a1a; }
+.faq p { font-size:13px; color:#555; line-height:1.65; padding:6px 0 4px 18px; margin:0; }
 
 /* Brief */
 .brief { background:#fff; padding:12px 16px; border-bottom:1px solid #ddd8cc; font-size:13px; color:#444; line-height:1.7; max-width:720px; display:none; }
@@ -352,6 +453,19 @@ footer a { color:#4a7c4a; }
 <!-- AI brief -->
 <!-- Auto Ads are enabled via the script tag in <head>. Google places ads automatically. -->
 <!-- and replace AD_SLOT_HERE below. Responsive format adapts to any screen size. -->
+<div class="intro">
+  <p>Live conditions for 63+ Michigan trout streams, scored every morning from USGS gauges and National Weather Service forecasts. Pick how you fish below, or filter by region and species, then tap any river for flow, temperature, and today's fly and lure picks. Free, no account.</p>
+</div>
+
+<div class="persona-bar" role="group" aria-label="Quick starts by how you fish">
+  <span class="ctrl-lbl">Fish your way:</span>
+  <button class="chip persona-chip" data-p="best" aria-pressed="false" onclick="setPersona('best')">Best right now</button>
+  <button class="chip persona-chip" data-p="brook" aria-pressed="false" onclick="setPersona('brook')">Brook trout water</button>
+  <button class="chip persona-chip" data-p="steelhead" aria-pressed="false" onclick="setPersona('steelhead')">Steelhead rivers</button>
+  <button class="chip persona-chip" data-p="weekend" aria-pressed="false" onclick="setPersona('weekend')">This weekend</button>
+  <button class="chip persona-chip" data-p="near" aria-pressed="false" onclick="setPersona('near')">Near me</button>
+</div>
+
 <div class="brief" id="brief">
   <div class="brief-label">Today's Report</div>
   <div id="briefText"></div>
@@ -431,21 +545,21 @@ footer a { color:#4a7c4a; }
       <option value="CLP">Central LP</option>
     </select>
     <span class="ctrl-lbl" style="margin-left:10px">Species:</span>
-    <button class="chip on"  data-s="ALL"       onclick="setS('ALL')">All</button>
-    <button class="chip"     data-s="brook"     onclick="setS('brook')">Brook</button>
-    <button class="chip"     data-s="brown"     onclick="setS('brown')">Brown</button>
-    <button class="chip"     data-s="rainbow"   onclick="setS('rainbow')">Rainbow</button>
-    <button class="chip"     data-s="steelhead" onclick="setS('steelhead')">Steelhead</button>
+    <button class="chip on"  data-s="ALL"       aria-pressed="true"  onclick="setS('ALL')">All</button>
+    <button class="chip"     data-s="brook" aria-pressed="false"     onclick="setS('brook')">Brook</button>
+    <button class="chip"     data-s="brown" aria-pressed="false"     onclick="setS('brown')">Brown</button>
+    <button class="chip"     data-s="rainbow" aria-pressed="false"   onclick="setS('rainbow')">Rainbow</button>
+    <button class="chip"     data-s="steelhead" aria-pressed="false" onclick="setS('steelhead')">Steelhead</button>
   </div>
   <!-- Row 3: Near Me -->
   <div class="ctrl-row">
     <button class="chip" onclick="activateNearMe()" style="background:#e3f2fd;border-color:#90caf9;color:#1565c0">📍 Near Me</button>
     <span id="nearMeLabel" style="font-size:11px;color:#888"></span>
     <span id="nearMeChips" style="display:none;gap:4px">
-      <button class="chip nm-chip" data-h="1hr" onclick="setNearMe('1hr')">1 hr</button>
-      <button class="chip nm-chip" data-h="2hr" onclick="setNearMe('2hr')">2 hr</button>
-      <button class="chip nm-chip" data-h="3hr" onclick="setNearMe('3hr')">3 hr</button>
-      <button class="chip nm-chip" data-h="OFF" onclick="setNearMe('OFF')" style="color:#999">All</button>
+      <button class="chip nm-chip" aria-pressed="false" data-h="1hr" onclick="setNearMe('1hr')">1 hr</button>
+      <button class="chip nm-chip" aria-pressed="false" data-h="2hr" onclick="setNearMe('2hr')">2 hr</button>
+      <button class="chip nm-chip" aria-pressed="false" data-h="3hr" onclick="setNearMe('3hr')">3 hr</button>
+      <button class="chip nm-chip" aria-pressed="false" data-h="OFF" onclick="setNearMe('OFF')" style="color:#999">All</button>
     </span>
   </div>
   <!-- Row 4: Legend -->
@@ -496,6 +610,26 @@ footer a { color:#4a7c4a; }
   </div>
 </div>
 
+
+<section class="faq" id="faq">
+  <h2>Questions anglers ask</h2>
+  <details>
+    <summary>How often is the report updated?</summary>
+    <p>Conditions are scored every morning around 9am Eastern from live USGS gauge readings and National Weather Service forecasts. Flow and temperature figures on river pages refresh from USGS each time you open them.</p>
+  </details>
+  <details>
+    <summary>What do the condition ratings mean?</summary>
+    <p>Each gauged river is rated Prime, Fishing Well, Fair, Tough, or Blown Out by comparing current flow and water temperature against that river's normal ranges. Green means go, amber means workable, red means stay home or pick another river.</p>
+  </details>
+  <details>
+    <summary>Where does the data come from?</summary>
+    <p>Streamflow and water temperature come from USGS gauges. Weather comes from the National Weather Service. Ratings, fly picks, and lure picks are computed from those readings, not written by hand.</p>
+  </details>
+  <details>
+    <summary>Does it cover spin fishing or just fly fishing?</summary>
+    <p>Both. Every gauged river gets fly recommendations and lure recommendations that change with conditions, so spin and bait anglers get the same daily read as fly anglers.</p>
+  </details>
+</section>
 
 <footer>
   Michigan Trout Stream Conditions by <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Chris Izworski</a>
@@ -602,13 +736,13 @@ function nearestCity(lat,lon){let best=null,bestD=Infinity;for(const [c,[la,lo]]
 function setNearMe(hours){
   if(!_nearMeCity){activateNearMe();return;}
   const b=PROXIMITY[_nearMeCity];if(!b) return;
-  if(hours==='OFF'){_nearMeIds=null;document.querySelectorAll('.nm-chip').forEach(c=>c.classList.remove('nm-active'));renderList();return;}
+  if(hours==='OFF'){_nearMeIds=null;document.querySelectorAll('.nm-chip').forEach(c=>{c.classList.remove('nm-active');c.setAttribute('aria-pressed','false');});renderList();return;}
   let ids=[];
   if(hours==='1hr') ids=[...b['1hr']];
   else if(hours==='2hr') ids=[...b['1hr'],...b['2hr']];
   else ids=[...b['1hr'],...b['2hr'],...b['3hr']];
   _nearMeIds=new Set(ids);
-  document.querySelectorAll('.nm-chip').forEach(c=>c.classList.toggle('nm-active',c.dataset.h===hours));
+  document.querySelectorAll('.nm-chip').forEach(c=>{const on=c.dataset.h===hours;c.classList.toggle('nm-active',on);c.setAttribute('aria-pressed',on?'true':'false');});
   renderList();
 }
 function activateNearMe(){
@@ -807,8 +941,25 @@ function setS(v){
   document.querySelectorAll('[data-s]').forEach(b=>{
     const cls=v==='ALL'?'on':`on-${v}`;
     b.className='chip'+(b.dataset.s===v?' '+cls:'');
+    b.setAttribute('aria-pressed', b.dataset.s===v?'true':'false');
   });
   renderList();
+}
+
+// -- Persona quick starts -----------------------------------------------------
+function scrollToList(){const c=document.querySelector('.controls');if(c)c.scrollIntoView({behavior:'smooth'});}
+function setPersona(p){
+  document.querySelectorAll('.persona-chip').forEach(b=>b.setAttribute('aria-pressed', b.dataset.p===p?'true':'false'));
+  if(p!=='near') clearSearch();
+  if(p==='best'){ setR('ALL'); setS('ALL'); scrollToList(); }
+  else if(p==='brook'){ setS('brook'); scrollToList(); }
+  else if(p==='steelhead'){ setS('steelhead'); scrollToList(); }
+  else if(p==='weekend'){
+    const w=document.getElementById('weekendSection');
+    const go=()=>{ if(w && w.style.display!=='none') w.scrollIntoView({behavior:'smooth'}); else scrollToList(); };
+    if(w && w.style.display==='none' && typeof loadWeekend==='function'){ Promise.resolve(loadWeekend()).then(go).catch(go); } else go();
+  }
+  else if(p==='near'){ if(typeof activateNearMe==='function') activateNearMe(); }
 }
 
 // ── Modal (USGS rivers only) ──────────────────────────────────────────────────
@@ -1026,6 +1177,13 @@ async function load(){
     renderList();
     renderYourRivers();
     loadWeekend();
+
+    // Deep links: /?q=jordan and /?persona=brook
+    const _qp=new URLSearchParams(location.search);
+    const _q=_qp.get('q');
+    if(_q){const _in=document.getElementById('riverSearch');if(_in)_in.value=_q;setSearch(_q);}
+    const _pp=_qp.get('persona');
+    if(_pp) setPersona(_pp);
 
   }catch(e){
     document.getElementById('heroSub').textContent='Error loading data';
