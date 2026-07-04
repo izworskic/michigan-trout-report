@@ -7,14 +7,25 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/",
       "has": [
         {
           "type": "host",
           "value": "(?<sub>.*)\\.vercel\\.app"
         }
       ],
-      "destination": "https://michigantroutreport.com/:path*",
+      "destination": "https://michigantroutreport.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<sub>.*)\\.vercel\\.app"
+        }
+      ],
+      "destination": "https://michigantroutreport.com/:path",
       "permanent": true
     },
     {
@@ -115,5 +126,10 @@
       ]
     }
   ],
-  "$schema": "https://openapi.vercel.sh/vercel.json"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/cron.js": {
+      "maxDuration": 300
+    }
+  }
 }
