@@ -33,4 +33,9 @@ assert.ok(
   'dynamic river pages must not interpolate the full rating object',
 );
 
+assert.ok(
+  riverHandler.includes('trout:river-page:v2:${id}'),
+  'dynamic river page cache must be versioned when rendered HTML changes',
+);
+
 console.log('SEO checks passed.');
