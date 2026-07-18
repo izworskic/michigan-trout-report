@@ -203,7 +203,7 @@ export default async function handler(req, res) {
   // ── HTML SEO PAGE branch ────────────────────────────────────────
   if ((req.url || '').startsWith('/rivers/')) {
     const redis    = makeRedis();
-    const cacheKey = `trout:river-page:${id}`;
+    const cacheKey = `trout:river-page:v2:${id}`;
 
     if (redis) {
       try {
