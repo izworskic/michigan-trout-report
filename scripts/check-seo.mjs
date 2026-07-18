@@ -23,4 +23,14 @@ for (const path of ['/alerts.html', '/directory.html']) {
   assert.ok(sitemap.includes(`${canonicalHost}${path}`), `sitemap is missing ${path}`);
 }
 
+const riverHandler = readFileSync('api/river/[id].js', 'utf8');
+assert.ok(
+  riverHandler.includes('conditions?.rating?.label || null'),
+  'dynamic river pages must render the rating label instead of the rating object',
+);
+assert.ok(
+  !riverHandler.includes('conditions?.rating || null'),
+  'dynamic river pages must not interpolate the full rating object',
+);
+
 console.log('SEO checks passed.');
