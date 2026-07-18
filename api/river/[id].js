@@ -41,7 +41,7 @@ function buildSEOPage(river, conditions, hatches) {
   const dateStr   = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const flow      = cfsLabel(conditions?.cfs);
   const temp      = conditions?.tempC != null ? `${(conditions.tempC * 9/5 + 32).toFixed(1)}°F` : null;
-  const rating    = conditions?.rating || null;
+  const rating    = conditions?.rating?.label || null;
 
   const hatchRows = hatches.map(h => `<tr>
     <td style="padding:10px 12px;border-bottom:1px solid #eee;font-weight:600;color:#111;">${h.name}</td>
