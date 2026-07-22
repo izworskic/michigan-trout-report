@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michigan Salmon &amp; Steelhead Run Tracker: Live River Conditions</title>
+<meta name="description" content="Live tracker for Michigan&#x27;s fall salmon and steelhead run. USGS flow, water temp, and an honest run status for the Manistee, Pere Marquette, Muskegon, Au Sable, and more. Updated continuously.">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a3a1a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="canonical" href="https://michigantroutreport.com/salmon-run/">
+<meta property="og:title" content="Michigan Salmon &amp; Steelhead Run Tracker: Live River Conditions">
+<meta property="og:description" content="Live tracker for Michigan&#x27;s fall salmon and steelhead run. USGS flow, water temp, and an honest run status for the Manistee, Pere Marquette, Muskegon, Au Sable, and more. Updated continuously.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://michigantroutreport.com/salmon-run/">
+<meta property="og:image" content="https://michigantroutreport.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/salmon-run/#webpage","url":"https://michigantroutreport.com/salmon-run/","name":"Michigan Salmon & Steelhead Run Tracker: Live River Conditions","description":"Live tracker for Michigan's fall salmon and steelhead run. USGS flow, water temp, and an honest run status for the Manistee, Pere Marquette, Muskegon, Au Sable, and more. Updated continuously.","isPartOf":{"@type":"WebSite","name":"Michigan Trout Report","url":"https://michigantroutreport.com"},"about":{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com"}},{"@type":"ItemList","name":"Michigan salmon and steelhead rivers","numberOfItems":7,"itemListElement":[{"@type":"ListItem","position":1,"name":"Big Manistee River","url":"https://michigantroutreport.com/salmon-run/rivers/big-manistee-tippy-dam.html"},{"@type":"ListItem","position":2,"name":"Pere Marquette River","url":"https://michigantroutreport.com/salmon-run/rivers/pere-marquette.html"},{"@type":"ListItem","position":3,"name":"Muskegon River","url":"https://michigantroutreport.com/salmon-run/rivers/muskegon-croton-dam.html"},{"@type":"ListItem","position":4,"name":"Little Manistee River","url":"https://michigantroutreport.com/salmon-run/rivers/little-manistee.html"},{"@type":"ListItem","position":5,"name":"Platte River","url":"https://michigantroutreport.com/salmon-run/rivers/platte-river.html"},{"@type":"ListItem","position":6,"name":"White River","url":"https://michigantroutreport.com/salmon-run/rivers/white-river.html"},{"@type":"ListItem","position":7,"name":"Au Sable River","url":"https://michigantroutreport.com/salmon-run/rivers/au-sable-foote-dam.html"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Salmon & Steelhead Run","item":"https://michigantroutreport.com/salmon-run/"}]}]}
+</script>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #f5f2ec; color: #2c2c2c; line-height: 1.7; }
+  a { color: #2c5f2d; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: #1a3a1a; color: #f0ede6; padding: 16px 20px; border-bottom: 3px solid #4a7c4a; }
+  .header-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-link { color: #7ab87a; font-size: 13px; text-decoration: none; }
+  .back-link:hover { color: #fff; }
+  .site-name { font-size: 16px; font-weight: normal; }
+  .header-nav { display: flex; gap: 14px; font-size: 13px; }
+  .header-nav a { color: #7ab87a; }
+  .header-nav a:hover { color: #fff; text-decoration: none; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  .river-hero { background: #fff; border-bottom: 1px solid #ddd8cc; padding: 28px 0 24px; }
+  .river-meta-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .region-badge { font-size: 12px; color: #888; font-style: italic; }
+  .type-badge { font-size: 11px; background: #f0ece4; color: #666; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: .5px; }
+  .river-h1 { font-size: 30px; font-weight: normal; color: #1a3a1a; margin-bottom: 10px; line-height: 1.3; }
+  .species-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .species-tag { font-size: 11px; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: .3px; }
+
+  .conditions-widget { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 6px; padding: 16px 18px; margin-top: 18px; }
+  .widget-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 10px; }
+  .widget-loading { font-size: 13px; color: #aaa; font-style: italic; }
+  .widget-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .widget-emoji { font-size: 24px; }
+  .widget-label-text { font-size: 18px; font-weight: bold; }
+  .widget-tagline { font-size: 13px; opacity: .8; }
+  .widget-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+  .widget-stat { background: #fff; border-radius: 4px; padding: 8px 10px; border: 1px solid #e8e4dc; }
+  .widget-stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+  .widget-stat-value { font-size: 15px; color: #2c2c2c; }
+  .widget-stat-sub { font-size: 10px; color: #bbb; }
+  .flow-bar { background: #e8e4dc; border-radius: 3px; height: 5px; margin: 4px 0 2px; overflow: hidden; }
+  .flow-bar-fill { height: 100%; border-radius: 3px; }
+  .flow-bar-label { font-size: 10px; color: #bbb; }
+  .widget-actions { display: flex; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e8e4dc; }
+  .widget-btn { font-family: Georgia, serif; font-size: 12px; padding: 6px 14px; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; }
+  .widget-btn-primary { background: #1a3a1a; color: #fff; }
+  .widget-btn-primary:hover { background: #2c5f2d; text-decoration: none; }
+  .widget-btn-secondary { background: #f0ece4; color: #555; }
+  .widget-btn-secondary:hover { background: #e0dbd0; text-decoration: none; }
+
+  .content-section { background: #fff; margin-top: 1px; padding: 28px 0; border-bottom: 1px solid #e8e4dc; }
+  .content-section h2 { font-size: 20px; font-weight: normal; color: #1a3a1a; margin: 24px 0 12px; line-height: 1.35; }
+  .content-section h2:first-child { margin-top: 0; }
+  .content-section p { margin-bottom: 16px; font-size: 15px; color: #3a3a3a; }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .info-card { background: #f9f6f0; border: 1px solid #e0dbd0; border-radius: 5px; padding: 14px 16px; }
+  .info-card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #aaa; margin-bottom: 6px; }
+  .info-card-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+  .faq-section { background: #fff; padding: 28px 0; border-bottom: 1px solid #e8e4dc; }
+  .faq-section h2 { font-size: 20px; font-weight: normal; color: #1a3a1a; margin-bottom: 18px; }
+  .faq-item { margin-bottom: 18px; border-bottom: 1px solid #f0ece4; padding-bottom: 18px; }
+  .faq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .faq-q { font-size: 16px; color: #1a3a1a; margin-bottom: 8px; font-weight: normal; }
+  .faq-a { font-size: 14px; color: #555; line-height: 1.7; }
+
+  .related-section { background: #fff; padding: 24px 0; border-bottom: 1px solid #e8e4dc; }
+  .related-section h2 { font-size: 14px; font-weight: normal; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 14px; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .related-link { font-size: 13px; padding: 6px 14px; background: #f5f2ec; border: 1px solid #ddd8cc; border-radius: 4px; color: #1a3a1a; text-decoration: none; }
+  .related-link:hover { background: #e8e4dc; text-decoration: none; }
+
+  .data-attribution { padding: 20px 0; font-size: 12px; color: #bbb; }
+  .data-attribution a { color: #999; }
+
+  .site-footer { border-top: 1px solid #ddd8cc; padding: 18px 20px; text-align: center; font-size: 12px; color: #bbb; background: #fff; margin-top: 2px; }
+  .site-footer a { color: #4a7c4a; }
+
+  /* Phone */
+  @media (max-width: 520px) {
+    .river-h1 { font-size: 20px; }
+    .widget-stats { grid-template-columns: 1fr 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+    .header-nav { display: none; }
+    .species-row { gap: 3px; }
+  }
+  /* Small phones */
+  @media (max-width: 380px) {
+    .river-h1 { font-size: 18px; }
+    .widget-stats { grid-template-columns: 1fr; }
+    .river-meta-row { flex-direction: column; align-items: flex-start; }
+  }
+  /* Tablet */
+  @media (min-width: 521px) and (max-width: 1024px) {
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .container { padding: 0 24px; }
+  }
+  /* Safe area */
+
+  .site-header { padding-top: max(16px, env(safe-area-inset-top)); }
+
+  /* run tracker additions */
+  .runboard { width:100%; border-collapse:collapse; margin-top:6px; font-size:14px; background:#fff; border:1px solid #e0dbd0; border-radius:6px; overflow:hidden; }
+  .runboard th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.6px; color:#999; font-weight:normal; padding:9px 12px; border-bottom:1px solid #e8e4dc; background:#f9f6f0; }
+  .runboard td { padding:11px 12px; border-bottom:1px solid #f0ece4; vertical-align:middle; }
+  .runboard tr:last-child td { border-bottom:none; }
+  .runboard a { color:#1a3a1a; font-weight:bold; }
+  .status-pill { display:inline-block; font-size:11px; font-weight:bold; padding:3px 9px; border-radius:11px; white-space:nowrap; }
+  .num { font-variant-numeric:tabular-nums; }
+  .trend { font-size:11px; color:#999; }
+  .lede { font-size:17px; color:#3a3a3a; line-height:1.6; margin-bottom:16px; }
+  .callout { background:#f9f6f0; border-left:3px solid #4a7c4a; padding:12px 16px; margin:16px 0; font-size:14px; color:#444; border-radius:0 4px 4px 0; }
+  .cal-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  .cal-table th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:#999; font-weight:normal; padding:8px 10px; border-bottom:2px solid #e8e4dc; }
+  .cal-table td { padding:9px 10px; border-bottom:1px solid #f0ece4; font-size:13px; color:#444; }
+  .cal-table td:first-child { font-weight:bold; color:#1a3a1a; white-space:nowrap; }
+  .river-links { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+  .river-link-card { background:#f9f6f0; border:1px solid #e0dbd0; border-radius:5px; padding:12px 14px; text-decoration:none; display:block; }
+  .river-link-card:hover { background:#f0ece4; text-decoration:none; }
+  .river-link-card .rlc-name { font-size:15px; color:#1a3a1a; font-weight:bold; margin-bottom:2px; }
+  .river-link-card .rlc-sub { font-size:12px; color:#888; }
+  @media (max-width:520px){ .river-links{grid-template-columns:1fr;} .runboard th:nth-child(4),.runboard td:nth-child(4){display:none;} }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <a href="/" class="back-link">← Trout Report</a>
+      <span class="site-name">Salmon &amp; Steelhead Run</span>
+    </div>
+    <nav class="header-nav">
+      <a href="/salmon-run/">Run Board</a>
+      <a href="/salmon-run/when-is-the-salmon-run.html">Timing</a>
+      <a href="/salmon-run/steelhead.html">Steelhead</a>
+      <a href="/">Trout</a>
+    </nav>
+  </div>
+</header>
+<div class="river-hero"><div class="container">
+    <div class="river-meta-row"><span class="region-badge">Live USGS conditions</span><span class="type-badge">Fall Run</span></div>
+    <h1 class="river-h1">Michigan Salmon &amp; Steelhead Run Tracker</h1>
+    <p class="lede">The fall run is a moving target. Kings push on cooling water and fresh rain, coho stack in the small rivers, and steelhead follow them in and keep coming through spring. This board reads live USGS flow and water temperature on the rivers that matter, then gives an honest call on where each run stands right now.</p>
+    <p id="board-stamp" class="trend">Loading live USGS readings...</p>
+    <table class="runboard"><thead><tr><th>River</th><th>Run Status</th><th>Flow</th><th>Water Temp</th></tr></thead><tbody id="runboard-body"><tr id="row-big-manistee-tippy-dam"><td><a href="/salmon-run/rivers/big-manistee-tippy-dam.html">Big Manistee River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-pere-marquette"><td><a href="/salmon-run/rivers/pere-marquette.html">Pere Marquette River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-muskegon-croton-dam"><td><a href="/salmon-run/rivers/muskegon-croton-dam.html">Muskegon River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-little-manistee"><td><a href="/salmon-run/rivers/little-manistee.html">Little Manistee River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-platte-river"><td><a href="/salmon-run/rivers/platte-river.html">Platte River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-white-river"><td><a href="/salmon-run/rivers/white-river.html">White River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-au-sable-foote-dam"><td><a href="/salmon-run/rivers/au-sable-foote-dam.html">Au Sable River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr></tbody></table>
+    <p class="trend" style="margin-top:8px">Run status is our read from the calendar, water temperature, and the 7-day flow trend. It is a starting point, not a guarantee. Tap any river for the full report.</p>
+    </div></div>
+    <div class="content-section"><div class="container">
+    <h2>How to read the run</h2>
+    <p>Three things move Great Lakes salmon out of the lake and up a river: day length, water temperature, and flow. Day length starts the clock in late summer. Water temperature is the trigger, and chinook in particular get moving as river temperatures fall out of the 60s and into the 50s. Flow is the pull: a good rain that bumps the river sends a fresh wave of fish upstream, which is why the best fishing so often follows a fall storm.</p>
+    <p>That is what this board watches. When a river reads warm and low in early September, fish are staging at the mouth and waiting. When it cools into the 50s and the flow ticks up, it is time to go. Steelhead run colder and later, staying active into the 40s, which is why they carry the fishery through winter and peak again in spring.</p>
+    <div class="callout">New to the run, or planning a trip? Start with <a href="/salmon-run/when-is-the-salmon-run.html">when the Michigan salmon run happens</a>, then check the live board above the week you plan to go.</div>
+    <h2>The rivers</h2>
+    <div class="river-links"><a class="river-link-card" href="/salmon-run/rivers/big-manistee-tippy-dam.html"><div class="rlc-name">Big Manistee River</div><div class="rlc-sub">Lake Michigan &middot; Chinook, Coho, Steelhead</div></a><a class="river-link-card" href="/salmon-run/rivers/pere-marquette.html"><div class="rlc-name">Pere Marquette River</div><div class="rlc-sub">Lake Michigan &middot; Chinook, Coho, Steelhead</div></a><a class="river-link-card" href="/salmon-run/rivers/muskegon-croton-dam.html"><div class="rlc-name">Muskegon River</div><div class="rlc-sub">Lake Michigan &middot; Chinook, Coho, Steelhead</div></a><a class="river-link-card" href="/salmon-run/rivers/little-manistee.html"><div class="rlc-name">Little Manistee River</div><div class="rlc-sub">Lake Michigan &middot; Chinook, Coho, Steelhead</div></a><a class="river-link-card" href="/salmon-run/rivers/platte-river.html"><div class="rlc-name">Platte River</div><div class="rlc-sub">Lake Michigan &middot; Coho, Chinook</div></a><a class="river-link-card" href="/salmon-run/rivers/white-river.html"><div class="rlc-name">White River</div><div class="rlc-sub">Lake Michigan &middot; Chinook, Steelhead</div></a><a class="river-link-card" href="/salmon-run/rivers/au-sable-foote-dam.html"><div class="rlc-name">Au Sable River</div><div class="rlc-sub">Lake Huron &middot; Steelhead, Chinook</div></a></div>
+    </div></div>
+    <div class="related-section"><div class="container"><h2>Around the network</h2><div class="related-links">
+    <a class="related-link" href="/">Michigan Trout Report</a>
+    <a class="related-link" href="/salmon-run/steelhead.html">Steelhead Run Timing</a>
+    <a class="related-link" href="https://ausable.chrisizworski.com" target="_blank" rel="noopener">Au Sable Field Map</a>
+    <a class="related-link" href="https://chrisizworski.com/great-lakes-buoys/" target="_blank" rel="noopener">Great Lakes Buoys</a>
+    <a class="related-link" href="https://weekend.chrisizworski.com" target="_blank" rel="noopener">Michigan Outdoor Weekend</a>
+    </div></div></div>
+    <div class="container"><div class="data-attribution">Live data from <a href="https://dashboard.waterdata.usgs.gov/" target="_blank" rel="noopener">USGS Water Data</a>. Independent project by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>. Check current <a href="https://www.michigan.gov/dnr/things-to-do/fishing" target="_blank" rel="noopener">Michigan DNR regulations</a> before fishing.</div></div>
+    <footer class="site-footer">
+  Live USGS river data &nbsp;·&nbsp;
+  <a href="/salmon-run/">Salmon &amp; Steelhead Run</a> &nbsp;·&nbsp;
+  <a href="/">Michigan Trout Report</a> &nbsp;·&nbsp;
+  Built by <a href="https://chrisizworski.com" target="_blank" rel="noopener">Chris Izworski</a>
+  <div class="network-footer" style="max-width:900px;margin:0.75rem auto 0;padding-top:0.75rem;border-top:1px solid #ddd8cc;font-size:11px;color:#888;text-align:center;line-height:1.7">
+    More from Chris Izworski:
+    <a href="https://michiganbirdingreport.com" target="_blank" rel="noopener">Michigan Birding Report</a> &nbsp;·&nbsp;
+    <a href="https://greatlakeslevels.org" target="_blank" rel="noopener">Great Lakes Lake Levels</a> &nbsp;·&nbsp;
+    <a href="https://ausable.chrisizworski.com" target="_blank" rel="noopener">Au Sable Field Map</a> &nbsp;·&nbsp;
+    <a href="https://chrisizworski.com/tools/" target="_blank" rel="noopener">All Michigan Tools</a>
+  </div>
+</footer>
+    <script src="/salmon-run/salmon-run.js"></script>
+    <script>renderBoard();</script>
+    </body></html>

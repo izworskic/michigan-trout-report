@@ -118,4 +118,14 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url><loc>https://michigantroutreport.com/salmon-run/</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/when-is-the-salmon-run.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/steelhead.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/big-manistee-tippy-dam.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/pere-marquette.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/muskegon-croton-dam.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/little-manistee.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/platte-river.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/white-river.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://michigantroutreport.com/salmon-run/rivers/au-sable-foote-dam.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
