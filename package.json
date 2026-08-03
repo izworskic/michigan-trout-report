@@ -4,7 +4,7 @@
   "description": "Daily Michigan trout stream conditions: powered by USGS live data and AI interpretation",
   "type": "module",
   "scripts": {
-    "test": "node scripts/check-seo.mjs"
+    "test": "node scripts/check-seo.mjs && node scripts/check-cron-reliability.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

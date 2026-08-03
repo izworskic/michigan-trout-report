@@ -1,4 +1,5 @@
-// Daily cron: 8am CT (13:00 UTC), set in vercel.json
+// Daily cron: 09:00 UTC, set in vercel.json. On Vercel Hobby this means one
+// invocation during the 4-5am EST or 5-6am EDT hour, ahead of the morning read.
 // Fetches USGS data, generates AI brief, caches to Redis.
 // Also fetches guide reports and stores daily history snapshots.
 
@@ -177,6 +178,35 @@ function buildSchemaByline(html, river) {
   return html.replace(/(<\/h1>)/i, `$1\n${byline}`);
 }
 
+export function michiganDateKey(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Detroit',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const value = type => parts.find(part => part.type === type)?.value;
+  return `${value('year')}-${value('month')}-${value('day')}`;
+}
+
+export function isRealTodayPost(post, dateKey = michiganDateKey()) {
+  if (post?.status !== 'publish' || !String(post?.date || '').startsWith(dateKey)) return false;
+  const words = String(post?.content || '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean);
+  return words.length >= 250;
+}
+
+async function findTodayWordPressPost(log) {
+  try {
+    const response = await fetch(`${WP_API_BASE}/posts/?number=5&fields=ID,date,title,URL,content,status`);
+    if (!response.ok) throw new Error(`WordPress lookup HTTP ${response.status}`);
+    const posts = (await response.json())?.posts || [];
+    return posts.find(post => isRealTodayPost(post)) || null;
+  } catch (error) {
+    log.push(`[${new Date().toISOString()}] Stream post: WordPress dedupe lookup failed (continuing): ${error.message}`);
+    return null;
+  }
+}
+
 async function runStreamPost(r, log) {
   const ts = () => new Date().toISOString();
   try {
@@ -187,8 +217,18 @@ async function runStreamPost(r, log) {
       const alreadyPublished = await r.get(todayKey);
       if (alreadyPublished) {
         log.push(`[${ts()}] Stream post: already published today (${alreadyPublished}), skipping`);
-        return;
+        return { status: 'already-published', url: alreadyPublished };
       }
+    }
+
+    // A separate GitHub Actions publisher is the safety net. Check the shared
+    // WordPress destination too, so whichever publisher wins prevents a
+    // cross-system duplicate even if Redis was unavailable to the other one.
+    const existingWordPressPost = await findTodayWordPressPost(log);
+    if (existingWordPressPost) {
+      if (r) await r.set(todayKey, existingWordPressPost.URL || String(existingWordPressPost.ID), { ex: 7 * 24 * 60 * 60 });
+      log.push(`[${ts()}] Stream post: real WordPress report already exists today, skipping`);
+      return { status: 'already-published', url: existingWordPressPost.URL || '' };
     }
 
     // Pick next river in rotation
@@ -198,12 +238,11 @@ async function runStreamPost(r, log) {
       const stored = await r.get(key);
       idx = stored !== null && stored !== undefined ? (parseInt(stored, 10) + 1) % GAUGED_RIVERS.length : 0;
       if (isNaN(idx) || idx < 0) idx = 0;
-      await r.set(key, String(idx));
     }
     const river = GAUGED_RIVERS[idx];
     if (!river) {
       log.push(`[${ts()}] Stream post: no river at index ${idx}, skipping`);
-      return;
+      return { status: 'failed', error: `No river at rotation index ${idx}` };
     }
     log.push(`[${ts()}] Stream post: ${river.name} (index ${idx})`);
 
@@ -272,6 +311,9 @@ async function runStreamPost(r, log) {
       body: JSON.stringify({ title, content: body, status: 'publish', tags: tags.join(','), format: 'standard' }),
     });
     const wp = await wpRes.json();
+    if (!wpRes.ok || !wp?.URL) {
+      throw new Error(`WordPress publish HTTP ${wpRes.status}: ${wp?.error || wp?.message || 'missing post URL'}`);
+    }
     log.push(`[${ts()}] Stream post published: ${wp.URL || wp.error || 'unknown'}`);
 
     // Mark today as published so a repeat cron run won't duplicate.
@@ -279,7 +321,8 @@ async function runStreamPost(r, log) {
     if (r && wp && wp.URL) {
       try {
         await r.set(todayKey, wp.URL, { ex: 7 * 24 * 60 * 60 });
-      } catch(e) { /* non-fatal */ }
+        await r.set(key, String(idx));
+      } catch(e) { log.push(`[${ts()}] Stream post state write failed (non-fatal): ${e.message}`); }
     }
 
     // Build the canonical troutdaily URL for the new post
@@ -308,8 +351,10 @@ async function runStreamPost(r, log) {
         log.push(`[${ts()}] Google sitemap pinged`);
       } catch(e) {}
     }
+    return { status: 'published', url: wp.URL, postId: wp.ID, slug: wp.slug };
   } catch(e) {
-    log.push(`[${ts()}] Stream post error (non-fatal): ${e.message}`);
+    log.push(`[${ts()}] Stream post error: ${e.message}`);
+    return { status: 'failed', error: e.message };
   }
 }
 
@@ -579,8 +624,9 @@ export default async function handler(req, res) {
       log.push(`[${ts()}] Alert send error (non-fatal): ${e.message}`);
     }
 
-    // Run daily stream post for Michigan Trout Daily (non-fatal)
-    await runStreamPost(r, log);
+    // Run the reader-facing Michigan Trout Daily post. Unlike guide-report and
+    // cache-warming work, a failed daily post must make the cron visibly fail.
+    const streamPost = await runStreamPost(r, log);
 
     // On Sundays, also publish a weekly Michigan-wide overview
     const isSunday = new Date().getUTCDay() === 0;
@@ -593,10 +639,18 @@ export default async function handler(req, res) {
     // Warm daily river SEO page (non-fatal)
     await runRiverPage(r, log);
 
-    return res.status(200).json({ success: true, log });
+    if (streamPost?.status === 'failed') {
+      return res.status(500).json({
+        success: false,
+        error: `Michigan Trout Daily publish failed: ${streamPost.error}`,
+        streamPost,
+        log,
+      });
+    }
+
+    return res.status(200).json({ success: true, streamPost, log });
   } catch(e) {
     log.push(`[${ts()}] ERROR: ${e.message}`);
     return res.status(500).json({ success: false, error: e.message, log });
   }
 }
-
