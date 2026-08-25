@@ -3,3 +3,4 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://michigantroutreport.com/sitemap.xml
+Sitemap: https://michigantroutreport.com/sitemap-authored.xml
