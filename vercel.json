@@ -43,7 +43,7 @@
   ],
   "rewrites": [
     { "source": "/api/river/:id", "destination": "/api/river/[id]" },
-    { "source": "/rivers/:id", "destination": "/api/river/[id]" },
+    { "source": "/rivers/:id", "destination": "/api/river-page?id=:id" },
     { "source": "/api/weekend", "destination": "/api/weekend" },
     { "source": "/api/recommend", "destination": "/api/recommend" },
     { "source": "/api/create-checkout", "destination": "/api/create-checkout" },
