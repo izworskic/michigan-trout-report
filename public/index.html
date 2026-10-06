@@ -13,8 +13,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<script type="application/ld+json">
-{
+<script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -27,7 +26,7 @@
         "@type": "Person",
         "@id": "https://chrisizworski.com/#person",
         "name": "Chris Izworski",
-        "url": "https://chrisizworski.com/chris-izworski/",
+        "url": "https://chrisizworski.com/",
         "sameAs": [
           "https://www.wikidata.org/wiki/Q138283432",
           "https://chrisizworski.com",
@@ -49,7 +48,8 @@
           "urlTemplate": "https://michigantroutreport.com/?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
-      }
+      },
+      "publisher": {"@id": "https://chrisizworski.com/#person"}
     },
     {
       "@type": "WebApplication",
@@ -68,7 +68,7 @@
         "@type": "Person",
         "@id": "https://chrisizworski.com/#person",
         "name": "Chris Izworski",
-        "url": "https://chrisizworski.com/chris-izworski/",
+        "url": "https://chrisizworski.com/",
         "sameAs": [
           "https://www.wikidata.org/wiki/Q138283432",
           "https://chrisizworski.com",
@@ -86,6 +86,12 @@
         "@type": "Thing",
         "name": "Michigan trout fishing",
         "description": "Daily conditions for Michigan trout streams including the AuSable, Manistee, Pere Marquette, Muskegon, Boardman, Jordan, Rifle, Dowagiac, Escanaba, and 50+ more rivers."
+      },
+      "author": {
+        "@id": "https://chrisizworski.com/#person"
+      },
+      "publisher": {
+        "@id": "https://chrisizworski.com/#person"
       }
     },
     {
@@ -126,8 +132,7 @@
       ]
     }
   ]
-}
-</script>
+}</script>
 <link rel="canonical" href="https://michigantroutreport.com/">
 <link rel="author" href="https://chrisizworski.com/chris-izworski/">
 <link rel="preload" href="/api/generate" as="fetch">
@@ -643,7 +648,7 @@ footer a { color:#4a7c4a; }
 </section>
 
 <footer>
-  Michigan Trout Stream Conditions by <a href="https://chrisizworski.com/michigan-trout-streams/" target="_blank" rel="noopener">Chris Izworski</a>
+  Michigan Trout Stream Conditions by <a href="https://chrisizworski.com/chris-izworski/" target="_blank" rel="noopener">Chris Izworski</a>
   &nbsp;·&nbsp; Data: <a href="https://waterservices.usgs.gov" target="_blank" rel="noopener">USGS</a> + <a href="https://www.weather.gov" target="_blank" rel="noopener">NWS</a>
   &nbsp;·&nbsp; Updated daily
   &nbsp;·&nbsp; <a href="/map.html">Stream Map</a>

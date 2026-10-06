@@ -19,7 +19,9 @@
   "url": "https://michigantroutreport.com/map.html",
   "applicationCategory": "SportsApplication",
   "operatingSystem": "Any",
-  "creator": {"@type": "Person", "name": "Chris Izworski", "url": "https://chrisizworski.com"}
+  "creator": {"@type": "Person", "@id": "https://chrisizworski.com/#person", "name": "Chris Izworski", "url": "https://chrisizworski.com/"},
+  "author": {"@id": "https://chrisizworski.com/#person"},
+  "publisher": {"@id": "https://chrisizworski.com/#person"}
 }
 </script>
 <link rel="manifest" href="/manifest.json">
@@ -170,13 +172,12 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 <div class="hdr">
   <div class="hdr-left">
     <a href="/" class="back">← All Rivers</a>
-    <span class="hdr-title">Michigan Trout Map</span>
+    <h1 class="hdr-title" style="margin:0">Michigan Trout Stream Map</h1>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
     <span class="hdr-status" id="hdrStatus">Loading...</span>
     <nav class="hdr-nav">
-      
-      
+      <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a>
     </nav>
   </div>
 </div>

@@ -13,7 +13,9 @@ import { MICHIGAN_HATCHES } from '../../lib/hatches.js';
 
 const SITE       = 'https://michigantroutreport.com';
 const AUTHOR     = 'Chris Izworski';
-const AUTHOR_URL = 'https://chrisizworski.com';
+const AUTHOR_URL = 'https://chrisizworski.com/chris-izworski/';
+const PERSON_ID  = 'https://chrisizworski.com/#person';
+const PERSON_URL = 'https://chrisizworski.com/';
 const DAILY      = 'https://troutdaily.chrisizworski.com';
 
 function makeRedis() {
@@ -57,7 +59,7 @@ function buildSEOPage(river, conditions, hatches) {
       description: `Live ${river.name} trout fishing conditions. USGS flow ${flow || 'data'}, water temperature, active hatches, and fly recommendations for ${monthName} ${year}. By ${AUTHOR}.`,
       dateModified: new Date().toISOString(),
       datePublished: new Date().toISOString(),
-      author: { '@type': 'Person', name: AUTHOR, url: AUTHOR_URL, sameAs: [AUTHOR_URL, DAILY, 'https://www.wikidata.org/wiki/Q138283432'] },
+      author: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL, sameAs: [AUTHOR_URL, DAILY, 'https://www.wikidata.org/wiki/Q138283432'] },
       publisher: { '@type': 'Organization', name: 'Michigan Trout Report', url: SITE },
       about: { '@type': 'Place', name: river.name, description: river.notes },
       keywords: `${river.name}, michigan trout fishing, fly fishing michigan, ${river.species.join(', ')} trout, USGS stream conditions, ${AUTHOR}`,
@@ -74,7 +76,8 @@ function buildSEOPage(river, conditions, hatches) {
       name: `${river.name} Live Conditions`,
       description: `Real-time USGS gauge data for the ${river.name}`,
       url: `${SITE}/rivers/${river.id}`,
-      creator: { '@type': 'Person', name: AUTHOR, url: AUTHOR_URL },
+      creator: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL, sameAs: [AUTHOR_URL, DAILY, 'https://www.wikidata.org/wiki/Q138283432'] },
+      publisher: { '@id': PERSON_ID },
       variableMeasured: ['stream discharge', 'water temperature', 'gauge height'],
     }]
   });
