@@ -26,7 +26,9 @@ function walk(value, visit) {
 }
 
 const files = htmlFiles('public');
+let contentDocumentCount = 0;
 let contentSchemaCount = 0;
+const publishingTypes = ['Article', 'WebPage', 'WebApplication', 'Dataset', 'WebSite', 'ProfilePage', 'TouristTrip'];
 for (const file of files) {
   const html = readFileSync(file, 'utf8');
   const nodes = [];
@@ -46,16 +48,20 @@ for (const file of files) {
   });
   const contentNodes = nodes.filter((node) => {
     const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
-    return ['Article', 'WebPage', 'WebApplication'].some((type) => types.includes(type));
+    return publishingTypes.some((type) => types.includes(type));
   });
-  contentSchemaCount += contentNodes.length;
+  if (contentNodes.length > 0) {
+    contentDocumentCount += 1;
+    contentSchemaCount += contentNodes.length;
+    assert.ok(personDefinition, `${file}: content document must include the full canonical Chris Person definition`);
+  }
   for (const node of contentNodes) {
     const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
-    assert.ok(personDefinition, `${file}: content schema must include the full canonical Chris Person definition`);
-    assert.equal(node.author?.['@id'], person, `${file}: content author must reference the canonical Person`);
-    assert.ok(node.publisher, `${file}: content schema must declare a publisher`);
-    if (types.includes('WebPage') || types.includes('WebApplication')) {
-      assert.equal(node.publisher['@id'], person, `${file}: WebPage/WebApplication publisher must reference the canonical Person`);
+    const creator = node.author || node.creator;
+    assert.equal(creator?.['@id'], person, `${file}: primary content publisher must identify canonical Chris as author or creator`);
+    assert.ok(node.publisher, `${file}: primary content publisher node must declare an actual publisher`);
+    if (!types.includes('Article')) {
+      assert.equal(node.publisher['@id'], person, `${file}: owned page, site, dataset, or profile publisher must reference the canonical Person`);
     }
   }
   assert.ok(
@@ -83,4 +89,6 @@ assert.equal(salmonPage.author['@id'], person, 'salmon WebPage author must refer
 assert.equal(salmonPage.publisher['@id'], person, 'salmon WebPage publisher must reference the canonical Person');
 assert.ok(salmonGraph.some((node) => node['@id'] === person && node.url === personUrl), 'salmon graph must define the canonical Person');
 
-console.log(`Creator entity checks passed: ${contentSchemaCount} content schema nodes across ${files.length} HTML pages.`);
+assert.equal(contentDocumentCount, 99, 'all 99 current Trout Report content documents must have a checked primary publishing node');
+assert.equal(contentSchemaCount, 124, 'all primary publishing nodes across current Trout Report content documents must be checked');
+console.log(`Creator entity checks passed: ${contentSchemaCount} primary publishing nodes across ${contentDocumentCount} content documents (${files.length} HTML pages).`);
