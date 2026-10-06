@@ -26,6 +26,7 @@ function walk(value, visit) {
 }
 
 const files = htmlFiles('public');
+const dynamicRiverPage = readFileSync('api/river/[id].js', 'utf8');
 let contentDocumentCount = 0;
 let contentSchemaCount = 0;
 const publishingTypes = ['Article', 'WebPage', 'WebApplication', 'Dataset', 'WebSite', 'ProfilePage', 'TouristTrip'];
@@ -91,4 +92,7 @@ assert.ok(salmonGraph.some((node) => node['@id'] === person && node.url === pers
 
 assert.equal(contentDocumentCount, 99, 'all 99 current Trout Report content documents must have a checked primary publishing node');
 assert.equal(contentSchemaCount, 124, 'all primary publishing nodes across current Trout Report content documents must be checked');
+assert.ok(dynamicRiverPage.includes("publisher: { '@id': PERSON_ID }"), 'dynamic river Dataset must name the canonical publisher');
+assert.ok(dynamicRiverPage.includes("creator: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL"), 'dynamic river Dataset creator must define the canonical Person');
+assert.ok(dynamicRiverPage.includes("author: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL"), 'dynamic river Article author must define the canonical Person');
 console.log(`Creator entity checks passed: ${contentSchemaCount} primary publishing nodes across ${contentDocumentCount} content documents (${files.length} HTML pages).`);
