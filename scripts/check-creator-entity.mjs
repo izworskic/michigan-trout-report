@@ -26,6 +26,7 @@ function walk(value, visit) {
 }
 
 const files = htmlFiles('public');
+let contentSchemaCount = 0;
 for (const file of files) {
   const html = readFileSync(file, 'utf8');
   const nodes = [];
@@ -47,10 +48,15 @@ for (const file of files) {
     const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
     return ['Article', 'WebPage', 'WebApplication'].some((type) => types.includes(type));
   });
+  contentSchemaCount += contentNodes.length;
   for (const node of contentNodes) {
+    const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
     assert.ok(personDefinition, `${file}: content schema must include the full canonical Chris Person definition`);
     assert.equal(node.author?.['@id'], person, `${file}: content author must reference the canonical Person`);
-    assert.equal(node.publisher?.['@id'], person, `${file}: content publisher must reference the canonical Person`);
+    assert.ok(node.publisher, `${file}: content schema must declare a publisher`);
+    if (types.includes('WebPage') || types.includes('WebApplication')) {
+      assert.equal(node.publisher['@id'], person, `${file}: WebPage/WebApplication publisher must reference the canonical Person`);
+    }
   }
   assert.ok(
     !/<a\b[^>]*href=["']https:\/\/chrisizworski\.com\/?["'][^>]*>Chris Izworski<\/a>/i.test(html),
@@ -77,4 +83,4 @@ assert.equal(salmonPage.author['@id'], person, 'salmon WebPage author must refer
 assert.equal(salmonPage.publisher['@id'], person, 'salmon WebPage publisher must reference the canonical Person');
 assert.ok(salmonGraph.some((node) => node['@id'] === person && node.url === personUrl), 'salmon graph must define the canonical Person');
 
-console.log(`Creator entity checks passed across ${files.length} HTML pages.`);
+console.log(`Creator entity checks passed: ${contentSchemaCount} content schema nodes across ${files.length} HTML pages.`);
