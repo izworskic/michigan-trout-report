@@ -78,7 +78,13 @@ const salmon = readFileSync('public/salmon-run/index.html', 'utf8');
 assert.ok(home.includes(`<link rel="author" href="${profile}">`), 'homepage must expose the canonical Chris Izworski profile');
 assert.ok(home.includes(`href="${profile}" target="_blank" rel="noopener">Chris Izworski</a>`), 'homepage must show a visible profile-linked creator credit');
 assert.ok(author.includes(`"@id": "${person}"`), 'author page must describe the canonical Person entity');
-assert.ok(author.includes(`"mainEntity": { "@id": "${person}" }`), 'ProfilePage must point at the canonical Person entity');
+const authorNodes = [];
+for (const block of jsonLd(author)) walk(block, (node) => authorNodes.push(node));
+const profilePage = authorNodes.find((node) => {
+  const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
+  return types.includes('ProfilePage');
+});
+assert.equal(profilePage?.mainEntity?.['@id'], person, 'ProfilePage must point at the canonical Person entity');
 assert.ok(!author.includes(localPerson), 'author page must not mint a second local Person identity');
 assert.ok(map.includes('<h1 class="hdr-title"'), 'map must start with a readable h1');
 assert.ok(map.includes(`href="${profile}">Built by Chris Izworski</a>`), 'map must show a visible profile-linked creator credit');
