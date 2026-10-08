@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/inject-ga4.mjs && node scripts/inject-network-ads.mjs public",
+  "buildCommand": "node scripts/social-metadata.mjs --check && node scripts/inject-ga4.mjs && node scripts/inject-network-ads.mjs public",
   "crons": [
     {
       "path": "/api/cron",
