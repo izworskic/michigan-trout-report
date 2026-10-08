@@ -26,7 +26,13 @@ Built by [Chris Izworski](https://chrisizworski.com): Bay City, Michigan.
 | 🟠 **Tough** | Fish are off. Long leader, small fly. |
 | 🔴 **Blown Out** | Stay home. Fish another day. |
 
-Rating is based on flow (% of seasonal median), water temperature, and gage height: from USGS Water Services real-time data.
+The rating combines flow as a percentage of the station's daily historical median with water-temperature categories. Gauge height, turbidity, and dissolved oxygen are additional observations where available. Ratings are planning heuristics, not USGS recommendations or predictions of catches. The [report methodology](https://michigantroutreport.com/how-to-read-michigan-trout-water/#report-methodology) explains freshness limits, missing inputs, and the AI-written brief.
+
+## Page metadata
+
+Each indexable static page needs its own title, description, and absolute HTTPS canonical. After adding or editing pages, run `npm run metadata:sync`, review and commit the resulting HTML, then run `npm test`. The sync command fills missing social fields from existing editorial values and copies an existing social image when available. It preserves explicit social values, article/profile types, canonical URLs, and page content; it does not invent images or refresh sitemap dates.
+
+The complete test gate and production build reject missing, blank, duplicated, or inconsistent social metadata. Intentional noindex documents are excluded. Dynamic river pages already supply their social metadata in the server-rendered template.
 
 ## Stack
 
