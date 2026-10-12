@@ -1,14 +1,12 @@
 // GET /api/weather/[id]
-// Returns NWS forecast for a river location, cached 2 hours in Redis.
+// Returns NWS forecast for a river location, cached 2 hours in private state.
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../../lib/tool-state.cjs';
 import { fetchRiverWeather } from '../../lib/weather.js';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 const CACHE_TTL = 2 * 60 * 60; // 2 hours
@@ -19,7 +17,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { id } = req.query;
-  const redis  = makeRedis();
+  const redis  = makeState();
   const key    = `trout:weather:${id}:${new Date().toISOString().slice(0, 13)}`; // hourly bucket
 
   // Cache check

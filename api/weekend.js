@@ -1,19 +1,17 @@
 // GET /api/weekend
 // Returns the best 5 rivers for Saturday and Sunday
 // Combines current conditions + NWS weather forecast + trend direction
-// Cached 6 hours in Redis
+// Cached 6 hours in private state
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 import { RIVERS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions, RATINGS } from '../lib/rater.js';
 import { RIVER_GRIDS } from '../lib/weather.js';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 const CACHE_TTL = 6 * 60 * 60; // 6 hours
@@ -95,7 +93,7 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const redis = makeRedis();
+  const redis = makeState();
   const weekend = getNextWeekendDays();
   const cacheKey = `trout:weekend:${weekend.saturday.date}`;
 
