@@ -1,18 +1,16 @@
 // GET /api/generate
 // Fetches USGS data, rates conditions, generates AI brief.
-// Cached in Upstash Redis until midnight: one AI call per day.
+// Cached in Upstash private state until midnight: one AI call per day.
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 import { RIVERS, ALL_GAUGE_IDS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
 import { generateBrief } from '../lib/generator.js';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 function todayUTC() { return new Date().toISOString().slice(0, 10); }
@@ -81,13 +79,13 @@ export default async function handler(req, res) {
   const today    = todayUTC();
   const redisKey = `trout:daily:${today}`;
   const ttl      = secondsUntilMidnight();
-  const r        = makeRedis();
+  const r        = makeState();
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'no-store');
 
   try {
-    // 1. Redis cache
+    // 1. private state cache
     if (!forceRefresh && r) {
       try {
         const cached = await r.get(redisKey);
@@ -122,7 +120,7 @@ export default async function handler(req, res) {
     if (r) {
       try {
         const keys = RIVERS.map(rv => `trout:history:${rv.id}:${yesterday}`);
-        // Fetch in batches of 20 to avoid overwhelming Redis
+        // Fetch in batches of 20 to avoid overwhelming private state
         for (let i = 0; i < keys.length; i += 20) {
           const batch = keys.slice(i, i + 20);
           const results = await Promise.all(batch.map(k => r.get(k).catch(() => null)));

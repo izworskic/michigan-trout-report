@@ -2,7 +2,7 @@
 // GET /rivers/:id (rewritten to this): HTML SEO page
 // Behavior switches on req.url path.
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../../lib/tool-state.cjs';
 import { RIVERS } from '../../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../../lib/usgs.js';
 import { buildConditions } from '../../lib/rater.js';
@@ -18,11 +18,9 @@ const PERSON_ID  = 'https://chrisizworski.com/#person';
 const PERSON_URL = 'https://chrisizworski.com/';
 const DAILY      = 'https://troutdaily.chrisizworski.com';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 const CACHE_TTL = 6 * 60 * 60;
@@ -205,7 +203,7 @@ export default async function handler(req, res) {
 
   // ── HTML SEO PAGE branch ────────────────────────────────────────
   if ((req.url || '').startsWith('/rivers/')) {
-    const redis    = makeRedis();
+    const redis    = makeState();
     const cacheKey = `trout:river-page:v2:${id}`;
 
     if (redis) {
@@ -250,7 +248,7 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const r = makeRedis();
+  const r = makeState();
   const cacheKey = `trout:detail:${id}:${new Date().toISOString().slice(0, 10)}`;
   if (r) {
     try {

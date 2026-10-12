@@ -2,13 +2,11 @@
 // GET /api/alerts-manage?action=count  (protected)
 
 import { removeSubscriber, getSubscriber } from '../lib/alerts.js';
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 export default async function handler(req, res) {
@@ -33,7 +31,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     try {
-      const r = makeRedis();
+      const r = makeState();
       const emails = r ? await r.smembers('alerts:emails') : [];
       return res.status(200).json({ count: emails?.length || 0 });
     } catch(e) {

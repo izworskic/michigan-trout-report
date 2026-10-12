@@ -1,9 +1,9 @@
 // Daily cron: 09:00 UTC, set in vercel.json. On Vercel Hobby this means one
 // invocation during the 4-5am EST or 5-6am EDT hour, ahead of the morning read.
-// Fetches USGS data, generates AI brief, caches to Redis.
+// Fetches USGS data, generates AI brief, caches to private state.
 // Also fetches guide reports and stores daily history snapshots.
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 import { RIVERS, ALL_GAUGE_IDS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { fetchRiverWeather, RIVER_GRIDS } from '../lib/weather.js';
@@ -223,7 +223,7 @@ async function runStreamPost(r, log) {
 
     // A separate GitHub Actions publisher is the safety net. Check the shared
     // WordPress destination too, so whichever publisher wins prevents a
-    // cross-system duplicate even if Redis was unavailable to the other one.
+    // cross-system duplicate even if private state was unavailable to the other one.
     const existingWordPressPost = await findTodayWordPressPost(log);
     if (existingWordPressPost) {
       if (r) await r.set(todayKey, existingWordPressPost.URL || String(existingWordPressPost.ID), { ex: 7 * 24 * 60 * 60 });
@@ -517,11 +517,9 @@ WRITING RULES:
   }
 }
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 function todayUTC() { return new Date().toISOString().slice(0, 10); }
@@ -546,7 +544,7 @@ async function runRiverPage(r, log) {
     // Bust cache so page rebuilds fresh this morning
     if (r) await r.del(`trout:river-page:${river.id}`);
 
-    // Warm the page by fetching it (populates Redis cache)
+    // Warm the page by fetching it (populates private state cache)
     const base = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : 'https://michigantroutreport.com';
@@ -569,7 +567,7 @@ export default async function handler(req, res) {
 
   try {
     log.push(`[${ts()}] Cron starting: Michigan Trout Report daily run`);
-    const r = makeRedis();
+    const r = makeState();
 
     const [liveReadings, allStats] = await Promise.all([
       fetchLiveReadings(ALL_GAUGE_IDS),

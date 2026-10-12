@@ -1,21 +1,19 @@
 // GET /api/backfill?secret=CRON_SECRET&days=14
-// One-time endpoint to seed Redis with real historical USGS data.
+// One-time endpoint to seed private state with real historical USGS data.
 // Fetches daily mean flow + temp for past N days, rates each day,
 // stores in same format the cron uses: nothing downstream breaks.
 //
 // Safe to call multiple times: existing snapshots are overwritten with
 // the same data (idempotent). Does NOT touch today's live cache.
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 import { RIVERS } from '../lib/rivers.js';
 import { fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 const HISTORY_TTL = 365 * 24 * 60 * 60;
@@ -103,8 +101,8 @@ export default async function handler(req, res) {
   }
 
   const days = Math.min(parseInt(req.query?.days || '14'), 30);
-  const r    = makeRedis();
-  if (!r) return res.status(500).json({ error: 'Redis not configured' });
+  const r    = makeState();
+  if (!r) return res.status(500).json({ error: 'private state not configured' });
 
   const log = [];
   const ts  = () => new Date().toISOString();

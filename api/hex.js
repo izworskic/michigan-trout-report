@@ -7,13 +7,11 @@ import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
 import { fetchRiverWeather, RIVER_GRIDS } from '../lib/weather.js';
 import { buildHexReport, getHexSeasonPhase, daysUntilHex, getMoonPhase } from '../lib/hex.js';
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 
-function makeRedis() {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 export default async function handler(req, res) {
@@ -25,7 +23,7 @@ export default async function handler(req, res) {
   const river = RIVERS.find(r => r.id === riverId);
   if (!river) return res.status(500).json({ error: 'AuSable not found in river config' });
 
-  const redis = makeRedis();
+  const redis = makeState();
   const now = new Date();
   const cacheKey = `trout:hex:${now.toISOString().slice(0, 13)}`; // cache 1hr
 
@@ -96,7 +94,7 @@ export default async function handler(req, res) {
       date: now,
     });
 
-    // Water temp trend: last 7 days from Redis snapshots
+    // Water temp trend: last 7 days from private state snapshots
     let tempTrend = null;
     if (redis) {
       try {

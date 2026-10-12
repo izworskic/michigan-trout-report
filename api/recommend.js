@@ -5,9 +5,9 @@
 //   - Current hatch intel from RSS feeds (lib/intel.js)
 //   - Time of day and time of year
 //
-// Cached 4 hours in Redis: recommendations don't change that fast.
+// Cached 4 hours in private state: recommendations don't change that fast.
 
-import { Redis } from '@upstash/redis';
+import { ToolState } from '../lib/tool-state.cjs';
 import Anthropic from '@anthropic-ai/sdk';
 import { RIVERS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
@@ -18,11 +18,9 @@ import { fetchRiverWeather, RIVER_GRIDS } from '../lib/weather.js';
 import { buildLureRecommendations } from '../lib/lures.js';
 import { calcSunTimes, estimateSpinnerFall } from '../lib/sun.js';
 
-function makeRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function makeState() {
+      if (!process.env.TOOL_STATE_URL) return null;
+  return new ToolState();
 }
 
 const CACHE_TTL = 4 * 60 * 60; // 4 hours
@@ -36,7 +34,7 @@ export default async function handler(req, res) {
   const river = RIVERS.find(r => r.id === id);
   if (!river) return res.status(404).json({ error: 'River not found' });
 
-  const redis     = makeRedis();
+  const redis     = makeState();
   const now       = new Date();
   const hourUTC   = now.getUTCHours();
   const hourET    = ((hourUTC - 5 + 24) % 24); // approximate ET
