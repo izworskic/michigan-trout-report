@@ -189,6 +189,17 @@ function springVerdict(day,temp,trend,tempFresh,flowFresh){
   if(temp<38)return {label:'Cold, watch warming',tone:'cold',score:null,note:'Water is '+temp+'°F, below the 38–52°F spring band. Fish may be present, but colder water can slow movement. '+flowNote};
   return {label:'Warmer than window',tone:'warm',score:null,note:'Water is '+temp+'°F, above the spring trigger band. Fish may still be present; this cannot establish fish counts. '+flowNote};
 }
+
+// Keep the dedicated spring board responsive if any upstream USGS request hangs.
+// The original fetchGauge() and its 7-day trend calculation are unchanged.
+function springFetchWithDeadline(gauge){
+  let timer;
+  return Promise.race([
+    fetchGauge(gauge),
+    new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('USGS timeout')),12000);})
+  ]).finally(()=>clearTimeout(timer));
+}
+
 async function renderSpringBoard(){
   const board=document.getElementById('spring-rivers');
   if(!board)return;
@@ -205,7 +216,7 @@ async function renderSpringBoard(){
   const results=await Promise.all(slugs.map(async slug=>{
     const el=document.getElementById('spring-'+slug),river=RIVERS[slug];
     try{
-      const c=await fetchGauge(river.gauge);
+      const c=await springFetchWithDeadline(river.gauge);
       const tf=springFresh(c.tempObservedAt),ff=springFresh(c.flowObservedAt);
       const v=springVerdict(day,c.tempF,c.trend,tf,ff);
       const statusEl=el.querySelector('.spring-status');

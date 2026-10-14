@@ -288,10 +288,22 @@
   <h1 class="river-h1">Michigan Spring Steelhead Run Board</h1>
   <p class="lede">Where is the water warming toward spring steelhead conditions? Compare real USGS water temperatures, discharge and seven-day flow trends across six rivers. These are river-condition signals, not live fish counts.</p>
   <nav class="spring-quicknav" aria-label="Related tools"><a href="/salmon-run/">Salmon Run Board</a><a href="/salmon-run/steelhead.html">Steelhead guide</a><a href="/salmon-run/when-is-the-salmon-run.html">Run calendar</a></nav>
-  <div class="spring-season" id="spring-season" role="status"><strong>Checking season…</strong><span>No run claims outside the March–April spring window.</span></div>
+  <div class="spring-season" id="spring-season" role="status"><strong>Spring steelhead · March–April</strong><span>River conditions are measured by USGS; the seasonal window does not confirm fish presence.</span></div>
+  <script>
+  // Independent of the shared river script: season must never hang on "Checking".
+  (function(){
+    const el=document.getElementById('spring-season');
+    const d=new Date(),month=d.getMonth()+1,active=month===3||month===4;
+    const year=month>=5?d.getFullYear()+1:d.getFullYear();
+    el.querySelector('strong').textContent=active?'Spring steelhead migration window':'Off season · spring '+year+' ahead';
+    el.querySelector('span').textContent=active
+      ? 'March–April is the typical window. River conditions do not verify fish passage or catches.'
+      : 'Typical spring timing is March–April. Live conditions below are not an active spring run claim.';
+  })();
+  </script>
   <div class="spring-metrics"><div><strong>38–52°F</strong><span>Spring temperature window</span></div><div><strong>March–April</strong><span>Typical migration season</span></div><div><strong>6 rivers</strong><span>Flow plus temp where measured</span></div></div>
   <section class="conditions-widget spring-board" aria-label="Spring steelhead live river conditions">
-    <div class="spring-board-title"><div><div class="widget-label">Spring migration indicators</div><h2>Live river readiness</h2></div><button class="spring-refresh" type="button" id="spring-refresh" onclick="renderSpringBoard()">Refresh readings</button></div>
+    <div class="spring-board-title"><div><div class="widget-label">Spring migration indicators</div><h2>Live river readiness</h2></div><button class="spring-refresh" type="button" id="spring-refresh">Refresh readings</button></div>
     <p id="spring-stamp" class="trend">Loading live USGS data...</p>
     <div id="spring-summary" class="spring-summary" aria-live="polite">Comparing seasonal timing and river conditions...</div>
     <div id="spring-rivers" class="spring-rivers" aria-busy="true">
@@ -360,6 +372,32 @@
     <a href="https://chrisizworski.com/tools/" target="_blank" rel="noopener">All Michigan Tools</a>
   </div>
 </footer>
-    <script src="/salmon-run/salmon-run.js"></script>
-    <script>renderSpringBoard();</script>
+    <script src="/salmon-run/salmon-run.js?v=20261014-spring-cachefix-2"></script>
+    <script>
+    (function(){
+      const button=document.getElementById('spring-refresh');
+      function fallback(){
+        const message='Live river conditions could not load. Refresh the page to retry or use the official USGS gauge links below.';
+        document.getElementById('spring-stamp').textContent=message;
+        document.getElementById('spring-summary').textContent='Season guidance is available above, but no live river ranking can be made right now.';
+        document.getElementById('spring-rivers').setAttribute('aria-busy','false');
+        document.querySelectorAll('.spring-status').forEach(el => {
+          if(el.textContent==='Checking...')el.textContent='Data unavailable';
+        });
+        button.disabled=false;
+        button.textContent='Retry live readings';
+      }
+      function start(){
+        if(typeof window.renderSpringBoard!=='function'){fallback();return;}
+        try{
+          Promise.resolve(window.renderSpringBoard()).catch(fallback);
+        }catch(error){fallback();}
+      }
+      button.addEventListener('click',function(){
+        if(typeof window.renderSpringBoard==='function')start();
+        else window.location.reload();
+      });
+      start();
+    })();
+    </script>
     </body></html>

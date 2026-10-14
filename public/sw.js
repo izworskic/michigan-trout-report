@@ -2,7 +2,7 @@
 // Strategy: cache shell (HTML/CSS/JS) for instant load + offline
 // Network-first for API data (always try fresh, fall back to cached)
 
-const CACHE_NAME = 'trout-v5';
+const CACHE_NAME = 'trout-v6';
 
 // Shell files: cache on install for offline access
 const SHELL = [
@@ -41,6 +41,25 @@ self.addEventListener('fetch', event => {
   // Let crawlers/bots always hit the network directly
   const ua = event.request.headers.get('User-Agent') || '';
   if (/Googlebot|bingbot|Baiduspider|Slurp|DuckDuckBot|crawl|spider|bot/i.test(ua)) return;
+
+
+  // Salmon/steelhead HTML and its JavaScript must use a matching release.
+  // Cache-first previously paired new spring HTML with an older salmon-run.js,
+  // leaving the page stuck at "Checking season" (renderSpringBoard undefined).
+  if (url.origin === self.location.origin && url.pathname.startsWith('/salmon-run/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+            event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)));
+          }
+          return response;
+        })
+        .catch(async () => (await caches.match(event.request)) || Response.error())
+    );
+    return;
+  }
 
   // API calls: network-first, cache fallback (so last conditions show offline)
   if (url.pathname.startsWith('/api/')) {
