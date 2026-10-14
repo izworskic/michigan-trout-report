@@ -66,20 +66,78 @@ async function fetchGauge(gauge){
 function arrow(tr){ return tr==='rising'?'&#9650; rising':tr==='falling'?'&#9660; falling':'&#8212; steady'; }
 function pill(s){ return '<span class="status-pill" style="background:'+s.color+'1a;color:'+s.color+'">'+s.label+'</span>'; }
 
+
+/* A second, species-specific signal. Seasonal calendar is not a fish count.
+   Temperature guidance follows the steelhead page's 40s-50s fall window. */
+function steelheadSignal(day, tempF, trend){
+  const fall=day>=A(10,1)&&day<A(12,1);
+  const winter=day>=A(12,1)||day<A(3,1);
+  const spring=day>=A(3,1)&&day<A(5,1);
+  if(!fall&&!winter&&!spring) return {label:'Between runs',color:'#777',note:'Outside the usual fall, winter and spring steelhead windows.',score:-1};
+  let signal=fall
+    ? {label:day<A(10,15)?'Arriving now':'Fall run',color:'#2e7d32',note:'Fall steelhead arrival window (not a verified fish count).',score:0}
+    : winter
+      ? {label:'Winter hold',color:'#5068ad',note:'Winter steelhead may hold in deeper, slower river runs.',score:0}
+      : {label:'Spring run',color:'#2e7d32',note:'Spring steelhead migration window.',score:0};
+  if(tempF==null){
+    signal.note+=' No USGS temperature reading here; temperature readiness is unknown.';
+    signal.score=-1;
+    return signal;
+  }
+  const low=spring?38:40, high=spring?52:55;
+  if(tempF>=low&&tempF<=high){
+    signal.note+=' Water at '+tempF+'°F is in the '+low+'–'+high+'°F steelhead temperature window.';
+    signal.score=10-Math.abs(tempF-(low+high)/2)*0.1;
+  }else if(tempF>60){
+    signal.label='Water too warm'; signal.color='#95611c'; signal.score=1;
+    signal.note='Water at '+tempF+'°F remains warmer than the usual steelhead trigger range.';
+  }else if(tempF>high){
+    signal.label='Cooling toward run'; signal.color='#987020'; signal.score=4;
+    signal.note='Water at '+tempF+'°F is approaching the steelhead trigger range.';
+  }else{
+    signal.label='Cold, slower fish'; signal.color='#5068ad'; signal.score=3;
+    signal.note='Water at '+tempF+'°F is below the active temperature window; fish can be present but less active.';
+  }
+  if(trend==='rising'){signal.note+=' USGS flow is rising.'; signal.score+=0.3;}
+  return signal;
+}
+function speciesPills(salmon,steelhead,tracked){
+  return '<div class="run-statuses"><div class="run-status-group"><span class="run-type">Salmon</span>'+pill(salmon)+'</div>'+
+    '<div class="run-status-group"><span class="run-type">Steelhead</span>'+
+    (tracked?pill(steelhead):'<span class="status-pill status-not-tracked">Not tracked</span>')+'</div></div>';
+}
+
 async function renderBoard(){
   const tb=document.getElementById('runboard-body'); if(!tb) return;
-  const slugs=Object.keys(RIVERS);
+  const slugs=Object.keys(RIVERS).filter(slug=>document.getElementById('row-'+slug));
   const stamp=document.getElementById('board-stamp');
-  await Promise.all(slugs.map(async slug=>{
-    const R=RIVERS[slug]; const row=document.getElementById('row-'+slug);
+  const summaries=await Promise.all(slugs.map(async slug=>{
+    const R=RIVERS[slug], row=document.getElementById('row-'+slug);
     try{
-      const c=await fetchGauge(R.gauge); const st=boardStatus(R.species,c.tempF,c.trend);
-      row.querySelector('.c-status').innerHTML=pill(st);
+      const c=await fetchGauge(R.gauge), st=boardStatus(R.species,c.tempF,c.trend);
+      const steelhead=R.species.includes('steelhead')?steelheadSignal(today().doy,c.tempF,c.trend):null;
+      row.querySelector('.c-status').innerHTML=speciesPills(st,steelhead,!!steelhead);
       row.querySelector('.c-flow').innerHTML=(c.flow!=null? Math.round(c.flow).toLocaleString()+' <span class="trend">cfs</span>':'&#8212;')+(c.flow!=null?'<div class="trend">'+arrow(c.trend)+'</div>':'');
       row.querySelector('.c-temp').innerHTML=(c.tempF!=null? c.tempF+'&deg;F':'<span class="trend">no sensor</span>');
       row.querySelector('.c-note').textContent=st.note;
-    }catch(e){ row.querySelector('.c-status').innerHTML='<span class="trend">data unavailable</span>'; row.querySelector('.c-flow').innerHTML='&#8212;'; row.querySelector('.c-temp').innerHTML='&#8212;'; }
+      if(steelhead)row.querySelector('.c-status').title=steelhead.note;
+      return {slug,name:R.name,tempF:c.tempF,trend:c.trend,steelhead};
+    }catch(e){
+      row.querySelector('.c-status').innerHTML='<span class="trend">USGS data unavailable</span>';
+      row.querySelector('.c-flow').innerHTML='&#8212;'; row.querySelector('.c-temp').innerHTML='&#8212;';
+      return null;
+    }
   }));
+  const picks=document.getElementById('steelhead-picks');
+  if(picks){
+    const ranked=summaries.filter(x=>x&&x.steelhead&&x.steelhead.score>=0&&x.tempF!=null)
+      .sort((a,b)=>b.steelhead.score-a.steelhead.score).slice(0,3);
+    picks.innerHTML=ranked.length
+      ? '<strong>Best measured temperature matches right now:</strong> '+ranked.map(x=>
+          '<a href="/salmon-run/rivers/'+x.slug+'.html">'+x.name.split(' (')[0]+'</a> ('+x.tempF+'°F, '+x.trend+' flow)').join(' · ')+
+        '<div class="trend">Ranked by temperature match, then 7-day flow trend; not verified fish activity. Gauges without temperature sensors are not ranked.</div>'
+      : 'No steelhead river has a usable USGS temperature reading for a live ranking right now. Check individual river flows below.';
+  }
   if(stamp) stamp.textContent='Live USGS readings as of '+new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 }
 

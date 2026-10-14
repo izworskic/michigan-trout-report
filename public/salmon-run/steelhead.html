@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Michigan Steelhead Run: Fall, Winter, and Spring Timing</title>
-<meta name="description" content="Michigan steelhead run timing: fall fish arrive in October and November with the salmon, winter fish hold in the tailwaters, and the spring run peaks March to April. The best rivers and how to time each run.">
+<title>Michigan Steelhead Run 2026: Fall Arrival &amp; Live River Temps</title>
+<meta name="description" content="Michigan steelhead run 2026: fall arrival signals, live USGS flow and water temperatures, and current steelhead temperature matches across six rivers.">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1a3a1a">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link rel="canonical" href="https://michigantroutreport.com/salmon-run/steelhead.html">
-<meta property="og:title" content="Michigan Steelhead Run: Fall, Winter, and Spring Timing">
-<meta property="og:description" content="Michigan steelhead run timing: fall fish arrive in October and November with the salmon, winter fish hold in the tailwaters, and the spring run peaks March to April. The best rivers and how to time each run.">
+<meta property="og:title" content="Michigan Steelhead Run 2026: Fall Arrival &amp; Live River Temps">
+<meta property="og:description" content="Michigan steelhead run 2026: fall arrival signals, live USGS flow and water temperatures, and current steelhead temperature matches across six rivers.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://michigantroutreport.com/salmon-run/steelhead.html">
 <meta property="og:image" content="https://michigantroutreport.com/og-image.png">
@@ -24,14 +24,18 @@
       "@type": "WebPage",
       "@id": "https://michigantroutreport.com/salmon-run/steelhead.html#webpage",
       "url": "https://michigantroutreport.com/salmon-run/steelhead.html",
-      "name": "Michigan Steelhead Run: Fall, Winter, and Spring Timing",
-      "description": "Michigan steelhead run timing: fall fish arrive in October and November with the salmon, winter fish hold in the tailwaters, and the spring run peaks March to April. The best rivers and how to time each run.",
+      "name": "Michigan Steelhead Run 2026: Fall Arrival & Live River Temps",
+      "description": "Michigan steelhead run 2026: fall arrival signals, live USGS flow and water temperatures, and current steelhead temperature matches across six rivers.",
       "isPartOf": {
         "@type": "WebSite",
         "name": "Michigan Trout Report",
         "url": "https://michigantroutreport.com",
-        "creator": {"@id": "https://chrisizworski.com/#person"},
-        "publisher": {"@id": "https://chrisizworski.com/#person"}
+        "creator": {
+          "@id": "https://chrisizworski.com/#person"
+        },
+        "publisher": {
+          "@id": "https://chrisizworski.com/#person"
+        }
       },
       "about": {
         "@type": "Person",
@@ -206,10 +210,28 @@
   .river-link-card:hover { background:#f0ece4; text-decoration:none; }
   .river-link-card .rlc-name { font-size:15px; color:#1a3a1a; font-weight:bold; margin-bottom:2px; }
   .river-link-card .rlc-sub { font-size:12px; color:#888; }
-  @media (max-width:520px){ .river-links{grid-template-columns:1fr;} .runboard th:nth-child(4),.runboard td:nth-child(4){display:none;} }
+  .run-statuses { display:grid; gap:5px; }
+  .run-type { display:block; margin-bottom:2px; color:#777; font-size:10px; font-weight:normal; }
+  .status-not-tracked { color:#777; background:#eee; }
+  .steelhead-picks { background:#eef5eb; border-left:3px solid #4a7c4a; padding:10px 12px; margin:10px 0 14px; font-size:13px; line-height:1.5; }
+  .steelhead-picks .trend { margin-top:4px; }
+  @media (max-width:520px){
+    .river-links {grid-template-columns:1fr;}
+    .runboard {table-layout:fixed;font-size:12px;}
+    .runboard th {padding:7px 4px;font-size:9px;letter-spacing:0;}
+    .runboard td {padding:8px 4px;overflow-wrap:anywhere;}
+    .runboard th:nth-child(1) {width:33%;}
+    .runboard th:nth-child(2) {width:33%;}
+    .runboard th:nth-child(3) {width:18%;}
+    .runboard th:nth-child(4) {width:16%;}
+    .runboard a {font-size:12px;}
+    .runboard .status-pill {white-space:normal;font-size:10px;line-height:1.2;padding:3px 5px;}
+    .runboard .run-type {font-size:9px;}
+    .runboard .trend {font-size:10px;}
+  }
 </style>
-<meta name="twitter:title" content="Michigan Steelhead Run: Fall, Winter, and Spring Timing">
-<meta name="twitter:description" content="Michigan steelhead run timing: fall fish arrive in October and November with the salmon, winter fish hold in the tailwaters, and the spring run peaks March to April. The best rivers and how to time each run.">
+<meta name="twitter:title" content="Michigan Steelhead Run 2026: Fall Arrival &amp; Live River Temps">
+<meta name="twitter:description" content="Michigan steelhead run 2026: fall arrival signals, live USGS flow and water temperatures, and current steelhead temperature matches across six rivers.">
 <meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
 </head>
 <body>
@@ -231,7 +253,15 @@
     <div class="river-meta-row"><span class="region-badge">Steelhead Guide</span></div>
     <h1 class="river-h1">Michigan Steelhead Run</h1>
     <p class="lede">Steelhead are the run that never really ends. They come in with the salmon in fall, hold through winter in the rivers that stay open, and return in force in spring. For many Michigan anglers, steelhead are the whole reason to own waders.</p>
-    <div class="callout">The <a href="/salmon-run/">live run board</a> tracks water temperature and flow on the top steelhead rivers, so you can see when the fish are likely moving.</div>
+    <div class="conditions-widget" aria-label="Live steelhead river conditions">
+      <div class="widget-label">Live USGS steelhead conditions — six rivers</div>
+      <p class="lede" style="font-size:14px;margin:4px 0 12px">Fall steelhead begin arriving during October. In most rivers, water in the 40s–50s°F is an important temperature cue. Readings describe river conditions, not confirmed fish sightings.</p>
+      <p id="board-stamp" class="trend">Loading live USGS readings...</p>
+      <div id="steelhead-picks" class="steelhead-picks" aria-live="polite">Comparing measured river temperatures...</div>
+      <table class="runboard"><thead><tr><th>River</th><th>Run Status</th><th>Flow</th><th>Water Temp</th></tr></thead><tbody id="runboard-body"><tr id="row-big-manistee-tippy-dam"><td><a href="/salmon-run/rivers/big-manistee-tippy-dam.html">Big Manistee River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-pere-marquette"><td><a href="/salmon-run/rivers/pere-marquette.html">Pere Marquette River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-muskegon-croton-dam"><td><a href="/salmon-run/rivers/muskegon-croton-dam.html">Muskegon River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-little-manistee"><td><a href="/salmon-run/rivers/little-manistee.html">Little Manistee River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-white-river"><td><a href="/salmon-run/rivers/white-river.html">White River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr><tr id="row-au-sable-foote-dam"><td><a href="/salmon-run/rivers/au-sable-foote-dam.html">Au Sable River</a><div class="c-note trend" style="margin-top:3px;max-width:340px"></div></td><td class="c-status"><span class="trend">loading...</span></td><td class="c-flow num">&#8212;</td><td class="c-temp num">&#8212;</td></tr></tbody></table>
+      <p class="trend" style="margin-top:8px">Steelhead temperature signals are seasonal guidance; see current regulations and each river report before fishing.</p>
+    </div>
+    <div class="callout">See all seven rivers on the <a href="/salmon-run/">live run board</a>, including the separate salmon run status.</div>
     </div></div>
     <div class="content-section"><div class="container">
     <h2>Fall steelhead (October to November)</h2>
@@ -258,4 +288,5 @@
   </div>
 </footer>
     <script src="/salmon-run/salmon-run.js"></script>
+    <script>renderBoard();</script>
     </body></html>
