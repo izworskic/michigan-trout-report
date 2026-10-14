@@ -130,13 +130,22 @@ async function renderBoard(){
   }));
   const picks=document.getElementById('steelhead-picks');
   if(picks){
-    const ranked=summaries.filter(x=>x&&x.steelhead&&x.steelhead.score>=0&&x.tempF!=null)
+    const spring=today().doy>=A(3,1)&&today().doy<A(5,1);
+    const low=spring?38:40, high=spring?52:55;
+    const observed=summaries.filter(x=>x&&x.steelhead&&x.steelhead.score>=0&&x.tempF!=null);
+    const favorable=observed.filter(x=>x.tempF>=low&&x.tempF<=high)
       .sort((a,b)=>b.steelhead.score-a.steelhead.score).slice(0,3);
-    picks.innerHTML=ranked.length
-      ? '<strong>Best measured temperature matches right now:</strong> '+ranked.map(x=>
-          '<a href="/salmon-run/rivers/'+x.slug+'.html">'+x.name.split(' (')[0]+'</a> ('+x.tempF+'°F, '+x.trend+' flow)').join(' · ')+
-        '<div class="trend">Ranked by temperature match, then 7-day flow trend; not verified fish activity. Gauges without temperature sensors are not ranked.</div>'
-      : 'No steelhead river has a usable USGS temperature reading for a live ranking right now. Check individual river flows below.';
+    const cooling=observed.filter(x=>x.tempF>high&&x.tempF<=60)
+      .sort((a,b)=>a.tempF-b.tempF).slice(0,3);
+    const chosen=favorable.length?favorable:cooling;
+    const links=chosen.map(x=>'<a href="/salmon-run/rivers/'+x.slug+'.html">'+x.name.split(' (')[0]+'</a> ('+x.tempF+'°F, '+x.trend+' flow)').join(' · ');
+    picks.innerHTML=favorable.length
+      ? '<strong>Rivers in the '+low+'–'+high+'°F steelhead temperature window:</strong> '+links+
+        '<div class="trend">Temperature/flow indicators only; not confirmed fish counts. Rivers without a temperature sensor are not ranked.</div>'
+      : cooling.length
+        ? '<strong>No monitored river is in the '+low+'–'+high+'°F steelhead temperature window yet.</strong> Closest cooling readings: '+links+
+          '<div class="trend">These rivers are still warmer than the target range; this is a watchlist, not a fishing hot-spot claim. Rivers without temperature sensors are unranked.</div>'
+        : '<strong>No monitored river currently matches the '+low+'–'+high+'°F steelhead temperature window.</strong> See USGS readings and individual rivers below. Missing temperature sensors are not assumed to be favorable.';
   }
   if(stamp) stamp.textContent='Live USGS readings as of '+new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 }
