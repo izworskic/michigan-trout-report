@@ -70,7 +70,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const LAKES=['All five','Superior','Michigan','Huron','Erie','Ontario','Connecting waters'];
 let activeLake='All five',selected='bass-islands';
-let markerSelect=null;
+let markerSelect=null,lakeChanged=null;
 function grade(p){
  const labels={strong_historical:'Extensive historic nymph research',
  documented_historical:'Historic field observations',
@@ -109,12 +109,14 @@ function render(){
  $('atlasSites').querySelectorAll('[data-atlas-site]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.atlasSite)));
  document.querySelectorAll('[data-lake]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lake===activeLake)));
  $('atlasCount').textContent=visible.length+' research-led location'+(visible.length===1?'':'s');
+ if($('atlasMapLabel'))$('atlasMapLabel').textContent=activeLake==='All five'?'ALL FIVE GREAT LAKES':activeLake==='Connecting waters'?'LAKE ST. CLAIR · CONNECTING WATERS':'LAKE '+activeLake.toUpperCase();
  const location=SPOTS.find(x=>x.id===selected)||visible[0]||SPOTS[0];detail(location);
 }
 function select(id,pan=true){
  const p=SPOTS.find(s=>s.id===id);if(!p)return;
  if(activeLake!=='All five'&&activeLake!==p.lake)activeLake='All five';
  selected=id;render();
+ if(lakeChanged)lakeChanged(activeLake,p);
  if(pan&&markerSelect)markerSelect(p);
 }
 function init(){
@@ -122,10 +124,12 @@ function init(){
   activeLake=b.dataset.lake;
   const match=SPOTS.find(p=>activeLake==='All five'?p.lake!=='Connecting waters':p.lake===activeLake);
   if(match)selected=match.id;
-  render();if(match&&markerSelect)markerSelect(match);
+  render();
+  if(lakeChanged)lakeChanged(activeLake,match);
+  else if(match&&markerSelect)markerSelect(match);
  }));
  render();
 }
-window.LAKE_ATLAS={spots:SPOTS,select,init,onMapSelect(fn){markerSelect=fn},selected:()=>selected};
+window.LAKE_ATLAS={spots:SPOTS,select,init,onMapSelect(fn){markerSelect=fn},onLakeChange(fn){lakeChanged=fn},selected:()=>selected,currentLake:()=>activeLake};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
