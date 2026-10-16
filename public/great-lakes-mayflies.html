@@ -198,8 +198,8 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <script src="/lake-mayfly-atlas.js" defer></script>
 <script>
-const REGION=[{id:'saginaw-bay',title:'Saginaw Bay',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie',lat:41.702,lon:-83.262}];
-let current='saginaw-bay',report=null,map=null,marks={},reqCounter=0;
+const REGION=[{id:'saginaw-bay',title:'Saginaw Bay (recovery / seasonal buoy)',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie (best documented)',lat:41.702,lon:-83.262}];
+let current='western-erie',report=null,map=null,marks={},reqCounter=0;
 const $=id=>document.getElementById(id);
 function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function txt(id,v){$(id).textContent=v;}
@@ -349,14 +349,68 @@ async function choose(id){
  }
 }
 REGION.forEach(r=>{const b=document.createElement('button');b.dataset.region=r.id;b.textContent=r.title;b.setAttribute('aria-pressed',String(r.id===current));b.addEventListener('click',()=>choose(r.id));$('regions').appendChild(b);});
+// Five-lake research geography with no CARTO authentication watermark.
 function initMap(){
- if(!window.L){$('lakeMap').textContent='Map tiles unavailable. The region buttons still let you switch monitoring locations.';return;}
- map=L.map('lakeMap',{scrollWheelZoom:false}).setView([42.7,-83.42],7);
- L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'}).addTo(map);
- REGION.forEach(r=>{const m=L.circleMarker([r.lat,r.lon],{radius:10,weight:2,color:'#fff',fillColor:'#23676a',fillOpacity:1}).addTo(map);
-  m.bindPopup('<strong>'+esc(r.title)+'</strong><br>NOAA buoy location, not hatch hotspot');
-  m.on('click',()=>choose(r.id));marks[r.id]=m;});
- map.fitBounds(L.latLngBounds(REGION.map(r=>[r.lat,r.lon])).pad(.25));
+ const data=window.LAKE_ATLAS;
+ if(!window.L||!data){
+  $('lakeMap').innerHTML='<div class="atlas-fallback">The interactive map cannot load. Every research location and original study remains available through the lake filters and site cards.</div>';
+  return;
+ }
+ try{
+  $('lakeMap').replaceChildren();
+  map=L.map('lakeMap',{scrollWheelZoom:false,preferCanvas:true});
+  const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    minZoom:4,maxZoom:13,attribution:'&copy; OpenStreetMap contributors',
+    detectRetina:false,keepBuffer:1,updateWhenIdle:true
+  });
+  let failed=0,loaded=0;
+  osm.on('tileload',()=>{loaded++;});
+  osm.on('tileerror',()=>{
+    if(++failed>=3&&loaded===0){
+     try{map.remove();}catch(_){}
+     map=null;
+     $('lakeMap').innerHTML='<div class="atlas-fallback"><strong>Map background unavailable</strong><span>Use the research-backed site cards alongside this map. They remain clickable and include original scientific sources.</span></div>';
+    }
+  });
+  osm.addTo(map);
+  let activeAtlas=null;
+  const researchMarks=new Map();
+  data.spots.forEach(p=>{
+   const pin=L.circleMarker([p.lat,p.lon],{
+    radius:8,color:'#fff',weight:2,fillColor:p.lake==='Connecting waters'?'#6c8983':'#267c76',fillOpacity:1
+   }).addTo(map);
+   pin.bindTooltip(esc(p.name),{direction:'top'});
+   pin.bindPopup('<strong>'+esc(p.name)+'</strong><br><small>Approximate research-area reference — not a current hatch</small>');
+   pin.on('click',()=>data.select(p.id,false));
+   researchMarks.set(p.id,pin);
+  });
+  data.onMapSelect(p=>{
+   if(!map)return;
+   if(activeAtlas&&researchMarks.get(activeAtlas))
+    researchMarks.get(activeAtlas).setStyle({radius:8,fillColor:'#267c76'});
+   activeAtlas=p.id;
+   const pin=researchMarks.get(p.id);
+   if(pin){
+    pin.setStyle({radius:11,fillColor:'#ba8745'});
+    map.panTo(pin.getLatLng());
+    pin.openPopup();
+   }
+  });
+  // Two independently instrumented buoys. These are NOT hatch location pins.
+  REGION.forEach(r=>{
+   const icon=L.divIcon({className:'',html:'<span style="display:block;background:#aa7742;color:#fff;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 5px #3338;padding:3px 5px;font-size:11px;font-weight:800">NOAA</span>',iconSize:[47,25],iconAnchor:[23,12]});
+   const pin=L.marker([r.lat,r.lon],{icon}).addTo(map);
+   pin.bindPopup('<strong>'+esc(r.title)+'</strong><br>Measured NOAA surface water · not emergence');
+   pin.on('click',()=>choose(r.id));
+   marks[r.id]=pin;
+  });
+  map.fitBounds(L.latLngBounds(data.spots.filter(p=>p.lake!=='Connecting waters').map(p=>[p.lat,p.lon])).pad(.07),{maxZoom:6});
+ }catch(_){
+  try{map?.remove();}catch(_2){}
+  map=null;
+  $('lakeMap').innerHTML='<div class="atlas-fallback">The map could not initialize. Explore all five lakes using the working research-location cards and original study links.</div>';
+ }
 }
+window.LAKE_BUOY_CHOOSE=choose;
 window.addEventListener('load',initMap);choose(current);
 </script></body></html>
