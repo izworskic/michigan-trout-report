@@ -7,6 +7,7 @@ on:
       - 'lib/mayfly-outlook.js'
       - 'api/mayfly-hatches.js'
       - 'scripts/mayfly-forecast.test.mjs'
+      - 'scripts/mayfly-page.test.mjs'
       - 'public/mayfly-hatches.html'
       - '.github/workflows/mayfly-forecast.yml'
   push:
@@ -30,4 +31,4 @@ jobs:
           node --check api/mayfly-hatches.js
           node --check scripts/mayfly-forecast.test.mjs
       - name: Test no-fake-hatch and modern USGS contracts
-        run: node --test scripts/mayfly-forecast.test.mjs
+        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs
