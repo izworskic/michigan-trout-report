@@ -1,0 +1,44 @@
+/* Historical event archive chart. Temporal evidence, not predicted hatch peaks. */
+.history-panel{grid-column:1/-1;border:1px solid #cbded6;background:linear-gradient(138deg,#f6faf7,#faf8ef);padding:20px;border-radius:8px;min-width:0}
+.history-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.history-header h3{font:normal clamp(23px,2.5vw,31px) Georgia,serif;color:#194b46;margin:4px 0}
+.history-header p{font-size:12px;color:#61796e;max-width:750px;line-height:1.6;margin:6px 0}
+.history-badge{background:#e6f0e7;border:1px solid #bddbc7;border-radius:5px;color:#245e53;font-size:11px;font-weight:800;padding:7px 10px}
+.history-lake-switch{display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;padding:8px 1px 11px;margin:10px 0 0}
+.history-lake-switch button{flex:0 0 auto;border:1px solid #c6dbce;background:#fff;color:#24574d;border-radius:5px;cursor:pointer;font-size:11px;font-weight:800;min-height:37px;padding:8px 11px}
+.history-lake-switch button[aria-pressed=true]{color:#fff;background:#155a52;border-color:#155a52}
+.history-matrix{display:grid;grid-template-columns:minmax(44px,.4fr) repeat(5,minmax(0,1fr));gap:5px;margin:8px 0 0;align-items:stretch}
+.history-month,.history-year{display:flex;align-items:center;justify-content:center;font-size:11px;color:#59756c;font-weight:800;padding:9px 3px}
+.history-year{background:#ecf2ec;border-radius:4px}
+.history-cell{min-height:40px;display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap;background:#e7eee7;border:1px solid #dce8df;border-radius:5px;cursor:pointer}
+.history-cell.populated{background:#fefcf5;border-color:#b4cfc1}
+.history-cell.focused{outline:2px solid #286e63;outline-offset:1px}
+.history-cell:hover{border-color:#3a8c78}
+.history-cell-empty{color:#b8c7bd;font-size:17px}
+.history-dot{display:inline-block;width:10px;height:10px;border-radius:2px;background:#2b7a67;border:1px solid #fff}
+.history-dot.field{background:#245f77}
+.history-dot.reported{background:#bb8746}
+.history-dot.first{background:#67a88b}
+.history-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#526b5f;margin:13px 0}
+.history-legend span{display:inline-flex;align-items:center;gap:6px}
+.history-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:6px}
+.history-actions button{background:#e8f0e9;border:1px solid #b4d0bf;border-radius:5px;color:#235a50;padding:7px 10px;font-size:11px;cursor:pointer;font-weight:800}
+.history-actions button[hidden]{display:none}
+.history-actions span{font-size:11px;color:#657e71}
+.history-records{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.history-event{background:#fff;border:1px solid #dce7de;border-radius:6px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.history-event-when{padding:10px 12px;background:#123e45;color:#fff;display:flex;gap:7px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.history-event-when strong{font-size:14px;white-space:nowrap}
+.history-category{font-size:10px;font-weight:700;color:#e6f2ec;background:#326f76;border-radius:4px;padding:4px 7px}
+.history-category.reported{background:#7b6040}
+.history-category.first{background:#376b53}
+.history-event-body{padding:13px;flex:1}
+.history-event-body>strong{display:block;font:normal 18px Georgia,serif;color:#184a42}
+.history-event-body>span{font-size:10px;color:#668174}
+.history-event-body p{color:#567165;font-size:12px;line-height:1.55;margin:10px 0}
+.history-event-body .history-limit{border-left:3px solid #b99564;background:#faf8f0;color:#756847;padding:7px 10px;font-size:11px}
+.history-event-body a{display:inline-block;color:#217564;text-decoration:underline;font-size:11px;font-weight:750;line-height:1.5}
+.history-empty{border:1px dashed #c9dace;color:#6b7e6d;padding:20px;background:#f9fcf8;font-size:12px;border-radius:5px}
+.history-disclaimer{border-top:1px solid #e0e9de;margin:15px 0 0;padding-top:12px;color:#5c7466;font-size:11px;line-height:1.7}
+@media(max-width:790px){.history-records{grid-template-columns:1fr}.history-panel{padding:14px}.history-header h3{font-size:25px}}
+@media(max-width:480px){.history-matrix{gap:3px;grid-template-columns:45px repeat(5,minmax(0,1fr))}.history-cell{min-height:36px;padding:3px}.history-dot{width:8px;height:8px}.history-month{font-size:10px}.history-event-when strong{font-size:12px}}

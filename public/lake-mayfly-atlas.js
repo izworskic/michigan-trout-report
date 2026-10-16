@@ -116,6 +116,7 @@ function select(id,pan=true){
  const p=SPOTS.find(s=>s.id===id);if(!p)return;
  if(activeLake!=='All five'&&activeLake!==p.lake)activeLake='All five';
  selected=id;render();
+ window.LAKE_PUBLISHED_HISTORY?.setSite?.(id,p.lake);
  window.LAKE_INSIGHTS?.setLake?.(activeLake);
  if(lakeChanged)lakeChanged(activeLake,p);
  if(pan&&markerSelect)markerSelect(p);
@@ -126,6 +127,7 @@ function init(){
   const match=SPOTS.find(p=>activeLake==='All five'?p.lake!=='Connecting waters':p.lake===activeLake);
   if(match)selected=match.id;
   render();
+  window.LAKE_PUBLISHED_HISTORY?.setLake?.(activeLake);
   window.LAKE_INSIGHTS?.setLake?.(activeLake);
   if(lakeChanged)lakeChanged(activeLake,match);
   else if(match&&markerSelect)markerSelect(match);
