@@ -101,10 +101,22 @@
    render();
   }));
  }
+function renderComparison(spots,loaded){
+ const destination=$('riverComparison');if(!destination)return;
+ destination.innerHTML=spots.map(spot=>{
+  const report=loaded.get(spot.id),t=report?.waterTempF;
+  const measured=Number.isFinite(t)&&report?.observedAt;
+  if(!measured)return '<article class="compare-river"><strong>'+esc(spot.river)+' <span>—</span></strong><p>'+esc(spot.name.split('·').at(-1).trim())+'</p><div class="compare-blank">No fresh water temperature</div></article>';
+  const pct=Math.max(0,Math.min(100,(t-35)/45*100));
+  const hot=t>=68;
+  return '<article class="compare-river"><strong>'+esc(spot.river)+' <span>'+t.toFixed(1)+'°F</span></strong><p>'+esc(spot.name.split('·').at(-1).trim())+' · USGS '+esc(spot.station)+'</p><div class="compare-track" role="img" aria-label="Measured '+t.toFixed(1)+' degrees Fahrenheit on a 35 to 80 degree scale"><div class="compare-fill'+(hot?' hot':'')+'" style="width:'+pct.toFixed(1)+'%"></div></div></article>';
+ }).join('');
+}
  function render(){
   const b=board();if(!b)return;
   const {spots,loaded,chosen}=b;
   syncChoices(spots);
+  renderComparison(spots,loaded);
   const spot=spots.find(x=>x.id===selection)||spots[0];
   const report=loaded.get(spot.id)||null;
   const meta=FLY[chosen]||FLY.hex;
