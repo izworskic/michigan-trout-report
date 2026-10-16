@@ -25,6 +25,7 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 @media(max-width:970px){.columns{grid-template-columns:1fr}#riverMap{height:320px}}
 @media(max-width:640px){.river-grid,.calendar,.stats{grid-template-columns:1fr}.topbar{padding:12px}.hero-inner{padding:26px 14px}main{padding:12px 10px 36px}.panel{padding:15px}}
 </style>
+<link rel="stylesheet" href="/mayfly-experience.css">
 </head><body>
 <header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
 <section class="hero"><div class="hero-inner"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
@@ -57,6 +58,18 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <p class="far"><a href="/mayfly-hatches.html">Explore 12 mayfly groups and 7-day water scenarios on the Au Sable →</a></p>
 </section>
 </aside></div>
+<section class="panel river-story" id="riverStory" aria-labelledby="riverStoryTitle">
+<div class="story-header"><div><div class="story-kicker">Understand the water before chasing the hatch</div><h2 id="riverStoryTitle">Your river, explained</h2><p class="story-lede">Pick a real monitoring station. The charts show what the water is doing, which parts are measured, and what remains a seasonal guess.</p></div><span class="story-pill" id="experienceStatus">Checking stations…</span></div>
+<div id="stationChoices" class="story-tabs" role="group" aria-label="Select a monitored trout river"></div>
+<div class="story-overview">
+<div class="story-message"><div class="story-label"><span id="experienceFly">Hexagenia</span> watch · <span id="experienceRiver">Au Sable</span></div><h3 id="experienceHeadline">Reading measured river conditions…</h3><p id="experienceWhy">Only direct sightings can confirm mayflies are emerging.</p></div>
+<div class="story-when"><div class="story-label">How an angler uses this</div><strong>Look for <span id="experienceTime">after dark</span></strong><p>Usual time of activity, not a scheduled hatch.</p><div class="story-label">Useful fly patterns</div><strong id="experiencePattern">Large Hex dry</strong><p>Carry several sizes; match the insects actually visible.</p></div></div>
+<div class="story-evidence">
+<div class="story-chart"><h3>How water temperature is changing</h3><p class="muted">USGS measured history and, only where supported, an experimental three-day scenario.</p><div id="riverTempGraph" aria-live="polite"><p class="data-empty">Checking USGS readings…</p></div></div>
+<div class="story-season"><h3>Where this hatch fits in the year</h3><p id="experienceExplain">Broad seasonal context, not a promised emergence date.</p><div id="seasonTimeline"></div><p class="experience-subnote" id="experienceScope">A gauge is a point, not the whole river.</p></div></div>
+<p class="story-quality" id="experienceDataQuality">Connecting measured river and weather sources…</p>
+<div class="story-outlook"><div class="sectionhead"><h3>Next seven days of water and weather</h3><span class="tiny">Not a verified insect forecast</span></div><p id="experienceModel">Days 1–3: possible scenario if measured water history exists. Days 4–7: weather context only.</p><div id="outlookTiles" class="weather-strip" aria-live="polite"><p class="data-empty">Waiting for weather…</p></div></div>
+</section>
 <section class="panel"><div class="sectionhead"><h2>Signature mayfly seasons</h2><span class="tiny">Broad field-guide windows, not fixed hatch dates</span></div>
 <div class="calendar">
 <div class="hatch"><strong>Hendrickson · Ephemerella subvaria</strong><time>Mid-April – May</time><p>Afternoon mayflies on warming spring water. Au Sable, Manistee, and Pere Marquette dry-fly fishing highlights.</p></div>
@@ -68,6 +81,7 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <p><a href="/great-lakes-mayflies.html">Open the separate Great Lakes lakefly-swarm tracker →</a></p></section>
 </main><footer>Hatches are not directly measured. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable Predictor</a> · <a href="/hatches/michigan-hatch-calendar.html">Hatch guide</a></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="/mayfly-experience.js" defer></script>
 <script>
 const SPOTS=[
  {id:'red-oak',name:'Au Sable · Mainstream / Red Oak',river:'Au Sable',lat:44.6769593,lon:-84.2925146,station:'04136000',scope:'Measured Red Oak mainstream water, NOT Holy Water near Grayling.',guide:'/stream/ausable-river.html'},
@@ -123,11 +137,11 @@ async function loadRiver(spot){
   const data=await res.json();if(data.success!==true||data.reach?.station!==spot.station)throw Error('Gauge mismatch');
   loaded.set(spot.id,data);
  }catch(e){loaded.set(spot.id,{error:true});}
- renderOne(spot);updateTotals();
+ renderOne(spot);updateTotals();window.MayflyExperience?.notify?.();
 }
 function selectSpecies(fly){
  chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
- SPOTS.forEach(renderOne);
+ SPOTS.forEach(renderOne);window.MayflyExperience?.notify?.();
 }
 function initMap(){
  if(!window.L){$('riverMap').textContent='Map tiles unavailable. All six station cards remain usable.';return;}
