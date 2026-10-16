@@ -1,7 +1,7 @@
 // GET /api/mayfly-hatches?reach=north-branch
 // Au Sable-specific first release. Uses the modern USGS OGC continuous API,
 // never the retiring waterservices.usgs.gov endpoint.
-import { REACHES, buildMayflyReport } from '../lib/mayfly-forecast.js';
+import { REACHES, STATEWIDE_REACHES, buildMayflyReport } from '../lib/mayfly-forecast.js';
 import { buildSevenDayOutlook } from '../lib/mayfly-outlook.js';
 
 const ENDPOINT='https://api.waterdata.usgs.gov/ogcapi/v1/collections/latest-continuous/items';
@@ -20,7 +20,8 @@ async function json(url, ms=8500) {
 function newest(features, code) {
   return (features||[])
     .filter(f=>String(f.properties?.parameter_code)===code)
-    .filter(f=>Number.isFinite(Number(f.properties?.value)))
+    .filter(f=>{const unit=String(f.properties?.unit_of_measure||'');return !unit||(code==='00010'?unit==='degC':unit==='ft^3/s');})
+    .filter(f=>f.properties?.value!==null&&f.properties?.value!==undefined&&f.properties?.value!==''&&Number.isFinite(Number(f.properties.value)))
     .sort((a,b)=>Date.parse(b.properties?.time||0)-Date.parse(a.properties?.time||0))[0]?.properties || null;
 }
 function fresh(reading, now) {
@@ -94,7 +95,7 @@ export default async function handler(req,res) {
   if(req.method==='OPTIONS') return res.status(204).end();
   if(req.method!=='GET') return res.status(405).json({error:'Method not allowed'});
   const id=typeof req.query?.reach==='string'?req.query.reach:'north-branch';
-  const reach=REACHES.find(r=>r.id===id);
+  const reach=[...REACHES,...STATEWIDE_REACHES].find(r=>r.id===id);
   if(!reach) return res.status(400).json({error:'Unknown reach'});
   const now=new Date();
   const [gage,weather,history]=await Promise.allSettled([loadGage(reach,now),loadWeather(reach),loadWaterHistory(reach)]);

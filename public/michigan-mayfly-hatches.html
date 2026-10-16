@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Michigan Mayfly Hatch Predictor 2026 | Au Sable, Manistee, Pere Marquette</title>
+<meta name="description" content="Where are Michigan's famous trout-river mayflies hatching next? Compare Au Sable, Manistee, Pere Marquette, Muskegon and Boardman with live USGS temperatures, 7-day weather and realistic Hex, Hendrickson, Brown Drake and Sulphur windows.">
+<link rel="canonical" href="https://michigantroutreport.com/michigan-mayfly-hatches.html">
+<meta property="og:type" content="website"><meta property="og:title" content="Michigan Mayfly Hatch Predictor 2026 | Famous Trout Rivers">
+<meta property="og:description" content="River-by-river Hex, Brown Drake, Hendrickson and Sulphur watches for Michigan's iconic trout fisheries. USGS gauges, real water temperatures, NWS outlook, no invented hatch claims.">
+<meta property="og:url" content="https://michigantroutreport.com/michigan-mayfly-hatches.html">
+<meta property="og:image" content="https://michigantroutreport.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Michigan River Mayfly Hatch Predictor 2026"><meta name="twitter:description" content="Condition-based mayfly hatch watches across the Au Sable, Manistee, Pere Marquette, Muskegon and Boardman Rivers."><meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/michigan-mayfly-hatches.html#page","name":"Michigan Mayfly Hatch Predictor","url":"https://michigantroutreport.com/michigan-mayfly-hatches.html","description":"Environmental hatch-window watches for Michigan trout streams with measured USGS gauges and NWS forecast context; never direct insect counts.","author":{"@id":"https://chrisizworski.com/#person"},"publisher":{"@id":"https://chrisizworski.com/#person"}},{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com/"}]}</script>
+<style>
+:root{--pine:#143b34;--forest:#205b49;--ink:#20352d;--muted:#697c70;--line:#dbe7dc;--surface:#fff;--gold:#b17b3f}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f6f8f4;color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}a{color:#166d56}button{font:inherit}button:focus-visible,a:focus-visible{outline:3px solid #daa557;outline-offset:2px}
+header{background:#12382f;color:#d3e6db}.topbar{max-width:1210px;margin:auto;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.brand{font-size:13px;font-weight:800;letter-spacing:.035em;color:#fff;text-decoration:none}.topbar nav{display:flex;gap:14px;flex-wrap:wrap}.topbar nav a{color:#cae5da;font-size:12px;text-decoration:none}
+.hero{background:linear-gradient(116deg,#143b34 5%,#265f50 88%);color:#fff}.hero-inner{max-width:1210px;margin:auto;padding:29px 18px 31px}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:#f0ca8c}h1{font:normal clamp(30px,4.25vw,49px)/1.12 Georgia,serif;margin:8px 0 9px;max-width:825px}h2{font:normal 26px/1.24 Georgia,serif;margin:0 0 8px}h3{font-size:16px;margin:0 0 8px}.hero p{max-width:825px;color:#ddece2;font-size:15px;margin:0}.hero-tags{margin-top:16px;display:flex;gap:7px;flex-wrap:wrap}.hero-tags span{color:#eaf4eb;font-size:11px;border:1px solid #acd2bd88;border-radius:5px;padding:5px 9px}
+main{max-width:1210px;margin:auto;padding:16px 17px 45px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:19px;margin-bottom:16px;box-shadow:0 3px 19px #12412f08}.sectionhead{display:flex;align-items:baseline;gap:12px;justify-content:space-between;flex-wrap:wrap}.tiny{font-size:11px;color:var(--muted)}.muted{font-size:13px;color:#657c70;margin:0 0 10px}
+.switches{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.switches button{cursor:pointer;background:#f1f6f0;border:1px solid #d8e7d9;border-radius:6px;color:#24543f;font-weight:700;padding:9px 12px;min-height:43px;font-size:12px}.switches button[aria-pressed="true"]{background:var(--pine);color:#fff;border-color:var(--pine)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}.stat{background:#f3f7f2;border:1px solid var(--line);border-radius:7px;padding:12px}.stat strong{display:block;color:#285340;font-size:21px}.stat span{color:#72847b;font-size:11px}.columns{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(290px,.78fr);gap:16px;align-items:start}.river-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.river{border:1px solid #dee7dc;border-radius:9px;background:#fff;overflow:hidden}.river-header{display:flex;align-items:start;justify-content:space-between;gap:8px;padding:14px 14px 0}.river-number{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#76897b;font-weight:750}.river h3{font:normal 21px/1.15 Georgia,serif;margin:4px 0 0}.status{font-size:11px;font-weight:800;background:#edf2ed;color:#567367;border-radius:5px;padding:5px 7px;max-width:125px;text-align:right}.status.on{background:#e3f2e7;color:#27694d}.status.caution{background:#fff0dd;color:#906329}.readings{display:flex;gap:10px;align-items:start;margin:13px 14px;padding:9px 10px;background:#f4f8f4;border-radius:6px}.reading{flex:1;min-width:0}.reading strong{font-size:21px;color:#204f38;display:block;font-variant-numeric:tabular-nums}.reading small{display:block;color:#71837a;font-size:10px}.detail{font-size:12px;color:#5a7164;padding:0 14px;min-height:54px;margin-bottom:6px}.mini{font-size:11px;color:#61786a;padding:0 14px 10px;line-height:1.4}.mini strong{color:#265b40}.river-links{padding:10px 14px;border-top:1px solid #e9efe8;background:#f8faf7;display:flex;gap:12px;flex-wrap:wrap}.river-links a{font-size:12px;font-weight:700}
+#riverMap{height:380px;border:1px solid #d9e5d8;background:#eff5ef;border-radius:8px;margin-top:12px}.legend{font-size:11px;color:#617c6c;padding-top:8px}
+.calendar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.hatch{border:1px solid #dfe8dd;border-radius:7px;padding:12px;background:#fbfcfa}.hatch strong{display:block;color:#214d3c;font-size:14px}.hatch time{display:block;color:#658272;font-size:11px;margin-top:4px}.hatch p{color:#58715f;font-size:12px;margin:5px 0 0}.warning{background:#fff6e9;border-left:3px solid #c18e4a;padding:10px 12px;font-size:12px;color:#795627;border-radius:4px;margin:10px 0}.scope{font-size:12px;color:#627467}.far{border-top:1px solid var(--line);padding-top:12px;margin-top:11px;font-size:12px;color:#60776a}
+footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font-size:12px}footer a{color:#e5f2e8}
+@media(max-width:970px){.columns{grid-template-columns:1fr}#riverMap{height:320px}}
+@media(max-width:640px){.river-grid,.calendar,.stats{grid-template-columns:1fr}.topbar{padding:12px}.hero-inner{padding:26px 14px}main{padding:12px 10px 36px}.panel{padding:15px}}
+</style>
+</head><body>
+<header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
+<p>Au Sable. Manistee. Pere Marquette. Muskegon. Boardman. Compare measured water conditions, regional hatch timing, and cautious three-day outlook signals at actual USGS stations—not fishing-access points or invented insect reports.</p>
+<div class="hero-tags"><span>Hendricksons in spring</span><span>Brown Drakes before Hex</span><span>Hex after dark</span><span>Measured river temperatures</span></div></div></section>
+<main>
+<section class="panel">
+<div class="sectionhead"><h2>Michigan trout-river hatch board</h2><span class="tiny" id="boardStamp">Checking USGS stations…</span></div>
+<p class="muted">Five renowned river systems. Six monitored locations. Each card reports its named gauge; famous upstream fly-fishing reaches do not inherit temperatures from downstream flow stations.</p>
+<div class="switches" id="flySelect" role="group" aria-label="Select mayfly to watch">
+<button type="button" data-fly="hex" aria-pressed="true">Hex</button>
+<button type="button" data-fly="hendrickson" aria-pressed="false">Hendrickson</button>
+<button type="button" data-fly="brown-drake" aria-pressed="false">Brown Drake</button>
+<button type="button" data-fly="sulphur" aria-pressed="false">Sulphur</button>
+<button type="button" data-fly="bwo" aria-pressed="false">BWO</button>
+</div>
+<div class="stats"><div class="stat"><strong>5</strong><span>Named trout-river systems</span></div><div class="stat"><strong>6</strong><span>Actual USGS monitoring stations</span></div><div class="stat"><strong id="liveStations">Checking…</strong><span>Gauges with fresh measured water temp</span></div></div>
+</section>
+<div class="columns">
+<section class="panel"><div class="sectionhead"><h2>Compare river conditions</h2><span class="tiny">No species sightings claimed</span></div><div id="riverCards" class="river-grid" aria-live="polite"></div>
+<p class="warning"><strong>Important:</strong> A gauge recording favorable water temperatures is not a confirmed hatch. At 68°F or warmer, the trout-fishing signal is suppressed for catch-and-release safety. Missing water temperatures are never estimated from air temperature or a different river.</p>
+</section>
+<aside>
+<section class="panel"><h2>Where are the gauges?</h2><p class="muted">Markers are verified USGS monitoring locations, not Hex emergence hotspots or guaranteed public access.</p><div id="riverMap"></div><p class="legend">CARTO / OpenStreetMap basemap. Select a marker to highlight its river card.</p></section>
+<section class="panel"><h2>Don't confuse the water</h2><p class="muted"><strong>Au Sable Holy Water:</strong> outstanding for classic spring hatches. Michigan DNR's natural river plan notes that Brown Drake and Hex hatches favor sand-and-silt sections above and below the flies-only reach.</p>
+<p class="muted"><strong>Pere Marquette:</strong> the Scottville gauge is downstream of the renowned flies-only water near Baldwin. Its flow cannot prove a Baldwin Hex hatch.</p>
+<p class="muted"><strong>Manistee:</strong> upper-river and Sherman gauges are separate sections; neither represents the entire river.</p>
+<p class="muted"><strong>Muskegon:</strong> Croton Dam tailwater conditions can differ from the warmer downstream habitat.</p>
+<p class="muted"><strong>Boardman:</strong> a Brown Bridge Road flow gauge is not a measured Traverse City hatch.</p>
+<p class="far"><a href="/mayfly-hatches.html">Explore 12 mayfly groups and 7-day water scenarios on the Au Sable →</a></p>
+</section>
+</aside></div>
+<section class="panel"><div class="sectionhead"><h2>Signature mayfly seasons</h2><span class="tiny">Broad field-guide windows, not fixed hatch dates</span></div>
+<div class="calendar">
+<div class="hatch"><strong>Hendrickson · Ephemerella subvaria</strong><time>Mid-April – May</time><p>Afternoon mayflies on warming spring water. Au Sable, Manistee, and Pere Marquette dry-fly fishing highlights.</p></div>
+<div class="hatch"><strong>Brown Drake · Ephemera simulans</strong><time>Late May – June</time><p>Large dusk mayflies; sand and soft bottom matter more than a famous access location.</p></div>
+<div class="hatch"><strong>Hexagenia · giant Michigan mayfly</strong><time>Mid-June – July</time><p>Michigan's legendary nighttime dry-fly event. Au Sable, Manistee, Pere Marquette and other suitable slow, silty trout water.</p></div>
+<div class="hatch"><strong>Sulphur · Ephemerella groups</strong><time>Late May – July</time><p>Often evening activity, sometimes mixed with other mayflies. A temperature match never guarantees a rising fish.</p></div></div>
+<p class="far">Habitat correction: <a href="https://www.michigan.gov/-/media/Project/Websites/dnr/Documents/Fisheries/NaturalRivers/Archive/AuSable_plan.pdf" target="_blank" rel="noopener">Michigan DNR Au Sable Natural River Plan</a>. General trout stream context: <a href="https://www.michigan.gov/dnr/education/michigan-species/fish-species/brown-trout" target="_blank" rel="noopener">Michigan DNR brown trout</a>. This board is an uncalibrated habitat- and weather-based watch.</p></section>
+<section class="panel"><h2>Looking for lake fish flies instead?</h2><p class="muted">Great Lakes shoreline Hexagenia swarms are a distinct phenomenon from Michigan's fly-fishing hatch destinations. The lakefly environmental and documented-specimen tool remains available separately for people tracking Saginaw Bay or Lake Erie.</p>
+<p><a href="/great-lakes-mayflies.html">Open the separate Great Lakes lakefly-swarm tracker →</a></p></section>
+</main><footer>Hatches are not directly measured. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable Predictor</a> · <a href="/hatches/michigan-hatch-calendar.html">Hatch guide</a></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script>
+const SPOTS=[
+ {id:'red-oak',name:'Au Sable · Mainstream / Red Oak',river:'Au Sable',lat:44.6769593,lon:-84.2925146,station:'04136000',scope:'Measured Red Oak mainstream water, NOT Holy Water near Grayling.',guide:'/stream/ausable-river.html'},
+ {id:'manistee-upper',name:'Manistee · Upper near Grayling',river:'Manistee',lat:44.6930538,lon:-84.8471415,station:'04123500',scope:'Upper river only; no Tippy Dam extrapolation.',guide:'/stream/manistee-river.html'},
+ {id:'manistee-mid',name:'Manistee · Sherman',river:'Manistee',lat:44.4363924,lon:-85.6986792,station:'04124000',scope:'Middle river only; not the upper Grayling reach.',guide:'/stream/manistee-river.html'},
+ {id:'pere-marquette',name:'Pere Marquette · Scottville',river:'Pere Marquette',lat:43.9450063,lon:-86.2786896,station:'04122500',scope:'Scottville flow-only gauge; no measured temperature for Baldwin flies-only water.',guide:'/stream/pere-marquette-river.html'},
+ {id:'muskegon-croton',name:'Muskegon · Croton tailwater',river:'Muskegon',lat:43.4347456,lon:-85.6653239,station:'04121970',scope:'Croton tailwater; dam-influenced, not downstream Hex habitat.',guide:'/stream/muskegon-river.html'},
+ {id:'boardman-upper',name:'Boardman · Brown Bridge Road',river:'Boardman',lat:44.6566700,lon:-85.4367311,station:'04126970',scope:'Flow-only station above Brown Bridge Road, not downtown Traverse City.',guide:'/stream/boardman-river.html'}
+];
+const names={hex:'Hexagenia',hendrickson:'Hendrickson','brown-drake':'Brown Drake',sulphur:'Sulphur',bwo:'Blue-Winged Olive'};
+const loaded=new Map();let chosen='hex',map,markers={};
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function shortDate(ts){return ts?new Date(ts).toLocaleString('en-US',{timeZone:'America/Detroit',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' ET':'Unavailable';}
+function flyState(report,fly){
+ const item=report?.species?.find(x=>x.id===fly);
+ if(!report||!item)return {label:'Loading',note:'Waiting for measured data.',css:''};
+ if(item.signal==='Off season')return {label:'Off season',note:'Outside the normal '+names[fly]+' hatch window. This is not an observation.',css:''};
+ if(report.troutHeatCaution)return {label:'Trout heat caution',note:'Measured water at or above 68°F; no catch-and-release recommendation.',css:'caution'};
+ if(report.waterTempF===null)return {label:'Temp unavailable',note:'No fresh measured water temperature: calendar and flow only; no live hatch-readiness claim.',css:''};
+ let text=item.signal;
+ return {label:text,note:item.reason||'Uncalibrated condition signal; no observed mayflies.',css:item.order>=4?'on':item.order===3?'caution':''};
+}
+function futureNote(report,fly){
+ const days=report?.outlook?.days||[];
+ const possible=days.filter(d=>d.dayNumber<=3&&d.tempBand&&d.safety==='none')
+   .filter(d=>(d.species||[]).some(s=>s.id===fly&&(s.signal==='Potential window'||s.signal==='Variable window')));
+ if(possible.length)return 'Experimental days 1–3: '+possible.map(x=>x.date.slice(5)).join(', ')+'. Not a predicted hatch.';
+ if(!report?.outlook?.measuredAnchorF&&report?.outlook?.measuredAnchorF!==0)return 'No measured-water forecast; 7-day weather is seasonal context only.';
+ return 'No verified near-term water/season hatch window; check the detailed river conditions.';
+}
+function renderOne(spot){
+ const target=$('r-'+spot.id),r=loaded.get(spot.id);
+ if(!target)return;
+ if(r?.error){target.innerHTML='<div class="river-header"><div><div class="river-number">'+esc(spot.river)+'</div><h3>'+esc(spot.name)+'</h3></div><span class="status">Service unavailable</span></div><p class="detail">Could not retrieve fresh USGS/NWS information; no conditions can be inferred.</p><div class="river-links"><a href="'+esc(spot.guide)+'">River guide →</a></div>';return;}
+ if(!r){target.innerHTML='<div class="river-header"><div><div class="river-number">'+esc(spot.river)+'</div><h3>'+esc(spot.name)+'</h3></div><span class="status">Checking data</span></div><p class="detail">Checking USGS observations and local weather…</p>';return;}
+ const state=flyState(r,chosen),fresh=r.waterTempF!==null;
+ target.innerHTML='<div class="river-header"><div><div class="river-number">'+esc(spot.river)+' · '+esc(spot.station)+'</div><h3>'+esc(spot.name)+'</h3></div><span class="status '+esc(state.css)+'">'+esc(state.label)+'</span></div>'
+ +'<div class="readings"><div class="reading"><strong>'+esc(fresh?r.waterTempF.toFixed(1)+'°F':'No temp')+'</strong><small>'+esc(fresh?'Measured water, '+shortDate(r.observedAt):'No fresh USGS temperature')+'</small></div><div class="reading"><strong>'+esc(r.flowCfs===null?'—':Math.round(r.flowCfs).toLocaleString())+'</strong><small>Discharge, cfs · gauge</small></div></div>'
+ +'<p class="detail">'+esc(state.note)+'</p><div class="mini"><strong>Next 3 days:</strong> '+esc(futureNote(r,chosen))+'<br>'+esc(spot.scope)+'</div>'
+ +'<div class="river-links"><a href="https://waterdata.usgs.gov/monitoring-location/USGS-'+esc(spot.station)+'" target="_blank" rel="noopener">USGS source ↗</a><a href="'+esc(spot.guide)+'">River guide →</a></div>';
+}
+function updateTotals(){
+ const result=SPOTS.filter(s=>loaded.get(s.id)?.waterTempF!==null&&Number.isFinite(loaded.get(s.id)?.waterTempF)).length;
+ $('liveStations').textContent=result+'/'+SPOTS.length;
+ const good=[...loaded.values()].filter(v=>v&&!v.error).length;
+ $('boardStamp').textContent=good+'/'+SPOTS.length+' gauge reports received · last refresh on page load';
+}
+async function loadRiver(spot){
+ try{
+  const res=await fetch('/api/mayfly-hatches?reach='+encodeURIComponent(spot.id),{headers:{Accept:'application/json'}});
+  if(!res.ok)throw Error('Gauge service '+res.status);
+  const data=await res.json();if(data.success!==true||data.reach?.station!==spot.station)throw Error('Gauge mismatch');
+  loaded.set(spot.id,data);
+ }catch(e){loaded.set(spot.id,{error:true});}
+ renderOne(spot);updateTotals();
+}
+function selectSpecies(fly){
+ chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
+ SPOTS.forEach(renderOne);
+}
+function initMap(){
+ if(!window.L){$('riverMap').textContent='Map tiles unavailable. All six station cards remain usable.';return;}
+ map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
+ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'}).addTo(map);
+ SPOTS.forEach(s=>{
+  const m=L.circleMarker([s.lat,s.lon],{radius:8,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
+  m.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' — monitoring only');
+  m.on('click',()=>{$('r-'+s.id).scrollIntoView({behavior:'smooth',block:'center'});});markers[s.id]=m;
+ });
+ map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+}
+document.querySelectorAll('[data-fly]').forEach(b=>b.addEventListener('click',()=>selectSpecies(b.dataset.fly)));
+SPOTS.forEach(s=>{const d=document.createElement('article');d.id='r-'+s.id;d.className='river';$('riverCards').appendChild(d);renderOne(s);});
+window.addEventListener('load',initMap);
+Promise.allSettled(SPOTS.map(loadRiver));
+</script>
+</body></html>
