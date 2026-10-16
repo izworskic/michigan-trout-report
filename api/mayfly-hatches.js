@@ -21,7 +21,7 @@ function newest(features, code) {
   return (features||[])
     .filter(f=>String(f.properties?.parameter_code)===code)
     .filter(f=>{const unit=String(f.properties?.unit_of_measure||'');return !unit||(code==='00010'?unit==='degC':unit==='ft^3/s');})
-    .filter(f=>Number.isFinite(Number(f.properties?.value)))
+    .filter(f=>f.properties?.value!==null&&f.properties?.value!==undefined&&f.properties?.value!==''&&Number.isFinite(Number(f.properties.value)))
     .sort((a,b)=>Date.parse(b.properties?.time||0)-Date.parse(a.properties?.time||0))[0]?.properties || null;
 }
 function fresh(reading, now) {
