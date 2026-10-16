@@ -136,3 +136,16 @@ test('front-end chart renders dates with separated categories and never claims a
    }catch(e){reject(e);}
  }));
 });
+
+
+test('source-based 11-year Port Clinton first sighting median is not a hatch forecast',()=>{
+ const x=lakeHistory({lake:'Erie',now:NOW}).firstSightingSummary;
+ assert.equal(x.count,11);
+ assert.equal(x.earliestMonthDay,'05-30');
+ assert.equal(x.medianMonthDay,'06-06');
+ assert.equal(x.latestMonthDay,'06-14');
+ assert.match(x.recordType,/not start, peak, or mass swarm/);
+ assert.equal(lakeHistory({lake:'Superior',now:NOW}).firstSightingSummary,null);
+ assert(HTML.includes('id="historyFirstSightings"'));
+ assert(JS.includes('medianMonthDay'));
+});
