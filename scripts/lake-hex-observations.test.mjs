@@ -104,7 +104,8 @@ test('page scripts parse and observation loading remains independent from buoy f
  }
  assert(html.includes('void loadEvidence(id,count)'));
  assert(html.includes('/api/lake-hex-observations?region='));
- assert(html.includes('basemaps.cartocdn.com'));
+ assert(!html.includes('basemaps.cartocdn.com'));
+ assert(html.includes('tile.openstreetmap.org'));
  assert(html.includes('Not verified by this tool'));
  const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
   .filter(m=>!/src=/i.test(m[1])&&!/application\/ld\+json/i.test(m[1]));
