@@ -143,19 +143,64 @@ function selectSpecies(fly){
  chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
  SPOTS.forEach(renderOne);window.MayflyExperience?.notify?.();
 }
-function initMap(){
- if(!window.L){$('riverMap').textContent='Map tiles unavailable. All six station cards remain usable.';return;}
- map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
- L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'}).addTo(map);
- SPOTS.forEach(s=>{
-  const m=L.circleMarker([s.lat,s.lon],{radius:8,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
-  m.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' — monitoring only');
-  m.on('click',()=>{$('r-'+s.id).scrollIntoView({behavior:'smooth',block:'center'});});markers[s.id]=m;
+// A zero-key CARTO basemap with OSM backup and an embedded schematic fallback.
+// Real station coordinates are kept separate from fishing access or hatch sites.
+function drawFallbackLocator(){
+ try{map?.remove();}catch(_){}
+ map=null;markers={};
+ const x=lon=>44+(lon+86.6)/2.5*650;
+ const y=lat=>390-(lat-43.25)/1.6*335;
+ let svg='<div class="fallback-locator"><svg role="img" aria-label="Approximate relative location of the six Michigan river gauges; not for navigation" viewBox="0 0 745 420">';
+ svg+='<rect x="4" y="4" width="737" height="410" rx="12" fill="#f4f7f1" stroke="#d3e0d4"/>';
+ [100,200,300].forEach(v=>{svg+='<line x1="25" x2="710" y1="'+v+'" y2="'+v+'" stroke="#e3ebe1" stroke-dasharray="4 7"/>';});
+ svg+='<text x="25" y="26" font-size="15" font-weight="750" fill="#28503e">Monitoring station locator</text>';
+ svg+='<text x="25" y="44" font-size="11" fill="#66816f">Schematic · relative locations, not public fishing access</text>';
+ SPOTS.forEach((p,i)=>{
+  const px=x(p.lon),py=y(p.lat);
+  svg+='<g class="fallback-point" data-fallback-station="'+esc(p.id)+'" role="button" tabindex="0" aria-label="Select '+esc(p.name)+'">';
+  svg+='<circle cx="'+px+'" cy="'+py+'" r="15" fill="#246e52" stroke="#fff" stroke-width="3"/>';
+  svg+='<text x="'+px+'" y="'+(py+4)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+(i+1)+'</text></g>';
  });
- map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+ svg+='</svg><div class="map-safe-note">1 Au Sable · 2 Upper Manistee · 3 Sherman · 4 Pere Marquette · 5 Muskegon · 6 Boardman. Select a number for its river story.</div></div>';
+ $('riverMap').innerHTML=svg;
+ $('riverMap').querySelectorAll('[data-fallback-station]').forEach(n=>{
+  const select=()=>window.MayflyExperience?.selectStation?.(n.dataset.fallbackStation);
+  n.addEventListener('click',select);
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
+ });
 }
-document.querySelectorAll('[data-fly]').forEach(b=>b.addEventListener('click',()=>selectSpecies(b.dataset.fly)));
-SPOTS.forEach(s=>{const d=document.createElement('article');d.id='r-'+s.id;d.className='river';$('riverCards').appendChild(d);renderOne(s);});
+function initMap(){
+ if(!window.L){drawFallbackLocator();return;}
+ try{
+  map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
+  let switched=false,backupErrors=0;
+  const carto=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+   {maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'});
+  carto.on('tileerror',()=>{
+   if(switched)return;switched=true;
+   try{
+    map.removeLayer(carto);
+    const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {maxZoom:16,attribution:'© OpenStreetMap contributors'});
+    osm.on('tileerror',()=>{if(++backupErrors>=3)drawFallbackLocator();});
+    osm.addTo(map);
+   }catch(_){drawFallbackLocator();}
+  });
+  carto.addTo(map);
+  SPOTS.forEach(s=>{
+   const p=L.circleMarker([s.lat,s.lon],{radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
+   p.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' · monitoring location, not a hatch hotspot');
+   p.on('click',()=>window.MayflyExperience?.selectStation?.(s.id));markers[s.id]=p;
+  });
+  map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+ }catch(_){drawFallbackLocator();}
+}
+window.MayflyBoard={
+ get:()=>({spots:SPOTS,loaded,chosen,highlight:(id)=>{
+  document.querySelectorAll('.river').forEach(e=>e.classList.toggle('selected-river',e.id==='r-'+id));
+  for(const [key,p] of Object.entries(markers))p.setStyle({fillColor:key===id?'#b17b3f':'#25644f',radius:key===id?11:9});
+ }})
+};
 window.addEventListener('load',initMap);
 Promise.allSettled(SPOTS.map(loadRiver));
 </script>
