@@ -1,0 +1,69 @@
+name: Report a Great Lakes mayfly swarm
+description: Submit a dated public mass-swarm or water-emergence report for editorial review (never auto-published).
+title: "[Lake Mayfly Report]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **A sighting is not automatically an approved hatch event.** A volunteer reviewer will check public evidence and event date before anything appears on Michigan Trout Report. Do **not** include private addresses, personal contact details, private fishing locations, or precise GPS coordinates. This GitHub Issue and attachments are public.
+  - type: dropdown
+    id: region
+    attributes:
+      label: Great Lakes region
+      description: This review workflow currently covers two monitored regions.
+      options:
+        - Saginaw Bay
+        - Western Lake Erie
+    validations:
+      required: true
+  - type: input
+    id: event-date
+    attributes:
+      label: Local date of occurrence (YYYY-MM-DD)
+      description: Provide the date you observed the actual insects, not the upload date.
+      placeholder: "2027-06-25"
+    validations:
+      required: true
+  - type: input
+    id: place
+    attributes:
+      label: Approximate public place (no private location)
+      description: City or publicly named shoreline only; do not provide coordinates, addresses, or home locations.
+      placeholder: "Bay City shoreline"
+    validations:
+      required: true
+  - type: dropdown
+    id: event-type
+    attributes:
+      label: What was observed?
+      options:
+        - Large airborne mayfly aggregation or mass swarm
+        - Mayflies emerging at the water surface
+        - Agency report or radar interpretation of a major swarm
+        - Just one or a few individual mayflies (specimen ID only)
+        - Uncertain or second-hand report
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Public first-hand evidence
+      description: Link to the original dated photos/video, published report, or agency radar documentation. You can attach media in the public issue only if you have the right to share it. A single insect photo alone is not mass emergence proof.
+      placeholder: "Paste an original evidence link and explain what it shows..."
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What exactly happened?
+      description: Approximate time of evening, whether a large swarm or water emergence was visible, how species were identified, and any uncertainty.
+      placeholder: "Around 9 PM, many large long-tailed mayflies ... "
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy-and-review
+    attributes:
+      label: Public report and editorial review
+      options:
+        - label: I understand this is a public GitHub Issue, no claim of a verified hatch will appear automatically, and I have not included private details.
+          required: true
