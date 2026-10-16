@@ -29,12 +29,39 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <link rel="stylesheet" href="/mayfly-identification.css">
 </head><body>
 <header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="#mayflyPhotoGuide">Identify a mayfly</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
-<section class="hero hero-with-reference"><div class="hero-inner"><div class="hero-copy"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
-<p>Au Sable. Manistee. Pere Marquette. Muskegon. Boardman. Compare measured water conditions, regional hatch timing, and cautious three-day outlook signals at actual USGS stations—not fishing-access points or invented insect reports.</p>
-<div class="hero-tags"><span>Real fly photographs</span><span>Identify what you see</span><span>Measured river conditions</span></div></div>
-<figure class="hero-reference"><img src="/images/mayflies/michigan-hex-hero.webp" width="260" height="177" fetchpriority="high" alt="Real Hexagenia limbata mayfly photographed in Michigan, with wings and long abdomen visible"><figcaption>Real Michigan Hexagenia · Photo: <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata.jpg" target="_blank" rel="noopener">Cody Hough, CC BY-SA 3.0</a></figcaption></figure>
-</div></section>
+<section class="hero hero-with-reference" aria-labelledby="mainTitle">
+<img class="hero-landscape" src="/images/mayflies/ausable-sunset-hero.webp" alt="Sunset reflecting on a northern Michigan forest river, photographed by the U.S. Forest Service" fetchpriority="high" width="1200" height="830">
+<div class="hero-inner">
+<div class="hero-copy">
+<div class="eyebrow">Michigan's celebrated trout-stream hatches</div>
+<h1 id="mainTitle">Michigan Mayfly Hatch Predictor</h1>
+<p class="hero-storyline">Find the river. Recognize the insect. Read the water.</p>
+<p>Track Hex, Hendrickson, Brown Drake, Sulphur, and Blue-Winged Olive conditions across the Au Sable, Manistee, Pere Marquette, Muskegon, and Boardman rivers. We show real gauge readings—not invented hatch sightings.</p>
+<div class="hero-actions"><a class="hero-action primary" href="#mayflyPhotoGuide">Identify the mayfly ↓</a><a class="hero-action secondary" href="#mapOfRivers">Explore the river map ↓</a></div>
+</div>
+<p class="hero-photo-credit">Scenic river photograph: <a href="https://commons.wikimedia.org/wiki/File:HMNF_AuSableRiver_HighbanksOverlook_(17762226084).jpg" target="_blank" rel="noopener">U.S. Forest Service · public domain</a>. Illustrative scenery, not a current hatch report.</p>
+</div>
+</section>
+<section class="hatch-quicklook" aria-labelledby="quickFlyTitle">
+<div class="hatch-quick-inner">
+<div class="quick-head"><h2 id="quickFlyTitle">Which mayfly are you seeing?</h2><span>Real photographed specimens · select to see identification details</span></div>
+<div class="hatch-quick-grid">
+<a href="#mayflyPhotoGuide" data-quick-fly="hendrickson"><img src="/images/mayflies/hendrickson.webp" alt="Aquatic nymph reference of a Hendrickson mayfly" width="200" height="112"><span class="quick-name">Hendrickson</span><span class="quick-month">April–May · nymph photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="brown-drake"><img src="/images/mayflies/brown-drake.webp" alt="Adult Brown Drake mayfly with mottled wings" width="200" height="112"><span class="quick-name">Brown Drake</span><span class="quick-month">May–June · adult photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="hex"><img src="/images/mayflies/hex.webp" alt="Adult yellow Hexagenia mayfly with tall wings and long tails" width="200" height="112"><span class="quick-name">Hexagenia / Hex</span><span class="quick-month">June–July · adult photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="sulphur"><img src="/images/mayflies/sulphur.webp" alt="Aquatic nymph reference of a Sulphur mayfly" width="200" height="112"><span class="quick-name">Sulphur</span><span class="quick-month">May–July · nymph photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="bwo"><img src="/images/mayflies/bwo.webp" alt="Adult Blue-Winged Olive mayfly on a mesh surface" width="200" height="112"><span class="quick-name">Blue-Winged Olive</span><span class="quick-month">Spring and fall · adult photo</span></a>
+</div>
+</div>
+</section>
 <main>
+<section class="panel map-panel" id="mapOfRivers" aria-labelledby="mapPanelTitle">
+<div class="sectionhead"><h2 id="mapPanelTitle">Michigan trout-river map</h2><span class="map-live-indicator">6 USGS gauge pins · no API key</span></div>
+<p class="muted">Explore actual USGS gauge locations and select a pin to read its river conditions. These are monitoring stations—not public fishing access, hatch locations, or guarantees of mayfly activity.</p>
+<div id="riverMap"><p class="data-empty">Loading the geographic map. A self-contained station locator is available if map services fail.</p></div>
+<div class="map-key"><span><i class="map-dot fresh"></i> Fresh water-temperature reading</span><span><i class="map-dot missing"></i> Temperature unavailable</span><span><i class="map-dot selected"></i> Selected gauge</span></div>
+<p class="map-provider-note">Basemap: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>. If map tiles cannot load, a clickable on-page station locator takes over automatically.</p>
+</section>
 <section class="panel id-feature-panel" id="mayflyPhotoGuide" aria-labelledby="idTitle">
 <div class="sectionhead"><div><div class="story-kicker">Real insects · credited specimen photographs</div><h2 id="idTitle">What mayfly am I looking at?</h2></div><span class="tiny">Five signature hatch groups · Michigan fishing field guide</span></div>
 <p class="id-intro">Compare <strong>actual photographs</strong> of the mayflies anglers talk about, then connect an insect to its normal season, preferred time of activity, and current river conditions. Look for the stage label on each photograph—two are aquatic nymphs, three are winged adults. Different sexes and species can also look alike; <strong>these are visual clues, not automatic species identifications.</strong></p>
@@ -81,7 +108,6 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <p class="warning"><strong>Important:</strong> A gauge recording favorable water temperatures is not a confirmed hatch. At 68°F or warmer, the trout-fishing signal is suppressed for catch-and-release safety. Missing water temperatures are never estimated from air temperature or a different river.</p>
 </section>
 <aside>
-<section class="panel"><h2>Where are the gauges?</h2><p class="muted">Markers are verified USGS monitoring locations, not Hex emergence hotspots or guaranteed public access.</p><div id="riverMap"></div><p class="legend">CARTO / OpenStreetMap basemap. Select a marker to highlight its river card.</p></section>
 <section class="panel"><h2>Don't confuse the water</h2><p class="muted"><strong>Au Sable Holy Water:</strong> outstanding for classic spring hatches. Michigan DNR's natural river plan notes that Brown Drake and Hex hatches favor sand-and-silt sections above and below the flies-only reach.</p>
 <p class="muted"><strong>Pere Marquette:</strong> the Scottville gauge is downstream of the renowned flies-only water near Baldwin. Its flow cannot prove a Baldwin Hex hatch.</p>
 <p class="muted"><strong>Manistee:</strong> upper-river and Sherman gauges are separate sections; neither represents the entire river.</p>
@@ -170,7 +196,7 @@ async function loadRiver(spot){
   const data=await res.json();if(data.success!==true||data.reach?.station!==spot.station)throw Error('Gauge mismatch');
   loaded.set(spot.id,data);
  }catch(e){loaded.set(spot.id,{error:true});}
- renderOne(spot);updateTotals();window.MayflyExperience?.notify?.();
+ renderOne(spot);updateTotals();window.MayflyBoard?.refreshMarkers?.();window.MayflyExperience?.notify?.();
 }
 function selectSpecies(fly){
  chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
@@ -202,37 +228,58 @@ function drawFallbackLocator(){
   n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
  });
 }
+// OpenStreetMap standard basemap: no vendor API token or CARTO watermark.
+// Tile requests happen only when a user views this interactive map (OSMF policy).
+// If external tiles or the Leaflet script are blocked, display the clickable
+// built-in station schematic. A blank/paid-key map is never an acceptable state.
 function initMap(){
  if(!window.L){drawFallbackLocator();return;}
  try{
-  map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
-  let switched=false,backupErrors=0;
-  const carto=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-   {maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'});
-  carto.on('tileerror',()=>{
-   if(switched)return;switched=true;
-   try{
-    map.removeLayer(carto);
-    const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {maxZoom:16,attribution:'© OpenStreetMap contributors'});
-    osm.on('tileerror',()=>{if(++backupErrors>=3)drawFallbackLocator();});
-    osm.addTo(map);
-   }catch(_){drawFallbackLocator();}
+  map=L.map('riverMap',{scrollWheelZoom:false,zoomControl:true,preferCanvas:true})
+   .setView([44.3,-85.12],8);
+  let errors=0,loadedTiles=0,showingFallback=false;
+  const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+   maxZoom:13,minZoom:6,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>',
+   detectRetina:false,updateWhenIdle:true,keepBuffer:1
   });
-  carto.addTo(map);
+  osm.on('tileload',()=>{loadedTiles++;});
+  osm.on('tileerror',()=>{
+   errors++;
+   if(!showingFallback&&errors>=2&&loadedTiles===0){
+    showingFallback=true;drawFallbackLocator();
+   }
+  });
+  osm.addTo(map);
   SPOTS.forEach(s=>{
-   const p=L.circleMarker([s.lat,s.lon],{radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
-   p.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' · monitoring location, not a hatch hotspot');
-   p.on('click',()=>window.MayflyExperience?.selectStation?.(s.id));markers[s.id]=p;
+   const point=L.circleMarker([s.lat,s.lon],{
+    radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1
+   }).addTo(map);
+   point.bindTooltip(esc(s.river)+' · '+esc(s.name.split('·').at(-1).trim()),{direction:'top',opacity:.92});
+   point.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' · actual monitoring location, not hatch hotspot');
+   point.on('click',()=>window.MayflyExperience?.selectStation?.(s.id));
+   markers[s.id]=point;
   });
-  map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+  map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.18));
+  // Marker visualization reflects real observations only.
+  window.MayflyBoard?.refreshMarkers?.();
  }catch(_){drawFallbackLocator();}
 }
 window.MayflyBoard={
  selectFly:(id)=>{if(names[id])selectSpecies(id);},
+ refreshMarkers:()=>{
+  for(const [id,point] of Object.entries(markers)){
+   const report=loaded.get(id);
+   const current=Number.isFinite(report?.waterTempF);
+   const missing=report&&!current;
+   point.setStyle({fillColor:missing?'#788c85':'#25644f'});
+  }
+ },
  get:()=>({spots:SPOTS,loaded,chosen,highlight:(id)=>{
   document.querySelectorAll('.river').forEach(e=>e.classList.toggle('selected-river',e.id==='r-'+id));
-  for(const [key,p] of Object.entries(markers))p.setStyle({fillColor:key===id?'#b17b3f':'#25644f',radius:key===id?11:9});
+  for(const [key,p] of Object.entries(markers)){
+   const hasTemp=Number.isFinite(loaded.get(key)?.waterTempF);
+   p.setStyle({fillColor:key===id?'#b17b3f':hasTemp?'#25644f':'#7c8e87',radius:key===id?11:9});
+  }
  }})
 };
 window.addEventListener('load',initMap);

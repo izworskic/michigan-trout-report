@@ -17,13 +17,15 @@ test('new chart and explanatory experience is linked and all critical targets ex
  assert(html.includes('href="/mayfly-experience.css"'));
  assert(css.includes('.story-evidence'));
  assert(css.includes('max-width:680px'));
- assert(html.includes('CARTO'));
+ assert(html.includes('OpenStreetMap contributors'));
  assert(html.includes('Experimental'));
 });
 
-test('a missing CARTO API key cannot make this page inaccessible',()=>{
+test('the map uses no vendor key and always has a clickable fallback locator',()=>{
  assert(!/key=\$\{|access_token=|carto_api_key|api-key-needed/i.test(html));
- assert(html.includes('basemaps.cartocdn.com/light_all'));
+ assert(!html.includes('basemaps.cartocdn.com'));
+ assert(html.includes('id="mapOfRivers"'));
+ assert(html.includes('id="riverMap"'));
  assert(html.includes('tile.openstreetmap.org/'));
  assert(html.includes('function drawFallbackLocator'));
  assert(html.includes('if(!window.L){drawFallbackLocator();return;}'));

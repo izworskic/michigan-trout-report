@@ -64,9 +64,9 @@ test('null USGS values are not parsed as 32F water or zero-discharge measurement
   assert.equal(res.body.flowCfs,null);
  }finally{globalThis.fetch=old;}
 });
-test('statewide dashboard is source-linked, responsive, CARTO mapped, and explicitly NOT a lake swarms page',()=>{
+test('statewide dashboard is source-linked, responsive, no-key geographic mapped, and explicitly NOT a lake swarms page',()=>{
  const h=readFileSync('public/michigan-mayfly-hatches.html','utf8');
- for(const token of ['/api/mayfly-hatches?reach=','basemaps.cartocdn.com','04122500',
+ for(const token of ['/api/mayfly-hatches?reach=','tile.openstreetmap.org','04122500',
     '04126970','04123500','04124000','04121970','04136000',
     'No fresh measured water temperature','Outside the normal','Lake fly',
     '/great-lakes-mayflies.html','DNR Au Sable Natural River Plan','68°F']){

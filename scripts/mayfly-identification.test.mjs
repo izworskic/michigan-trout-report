@@ -7,17 +7,23 @@ const page=readFileSync('public/michigan-mayfly-hatches.html','utf8');
 const guide=readFileSync('public/mayfly-identification.js','utf8');
 const css=readFileSync('public/mayfly-identification.css','utf8');
 
-test('visual ID gallery, credited hero and offline-safe keyless CARTO map remain on page',()=>{
+test('visual ID gallery, credited hero and offline-safe keyless river map remain on page',()=>{
  for(const id of ['mayflyPhotoGuide','mayflyPhotoCards','idCandidates','idSize','idColor',
  'idTime','idPhotoInput','idPhotoPreview','idPhotoClear','idPhotoNote','flySelect',
  'riverMap','riverCards']){
   assert(page.includes('id="'+id+'"'),id);
  }
  assert(page.includes('hero-with-reference'));
- assert(page.includes('Photo: <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata.jpg"'));
+ assert(page.includes('Scenic river photograph: <a href="https://commons.wikimedia.org/wiki/File:HMNF_AuSableRiver_HighbanksOverlook_'));
  assert(page.includes('src="/mayfly-identification.js"'));
  assert(page.includes('href="/mayfly-identification.css"'));
- assert(page.includes('basemaps.cartocdn.com'));
+ assert(!page.includes('basemaps.cartocdn.com'));
+ assert(page.includes('tile.openstreetmap.org'));
+ assert(page.includes('data-quick-fly="hex"'));
+ assert.equal((page.match(/data-quick-fly=/g)||[]).length,5);
+ assert(page.includes('U.S. Forest Service'));
+ assert(page.includes('hatch-quicklook'));
+ assert(page.indexOf('id="mapOfRivers"')<page.indexOf('id="mayflyPhotoGuide"'), 'map must be prominent rather than below all long content');
  assert(page.includes('drawFallbackLocator'));
  assert(css.includes('@media(max-width:480px)'));
  assert(css.includes('scroll-snap-type:x mandatory'));
@@ -32,14 +38,14 @@ test('5 real photo references have a separate original, attribution and license,
  const ids=['hendrickson','brown-drake','hex','sulphur','bwo'];
  for(const id of ids)assert(guide.includes("id:'"+id+"'"));
  assert.equal((guide.match(/image:'\/images\/mayflies\/[a-z-]+\.webp'/g)||[]).length,5);
- assert.equal((page.match(/src="\/images\/mayflies\/michigan-hex-hero\.webp"/g)||[]).length,1);
+ assert.equal((page.match(/src="\/images\/mayflies\/ausable-sunset-hero\.webp"/g)||[]).length,1);
  assert(guide.includes("stage:'Nymph · aquatic stage'"));
  assert(guide.includes("stage:'Adult · winged'"));
  assert(guide.includes('class="id-stage"'));
  assert(!guide.includes('upload.wikimedia.org'));
- for(const id of ['hendrickson','brown-drake','hex','sulphur','bwo','michigan-hex-hero']){
+ for(const id of ['hendrickson','brown-drake','hex','sulphur','bwo','michigan-hex-hero','ausable-sunset-hero']){
   const bytes=readFileSync('public/images/mayflies/'+id+'.webp');
-  assert(bytes.length>5000&&bytes.length<180000,id+' unexpected file size');
+  assert(bytes.length>5000&&bytes.length<(id==='ausable-sunset-hero'?450000:180000),id+' unexpected file size');
   assert.equal(bytes.toString('ascii',0,4),'RIFF',id+' invalid image header');
   assert.equal(bytes.toString('ascii',8,12),'WEBP',id+' invalid image type');
  }
@@ -50,7 +56,9 @@ test('5 real photo references have a separate original, attribution and license,
  assert(page.includes('Hendrickson and Sulphur photos here show aquatic NYMPHS'));
  assert(guide.includes('Photo shows a submerged nymph'));
  assert(guide.includes('Photo shows an aquatic nymph'));
- assert(page.includes('CC BY-SA 3.0'));
+ assert(guide.includes('[data-quick-fly]'));
+ assert(guide.includes("license:'CC BY-SA 3.0'"));
+ assert(page.includes('U.S. Forest Service'));
  assert(!page.includes('upload.wikimedia.org'));
 
  assert(!guide.includes('classifyImage('));
@@ -84,7 +92,7 @@ test('responsive five-photo gallery builds referenced photos and simple matching
  E.get('mayflyPhotoCards').querySelectorAll=()=>[];
  E.get('idCandidates').querySelectorAll=()=>[];
  E.get('mayflyPhotoGuide').querySelectorAll=()=>[];
- const doc={getElementById:id=>E.get(id)||null,querySelector:()=>null};
+ const doc={getElementById:id=>E.get(id)||null,querySelector:()=>null,querySelectorAll:()=>[]};
  const w={addEventListener(){}};
  new Script(guide).runInNewContext({window:w,document:doc,URL:{createObjectURL(){throw Error('No upload');}},String,Array,Math,Map,RegExp});
  const gallery=E.get('mayflyPhotoCards').innerHTML;
