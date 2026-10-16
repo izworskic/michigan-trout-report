@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {Script} from 'node:vm';
 import {LAKE_REGIONS, parseNdbcStandard,lakeMetrics,extractLakeEvenings,
  buildLakeHexReport,isLakeSeason,dateAfter} from '../lib/lake-mayflies.js';
-import handler from '../api/lake-mayflies.js';
+import handler,{eveningForecast} from '../api/lake-mayflies.js';
 const NOW=new Date('2026-06-23T00:00:00Z'); // June 22 at 8 PM EDT
 function stationRow({d='2026 06 22 23 50',temp='20.0',wind='3.0',wave='0.2'}={}){
  return d+' 210 '+wind+' 4.0 '+wave+' 3 MM 210 1015.0 21.0 '+temp+' MM MM MM MM';
@@ -105,4 +105,21 @@ test('UI has both independent lake selectors, a CARTO map and parsable browser J
   .filter(m=>!/src=/i.test(m[1])&&!/application\/ld\+json/i.test(m[1]));
  assert(scripts.length);
  scripts.forEach(s=>assert.doesNotThrow(()=>new Script(s[2])));
+});
+
+test('NWS forecast request uses working shoreline grid instead of unsupported open-water grid',async()=>{
+ const oldFetch=globalThis.fetch,seen=[];
+ globalThis.fetch=async url=>{
+  const u=String(url);seen.push(u);
+  if(u.includes('/points/'))return {ok:true,text:async()=>JSON.stringify({properties:{
+   forecastHourly:'https://api.weather.gov/gridpoints/DTX/32,90/forecast/hourly'}})};
+  if(u.includes('/forecast/hourly'))return {ok:true,text:async()=>JSON.stringify({properties:{periods:[{startTime:'2026-06-22T23:00:00Z',windSpeed:'6 mph',shortForecast:'Clear'}]}})};
+  throw Error('Unexpected '+u);
+ };
+ try{
+  const hours=await eveningForecast(LAKE_REGIONS[0]);
+  assert.equal(hours.length,1);
+  assert(seen.includes('https://api.weather.gov/points/43.6,-83.89'));
+  assert(!seen.some(u=>u.includes('/points/43.983,-83.6')));
+ }finally{globalThis.fetch=oldFetch;}
 });
