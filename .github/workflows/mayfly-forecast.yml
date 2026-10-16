@@ -1,0 +1,31 @@
+name: Au Sable Mayfly Forecast Checks
+
+on:
+  pull_request:
+    paths:
+      - 'lib/mayfly-forecast.js'
+      - 'api/mayfly-hatches.js'
+      - 'scripts/mayfly-forecast.test.mjs'
+      - 'public/mayfly-hatches.html'
+      - '.github/workflows/mayfly-forecast.yml'
+  push:
+    branches:
+      - 'feat/ausable-mayfly-hatch-predictor'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check lib/mayfly-forecast.js
+          node --check api/mayfly-hatches.js
+          node --check scripts/mayfly-forecast.test.mjs
+      - name: Test no-fake-hatch and modern USGS contracts
+        run: node --test scripts/mayfly-forecast.test.mjs
