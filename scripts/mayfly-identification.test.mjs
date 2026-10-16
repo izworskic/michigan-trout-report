@@ -70,7 +70,7 @@ test('responsive five-photo gallery builds referenced photos and simple matching
  const w={addEventListener(){}};
  new Script(guide).runInNewContext({window:w,document:doc,URL:{createObjectURL(){throw Error('No upload');}},String,Array,Math,Map,RegExp});
  const gallery=E.get('mayflyPhotoCards').innerHTML;
- assert.equal((gallery.match(/class="id-card/g)||[]).length,5);
+ assert.equal((gallery.match(/<article class="id-card/g)||[]).length,5);
  assert(gallery.includes('Hendrickson')&&gallery.includes('Blue-Winged Olive'));
  assert(gallery.includes('Photo')||gallery.includes('Reference'));
  assert(gallery.includes('target="_blank" rel="noopener"'));
