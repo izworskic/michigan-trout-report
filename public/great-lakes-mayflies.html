@@ -51,6 +51,26 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 @media(max-width:690px){.obs-list{grid-template-columns:1fr 1fr}}
 @media(max-width:470px){.obs-list,.obs-panels{grid-template-columns:1fr}}
 
+
+/* Evidence review: curated mass events are independent of iNaturalist IDs */
+.review-card{border-top:3px solid #356e63}
+.review-head{display:flex;justify-content:space-between;gap:14px;align-items:start;flex-wrap:wrap}
+.review-pill{font-size:11px;font-weight:700;color:#4c7469;background:#ebf4ef;border:1px solid #d5e4dc;border-radius:5px;padding:6px 9px}
+.review-description{max-width:800px;font-size:13px;color:#617972;margin-top:8px}
+.review-summary{display:grid;grid-template-columns:minmax(0,2fr) minmax(160px,1fr);gap:11px;margin:14px 0}
+.review-metric{background:#f5f8f5;border:1px solid #dfe9e3;border-radius:8px;padding:12px}
+.review-metric .caption{font-size:11px;color:#69827a}
+.review-metric strong{font-size:16px;display:block;color:#26564d;margin:3px 0}
+.review-history{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.review-event{border:1px solid #dce6df;border-radius:8px;padding:13px}
+.review-event time{font-size:11px;color:#6b847c;display:block}
+.review-event strong{display:block;font-size:15px;margin:4px 0}
+.review-event p{font-size:12px;color:#57736a;margin-bottom:5px}
+.review-event a{font-size:12px;font-weight:750}
+.review-cta{display:inline-flex;align-items:center;border-radius:6px;background:#1d6862;color:#fff!important;padding:9px 14px;text-decoration:none!important;font-size:13px;font-weight:750}
+.review-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid #e2ece6;padding-top:12px;margin-top:12px}
+@media(max-width:610px){.review-summary,.review-history{grid-template-columns:1fr}}
+
 </style></head>
 <body>
 <nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
@@ -77,6 +97,23 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <div class="metric"><div class="label">Evening outlook</div><strong id="evening">—</strong><div class="foot">NWS nearby shoreline weather</div></div></div>
 <div class="signal" role="status" id="signal">Collecting the last available NOAA buoy observation…</div>
 <p class="source"><span id="provenance">NOAA National Data Buoy Center</span> · <a id="stationUrl" href="https://www.ndbc.noaa.gov/station_page.php?station=45163" target="_blank" rel="noopener">Open original buoy observations</a> · <span id="updated"></span></p></section>
+<section class="card review-card" aria-labelledby="reviewTitle">
+<div class="review-head">
+<div><div class="kicker" style="color:#447b67">Human-reviewed field evidence</div><h2 id="reviewTitle">Documented mass hatch events</h2></div>
+<span class="review-pill" id="reviewFreshness">Checking the reviewed ledger…</span>
+</div>
+<p class="review-description">A documented mass swarm is different from seeing one mayfly. Reports are <strong>held for manual source review</strong> and only published after a curator adds evidence to the approved event ledger. No report changes the water-temperature forecast automatically.</p>
+<div class="review-summary" aria-label="Reviewed mass hatch event status">
+<div class="review-metric"><span class="caption">Reviewed events in selected region</span><strong id="reviewStatus">Checking records…</strong><span class="caption" id="reviewContext">Only approved, source-linked events are published.</span></div>
+<div class="review-metric"><span class="caption">Recent documented events · 14 days</span><strong id="reviewRecent">—</strong><span class="caption">A past event never means insects are emerging now.</span></div>
+</div>
+<div id="reviewEventList" class="review-history" aria-live="polite"><p class="muted">Checking editor-reviewed evidence…</p></div>
+<div class="review-footer">
+<span class="small">No approved events does not mean there were no hatches. Reports are not public here until reviewed.</span>
+<a class="review-cta" href="https://github.com/izworskic/michigan-trout-report/issues/new?template=lake-mayfly-swarm.yml" target="_blank" rel="noopener">Report a mass swarm ↗</a>
+</div>
+<p class="small" style="margin-top:8px">Reports are submitted through a public GitHub Issue and require a GitHub account. Do not share exact coordinates, private addresses or personal details. <a href="https://github.com/izworskic/michigan-trout-report/blob/main/docs/lake-mayfly-review.md" target="_blank" rel="noopener">Read the review standard</a>.</p>
+</section>
 <section class="card" aria-labelledby="observationTitle">
 <div class="obs-header">
   <div><div class="kicker" style="color:#447b67">Citizen-science evidence</div><h2 id="observationTitle">Are people actually seeing Hexagenia?</h2></div>
@@ -222,10 +259,47 @@ async function loadEvidence(id,requestToken){
  }
 }
 
+
+function renderReviewedEvents(data){
+ if(!data||!data.success)throw Error('Invalid reviewed ledger response');
+ txt('reviewFreshness','Curated event ledger');
+ txt('reviewStatus',data.totalReviewed ? data.totalReviewed+' editorially reviewed event'+(data.totalReviewed===1?'':'s'):'No reviewed events yet');
+ txt('reviewRecent',String(data.recent14Days));
+ txt('reviewContext',data.totalReviewed && data.latestEventDate
+  ?'Most recent documented event: '+data.latestEventDate+'. Not evidence that emergence is ongoing.'
+  :'The first event will appear here only after a human reviews its primary evidence.');
+ const records=data.events||[];
+ $('reviewEventList').innerHTML=records.length
+  ?records.map(e=>'<article class="review-event"><time datetime="'+esc(e.eventDate)+'">'+esc(e.eventDate)+'</time><strong>'+esc(e.placeLabel)+'</strong><p>'+esc(e.evidenceSummary)+'</p><p>Source: '+esc(e.sourceAttribution)+' · editorial review: '+esc(e.reviewedOn)+'</p><a href="'+esc(e.evidenceUrl)+'" target="_blank" rel="noopener">Inspect original mass-event evidence ↗</a></article>').join('')
+  :'<p class="muted">No mass-emergence events have passed editorial review for this region. Environmental watches and iNaturalist specimens remain available separately.</p>';
+}
+async function loadReviewedEvents(id,requestToken){
+ txt('reviewFreshness','Checking curated ledger…');
+ txt('reviewStatus','Checking…');
+ txt('reviewRecent','—');
+ txt('reviewContext','This is separate from citizen species sightings.');
+ $('reviewEventList').innerHTML='<p class="muted">Looking for published event reviews…</p>';
+ try{
+  const response=await fetch('/api/lake-hatch-events?region='+encodeURIComponent(id),{headers:{Accept:'application/json'}});
+  if(!response.ok)throw Error('Reviewed event API '+response.status);
+  const data=await response.json();
+  if(requestToken!==reqCounter)return;
+  renderReviewedEvents(data);
+ }catch(_){
+  if(requestToken!==reqCounter)return;
+  txt('reviewFreshness','Review ledger unavailable');
+  txt('reviewStatus','Unable to check reviewed records');
+  txt('reviewRecent','—');
+  txt('reviewContext','An outage must not be confused with zero events.');
+  $('reviewEventList').innerHTML='<p class="muted">The source-reviewed event feed is unavailable; do not infer that no hatches were reported.</p>';
+ }
+}
+
 async function choose(id){
  if(!REGION.some(r=>r.id===id))return;
  current=id;const count=++reqCounter;report=null;
  void loadEvidence(id,count);
+ void loadReviewedEvents(id,count);
  document.querySelectorAll('[data-region]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.region===id)));
  if(map&&marks[id]){map.panTo(marks[id].getLatLng());marks[id].openPopup();}
  txt('regionName',REGION.find(r=>r.id===id).title);
