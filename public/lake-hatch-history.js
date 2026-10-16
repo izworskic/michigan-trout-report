@@ -31,8 +31,27 @@ function available(e){
  const [yr,mon]=focus.split('-');
  return e.firstDate.slice(0,4)===yr&&e.firstDate.slice(5,7)===mon;
 }
+function renderFirstSightings(){
+ const box=$('historyFirstSightings');if(!box)return;
+ if(status!=='ready'){box.innerHTML='<p class="history-quiet">'+(status==='loading'?'Checking volunteer sightings…':'Volunteer summary unavailable.')+'</p>';return;}
+ const d=dataset?.firstSightingSummary;
+ if(!d||(lake!=='All five'&&lake!=='Erie')||(site!==null&&site!=='port-clinton')){
+  box.innerHTML='<p class="history-quiet">No qualifying repeat-year volunteer first-sighting series for this selection. Do not infer a missing or late hatch.</p>';return;
+ }
+ const fmt=md=>{
+  const date=new Date('2020-'+md+'T12:00:00Z');
+  return date.toLocaleDateString('en-US',{timeZone:'UTC',month:'short',day:'numeric'});
+ };
+ const years=d.sampleYears||[];
+ box.innerHTML='<div class="history-first-heading"><strong>Port Clinton · community FIRST sightings</strong><span>'+esc(years[0])+'–'+esc(years.at(-1))+' · '+esc(d.count)+' years, volunteer reports</span></div>'+
+  '<div class="history-first-stats"><div><span>Earliest logged</span><strong>'+esc(fmt(d.earliestMonthDay))+'</strong></div>'+
+  '<div><span>Median logged</span><strong>'+esc(fmt(d.medianMonthDay))+'</strong></div>'+
+  '<div><span>Latest logged</span><strong>'+esc(fmt(d.latestMonthDay))+'</strong></div></div>'+
+  '<p>Dates when someone FIRST REPORTED a mayfly, <strong>not when a mass hatch began, peaked or ended</strong>. Volunteer reporting effort varies between years; no current-year forecast is implied. <a href="https://www.mayflynews.net/news.html" target="_blank" rel="noopener">Original annual first-sighting table ↗</a></p>';
+}
 function render(){
  const root=$('historyRecords');if(!root)return;
+ renderFirstSightings();
  const all=filtered();
  const visible=all.filter(available);
  setText('historyScope',site?'RESEARCH AREA · '+(dataset?.entries.find(e=>e.siteId===site)?.place||site).toUpperCase():
