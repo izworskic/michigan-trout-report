@@ -3,6 +3,10 @@ name: Au Sable Mayfly Forecast Checks
 on:
   pull_request:
     paths:
+      - 'lib/lake-mayflies.js'
+      - 'api/lake-mayflies.js'
+      - 'public/great-lakes-mayflies.html'
+      - 'scripts/lake-mayflies.test.mjs'
       - 'lib/mayfly-forecast.js'
       - 'lib/mayfly-outlook.js'
       - 'api/mayfly-hatches.js'
@@ -26,9 +30,12 @@ jobs:
           node-version: '22'
       - name: Check JavaScript syntax
         run: |
+          node --check lib/lake-mayflies.js
+          node --check api/lake-mayflies.js
+          node --check scripts/lake-mayflies.test.mjs
           node --check lib/mayfly-forecast.js
           node --check lib/mayfly-outlook.js
           node --check api/mayfly-hatches.js
           node --check scripts/mayfly-forecast.test.mjs
       - name: Test no-fake-hatch and modern USGS contracts
-        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs
+        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs
