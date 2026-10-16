@@ -52,3 +52,17 @@
 #riverCards .river.selected-river{border-color:#5d9b72;box-shadow:0 0 0 2px #c8e5ce}
 @media(max-width:1040px){.story-evidence{grid-template-columns:1fr}.story-season .season-track{max-width:680px}}
 @media(max-width:680px){.story-overview{grid-template-columns:1fr}.story-tabs button{max-width:190px}.weather-strip{grid-auto-columns:minmax(165px,72%)}.river-story .story-header{display:block}.river-story .story-pill{display:inline-block;margin-top:10px}}
+
+/* Measured station comparison; intentionally NOT a hatch probability chart */
+.comparison-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:12px 0 10px}
+.compare-river{min-width:0;border:1px solid #dce6dd;background:#f8faf6;border-radius:9px;padding:13px}
+.compare-river strong{display:flex;justify-content:space-between;gap:6px;align-items:start;color:#244e3c;font-size:13px}
+.compare-river strong span{font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.compare-river p{font-size:11px;color:#698073;margin:6px 0 10px}
+.compare-track{height:9px;background:#e1e9df;border-radius:12px;overflow:hidden;position:relative}
+.compare-fill{height:100%;background:#398362;border-radius:12px}
+.compare-fill.hot{background:#ba8847}
+.compare-blank{font-size:12px!important;color:#6a7c70!important;margin:12px 0}
+.comparison-scale{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;color:#718477;font-size:10px}
+@media(max-width:950px){.comparison-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.comparison-grid{grid-template-columns:1fr}}
