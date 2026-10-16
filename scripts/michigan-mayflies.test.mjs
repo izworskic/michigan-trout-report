@@ -27,7 +27,7 @@ test('gauge-only Pere Marquette API does not generate false water temperature, r
   const u=String(url);requests.push(u);
   if(u.includes('api.waterdata.usgs.gov/ogcapi/v1/collections/latest-continuous')){
    const code=new URL(u).searchParams.get('parameter_code');
-   return {ok:true,json:async()=>({features:code==='00060'?[{properties:{parameter_code:'00060',unit_of_measure:'ft^3/s',value:'537',time:new Date().toISOString()}}]:[]})};
+   return {ok:true,json:async()=>({features:code==='00060'?[{properties:{parameter_code:'00060',unit_of_measure:'ft^3/s',value:'537',time:new Date(Date.now()-300000).toISOString()}}]:[]})};
   }
   if(u.includes('/collections/continuous/'))return{ok:true,json:async()=>({features:[],links:[]})};
   if(u.includes('api.weather.gov/points/'))throw Error('No NWS source in unit test');
