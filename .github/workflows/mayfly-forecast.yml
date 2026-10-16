@@ -3,6 +3,11 @@ name: Au Sable Mayfly Forecast Checks
 on:
   pull_request:
     paths:
+      - 'data/approved-hex-events.js'
+      - 'lib/lake-hatch-review.js'
+      - 'api/lake-hatch-events.js'
+      - 'scripts/lake-hatch-review.test.mjs'
+      - '.github/ISSUE_TEMPLATE/lake-mayfly-swarm.yml'
       - 'lib/lake-hex-observations.js'
       - 'api/lake-hex-observations.js'
       - 'scripts/lake-hex-observations.test.mjs'
@@ -33,6 +38,10 @@ jobs:
           node-version: '22'
       - name: Check JavaScript syntax
         run: |
+          node --check data/approved-hex-events.js
+          node --check lib/lake-hatch-review.js
+          node --check api/lake-hatch-events.js
+          node --check scripts/lake-hatch-review.test.mjs
           node --check lib/lake-hex-observations.js
           node --check api/lake-hex-observations.js
           node --check scripts/lake-hex-observations.test.mjs
@@ -44,4 +53,4 @@ jobs:
           node --check api/mayfly-hatches.js
           node --check scripts/mayfly-forecast.test.mjs
       - name: Test no-fake-hatch and modern USGS contracts
-        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs scripts/lake-hex-observations.test.mjs
+        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs scripts/lake-hex-observations.test.mjs scripts/lake-hatch-review.test.mjs
