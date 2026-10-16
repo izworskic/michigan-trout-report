@@ -50,6 +50,9 @@ test('source validation rejects spurious days, hidden private metadata, missing 
  assert.throws(()=>validateHistory(bad({category:'documented_adult_swarms',sourceType:'community_year_table'}),NOW),/scientific event without study/);
  assert.throws(()=>validateHistory(bad({privateReporterEmail:'someone@example.com'}),NOW),/unexpected field/);
  assert.throws(()=>validateHistory(bad({reviewedBy:'an imaginary person'}),NOW),/unexpected field/);
+ assert.throws(()=>validateHistory(bad({lake:'Erie'}),NOW),/research location\/lake mismatch/);
+ assert.throws(()=>validateHistory(bad({dateBasis:'current_hatch_verified'}),NOW),/invalid provenance for date/);
+ assert.throws(()=>validateHistory([{...PUBLISHED_LAKE_EVENTS.find(x=>x.category==='community_first_sighting'),dateBasis:'specific_observed_date'}],NOW),/first sighting cannot be labeled/);
  assert.throws(()=>validateHistory([PUBLISHED_LAKE_EVENTS[0],PUBLISHED_LAKE_EVENTS[0]],NOW),/duplicate ID/);
 });
 async function invoke(query={},method='GET'){
