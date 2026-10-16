@@ -6,12 +6,12 @@
 <meta name="description" content="Which mayflies could hatch on the Au Sable River? Compare Hendrickson, Sulphur, Brown Drake, Hex, Trico and more using fresh USGS water temperatures, local weather, and a regional season guide.">
 <link rel="canonical" href="https://michigantroutreport.com/mayfly-hatches.html">
 <meta property="og:type" content="website"><meta property="og:title" content="Au Sable Mayfly Hatch Predictor | Michigan Trout Report">
-<meta property="og:description" content="Compare ten mayfly hatches across the North Branch, South Branch and Au Sable mainstream. Gauge-based conditions, species timing and honest data confidence.">
+<meta property="og:description" content="Compare twelve mayfly hatches across the North Branch, South Branch and Au Sable mainstream. Gauge-based conditions, species timing and honest data confidence.">
 <meta property="og:url" content="https://michigantroutreport.com/mayfly-hatches.html">
 <meta property="og:image" content="https://michigantroutreport.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Au Sable Mayfly Hatch Predictor | Michigan Trout Report">
-<meta name="twitter:description" content="Compare ten mayfly hatches across the North Branch, South Branch and Au Sable mainstream. Gauge-based conditions, species timing and honest data confidence.">
+<meta name="twitter:description" content="Compare twelve mayfly hatches across the North Branch, South Branch and Au Sable mainstream. Gauge-based conditions, species timing and honest data confidence.">
 <meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/mayfly-hatches.html#page","name":"Au Sable Mayfly Hatch Predictor","description":"Condition-based estimates for ten mayfly groups on five USGS-gauged Au Sable watershed locations, not direct insect observations.","url":"https://michigantroutreport.com/mayfly-hatches.html","author":{"@id":"https://chrisizworski.com/#person"},"publisher":{"@id":"https://chrisizworski.com/#person"}},{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com/"}]}</script>
@@ -28,11 +28,36 @@
 .calendar{overflow-x:auto}.calendar table{width:100%;border-collapse:separate;border-spacing:2px;min-width:615px;font-size:11px}.calendar th{text-align:left;font-weight:600;padding:5px}.calendar td{min-width:30px;text-align:center;height:24px;border-radius:3px;background:#eff1eb}.calendar td.on{background:#74a28c;color:#113d31;font-weight:700}.calendar td.today{outline:2px solid #c78c2b}.calendar th:first-child{min-width:126px}
 .about{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.about p{font-size:13px;color:#4f6358}footer{background:#15352d;color:#d1e3d9;padding:22px;text-align:center;font-size:12px}footer a{color:#e1ead5}
 @media(max-width:830px){.split,.about{grid-template-columns:1fr}.panel{padding:16px}}@media(max-width:480px){.metrics{grid-template-columns:1fr 1fr}.metrics .metric:last-child{grid-column:span 2}.metric .value{font-size:22px}.wrap{padding:14px 11px 40px}.hero-inner{padding:28px 16px}.head-inner{padding:13px 16px}.species{grid-template-columns:1fr}.status{justify-self:start}#map{height:285px}}
+
+/* Seven-day water and mayfly outlook */
+.outlook-head{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.outlook-context{background:#eef5ee;padding:10px 12px;border-radius:6px;border-left:3px solid #4c8267;margin:8px 0 12px;color:#345849;font-size:13px}
+.outlook-context.warn{background:#fff4e6;border-left-color:#ca8c30;color:#74511c}
+.day-strip{display:grid;grid-template-columns:repeat(7,minmax(145px,1fr));gap:9px;overflow-x:auto;padding:3px 0 12px;scroll-snap-type:x proximity}
+.day-tile{background:#f7f9f6;border:1px solid #dbe5dc;border-radius:9px;padding:13px 12px;min-width:145px;scroll-snap-align:start}
+.day-tile.strong{background:#f0f8f2;border-color:#bedac6}
+.day-title{font-size:13px;font-weight:760;color:#204f3d}
+.day-sub{color:#688175;font-size:11px;margin:2px 0 11px}
+.day-label{font-size:12px;font-weight:700;color:#2d5745;min-height:36px;line-height:1.3}
+.day-tile .day-low{font-size:11px;color:#5a7265;margin-top:7px}
+.day-temp{font-size:17px;font-weight:760;color:#164533;margin:9px 0 0;font-variant-numeric:tabular-nums}
+.day-tile .flyname{font-size:12px;color:#345d4a;margin:9px 0 0;border-top:1px solid #dbe8da;padding-top:8px}
+.day-tile .flyname span{font-size:10px;color:#4e7c68;display:block}
+.trend-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,.6fr);gap:14px;margin-top:11px}
+.trend-plot{background:#fcfdfa;border:1px solid var(--line);border-radius:9px;padding:10px}
+#tempHistoryChart{width:100%;max-height:230px;overflow:hidden}#tempHistoryChart svg{display:block;width:100%;height:auto}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;font-size:11px;color:var(--muted)}
+.legend-dot{display:inline-block;width:17px;height:3px;background:#1c775e;vertical-align:middle;margin-right:4px}
+.legend-dot.dashed{background:repeating-linear-gradient(90deg,#bf8c41 0 4px,transparent 4px 7px)}
+.method-note{font-size:12px;color:#526b5d;line-height:1.5;padding:12px;background:#f5f8f3;border-radius:8px}
+.method-note strong{color:#204b3c}
+@media(max-width:800px){.day-strip{grid-auto-columns:minmax(145px,60%);grid-template-columns:none;grid-auto-flow:column}.trend-row{grid-template-columns:1fr}}
+@media(max-width:480px){.day-strip{grid-auto-columns:72%}}
 </style>
 </head>
 <body>
 <header class="header"><div class="head-inner"><div class="brand">Michigan Trout Report <span style="font-weight:400;color:#c7e2d2">/ Mayflies</span></div><nav><a href="/">River conditions</a> · <a href="/hex.html">Hex tracker</a> · <a href="/stream/ausable-river.html">Au Sable guide</a></nav></div></header>
-<section class="hero"><div class="hero-inner"><div class="eyebrow">Au Sable River · North and South Branches · Field Ledger</div><h1>Which mayflies might hatch next?</h1><p>Compare ten major Michigan mayflies against measured river temperature, hourly weather, and the normal hatch season. Designed for the Au Sable watershed — not a generic statewide calendar.</p><div class="hero-metrics"><span class="tag">10 mayfly groups</span><span class="tag">5 monitored river locations</span><span class="tag">USGS water temperature + NWS weather</span></div></div></section>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">Au Sable River · North and South Branches · Field Ledger</div><h1>Which mayflies might hatch next?</h1><p>Compare twelve major Michigan mayflies against measured river temperature, hourly weather, and the normal hatch season. Designed for the Au Sable watershed — not a generic statewide calendar.</p><div class="hero-metrics"><span class="tag">12 mayfly groups</span><span class="tag">5 monitored river locations</span><span class="tag">USGS water temperature + NWS weather</span></div></div></section>
 <main class="wrap">
 <section class="panel" aria-labelledby="selectTitle">
 <div class="section-heading"><h2 id="selectTitle">Choose your water</h2><span class="sub">USGS station locations — not fishing access points</span></div>
@@ -42,12 +67,21 @@
 <div id="caution" role="status" aria-live="polite"></div>
 <p class="fineprint">Source: <a id="gageLink" href="https://waterdata.usgs.gov/" target="_blank" rel="noopener">USGS monitoring station</a>. Temperature is measured at the selected gauge only. No direct hatch counts are available.</p>
 </section>
+<section class="panel" aria-labelledby="outlookTitle">
+<div class="outlook-head"><div><div class="eyebrow" style="color:#28755b">Next 7 days · experimental</div><h2 id="outlookTitle">Hatch window watch</h2></div><span class="sub" id="outlookUpdated">Checking river history and weather…</span></div>
+<p class="sub">Days 1–3 combine measured river-temperature trends with NWS hourly weather to show cautious scenario ranges. Days 4–7 show weather and normal species timing <strong>only</strong>. No hatch sightings or exact emergence hours are claimed.</p>
+<div id="outlookStatus" class="outlook-context" role="status" aria-live="polite">Reading recent water temperatures…</div>
+<div id="sevenDays" class="day-strip" aria-label="Seven-day river and mayfly outlook"><p>Loading forecast…</p></div>
+<div class="trend-row">
+<div class="trend-plot"><h3>Water-temperature momentum</h3><p class="sub">Measured USGS observations versus experimental next-three-day bands.</p><div id="tempHistoryChart"></div><div class="chart-legend"><span><span class="legend-dot"></span>Measured daily average</span><span><span class="legend-dot dashed"></span>Experimental range, not a measurement</span></div></div>
+<div class="method-note"><strong>What can we actually predict?</strong><p>River temperature is important, but mayfly emergence also depends on biological development, stream habitat, light, and weather. The bands are an uncalibrated scenario, not a temperature forecast. Wider bands mean more uncertainty.</p><p>When sensors, history, or hourly forecasts fail, this tool falls back to a seasonal watch. It never replaces missing water measurements with guessed data.</p><p><a href="https://api.waterdata.usgs.gov/docs/ogcapi/" target="_blank" rel="noopener">USGS observations</a> · <a href="https://www.weather.gov/documentation/services-web-api" target="_blank" rel="noopener">NWS forecast data</a></p></div>
+</div></section>
 <div class="split">
 <section class="panel" aria-labelledby="rankTitle"><div class="section-heading"><h2 id="rankTitle">Mayfly outlook</h2><span class="sub" id="updated">Loading observations…</span></div><p class="sub">Favorable means environmental conditions match a broad field-guide association; it does not mean insects have been seen.</p>
 <div class="filters" id="filters"><button class="filter-button" data-filter="all" aria-pressed="true">All mayflies</button><button class="filter-button" data-filter="likely" aria-pressed="false">Favorable / building</button><button class="filter-button" data-filter="seasonal" aria-pressed="false">Seasonally possible</button></div><div class="species-grid" id="species"><p>Checking river conditions…</p></div></section>
 <aside>
 <section class="panel"><h2>Au Sable gauge map</h2><p class="sub">Select a marker to see conditions and mayfly outlook for that actual gauge location.</p><div id="map" aria-label="Map of Au Sable River USGS monitoring locations"></div><p class="legend">Map: OpenStreetMap contributors. Markers show gauging stations, not inferred river-wide hatch hotspots. No map API key required.</p></section>
-<section class="panel"><h2>How to read the signals</h2><p class="sub">The model checks seasonal timing first. A fresh USGS measurement is required before calling conditions favorable. Water temperature is influential but does not determine emergence by itself. Weather refines the activity window, especially for drifting duns and spinner falls.</p><div class="alert"><strong>Trout safety first:</strong> if the measured water reaches 68°F or higher, the tool displays a heat caution rather than encouraging catch-and-release trout fishing.</div><p class="fineprint">This first release does not claim hatch sighting verification, species-specific calibrated probabilities, or an exact hour of emergence.</p></section>
+<section class="panel"><h2>How to read the signals</h2><p class="sub">The model checks seasonal timing first. A fresh USGS measurement is required before calling conditions favorable. Water temperature is influential but does not determine emergence by itself. Weather refines the activity window, especially for drifting duns and spinner falls.</p><div class="alert"><strong>Trout safety first:</strong> if the measured water reaches 68°F or higher, the tool displays a heat caution rather than encouraging catch-and-release trout fishing.</div><p class="fineprint">The three-day river-temperature scenarios are experimental, not calibrated water forecasts. Days four through seven offer only weather and seasonal context. No verified hatches or exact emergence hours are implied.</p></section>
 </aside></div>
 <section class="panel"><h2>Au Sable mayfly season calendar</h2><p class="sub">Typical regional windows. Actual timing changes with weather, water temperatures and local habitat.</p><div class="calendar" id="calendar"></div></section>
 <section class="panel about"><div><h2>Why branches matter</h2><p>The North Branch, South Branch, and mainstem can experience different thermal conditions and hatch timing. Downstream dam-influenced stations are not a substitute for Grayling or the Holy Waters. The historic Grayling USGS gauge is no longer a source of live water temperature.</p><p>For the Holy Waters, we deliberately do not publish a made-up live temperature from a downstream site. Exact-reach monitoring can be added when a verified measurement source is available.</p></div><div><h2>Great Lakes expansion</h2><p>This is the Au Sable watershed launch of a broader Great Lakes mayfly system. Other Michigan trout rivers are natural next locations. Nearshore Hexagenia emergences on lakes and bays require a separate habitat-and-surface-water model rather than reusing trout-stream rules.</p><p>Reference material: <a href="https://graylingmichigan.org/things-to-do/outdoors/fishing/fly-fishing/">Grayling hatch chart</a> · <a href="https://api.waterdata.usgs.gov/">USGS Water Data APIs</a> · <a href="https://www.weather.gov/documentation/services-web-api">NWS API</a>.</p></div></section>
@@ -83,6 +117,50 @@ function renderCalendar(){
  html+='</tr>';});
  $('calendar').innerHTML=html+'</tbody></table>';
 }
+
+function dayName(day,n){const d=new Date(day+'T12:00:00Z');return n===1?'Tomorrow · '+d.toLocaleDateString('en-US',{timeZone:'America/Detroit',weekday:'short'}):d.toLocaleDateString('en-US',{timeZone:'America/Detroit',weekday:'short',month:'short',day:'numeric'});}
+function rangeLabel(b){return b?b.lowF.toFixed(0)+'–'+b.highF.toFixed(0)+'°F':'No water projection';}
+function renderSevenDays(){
+ const el=$('sevenDays'), chart=$('tempHistoryChart'), status=$('outlookStatus');
+ const outlook=report?.outlook;
+ if(!outlook){el.textContent='Next-week outlook unavailable.';chart.textContent='History unavailable.';status.textContent='Data source unavailable.';return;}
+ const hasBand=outlook.days.some(x=>x.tempBand);
+ status.className='outlook-context'+(hasBand?'':' warn');
+ status.textContent=hasBand
+  ?'Water history: '+outlook.recentWaterDays+' complete days · '+(outlook.trendFPerDay===null?'Unknown trend':(outlook.trendFPerDay>=0?'Warming ':'Cooling ')+Math.abs(outlook.trendFPerDay).toFixed(1)+'°F/day')+'. The first three days are experimental ranges, not guaranteed water temperatures.'
+  :'No credible three-day water projection is available. Showing NWS weather and seasonal mayfly context instead.';
+ setText('outlookUpdated',outlook.forecastDaysAvailable+' of 7 days with sufficient forecast coverage');
+ el.innerHTML=outlook.days.map(day=>{
+  const future=day.dayNumber<=3;const w=day.weather;const interesting=(day.species||[]).filter(x=>x.order>=3).slice(0,2);
+  const watches=(day.species||[]).slice(0,2);
+  const picked=interesting.length?interesting:(!future?watches:[]);
+  const temp=future&&day.tempBand?rangeLabel(day.tempBand):'—';
+  const wText=w?((w.minAirF)+'–'+w.maxAirF+'°F air · '+esc(w.weather||'Forecast')):'NWS hourly forecast unavailable';
+  const disclaimer=day.tempBand?'Experimental water scenario':(future?'No modeled water temperature':'Weather only · water unknown');
+  return '<article class="day-tile '+(day.headline==='Potential hatch conditions'?'strong':'')+'"><div class="day-title">'+esc(dayName(day.date,day.dayNumber))+'</div><div class="day-sub">'+(future?'Near-term scenario':'Long-range watch')+'</div><div class="day-label">'+esc(day.headline)+'</div><div class="day-temp">'+esc(temp)+'</div><div class="day-low">'+esc(disclaimer)+'</div><div class="day-low">'+wText+'</div>'
+    +(picked.length?'<div class="flyname">'+picked.map(x=>esc(x.name)+' <span>'+esc(x.signal)+'</span>').join('<br>')+'</div>':'<div class="flyname">'+(day.weather?'No specific mayfly window':'Forecast unavailable')+'</div>')+'</article>';
+ }).join('');
+ renderTemperatureChart(outlook);
+}
+function renderTemperatureChart(outlook){
+ const dest=$('tempHistoryChart'), history=(outlook.history||[]).slice(-7);
+ const future=outlook.days.filter(d=>d.dayNumber<=3&&d.tempBand);
+ if(!history.length&&!future.length){dest.innerHTML='<p class="sub">No water-temperature history is available.</p>';return;}
+ const values=history.flatMap(d=>[d.minF,d.maxF]).concat(future.flatMap(d=>[d.tempBand.lowF,d.tempBand.highF]));
+ const ymin=Math.floor((Math.min(...values)-2)/5)*5, ymax=Math.ceil((Math.max(...values)+2)/5)*5;
+ const w=620,h=196,left=39,right=18,top=15,bottom=36;
+ const count=history.length+3;const dx=(w-left-right)/Math.max(1,count-1);
+ const y=t=>top+(ymax-t)/(ymax-ymin)*(h-top-bottom),x=i=>left+i*dx;
+ const line=history.map((d,i)=>x(i).toFixed(1)+','+y(d.meanF).toFixed(1)).join(' ');
+ let svg='<svg role="img" aria-label="Measured USGS daily mean water temperatures and experimental three-day low-to-high scenario bands" viewBox="0 0 '+w+' '+h+'">';
+ for(let k=0;k<=4;k++){const temp=ymin+(ymax-ymin)*k/4,yy=y(temp);
+ svg+='<line x1="'+left+'" y1="'+yy+'" x2="'+(w-right)+'" y2="'+yy+'" stroke="#e4eae4"/><text x="4" y="'+(yy+4)+'" fill="#6c8175" font-size="11">'+temp.toFixed(0)+'°</text>';}
+ if(history.length>1)svg+='<polyline fill="none" stroke="#20755b" stroke-width="3" points="'+line+'"/>';
+ history.forEach((d,i)=>{svg+='<circle cx="'+x(i)+'" cy="'+y(d.meanF)+'" r="3.5" fill="#20755b"/><text x="'+x(i)+'" y="'+(h-12)+'" text-anchor="middle" font-size="10" fill="#6c8175">'+esc(d.date.slice(5))+'</text>';});
+ future.forEach(d=>{const i=history.length-1+d.dayNumber,px=x(i),b=d.tempBand;svg+='<line x1="'+px+'" x2="'+px+'" y1="'+y(b.lowF)+'" y2="'+y(b.highF)+'" stroke="#bc8b3e" stroke-width="5" stroke-dasharray="5 3" stroke-linecap="round"/><circle cx="'+px+'" cy="'+y(b.centerF)+'" r="3" fill="#bc8b3e"/><text x="'+px+'" y="'+(h-12)+'" text-anchor="middle" font-size="10" fill="#986f35">+'+d.dayNumber+'d</text>';});
+ svg+='</svg>';dest.innerHTML=svg;
+}
+
 function render(){
  if(!report)return;
  setText('reachNote',report.reach.dataScope);
@@ -94,15 +172,15 @@ function render(){
  setText('updated','Updated '+new Date(report.generatedAt).toLocaleTimeString('en-US',{timeZone:'America/Detroit',hour:'numeric',minute:'2-digit'})+' ET');
  $('gageLink').href=report.sourceUrl;
  $('caution').innerHTML=report.troutHeatCaution?'<div class="alert"><strong>68°F+ measured:</strong> trout heat caution. Consider waiting for cooler water rather than catch-and-release fishing.</div>':report.partial?'<div class="alert">Fresh water temperature is unavailable at this gauge. Seasonal windows are shown, but no live favorable hatch signal is claimed.</div>':'';
- renderSpecies();renderCalendar();
+ renderSpecies();renderCalendar();renderSevenDays();
 }
 async function chooseReach(id){
  setSelected(id); const idForRequest=++requestId; report=null;
- setText('watertemp','Checking…');setText('flow','—');setText('weather','Checking…');setText('updated','Loading…');$('species').innerHTML='<p class="sub">Checking the selected gauge…</p>';
+ setText('watertemp','Checking…');setText('flow','—');setText('weather','Checking…');setText('outlookUpdated','Loading…');$('sevenDays').innerHTML='<p>Checking recent readings and seven-day weather…</p>';$('tempHistoryChart').textContent='Loading water history…';setText('updated','Loading…');$('species').innerHTML='<p class="sub">Checking the selected gauge…</p>';
  try{const response=await fetch('/api/mayfly-hatches?reach='+encodeURIComponent(id),{headers:{Accept:'application/json'}});
  if(!response.ok)throw Error('API '+response.status);const data=await response.json();if(idForRequest!==requestId)return;
  report=data;render();
- }catch(err){if(idForRequest!==requestId)return;setText('watertemp','Unavailable');setText('weather','Unavailable');setText('updated','Live service unavailable');$('species').innerHTML='<p class="alert">Could not fetch current readings. See the <a href="/hex.html">Hex tracker</a> or try again later. We do not publish invented hatch scores.</p>';}
+ }catch(err){if(idForRequest!==requestId)return;setText('watertemp','Unavailable');setText('weather','Unavailable');setText('updated','Live service unavailable');setText('outlookUpdated','Unavailable');$('sevenDays').textContent='Live forecast unavailable.';$('tempHistoryChart').textContent='Measured history unavailable.';$('outlookStatus').textContent='Unable to reach forecast service; no projected signal will be shown.';$('species').innerHTML='<p class="alert">Could not fetch current readings. See the <a href="/hex.html">Hex tracker</a> or try again later. We do not publish invented hatch scores.</p>';}
 }
 reaches.forEach(r=>{const b=document.createElement('button');b.className='reach-button';b.dataset.reach=r.id;b.textContent=r.name;b.setAttribute('aria-pressed',String(r.id===active));b.addEventListener('click',()=>chooseReach(r.id));$('reaches').appendChild(b);});
 document.querySelectorAll('.filter-button').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('.filter-button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderSpecies();}));
