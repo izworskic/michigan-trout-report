@@ -61,7 +61,7 @@ const SPOTS=Object.freeze([
   year:'Published lake-science guidance',kind:'documented_lake_population',level:'strong_historical',
   headline:'A major Great Lakes basin fish-fly location, but not one of the five lakes.',
   evidence:'Michigan Sea Grant explicitly addresses summer Hexagenia arrivals on the western shores of Lake St. Clair and western Lake Erie.',
-  why:'Included as a related connecting water rather than misleadingly calling it Lake Huron or Lake Erie.',
+  why:'Lake St. Clair is not one of the five Great Lakes. It is included as a well-documented connecting water, not falsely classified as Lake Huron or Lake Erie.',
   where:'St. Clair Shores is an orientation location, not a verified current hatch.',source:SOURCES.stclair,liveRegion:null}
 ]);
 const ids=new Set(SPOTS.map(s=>s.id));
