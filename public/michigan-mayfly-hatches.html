@@ -55,6 +55,13 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 </div>
 </section>
 <main>
+<section class="panel map-panel" id="mapOfRivers" aria-labelledby="mapPanelTitle">
+<div class="sectionhead"><h2 id="mapPanelTitle">Michigan trout-river map</h2><span class="map-live-indicator">6 USGS gauge pins · no API key</span></div>
+<p class="muted">Explore actual USGS gauge locations and select a pin to read its river conditions. These are monitoring stations—not public fishing access, hatch locations, or guarantees of mayfly activity.</p>
+<div id="riverMap"><p class="data-empty">Loading the geographic map. A self-contained station locator is available if map services fail.</p></div>
+<div class="map-key"><span><i class="map-dot fresh"></i> Fresh water-temperature reading</span><span><i class="map-dot missing"></i> Temperature unavailable</span><span><i class="map-dot selected"></i> Selected gauge</span></div>
+<p class="map-provider-note">Basemap: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>. If map tiles cannot load, a clickable on-page station locator takes over automatically.</p>
+</section>
 <section class="panel id-feature-panel" id="mayflyPhotoGuide" aria-labelledby="idTitle">
 <div class="sectionhead"><div><div class="story-kicker">Real insects · credited specimen photographs</div><h2 id="idTitle">What mayfly am I looking at?</h2></div><span class="tiny">Five signature hatch groups · Michigan fishing field guide</span></div>
 <p class="id-intro">Compare <strong>actual photographs</strong> of the mayflies anglers talk about, then connect an insect to its normal season, preferred time of activity, and current river conditions. Look for the stage label on each photograph—two are aquatic nymphs, three are winged adults. Different sexes and species can also look alike; <strong>these are visual clues, not automatic species identifications.</strong></p>
@@ -89,13 +96,6 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <button type="button" data-fly="bwo" aria-pressed="false">BWO</button>
 </div>
 <div class="stats"><div class="stat"><strong>5</strong><span>Named trout-river systems</span></div><div class="stat"><strong>6</strong><span>Actual USGS monitoring stations</span></div><div class="stat"><strong id="liveStations">Checking…</strong><span>Gauges with fresh measured water temp</span></div></div>
-</section>
-<section class="panel map-panel" id="mapOfRivers" aria-labelledby="mapPanelTitle">
-<div class="sectionhead"><h2 id="mapPanelTitle">Michigan trout-river map</h2><span class="map-live-indicator">6 measured gauge locations · no map API key</span></div>
-<p class="muted">Explore actual USGS gauge locations and select a pin to read its river conditions. These are monitoring stations—not public fishing access, hatch locations, or guarantees of mayfly activity.</p>
-<div id="riverMap"><p class="data-empty">Loading the geographic map. A self-contained station locator is available if map services fail.</p></div>
-<div class="map-key"><span><i class="map-dot fresh"></i> Fresh water-temperature reading</span><span><i class="map-dot missing"></i> Temperature unavailable</span><span><i class="map-dot selected"></i> Selected gauge</span></div>
-<p class="map-provider-note">Basemap: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>. No CARTO key is used; the previous unkeyed CARTO tiles displayed an “API KEY REQUIRED” watermark. If remote tiles fail, a clickable local station locator takes over.</p>
 </section>
 <section class="panel compare-panel" aria-labelledby="compareTitle">
 <div class="sectionhead"><h2 id="compareTitle">Michigan water temperature right now</h2><span class="tiny">Measured USGS °F, not a hatch ranking</span></div>
