@@ -136,3 +136,20 @@ test('front-end chart renders dates with separated categories and never claims a
    }catch(e){reject(e);}
  }));
 });
+
+
+test('source-derived historical first-sighting summary is correctly scoped and does not imply hatch peak',()=>{
+ const q=lakeHistory({lake:'Erie',now:NOW});
+ assert.equal(q.firstSightingSummary.count,11);
+ assert.deepEqual(q.firstSightingSummary.sampleYears,[2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]);
+ assert.equal(q.firstSightingSummary.earliestMonthDay,'05-30');
+ assert.equal(q.firstSightingSummary.medianMonthDay,'06-06');
+ assert.equal(q.firstSightingSummary.latestMonthDay,'06-14');
+ assert.match(q.firstSightingSummary.effortBiasNotice,/NOT a calibrated/);
+ assert.equal(lakeHistory({lake:'Superior',now:NOW}).firstSightingSummary,null);
+ assert.equal(lakeHistory({site:'tawas-shore',now:NOW}).firstSightingSummary,null);
+ assert.equal(lakeHistory({site:'port-clinton',now:NOW}).firstSightingSummary.count,11);
+ assert(HTML.includes('id="historyFirstSightings"'));
+ assert(JS.includes('medianMonthDay'));
+ assert(JS.includes('not when a mass hatch began, peaked or ended'));
+});
