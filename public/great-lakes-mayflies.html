@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Great Lakes Mayfly Hatch Tracker | Saginaw Bay & Western Lake Erie</title>
-<meta name="description" content="Are Great Lakes mayflies coming soon? Follow live NOAA lake temperatures, the 68°F Hexagenia trigger, Saginaw Bay and western Lake Erie buoy conditions, plus a seven-evening weather watch.">
+<title>Great Lakes Mayfly Atlas 2026 | Where Mayflies Live Across All 5 Lakes</title>
+<meta name="description" content="Where do Great Lakes mayflies actually live? Explore sourced Hexagenia research across Lake Erie, Huron, Michigan, Superior and Ontario, plus live buoy monitoring where available.">
 <link rel="canonical" href="https://michigantroutreport.com/great-lakes-mayflies.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Great Lakes Mayfly Hatch Tracker | Saginaw Bay & Lake Erie">
-<meta property="og:description" content="Are fish flies coming soon? Track NOAA buoy temperatures, Hexagenia emergence conditions and seven evenings of forecast winds on Saginaw Bay and western Lake Erie.">
+<meta property="og:title" content="Great Lakes Mayfly Atlas 2026 | Five Lakes and Sourced Hatch Habitat">
+<meta property="og:description" content="Research-backed locations across all five Great Lakes. See historic Hexagenia populations, documented swarms, and live surface buoy monitoring where available.">
 <meta property="og:url" content="https://michigantroutreport.com/great-lakes-mayflies.html">
 <meta property="og:image" content="https://michigantroutreport.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -14,7 +14,7 @@
 <meta name="twitter:description" content="Live NOAA buoy temperatures, 68°F lake-bottom emergence reference and seven-evening wind forecast for Great Lakes fish flies.">
 <meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/great-lakes-mayflies.html#page","name":"Great Lakes Mayfly Hatch Tracker","description":"Evidence-labelled environmental Hexagenia watch for Saginaw Bay and western Lake Erie, based on current NOAA buoy surface temperatures and NWS evening winds; does not directly observe emergence.","url":"https://michigantroutreport.com/great-lakes-mayflies.html","author":{"@id":"https://chrisizworski.com/#person"},"publisher":{"@id":"https://chrisizworski.com/#person"}},{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/great-lakes-mayflies.html#page","name":"Great Lakes Mayfly Atlas","description":"Research-led locations across all five Great Lakes with historical population evidence, documented Hexagenia swarms, and separate NOAA/NWS monitoring for two buoys; not live hatch verification.","url":"https://michigantroutreport.com/great-lakes-mayflies.html","author":{"@id":"https://chrisizworski.com/#person"},"publisher":{"@id":"https://chrisizworski.com/#person"}},{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com/"}]}</script>
 <style>
 :root{--deep:#112f36;--ink:#1b3032;--sea:#286c72;--shore:#b78348;--mist:#edf3f1;--line:#dce8e4;--muted:#627a79;--warm:#f4f0e7;--white:#fff}
 *{box-sizing:border-box}body{margin:0;background:#f6f8f6;color:var(--ink);font:15px/1.52 system-ui,-apple-system,Segoe UI,sans-serif}a{color:#176d70}a:hover{text-decoration:underline}button{font:inherit}button:focus-visible,a:focus-visible{outline:3px solid #dba455;outline-offset:3px}
@@ -71,23 +71,45 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 .review-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid #e2ece6;padding-top:12px;margin-top:12px}
 @media(max-width:610px){.review-summary,.review-history{grid-template-columns:1fr}}
 
-</style></head>
+</style><link rel="stylesheet" href="/lake-mayfly-atlas.css"></head>
 <body>
 <nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
 <div class="navlinks"><a href="/michigan-mayfly-hatches.html">Michigan trout-river hatches</a><a href="/hex.html">River Hex tracker</a><a href="/">Trout conditions</a></div></div></nav>
-<header class="hero"><div class="heroinner"><div>
-<div class="kicker">Great Lakes · Nearshore Phenology</div>
-<h1>Are the Great Lakes mayflies about to emerge?</h1>
-<p>A real-data watch for Hexagenia, the burrowing lake mayflies sometimes called fish flies. Follow lake-surface warming toward the sediment emergence marker, then watch evening wind and weather. No invented swarms or scores.</p>
-<p style="margin-top:9px;font-size:12px"><a style="color:#f6dbb4" href="/michigan-mayfly-hatches.html">Looking for Michigan’s famous trout-stream Hex hatches? Open the river mayfly forecast instead →</a></p>
-<div class="hero-flags"><span>NOAA buoy temperatures</span><span>NWS evening weather</span><span>68°F surface watch</span><span>Source timestamps</span></div></div>
-<svg class="hero-art" viewBox="0 0 250 154" role="img" aria-label="Line drawing of a Hexagenia mayfly over water" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M123 102Q76 41 15 25Q42 100 114 102Q47 108 22 135Q83 138 121 108Q168 138 228 135Q188 110 132 102Q212 96 239 25Q177 43 127 102" stroke="#d6e9dc" stroke-width="2.1" stroke-linejoin="round" opacity=".88"/>
-<path d="M123 68Q115 78 119 94L124 121L128 95Q135 79 123 68ZM122 121Q112 140 103 149M125 120L125 153M126 120Q135 142 147 149" stroke="#efcd93" stroke-width="2" stroke-linecap="round"/>
-<path d="M118 94L95 82M130 93L153 82M119 100L91 103M131 99L161 103" stroke="#d6e9dc" stroke-width="1.5"/></svg>
+<header class="hero"><div class="heroinner">
+<div><div class="kicker">Great Lakes · A five-lake natural history atlas</div>
+<h1>Where do mayflies actually emerge around the Great Lakes?</h1>
+<p>Explore credible lakebed research, documented historical swarms and the waterfront places that help locate the evidence. The best-studied sites aren't evenly distributed across all five lakes. <strong>Research history is not a forecast for tonight.</strong></p>
+<p style="margin-top:12px;font-size:12px"><a style="color:#f2d8a9" href="/michigan-mayfly-hatches.html">Looking for trout-river fly hatches? Use the Michigan river predictor →</a></p>
+<div class="hero-flags"><span>All five Great Lakes</span><span>Research-linked locations</span><span>Documented vs historical</span><span>Separate live NOAA buoy data</span></div>
+</div><figure style="margin:0"><img class="atlas-hero-photo" src="/images/mayflies/hex.webp" alt="Real winged adult Hexagenia mayfly showing its pale yellow upright wings and long tail" width="222" height="153"><figcaption class="atlas-hero-credit">Real adult Hex · <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata_(giant_mayfly)_(Mitchell,_South_Dakota,_USA)_1.jpg" target="_blank" rel="noopener">James St. John, CC BY 2.0</a></figcaption></figure>
 </div></header>
 <main>
-<section class="card" aria-labelledby="stationH"><div class="topline"><h2 id="stationH">Choose your lake</h2><span class="small">Buoy monitoring locations, not predicted swarm destinations</span></div>
+<section class="card" id="atlas" aria-labelledby="atlasTitle">
+<div class="atlas-intro"><div><div class="atlas-kicker">First: where the evidence actually points</div><h2 id="atlasTitle">Mayfly habitat across the Great Lakes</h2><p>Pick a lake or a researched place. The map pins are approximate public reference locations—not hatch GPS coordinates. Source-linked cards distinguish lakebed nymph studies, historic swarm observations and places to watch along shore.</p></div><span class="atlas-summary" id="atlasCount">Loading research sites…</span></div>
+<div class="atlas-switch" role="group" aria-label="Select a Great Lake">
+<button type="button" data-lake="All five" aria-pressed="true">All five lakes</button>
+<button type="button" data-lake="Superior" aria-pressed="false">Superior</button>
+<button type="button" data-lake="Michigan" aria-pressed="false">Michigan</button>
+<button type="button" data-lake="Huron" aria-pressed="false">Huron</button>
+<button type="button" data-lake="Erie" aria-pressed="false">Erie</button>
+<button type="button" data-lake="Ontario" aria-pressed="false">Ontario</button>
+<button type="button" data-lake="Connecting waters" aria-pressed="false">Lake St. Clair + connecting waters</button>
+</div>
+<div class="atlas-layout">
+<div class="atlas-map-wrap"><div id="lakeMap" role="region" aria-label="Five Great Lakes research location map"><p class="atlas-fallback">Loading geographic map. All researched sites remain selectable in the list.</p></div><p class="atlas-map-note">Basemap: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>. Map pins are approximate research-area markers (not samples or fishing access). Dark teal = researched location; amber = NOAA instrument.</p></div>
+<div class="atlas-interact">
+<div id="atlasSites" class="atlas-locations" role="group" aria-label="Research-backed mayfly locations"><p class="muted">Preparing evidence…</p></div>
+<div id="atlasDetail" class="atlas-detail" aria-live="polite"><p class="muted">Choose a research area.</p></div>
+</div>
+</div>
+<p class="atlas-caveat"><strong>Do not mistake research evidence for a live hatch.</strong> Even a verified nymph study from 2001 or adult swarm in 2010 does not tell us whether insects are emerging tonight. Habitat and bottom oxygen matter. No surface-temperature threshold alone can tell you where insects are hatching.</p>
+<div class="atlas-bottom">
+<div><strong>Lake Erie: unusually well documented</strong><p>Western basin and island-area Hexagenia populations have extensive historical research and reported swarms. Other Erie basins are not equivalent.</p></div>
+<div><strong>Lake Michigan & Huron: localized</strong><p>Northern Green Bay and the Tawas/Saginaw region have documented populations or adult swarms, but population recovery is uneven and older evidence must be dated.</p></div>
+<div><strong>Superior & Ontario: sheltered waters</strong><p>Chequamegon Bay, the St. Louis estuary and Bay of Quinte have research or historic recovery evidence. We do not extend these signals to whole open lakes.</p></div>
+</div>
+</section>
+<section class="card" aria-labelledby="stationH"><div class="atlas-monitor-header"><h2 id="stationH">Secondary: live NOAA buoy conditions</h2><p>Only two verified monitoring stations currently feed the actual forecast model. Selecting another atlas location does not invent a sensor or borrow one from another lake.</p></div><div class="topline"><h3>Choose a monitored station</h3><span class="small">Sensor positions, not hatch destinations</span></div>
 <div class="switch" id="regions" role="group" aria-label="Select monitored Great Lakes nearshore region"></div>
 <p id="regionCaveat" class="muted"></p>
 <div class="topline"><div><span class="small">TODAY'S LAKE MAYFLY SIGNAL</span><h3 id="regionName" style="font:normal 25px Georgia,serif">Saginaw Bay</h3></div><span class="status dim" id="status">Loading data…</span></div>
@@ -153,8 +175,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 </section>
 </section>
 <aside>
-<section class="card" aria-labelledby="mapTitle"><h2 id="mapTitle">Monitoring map</h2><p class="muted">The map marks two real buoy positions—not predicted hatch hotspots. Evening weather uses nearby land-based NWS forecast points.</p>
-<div id="lakeMap"></div><p class="small">Map tiles: CARTO / OpenStreetMap. No map key required.</p></section>
+
 <section class="card"><h2>What should I watch?</h2><div class="explain" style="grid-template-columns:1fr">
 <article><h3>1. Surface warming</h3><p>Look for a fresh local buoy temperature approaching or exceeding 68°F. In shallow western Erie, sediments can warm a few days later.</p></article>
 <article><h3>2. Evening winds</h3><p>Light winds may make flight activity more noticeable near the water. Direction can shift where swarms arrive onshore. A good-looking evening isn't an observed swarm.</p></article>
@@ -175,6 +196,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 </main>
 <footer>Environmental monitoring, not verified hatch reports. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable mayfly forecast</a> · <a href="/hex.html">River Hex tracker</a></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="/lake-mayfly-atlas.js" defer></script>
 <script>
 const REGION=[{id:'saginaw-bay',title:'Saginaw Bay',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie',lat:41.702,lon:-83.262}];
 let current='saginaw-bay',report=null,map=null,marks={},reqCounter=0;
