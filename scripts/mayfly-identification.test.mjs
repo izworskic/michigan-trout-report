@@ -14,7 +14,7 @@ test('visual ID gallery, credited hero and offline-safe keyless river map remain
   assert(page.includes('id="'+id+'"'),id);
  }
  assert(page.includes('hero-with-reference'));
- assert(page.includes('Photo: <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata.jpg"'));
+ assert(page.includes('Scenic river photograph: <a href="https://commons.wikimedia.org/wiki/File:HMNF_AuSableRiver_HighbanksOverlook_'));
  assert(page.includes('src="/mayfly-identification.js"'));
  assert(page.includes('href="/mayfly-identification.css"'));
  assert(!page.includes('basemaps.cartocdn.com'));
@@ -23,6 +23,7 @@ test('visual ID gallery, credited hero and offline-safe keyless river map remain
  assert.equal((page.match(/data-quick-fly=/g)||[]).length,5);
  assert(page.includes('U.S. Forest Service'));
  assert(page.includes('hatch-quicklook'));
+ assert(page.indexOf('id="mapOfRivers"')<page.indexOf('id="mayflyPhotoGuide"'), 'map must be prominent rather than below all long content');
  assert(page.includes('drawFallbackLocator'));
  assert(css.includes('@media(max-width:480px)'));
  assert(css.includes('scroll-snap-type:x mandatory'));
@@ -56,7 +57,8 @@ test('5 real photo references have a separate original, attribution and license,
  assert(guide.includes('Photo shows a submerged nymph'));
  assert(guide.includes('Photo shows an aquatic nymph'));
  assert(guide.includes('[data-quick-fly]'));
- assert(page.includes('CC BY-SA 3.0'));
+ assert(guide.includes("license:'CC BY-SA 3.0'"));
+ assert(page.includes('U.S. Forest Service'));
  assert(!page.includes('upload.wikimedia.org'));
 
  assert(!guide.includes('classifyImage('));
