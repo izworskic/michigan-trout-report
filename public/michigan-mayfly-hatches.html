@@ -25,6 +25,7 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 @media(max-width:970px){.columns{grid-template-columns:1fr}#riverMap{height:320px}}
 @media(max-width:640px){.river-grid,.calendar,.stats{grid-template-columns:1fr}.topbar{padding:12px}.hero-inner{padding:26px 14px}main{padding:12px 10px 36px}.panel{padding:15px}}
 </style>
+<link rel="stylesheet" href="/mayfly-experience.css">
 </head><body>
 <header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
 <section class="hero"><div class="hero-inner"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
@@ -43,6 +44,12 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 </div>
 <div class="stats"><div class="stat"><strong>5</strong><span>Named trout-river systems</span></div><div class="stat"><strong>6</strong><span>Actual USGS monitoring stations</span></div><div class="stat"><strong id="liveStations">Checking…</strong><span>Gauges with fresh measured water temp</span></div></div>
 </section>
+<section class="panel compare-panel" aria-labelledby="compareTitle">
+<div class="sectionhead"><h2 id="compareTitle">Michigan water temperature right now</h2><span class="tiny">Measured USGS °F, not a hatch ranking</span></div>
+<p class="muted">See which monitored rivers are actually warm or cool. Temperatures are observed <strong>at the listed gauge only</strong>; rivers with no fresh sensor reading stay visibly unavailable.</p>
+<div class="comparison-grid" id="riverComparison" aria-live="polite"><p class="data-empty">Checking measured temperatures at six river stations…</p></div>
+<div class="comparison-scale"><span>35°F</span><span>50°F</span><span>68°F · trout heat caution</span><span>80°F</span></div>
+</section>
 <div class="columns">
 <section class="panel"><div class="sectionhead"><h2>Compare river conditions</h2><span class="tiny">No species sightings claimed</span></div><div id="riverCards" class="river-grid" aria-live="polite"></div>
 <p class="warning"><strong>Important:</strong> A gauge recording favorable water temperatures is not a confirmed hatch. At 68°F or warmer, the trout-fishing signal is suppressed for catch-and-release safety. Missing water temperatures are never estimated from air temperature or a different river.</p>
@@ -57,6 +64,18 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <p class="far"><a href="/mayfly-hatches.html">Explore 12 mayfly groups and 7-day water scenarios on the Au Sable →</a></p>
 </section>
 </aside></div>
+<section class="panel river-story" id="riverStory" aria-labelledby="riverStoryTitle">
+<div class="story-header"><div><div class="story-kicker">Understand the water before chasing the hatch</div><h2 id="riverStoryTitle">Your river, explained</h2><p class="story-lede">Pick a real monitoring station. The charts show what the water is doing, which parts are measured, and what remains a seasonal guess.</p></div><span class="story-pill" id="experienceStatus">Checking stations…</span></div>
+<div id="stationChoices" class="story-tabs" role="group" aria-label="Select a monitored trout river"></div>
+<div class="story-overview">
+<div class="story-message"><div class="story-label"><span id="experienceFly">Hexagenia</span> watch · <span id="experienceRiver">Au Sable</span></div><h3 id="experienceHeadline">Reading measured river conditions…</h3><p id="experienceWhy">Only direct sightings can confirm mayflies are emerging.</p></div>
+<div class="story-when"><div class="story-label">How an angler uses this</div><strong>Look for <span id="experienceTime">after dark</span></strong><p>Usual time of activity, not a scheduled hatch.</p><div class="story-label">Useful fly patterns</div><strong id="experiencePattern">Large Hex dry</strong><p>Carry several sizes; match the insects actually visible.</p></div></div>
+<div class="story-evidence">
+<div class="story-chart"><h3>How water temperature is changing</h3><p class="muted">USGS measured history and, only where supported, an experimental three-day scenario.</p><div id="riverTempGraph" aria-live="polite"><p class="data-empty">Checking USGS readings…</p></div></div>
+<div class="story-season"><h3>Where this hatch fits in the year</h3><p id="experienceExplain">Broad seasonal context, not a promised emergence date.</p><div id="seasonTimeline"></div><p class="experience-subnote" id="experienceScope">A gauge is a point, not the whole river.</p></div></div>
+<p class="story-quality" id="experienceDataQuality">Connecting measured river and weather sources…</p>
+<div class="story-outlook"><div class="sectionhead"><h3>Next seven days of water and weather</h3><span class="tiny">Not a verified insect forecast</span></div><p id="experienceModel">Days 1–3: possible scenario if measured water history exists. Days 4–7: weather context only.</p><div id="outlookTiles" class="weather-strip" aria-live="polite"><p class="data-empty">Waiting for weather…</p></div></div>
+</section>
 <section class="panel"><div class="sectionhead"><h2>Signature mayfly seasons</h2><span class="tiny">Broad field-guide windows, not fixed hatch dates</span></div>
 <div class="calendar">
 <div class="hatch"><strong>Hendrickson · Ephemerella subvaria</strong><time>Mid-April – May</time><p>Afternoon mayflies on warming spring water. Au Sable, Manistee, and Pere Marquette dry-fly fishing highlights.</p></div>
@@ -68,6 +87,7 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <p><a href="/great-lakes-mayflies.html">Open the separate Great Lakes lakefly-swarm tracker →</a></p></section>
 </main><footer>Hatches are not directly measured. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable Predictor</a> · <a href="/hatches/michigan-hatch-calendar.html">Hatch guide</a></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="/mayfly-experience.js" defer></script>
 <script>
 const SPOTS=[
  {id:'red-oak',name:'Au Sable · Mainstream / Red Oak',river:'Au Sable',lat:44.6769593,lon:-84.2925146,station:'04136000',scope:'Measured Red Oak mainstream water, NOT Holy Water near Grayling.',guide:'/stream/ausable-river.html'},
@@ -123,25 +143,70 @@ async function loadRiver(spot){
   const data=await res.json();if(data.success!==true||data.reach?.station!==spot.station)throw Error('Gauge mismatch');
   loaded.set(spot.id,data);
  }catch(e){loaded.set(spot.id,{error:true});}
- renderOne(spot);updateTotals();
+ renderOne(spot);updateTotals();window.MayflyExperience?.notify?.();
 }
 function selectSpecies(fly){
  chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
- SPOTS.forEach(renderOne);
+ SPOTS.forEach(renderOne);window.MayflyExperience?.notify?.();
+}
+// A zero-key CARTO basemap with OSM backup and an embedded schematic fallback.
+// Real station coordinates are kept separate from fishing access or hatch sites.
+function drawFallbackLocator(){
+ try{map?.remove();}catch(_){}
+ map=null;markers={};
+ const x=lon=>44+(lon+86.6)/2.5*650;
+ const y=lat=>390-(lat-43.25)/1.6*335;
+ let svg='<div class="fallback-locator"><svg role="img" aria-label="Approximate relative location of the six Michigan river gauges; not for navigation" viewBox="0 0 745 420">';
+ svg+='<rect x="4" y="4" width="737" height="410" rx="12" fill="#f4f7f1" stroke="#d3e0d4"/>';
+ [100,200,300].forEach(v=>{svg+='<line x1="25" x2="710" y1="'+v+'" y2="'+v+'" stroke="#e3ebe1" stroke-dasharray="4 7"/>';});
+ svg+='<text x="25" y="26" font-size="15" font-weight="750" fill="#28503e">Monitoring station locator</text>';
+ svg+='<text x="25" y="44" font-size="11" fill="#66816f">Schematic · relative locations, not public fishing access</text>';
+ SPOTS.forEach((p,i)=>{
+  const px=x(p.lon),py=y(p.lat);
+  svg+='<g class="fallback-point" data-fallback-station="'+esc(p.id)+'" role="button" tabindex="0" aria-label="Select '+esc(p.name)+'">';
+  svg+='<circle cx="'+px+'" cy="'+py+'" r="15" fill="#246e52" stroke="#fff" stroke-width="3"/>';
+  svg+='<text x="'+px+'" y="'+(py+4)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+(i+1)+'</text></g>';
+ });
+ svg+='</svg><div class="map-safe-note">1 Au Sable · 2 Upper Manistee · 3 Sherman · 4 Pere Marquette · 5 Muskegon · 6 Boardman. Select a number for its river story.</div></div>';
+ $('riverMap').innerHTML=svg;
+ $('riverMap').querySelectorAll('[data-fallback-station]').forEach(n=>{
+  const select=()=>window.MayflyExperience?.selectStation?.(n.dataset.fallbackStation);
+  n.addEventListener('click',select);
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
+ });
 }
 function initMap(){
- if(!window.L){$('riverMap').textContent='Map tiles unavailable. All six station cards remain usable.';return;}
- map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
- L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'}).addTo(map);
- SPOTS.forEach(s=>{
-  const m=L.circleMarker([s.lat,s.lon],{radius:8,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
-  m.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' — monitoring only');
-  m.on('click',()=>{$('r-'+s.id).scrollIntoView({behavior:'smooth',block:'center'});});markers[s.id]=m;
- });
- map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+ if(!window.L){drawFallbackLocator();return;}
+ try{
+  map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
+  let switched=false,backupErrors=0;
+  const carto=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+   {maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'});
+  carto.on('tileerror',()=>{
+   if(switched)return;switched=true;
+   try{
+    map.removeLayer(carto);
+    const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {maxZoom:16,attribution:'© OpenStreetMap contributors'});
+    osm.on('tileerror',()=>{if(++backupErrors>=3)drawFallbackLocator();});
+    osm.addTo(map);
+   }catch(_){drawFallbackLocator();}
+  });
+  carto.addTo(map);
+  SPOTS.forEach(s=>{
+   const p=L.circleMarker([s.lat,s.lon],{radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
+   p.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' · monitoring location, not a hatch hotspot');
+   p.on('click',()=>window.MayflyExperience?.selectStation?.(s.id));markers[s.id]=p;
+  });
+  map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+ }catch(_){drawFallbackLocator();}
 }
-document.querySelectorAll('[data-fly]').forEach(b=>b.addEventListener('click',()=>selectSpecies(b.dataset.fly)));
-SPOTS.forEach(s=>{const d=document.createElement('article');d.id='r-'+s.id;d.className='river';$('riverCards').appendChild(d);renderOne(s);});
+window.MayflyBoard={
+ get:()=>({spots:SPOTS,loaded,chosen,highlight:(id)=>{
+  document.querySelectorAll('.river').forEach(e=>e.classList.toggle('selected-river',e.id==='r-'+id));
+  for(const [key,p] of Object.entries(markers))p.setStyle({fillColor:key===id?'#b17b3f':'#25644f',radius:key===id?11:9});
+ }})
+};
 window.addEventListener('load',initMap);
 Promise.allSettled(SPOTS.map(loadRiver));
 </script>

@@ -1,0 +1,68 @@
+/* Michigan mayfly experience, progressive enhancement to the existing page. */
+.river-story .story-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.river-story .story-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#54796a;font-weight:800}
+.river-story .story-lede{font-size:14px;color:#526d61;max-width:760px;line-height:1.65;margin:5px 0 0}
+.river-story .story-pill{font-weight:750;color:#1e5f4a;background:#e7f3e9;border:1px solid #c8e4d4;padding:7px 11px;border-radius:6px;font-size:12px}
+.story-tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;padding:5px 1px 12px;margin-top:12px}
+.story-tabs button{flex:0 0 auto;cursor:pointer;max-width:245px;white-space:normal;text-align:left;min-height:44px;padding:9px 11px;border-radius:7px;border:1px solid #d7e5d9;background:#f7faf6;color:#23533d;font-size:12px;font-weight:700}
+.story-tabs button[aria-pressed="true"]{background:#195641;color:#fff;border-color:#195641}
+.story-overview{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(220px,.75fr);gap:13px;margin:6px 0 16px}
+.story-message{border-radius:10px;padding:18px;background:linear-gradient(125deg,#1c5a46,#164637);color:#f2f8ee}
+.story-message .story-label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#bfe6d0;font-weight:800}
+.story-message h3{font:normal clamp(18px,2.5vw,23px)/1.25 Georgia,serif;color:#fff;margin:7px 0 10px}
+.story-message p{font-size:13px;color:#d2e8db;margin:0}
+.story-when{border:1px solid #e1e7da;background:#faf9f3;border-radius:10px;padding:16px}
+.story-when strong{display:block;color:#275a46;font-size:14px;margin:4px 0}
+.story-when .story-label{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#65786b}
+.story-when p{font-size:12px;color:#68786b;margin:2px 0 14px}
+.story-when p:last-child{margin-bottom:0}
+.story-evidence{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(260px,.82fr);gap:13px}
+.story-chart,.story-season{border:1px solid #e0e8dd;background:#fcfdfa;border-radius:10px;padding:15px;min-width:0}
+.story-chart h3,.story-season h3{margin:0 0 6px;font-size:16px}
+.story-chart #riverTempGraph{min-height:160px}
+.story-chart svg{width:100%;height:auto;display:block;max-height:340px}
+.story-season p{font-size:12px;color:#577266;line-height:1.55}
+.story-season .season-track{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin:15px 0 10px}
+.story-season .season-cell{min-width:0;border:1px solid #dce5da;border-radius:5px;background:#f2f5f1;text-align:center;padding:7px 1px 8px}
+.story-season .season-cell span{font-size:9px;display:block;color:#667e6f}
+.story-season .season-cell b{font-size:12px;display:block;color:#bfd3c2}
+.story-season .season-cell.in-season{background:#deebdc;border-color:#b6d4c0}
+.story-season .season-cell.in-season b{color:#2d7958}
+.story-season .season-cell.current{outline:2px solid #ba8a4d;outline-offset:1px}
+.experience-subnote{font-size:11px!important;color:#657a6e!important;line-height:1.5;margin:7px 0 0!important}
+.data-empty{font-size:13px;color:#6d8177;border:1px dashed #d3dfd4;padding:16px;background:#f8faf7;border-radius:7px}
+.story-quality{font-size:12px;color:#526a5d;background:#f0f7f0;border-left:3px solid #5b9674;border-radius:5px;padding:10px 12px;margin:14px 0 0}
+.story-outlook{margin-top:17px;padding-top:15px;border-top:1px solid #e0e8dd}
+.story-outlook>p{margin:2px 0 11px;font-size:13px;color:#5a7364}
+.weather-strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(176px,1fr);gap:9px;overflow-x:auto;padding:3px 0 10px;scroll-snap-type:x mandatory}
+.weather-tile{scroll-snap-align:start;border:1px solid #dce7dd;border-radius:9px;background:#f8fbf7;padding:12px;min-height:191px}
+.weather-tile .weather-date{font-weight:800;color:#275341;font-size:13px}
+.weather-tile .weather-meta{font-size:10px;color:#798a7a;margin:2px 0 10px}
+.weather-tile strong{display:block;font-size:12px;color:#235943;line-height:1.4;min-height:34px}
+.weather-tile .weather-air{font-size:18px;font-weight:750;color:#214b39;margin-top:10px}
+.weather-tile .weather-wind{font-size:12px;color:#536e60;margin:0 0 7px}
+.weather-tile p{font-size:11px;margin:0;color:#69796c}
+.map-safe-note{font-size:11px;color:#587364;margin:6px 0 0}
+#riverMap{position:relative;z-index:0}
+#riverMap .fallback-locator{width:100%;height:100%;padding:5px}
+#riverMap .fallback-locator svg{display:block;width:100%;height:100%}
+#riverMap .fallback-locator text{font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+#riverMap .fallback-locator .fallback-point{cursor:pointer}
+#riverMap .fallback-locator .fallback-point:focus{outline:2px solid #c18e4a}
+#riverCards .river.selected-river{border-color:#5d9b72;box-shadow:0 0 0 2px #c8e5ce}
+@media(max-width:1040px){.story-evidence{grid-template-columns:1fr}.story-season .season-track{max-width:680px}}
+@media(max-width:680px){.story-overview{grid-template-columns:1fr}.story-tabs button{max-width:190px}.weather-strip{grid-auto-columns:minmax(165px,72%)}.river-story .story-header{display:block}.river-story .story-pill{display:inline-block;margin-top:10px}}
+
+/* Measured station comparison; intentionally NOT a hatch probability chart */
+.comparison-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:12px 0 10px}
+.compare-river{min-width:0;border:1px solid #dce6dd;background:#f8faf6;border-radius:9px;padding:13px}
+.compare-river strong{display:flex;justify-content:space-between;gap:6px;align-items:start;color:#244e3c;font-size:13px}
+.compare-river strong span{font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.compare-river p{font-size:11px;color:#698073;margin:6px 0 10px}
+.compare-track{height:9px;background:#e1e9df;border-radius:12px;overflow:hidden;position:relative}
+.compare-fill{height:100%;background:#398362;border-radius:12px}
+.compare-fill.hot{background:#ba8847}
+.compare-blank{font-size:12px!important;color:#6a7c70!important;margin:12px 0}
+.comparison-scale{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;color:#718477;font-size:10px}
+@media(max-width:950px){.comparison-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.comparison-grid{grid-template-columns:1fr}}
