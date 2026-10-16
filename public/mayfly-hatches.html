@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Au Sable Mayfly Hatch Predictor 2026 | 10 Mayflies, Live River Conditions</title>
+<meta name="description" content="Which mayflies could hatch on the Au Sable River? Compare Hendrickson, Sulphur, Brown Drake, Hex, Trico and more using fresh USGS water temperatures, local weather, and a regional season guide.">
+<link rel="canonical" href="https://michigantroutreport.com/mayfly-hatches.html">
+<meta property="og:type" content="website"><meta property="og:title" content="Au Sable Mayfly Hatch Predictor | Michigan Trout Report">
+<meta property="og:description" content="Compare ten mayfly hatches across the North Branch, South Branch and Au Sable mainstream. Gauge-based conditions, species timing and honest data confidence.">
+<meta property="og:url" content="https://michigantroutreport.com/mayfly-hatches.html">
+<meta property="og:image" content="https://michigantroutreport.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/mayfly-hatches.html#page","name":"Au Sable Mayfly Hatch Predictor","description":"Condition-based estimates for ten mayfly groups on five USGS-gauged Au Sable watershed locations, not direct insect observations.","url":"https://michigantroutreport.com/mayfly-hatches.html","author":{"@id":"https://chrisizworski.com/#person"}},{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com/"}]}</script>
+<style>
+:root{--forest:#15352d;--pine:#235448;--ink:#192a25;--muted:#65796f;--sand:#f3f0e6;--line:#dde4db;--highlight:#e5b66e}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f7f8f4;color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}a{color:#126650}a:hover{text-decoration:underline}
+.header{background:var(--forest);color:#fff}.head-inner{max-width:1220px;margin:auto;padding:15px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}.brand{font-weight:750;letter-spacing:.03em}.header a{color:#d8eadf;font-size:13px}
+.hero{background:linear-gradient(120deg,#15352d,#2a5c50);color:#fff}.hero-inner{max-width:1220px;margin:auto;padding:32px 20px 34px}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-weight:750;color:#e5bd80;font-size:11px}h1{font:normal clamp(30px,4.2vw,50px)/1.12 Georgia,serif;margin:8px 0 12px;max-width:760px}h2{font:normal 27px/1.3 Georgia,serif;margin:0 0 12px}h3{font-size:17px;margin:0 0 4px}p{margin:0 0 11px}.hero p{font-size:16px;max-width:730px;color:#deebe2}.hero-metrics{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.tag{display:inline-flex;padding:6px 11px;border:1px solid #adc3b48e;border-radius:4px;background:#ffffff12;color:inherit;font-size:12px}
+.wrap{max-width:1220px;margin:0 auto;padding:22px 20px 55px}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 3px 20px #1a322508;margin-bottom:18px}.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}.sub{color:var(--muted);font-size:13px}.reach-controls{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.reach-button,.filter-button{background:#f4f7f3;color:#28473a;border:1px solid #d7e4d8;padding:10px 12px;border-radius:6px;font:600 13px system-ui;cursor:pointer;min-height:41px}.reach-button[aria-pressed="true"],.filter-button[aria-pressed="true"]{background:var(--forest);color:#fff;border-color:var(--forest)}button:focus-visible,a:focus-visible{outline:3px solid #e7af54;outline-offset:3px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}.metric{background:#f6f8f4;border:1px solid var(--line);padding:14px;border-radius:8px}.metric .value{font-size:24px;font-weight:750;font-variant-numeric:tabular-nums}.metric .label{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.alert{padding:12px 14px;border-radius:7px;margin-top:12px;background:#fff5e6;border-left:4px solid #c6872c;color:#60420c;font-size:13px}.fineprint{font-size:12px;color:var(--muted);margin:9px 0 0}.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(310px,.85fr);gap:18px;align-items:start}.filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.species-grid{display:grid;gap:10px}.species{padding:16px;border:1px solid #e0e6df;border-radius:8px;background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}.species-name{font:normal 20px Georgia,serif;color:#174235}.latin{font-size:12px;font-style:italic;color:var(--muted)}.status{font-size:11px;font-weight:700;padding:5px 8px;border-radius:4px;align-self:start;text-align:right;background:#edf0ed;color:#58665f}.status.favorable{background:#dcefe5;color:#126446}.status.variable{background:#fff0d7;color:#875813}.meta{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.meta span{background:#f5f7f4;border:1px solid #edf0eb;padding:3px 8px;border-radius:3px;font-size:11px}.species .reason{font-size:12px;color:#63746b;margin:0}.species .fly{font-size:12px;margin:6px 0 0;color:#375c45}
+#map{width:100%;height:335px;background:#eaf2e8;border-radius:8px;margin-top:12px;border:1px solid #d8e2d5}.legend{font-size:12px;color:var(--muted);margin-top:8px}
+.calendar{overflow-x:auto}.calendar table{width:100%;border-collapse:separate;border-spacing:2px;min-width:615px;font-size:11px}.calendar th{text-align:left;font-weight:600;padding:5px}.calendar td{min-width:30px;text-align:center;height:24px;border-radius:3px;background:#eff1eb}.calendar td.on{background:#74a28c;color:#113d31;font-weight:700}.calendar td.today{outline:2px solid #c78c2b}.calendar th:first-child{min-width:126px}
+.about{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.about p{font-size:13px;color:#4f6358}footer{background:#15352d;color:#d1e3d9;padding:22px;text-align:center;font-size:12px}footer a{color:#e1ead5}
+@media(max-width:830px){.split,.about{grid-template-columns:1fr}.panel{padding:16px}}@media(max-width:480px){.metrics{grid-template-columns:1fr 1fr}.metrics .metric:last-child{grid-column:span 2}.metric .value{font-size:22px}.wrap{padding:14px 11px 40px}.hero-inner{padding:28px 16px}.head-inner{padding:13px 16px}.species{grid-template-columns:1fr}.status{justify-self:start}#map{height:285px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="head-inner"><div class="brand">Michigan Trout Report <span style="font-weight:400;color:#c7e2d2">/ Mayflies</span></div><nav><a href="/">River conditions</a> · <a href="/hex.html">Hex tracker</a> · <a href="/stream/ausable-river.html">Au Sable guide</a></nav></div></header>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">Au Sable River · North and South Branches · Field Ledger</div><h1>Which mayflies might hatch next?</h1><p>Compare ten major Michigan mayflies against measured river temperature, hourly weather, and the normal hatch season. Designed for the Au Sable watershed — not a generic statewide calendar.</p><div class="hero-metrics"><span class="tag">10 mayfly groups</span><span class="tag">5 monitored river locations</span><span class="tag">USGS water temperature + NWS weather</span></div></div></section>
+<main class="wrap">
+<section class="panel" aria-labelledby="selectTitle">
+<div class="section-heading"><h2 id="selectTitle">Choose your water</h2><span class="sub">USGS station locations — not fishing access points</span></div>
+<div class="reach-controls" id="reaches" aria-label="Select river location"></div>
+<p id="reachNote" class="sub"></p>
+<div class="metrics" aria-live="polite"><div class="metric"><div class="label">Water temperature</div><div class="value" id="watertemp">Checking…</div><div class="sub" id="time">USGS sensor</div></div><div class="metric"><div class="label">River discharge</div><div class="value" id="flow">—</div><div class="sub">Cubic feet/second</div></div><div class="metric"><div class="label">Local weather</div><div class="value" id="weather">Checking…</div><div class="sub" id="wind">NWS hourly forecast</div></div></div>
+<div id="caution" role="status" aria-live="polite"></div>
+<p class="fineprint">Source: <a id="gageLink" href="https://waterdata.usgs.gov/" target="_blank" rel="noopener">USGS monitoring station</a>. Temperature is measured at the selected gauge only. No direct hatch counts are available.</p>
+</section>
+<div class="split">
+<section class="panel" aria-labelledby="rankTitle"><div class="section-heading"><h2 id="rankTitle">Mayfly outlook</h2><span class="sub" id="updated">Loading observations…</span></div><p class="sub">Favorable means environmental conditions match a broad field-guide association; it does not mean insects have been seen.</p>
+<div class="filters" id="filters"><button class="filter-button" data-filter="all" aria-pressed="true">All mayflies</button><button class="filter-button" data-filter="likely" aria-pressed="false">Favorable / building</button><button class="filter-button" data-filter="seasonal" aria-pressed="false">Seasonally possible</button></div><div class="species-grid" id="species"><p>Checking river conditions…</p></div></section>
+<aside>
+<section class="panel"><h2>Au Sable gauge map</h2><p class="sub">Select a marker to see conditions and mayfly outlook for that actual gauge location.</p><div id="map" aria-label="Map of Au Sable River USGS monitoring locations"></div><p class="legend">Map: OpenStreetMap contributors. Markers show gauging stations, not inferred river-wide hatch hotspots. No map API key required.</p></section>
+<section class="panel"><h2>How to read the signals</h2><p class="sub">The model checks seasonal timing first. A fresh USGS measurement is required before calling conditions favorable. Water temperature is influential but does not determine emergence by itself. Weather refines the activity window, especially for drifting duns and spinner falls.</p><div class="alert"><strong>Trout safety first:</strong> if the measured water reaches 68°F or higher, the tool displays a heat caution rather than encouraging catch-and-release trout fishing.</div><p class="fineprint">This first release does not claim hatch sighting verification, species-specific calibrated probabilities, or an exact hour of emergence.</p></section>
+</aside></div>
+<section class="panel"><h2>Au Sable mayfly season calendar</h2><p class="sub">Typical regional windows. Actual timing changes with weather, water temperatures and local habitat.</p><div class="calendar" id="calendar"></div></section>
+<section class="panel about"><div><h2>Why branches matter</h2><p>The North Branch, South Branch, and mainstem can experience different thermal conditions and hatch timing. Downstream dam-influenced stations are not a substitute for Grayling or the Holy Waters. The historic Grayling USGS gauge is no longer a source of live water temperature.</p><p>For the Holy Waters, we deliberately do not publish a made-up live temperature from a downstream site. Exact-reach monitoring can be added when a verified measurement source is available.</p></div><div><h2>Great Lakes expansion</h2><p>This is the Au Sable watershed launch of a broader Great Lakes mayfly system. Other Michigan trout rivers are natural next locations. Nearshore Hexagenia emergences on lakes and bays require a separate habitat-and-surface-water model rather than reusing trout-stream rules.</p><p>Reference material: <a href="https://graylingmichigan.org/things-to-do/outdoors/fishing/fly-fishing/">Grayling hatch chart</a> · <a href="https://api.waterdata.usgs.gov/">USGS Water Data APIs</a> · <a href="https://www.weather.gov/documentation/services-web-api">NWS API</a>.</p></div></section>
+</main>
+<footer>Condition estimates, not guaranteed hatches. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/hex.html">Existing Hex tracker</a></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script>
+const reaches=[
+{id:'north-branch',name:'North Branch',lat:44.7166645,lon:-84.4196263},
+{id:'south-branch',name:'South Branch',lat:44.6147385,lon:-84.4555750},
+{id:'red-oak',name:'Red Oak',lat:44.6769593,lon:-84.2925146},
+{id:'mio',name:'Mio',lat:44.6600138,lon:-84.1311167},
+{id:'mckinley',name:'McKinley',lat:44.6127754,lon:-83.8376616}
+];
+let active='north-branch',filter='all',report=null,map=null,markers={},requestId=0;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function setText(id,val){$(id).textContent=val;}
+function setSelected(id){active=id;document.querySelectorAll('.reach-button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.reach===id)));if(map&&markers[id]){map.panTo(markers[id].getLatLng());markers[id].openPopup();}}
+function statusClass(s){return s==='Conditions favorable'?'favorable':s==='Building / variable'?'variable':'';}
+function renderSpecies(){
+ if(!report)return;
+ const shown=report.species.filter(s=>filter==='all'||(filter==='likely'&&s.order>=3)||(filter==='seasonal'&&s.signal!=='Off season'));
+ $('species').innerHTML=shown.length?shown.map(s=>'<article class="species"><div><div class="species-name">'+esc(s.name)+'</div><div class="latin">'+esc(s.latin)+'</div><div class="meta"><span>'+esc(s.sizes)+'</span><span>'+esc(s.time)+'</span><span>'+s.water[0]+'–'+s.water[1]+'°F association</span></div><p class="reason">'+esc(s.reason)+'</p><p class="fly"><strong>Fly box:</strong> '+esc(s.fly)+'</p></div><span class="status '+statusClass(s.signal)+'">'+esc(s.signal)+'</span></article>').join(''):'<p class="sub">No species match this filter. Try All mayflies.</p>';
+}
+function renderCalendar(){
+ if(!report)return;
+ const mths=['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
+ let html='<table aria-label="Typical mayfly season calendar"><thead><tr><th>Species</th>'+mths.map(m=>'<th>'+m+'</th>').join('')+'</tr></thead><tbody>';
+ report.species.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(s=>{
+ html+='<tr><th scope="row">'+esc(s.name)+'</th>';
+ for(let m=3;m<=11;m++){const on=s.months.some(w=>m>=w[0]&&m<=w[2]);html+='<td class="'+(on?'on ':'')+(report.month===m?'today':'')+'">'+(on?'●':'')+'</td>';}
+ html+='</tr>';});
+ $('calendar').innerHTML=html+'</tbody></table>';
+}
+function render(){
+ if(!report)return;
+ setText('reachNote',report.reach.dataScope);
+ setText('watertemp',report.waterTempF===null?'Unavailable':report.waterTempF.toFixed(1)+'°F');
+ setText('flow',report.flowCfs===null?'Unavailable':Math.round(report.flowCfs).toLocaleString()+' cfs');
+ setText('weather',report.weatherText||'Unavailable');
+ setText('wind',report.windMph===null?'Wind unavailable':'Wind '+report.windMph+' mph');
+ setText('time',report.observedAt?'USGS · '+new Date(report.observedAt).toLocaleString('en-US',{timeZone:'America/Detroit',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'Fresh sensor reading unavailable');
+ setText('updated','Updated '+new Date(report.generatedAt).toLocaleTimeString('en-US',{timeZone:'America/Detroit',hour:'numeric',minute:'2-digit'})+' ET');
+ $('gageLink').href=report.sourceUrl;
+ $('caution').innerHTML=report.troutHeatCaution?'<div class="alert"><strong>68°F+ measured:</strong> trout heat caution. Consider waiting for cooler water rather than catch-and-release fishing.</div>':report.partial?'<div class="alert">Fresh water temperature is unavailable at this gauge. Seasonal windows are shown, but no live favorable hatch signal is claimed.</div>':'';
+ renderSpecies();renderCalendar();
+}
+async function chooseReach(id){
+ setSelected(id); const idForRequest=++requestId; report=null;
+ setText('watertemp','Checking…');setText('flow','—');setText('weather','Checking…');setText('updated','Loading…');$('species').innerHTML='<p class="sub">Checking the selected gauge…</p>';
+ try{const response=await fetch('/api/mayfly-hatches?reach='+encodeURIComponent(id),{headers:{Accept:'application/json'}});
+ if(!response.ok)throw Error('API '+response.status);const data=await response.json();if(idForRequest!==requestId)return;
+ report=data;render();
+ }catch(err){if(idForRequest!==requestId)return;setText('watertemp','Unavailable');setText('weather','Unavailable');setText('updated','Live service unavailable');$('species').innerHTML='<p class="alert">Could not fetch current readings. See the <a href="/hex.html">Hex tracker</a> or try again later. We do not publish invented hatch scores.</p>';}
+}
+reaches.forEach(r=>{const b=document.createElement('button');b.className='reach-button';b.dataset.reach=r.id;b.textContent=r.name;b.setAttribute('aria-pressed',String(r.id===active));b.addEventListener('click',()=>chooseReach(r.id));$('reaches').appendChild(b);});
+document.querySelectorAll('.filter-button').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('.filter-button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderSpecies();}));
+function initializeMap(){if(!window.L){$('map').textContent='Map tiles unavailable. Choose a gauge from the buttons above.';return;}
+ map=L.map('map',{scrollWheelZoom:false}).setView([44.65,-84.22],9);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenStreetMap contributors'}).addTo(map);
+ reaches.forEach(r=>{const m=L.circleMarker([r.lat,r.lon],{radius:8,weight:2,color:'#fff',fillColor:'#1e6650',fillOpacity:1}).addTo(map);
+ m.bindPopup('<strong>'+esc(r.name)+'</strong><br>USGS monitoring location');m.on('click',()=>chooseReach(r.id));markers[r.id]=m;});
+ map.fitBounds(L.latLngBounds(reaches.map(r=>[r.lat,r.lon])).pad(.12));}
+window.addEventListener('load',initializeMap);chooseReach(active);
+</script>
+</body></html>
