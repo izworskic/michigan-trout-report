@@ -106,6 +106,15 @@ function initPhoto(){
  window.addEventListener('pagehide',()=>{if(previewURL)URL.revokeObjectURL(previewURL);});
 }
 renderCards();
+// Prominent image strip above the dashboard works as identification navigation.
+document.querySelectorAll('[data-quick-fly]').forEach(link=>link.addEventListener('click',e=>{
+ const id=link.dataset.quickFly;
+ if(!PHOTOS.some(p=>p.id===id))return;
+ e.preventDefault();
+ window.MayflyBoard?.selectFly?.(id);
+ updateSelected(id);
+ root.querySelector('[data-identifies="'+id+'"]')?.scrollIntoView({behavior:'smooth',block:'center'});
+}));
 ['idSize','idColor','idTime'].forEach(id=>$(id)?.addEventListener('change',candidates));
 candidates();initPhoto();
 window.MayflyID={updateSelected,photoCount:PHOTOS.length};
