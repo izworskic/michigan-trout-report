@@ -59,7 +59,7 @@ test('wind and rain affect evening watch only when fresh 68 degree observation e
  const corrected=[22,23,0,1,2,3].map((h,i)=>({startTime:'2026-06-'+(h<22?'23':'22')+'T'+String(h).padStart(2,'0')+':00:00Z',
   windSpeed:'4 mph',shortForecast:'Clear'}));
  const nights=extractLakeEvenings(corrected,NOW);
- assert.equal(nights[0].coverageHours,4); // after 8pm June 22 UTC start (due to now)
+ assert.equal(nights[0].coverageHours,5); // includes one hour lookback plus evening forecast hours
  const rows=parseNdbcStandard(dataset([stationRow()]),'45165',NOW);
  const good=buildLakeHexReport({region:LAKE_REGIONS[1],now:NOW,observations:rows,hourlyForecast:corrected});
  assert.equal(good.evenings[0].signal,'Conditions worth watching');
