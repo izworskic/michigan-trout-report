@@ -238,18 +238,30 @@ function initMap(){
   $('riverMap').replaceChildren(); // Remove loading text before adding map tiles.
   map=L.map('riverMap',{scrollWheelZoom:false,zoomControl:true,preferCanvas:true})
    .setView([44.3,-85.12],8);
-  let errors=0,loadedTiles=0,showingFallback=false;
+  let errors=0,loadedTiles=0,showingFallback=false,tileDeadline=null;
+  function fallbackIfNoTiles(){
+   if(showingFallback||loadedTiles>0)return;
+   showingFallback=true;
+   if(tileDeadline!==null)clearTimeout(tileDeadline);
+   drawFallbackLocator();
+  }
   const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
    maxZoom:13,minZoom:6,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>',
    detectRetina:false,updateWhenIdle:true,keepBuffer:1
   });
-  osm.on('tileload',()=>{loadedTiles++;});
-  osm.on('tileerror',()=>{
-   errors++;
-   if(!showingFallback&&errors>=2&&loadedTiles===0){
-    showingFallback=true;drawFallbackLocator();
-   }
+  osm.on('tileload',()=>{
+   if(showingFallback)return;
+   loadedTiles++;
+   if(tileDeadline!==null){clearTimeout(tileDeadline);tileDeadline=null;}
   });
+  osm.on('tileerror',()=>{
+   if(showingFallback)return;
+   errors++;
+   if(errors>=2&&loadedTiles===0)fallbackIfNoTiles();
+  });
+  // Arm the deadline before starting requests, so even a cached tile load
+  // clears it correctly; a silent stalled request gets a no-key local map.
+  tileDeadline=setTimeout(fallbackIfNoTiles,8000);
   osm.addTo(map);
   SPOTS.forEach(s=>{
    const point=L.circleMarker([s.lat,s.lon],{
@@ -283,7 +295,9 @@ window.MayflyBoard={
   }
  }})
 };
-window.addEventListener('load',initMap);
+// Do not wait on the hero and insect photos before initializing the map.
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap,{once:true});
+else initMap();
 Promise.allSettled(SPOTS.map(loadRiver));
 </script>
 </body></html>
