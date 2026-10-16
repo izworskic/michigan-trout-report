@@ -71,7 +71,8 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 .review-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid #e2ece6;padding-top:12px;margin-top:12px}
 @media(max-width:610px){.review-summary,.review-history{grid-template-columns:1fr}}
 
-</style><link rel="stylesheet" href="/lake-mayfly-atlas.css?v=2"></head>
+</style><link rel="stylesheet" href="/lake-mayfly-atlas.css?v=2">
+<link rel="stylesheet" href="/lake-mayfly-insights.css?v=1"></head>
 <body>
 <nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
 <div class="navlinks"><a href="/michigan-mayfly-hatches.html">Michigan trout-river hatches</a><a href="/hex.html">River Hex tracker</a><a href="/">Trout conditions</a></div></div></nav>
@@ -135,6 +136,28 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <div><span>FIELD NOTE / MICHIGAN + HURON</span><strong>Patchy, uneven recovery</strong><p>Northern Green Bay and Tawas have historical evidence. What you see in one bay may not occur in another.</p></div>
 <div><span>FIELD NOTE / SUPERIOR + ONTARIO</span><strong>Sheltered habitat matters</strong><p>Research points to bays and estuaries, not to the entire open lake.</p></div>
 </div>
+</section>
+<section class="card pulse-shell" id="mayflyInsights" aria-labelledby="pulseMainTitle">
+<div class="pulse-header"><div><span class="pulse-eyebrow">04 / THE MAYFLY PULSE · AT A GLANCE</span><h2 id="pulseMainTitle">Is the hatch getting closer?</h2><p>See what the instruments and field evidence actually say—measured temperature changes, public specimen records, reviewed swarm reports, broad seasonality and the next seven evenings. <strong>No invented probability or “hatching now” claim.</strong></p></div><span class="pulse-livebadge" id="pulseScope">WESTERN LAKE ERIE · CHECKING SOURCES</span></div>
+<div class="pulse-region-switch" role="group" aria-label="Choose a verified monitoring region">
+<button type="button" data-pulse-region="western-erie" aria-pressed="true">Western Lake Erie · NOAA 45165</button>
+<button type="button" data-pulse-region="saginaw-bay" aria-pressed="false">Saginaw Bay · NOAA 45163</button>
+<span class="pulse-switch-help">Only these two lake regions have verified live buoy integrations.</span>
+</div>
+<div class="pulse-summary" aria-label="Quick mayfly signal summary">
+<div class="pulse-stat"><span class="pulse-stat-label">Current environmental stage</span><strong id="pulseTitle">Checking…</strong><p id="pulseExplain">Waiting for source data.</p></div>
+<div class="pulse-stat"><span class="pulse-stat-label">Latest measured surface water</span><strong id="pulseWater">—</strong><p id="pulseWaterDetail">No fresh water report yet</p></div>
+<div class="pulse-stat"><span class="pulse-stat-label">Reviewed mass events · 14 days</span><strong id="pulseReviewed">—</strong><p id="pulseReviewedDetail">Editorially reviewed records only</p></div>
+<div class="pulse-stat"><span class="pulse-stat-label">Latest individual specimen</span><strong id="pulseLatest">—</strong><p id="pulseLatestDetail">Photo-backed iNaturalist, not a hatch</p></div>
+</div>
+<div class="pulse-charts">
+<section class="pulse-chart" aria-labelledby="pulseTempTitle"><span class="pulse-chart-kicker">01 / Measured trend</span><h3 id="pulseTempTitle">How warm is the water getting?</h3><p class="pulse-chart-desc">Up to 14 recent calendar days of real NOAA buoy surface temperatures. Daily ranges and averages; no gaps filled in.</p><div id="pulseTempGraph" class="pulse-svg-box" aria-live="polite"><div class="pulse-empty">Checking measured history…</div></div><div class="pulse-legends"><span class="pulse-key">Measured mean and range</span><span class="pulse-key threshold">Western Erie reference only</span></div><p class="pulse-chart-foot" id="pulseTempFoot">Checking NOAA National Data Buoy Center history…</p></section>
+<section class="pulse-chart" aria-labelledby="pulseEvidenceTitle"><span class="pulse-chart-kicker">02 / Independent dated evidence</span><h3 id="pulseEvidenceTitle">Any mayflies actually reported?</h3><p class="pulse-chart-desc">Last 30 days of <em>displayed</em> photo-backed specimen records and approved past swarm events. These are not equal evidence types.</p><div id="pulseEvidenceGraph" class="pulse-svg-box" aria-live="polite"><div class="pulse-empty">Checking dated reports…</div></div><div class="pulse-legends"><span class="pulse-key">Individual specimens</span><span class="pulse-key events">Reviewed mass events</span></div><p id="pulseEvidenceFoot" class="pulse-chart-foot">Neither source is a census or real-time hatch count.</p></section>
+<section class="pulse-chart pulse-season-panel" aria-labelledby="pulseSeasonTitle"><span class="pulse-chart-kicker">03 / Broad seasonal guide</span><h3 id="pulseSeasonTitle">When are Great Lakes Hex hatches usually possible?</h3><p class="pulse-chart-desc"><strong id="pulseSeason">Checking season…</strong> · The colored period is a broad summer reference across the basin, not a separate measured hatch peak for each lake.</p><div id="pulseSeasonChart" aria-live="polite"><div class="pulse-empty">Preparing the seasonal reference…</div></div></section>
+<section class="pulse-chart pulse-stage-panel" aria-labelledby="pulseStageTitle"><span class="pulse-chart-kicker">04 / Explain the signal</span><h3 id="pulseStageTitle">How far along is the evidence?</h3><p class="pulse-chart-desc">A transparent evidence ladder—not a progress percentage. A recent reviewed event is historical until independently confirmed ongoing.</p><ol class="pulse-stage-rail" id="pulseStageRail" aria-label="Evidence stages"></ol><p class="pulse-chart-foot" id="pulseStageCaveat">An environmental watch is never hatch confirmation.</p></section>
+<section class="pulse-chart pulse-weather-panel" aria-labelledby="pulseWeatherTitle"><span class="pulse-chart-kicker">05 / Next seven evenings</span><h3 id="pulseWeatherTitle">Will the shore be windy?</h3><p class="pulse-chart-desc">NWS shoreline wind forecast, 6–11 PM Eastern. Bar lengths indicate expected wind, not probabilities of mayfly emergence.</p><div id="pulseEveningGraph"><div class="pulse-empty">Checking evening conditions…</div></div><p class="pulse-chart-foot" id="pulseEveningFoot">Shoreline forecasts do not measure offshore emergence.</p></section>
+</div>
+<p class="pulse-trust-note"><strong>What “on” really means:</strong> a mass hatch cannot be verified from surface buoy temperatures, ordinary specimen photos, or historical calendars. The tool will only describe dated, source-reviewed past swarms when available, and it never extrapolates those to ongoing activity. Lake Superior, Michigan, Ontario and Lake St. Clair have research profiles but no validated live nearshore monitoring in this product yet.</p>
 </section>
 <section class="card" aria-labelledby="stationH"><div class="atlas-monitor-header"><h2 id="stationH">Secondary: live NOAA buoy conditions</h2><p>Only two verified monitoring stations currently feed the actual forecast model. Selecting another atlas location does not invent a sensor or borrow one from another lake.</p></div><div class="topline"><h3>Choose a monitored station</h3><span class="small">Sensor positions, not hatch destinations</span></div>
 <div class="switch" id="regions" role="group" aria-label="Select monitored Great Lakes nearshore region"></div>
@@ -224,6 +247,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <footer>Environmental monitoring, not verified hatch reports. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable mayfly forecast</a> · <a href="/hex.html">River Hex tracker</a></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <script src="/lake-mayfly-atlas.js?v=2" defer></script>
+<script src="/lake-mayfly-insights.js?v=1"></script>
 <script>
 const REGION=[{id:'saginaw-bay',title:'Saginaw Bay (recovery / seasonal buoy)',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie (best documented)',lat:41.702,lon:-83.262}];
 let current='western-erie',report=null,map=null,marks={},reqCounter=0;
