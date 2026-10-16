@@ -11,10 +11,10 @@ const JS=readFileSync('public/lake-hatch-history.js','utf8');
 const CSS=readFileSync('public/lake-hatch-history.css','utf8');
 const NOW=new Date('2026-10-16T18:00:00Z');
 
-test('nine dated source-linked records distinguish adult samples, contemporaneous reports, and first sightings',()=>{
+test('fifteen dated source-linked records distinguish adult samples, contemporaneous reports, and first sightings',()=>{
  const entries=validateHistory(PUBLISHED_LAKE_EVENTS,NOW);
- assert.equal(entries.length,9);
- assert.equal(new Set(entries.map(e=>e.id)).size,9);
+ assert.equal(entries.length,15);
+ assert.equal(new Set(entries.map(e=>e.id)).size,15);
  assert.deepEqual([...new Set(entries.map(e=>e.category))].sort(),[...CATEGORIES].sort());
  assert(entries.every(e=>e.sourceURL.startsWith('https://')));
  assert(entries.some(e=>e.id==='tawas-2010'&&e.firstDate==='2010-06-22'&&e.lastDate==='2010-06-24'));
@@ -32,13 +32,13 @@ test('all five lakes are browsable; unsupported source dates fail closed, not an
   assert.match(r.coverage,/not evidence of no historic hatch/i);
  }
  const all=lakeHistory({now:NOW});
- assert.equal(all.total,9);
+ assert.equal(all.total,15);
  assert.equal(all.isCurrentHatchConfirmed,false);
- assert.deepEqual(all.byCategory,{documented_adult_swarms:1,reported_mass_swarm:3,community_first_sighting:5});
- assert.deepEqual([...all.years],[2010,2021,2022,2023,2024,2025]);
+ assert.deepEqual(all.byCategory,{documented_adult_swarms:1,reported_mass_swarm:3,community_first_sighting:11});
+ assert.deepEqual([...all.years],[2010,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]);
  assert.equal(lakeHistory({lake:'Huron',now:NOW}).total,1);
  assert.equal(lakeHistory({lake:'Connecting waters',now:NOW}).total,1);
- assert.equal(lakeHistory({site:'port-clinton',now:NOW}).total,7);
+ assert.equal(lakeHistory({site:'port-clinton',now:NOW}).total,13);
  assert.equal(lakeHistory({site:'bass-islands',now:NOW}).total,0);
 });
 test('source validation rejects spurious days, hidden private metadata, missing IDs, and faked verification',()=>{
@@ -65,10 +65,10 @@ async function invoke(query={},method='GET'){
 }
 test('API returns dated evidence for site/lake and rejects unsupported input',async()=>{
  const all=await invoke();
- assert.equal(all.status,200);assert.equal(all.body.entries.length,9);
+ assert.equal(all.status,200);assert.equal(all.body.entries.length,15);
  assert.match(all.headers['Cache-Control'],/s-maxage=86400/);
  assert.equal((await invoke({lake:'Huron'})).body.total,1);
- assert.equal((await invoke({lake:'Erie',site:'port-clinton'})).body.total,7);
+ assert.equal((await invoke({lake:'Erie',site:'port-clinton'})).body.total,13);
  assert.equal((await invoke({lake:'Ontario'})).body.total,0);
  assert.equal((await invoke({lake:'Lake Fake'})).status,400);
  assert.equal((await invoke({site:'unknown'})).status,400);
@@ -129,10 +129,23 @@ test('front-end chart renders dates with separated categories and never claims a
     assert.match(root('historyMatrix').innerHTML,/No exact-dated adult swarm/);
     assert.equal(win.LAKE_PUBLISHED_HISTORY.getSnapshot().count,0);
     win.LAKE_PUBLISHED_HISTORY.setLake('Erie');
-    assert.equal(win.LAKE_PUBLISHED_HISTORY.getSnapshot().count,7);
+    assert.equal(win.LAKE_PUBLISHED_HISTORY.getSnapshot().count,13);
     win.LAKE_PUBLISHED_HISTORY.setSite('bass-islands','Erie');
     assert.equal(win.LAKE_PUBLISHED_HISTORY.getSnapshot().count,0);
     resolve();
    }catch(e){reject(e);}
  }));
+});
+
+
+test('source-based 11-year Port Clinton first sighting median is not a hatch forecast',()=>{
+ const x=lakeHistory({lake:'Erie',now:NOW}).firstSightingSummary;
+ assert.equal(x.count,11);
+ assert.equal(x.earliestMonthDay,'05-30');
+ assert.equal(x.medianMonthDay,'06-06');
+ assert.equal(x.latestMonthDay,'06-14');
+ assert.match(x.recordType,/not start, peak, or mass swarm/);
+ assert.equal(lakeHistory({lake:'Superior',now:NOW}).firstSightingSummary,null);
+ assert(HTML.includes('id="historyFirstSightings"'));
+ assert(JS.includes('medianMonthDay'));
 });
