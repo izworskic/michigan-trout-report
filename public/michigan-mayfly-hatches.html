@@ -46,11 +46,11 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <div class="hatch-quick-inner">
 <div class="quick-head"><h2 id="quickFlyTitle">Which mayfly are you seeing?</h2><span>Real photographed specimens · select to see identification details</span></div>
 <div class="hatch-quick-grid">
-<a href="#mayflyPhotoGuide" data-quick-fly="hendrickson"><img src="/images/mayflies/hendrickson.webp" alt="Aquatic nymph reference of a Hendrickson mayfly" width="200" height="112"><span class="quick-name">Hendrickson</span><span class="quick-month">April–May · nymph photo</span></a>
-<a href="#mayflyPhotoGuide" data-quick-fly="brown-drake"><img src="/images/mayflies/brown-drake.webp" alt="Adult Brown Drake mayfly with mottled wings" width="200" height="112"><span class="quick-name">Brown Drake</span><span class="quick-month">May–June · adult photo</span></a>
 <a href="#mayflyPhotoGuide" data-quick-fly="hex"><img src="/images/mayflies/hex.webp" alt="Adult yellow Hexagenia mayfly with tall wings and long tails" width="200" height="112"><span class="quick-name">Hexagenia / Hex</span><span class="quick-month">June–July · adult photo</span></a>
-<a href="#mayflyPhotoGuide" data-quick-fly="sulphur"><img src="/images/mayflies/sulphur.webp" alt="Aquatic nymph reference of a Sulphur mayfly" width="200" height="112"><span class="quick-name">Sulphur</span><span class="quick-month">May–July · nymph photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="brown-drake"><img src="/images/mayflies/brown-drake.webp" alt="Adult Brown Drake mayfly with mottled wings" width="200" height="112"><span class="quick-name">Brown Drake</span><span class="quick-month">May–June · adult photo</span></a>
 <a href="#mayflyPhotoGuide" data-quick-fly="bwo"><img src="/images/mayflies/bwo.webp" alt="Adult Blue-Winged Olive mayfly on a mesh surface" width="200" height="112"><span class="quick-name">Blue-Winged Olive</span><span class="quick-month">Spring and fall · adult photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="hendrickson"><img src="/images/mayflies/hendrickson.webp" alt="Aquatic nymph reference of a Hendrickson mayfly" width="200" height="112"><span class="quick-name">Hendrickson</span><span class="quick-month">April–May · nymph photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="sulphur"><img src="/images/mayflies/sulphur.webp" alt="Aquatic nymph reference of a Sulphur mayfly" width="200" height="112"><span class="quick-name">Sulphur</span><span class="quick-month">May–July · nymph photo</span></a>
 </div>
 </div>
 </section>
@@ -235,6 +235,7 @@ function drawFallbackLocator(){
 function initMap(){
  if(!window.L){drawFallbackLocator();return;}
  try{
+  $('riverMap').replaceChildren(); // Remove loading text before adding map tiles.
   map=L.map('riverMap',{scrollWheelZoom:false,zoomControl:true,preferCanvas:true})
    .setView([44.3,-85.12],8);
   let errors=0,loadedTiles=0,showingFallback=false;
