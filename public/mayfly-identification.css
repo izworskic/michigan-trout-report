@@ -1,0 +1,45 @@
+/* Photo-first Mayfly field ID. Photos are real CC-licensed source specimens. */
+.hero.hero-with-reference .hero-inner{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:20px;align-items:center}
+.hero .hero-copy{min-width:0}
+.hero-reference{margin:0;position:relative;background:#234b3c;border-radius:11px;overflow:hidden;height:177px;box-shadow:0 13px 24px #00170f20}
+.hero-reference img{width:100%;height:100%;display:block;object-fit:cover;object-position:50% 33%;filter:saturate(.83)}
+.hero-reference figcaption{position:absolute;left:0;right:0;bottom:0;padding:20px 9px 8px;background:linear-gradient(transparent,#082820e8);color:#fff;font-size:10px;text-align:left}
+.hero-reference a{color:#e9f5e9}
+.id-feature-panel{border-color:#cfe0d1;overflow:hidden}
+.id-feature-panel .id-intro{max-width:880px;color:#576c5b;font-size:13px}
+.id-photo-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}
+.id-card{background:#fbfcfa;border:1px solid #dce6dc;border-radius:10px;overflow:hidden;min-width:0;transition:box-shadow .18s,border-color .18s}
+.id-card.picked{border-color:#659a79;box-shadow:0 0 0 2px #c6e4cf}
+.id-card .id-photo{height:133px;background:linear-gradient(115deg,#ddedde,#c8d9c9);display:block;position:relative;overflow:hidden}
+.id-card .id-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;position:relative;z-index:1}
+.id-photo-fallback{position:absolute;inset:13px;color:#55735d;font-size:12px}
+.id-card-inner{padding:12px}
+.id-season{font-size:10px;font-weight:850;letter-spacing:.055em;text-transform:uppercase;color:#507d67;margin:0 0 7px}
+.id-card h3{font:normal 20px/1.2 Georgia,serif;color:#1c4b39;margin:0}
+.id-latin{font-size:11px;color:#6b816e;font-style:italic;margin-top:2px;min-height:33px}
+.id-keyline{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.id-keyline span{border:1px solid #e2e9dc;padding:4px 6px;background:#f3f8ef;border-radius:4px;font-size:10px;color:#566b5f}
+.id-card p{font-size:12px;color:#526c5d;line-height:1.5;min-height:93px;margin:7px 0}
+.id-card button{display:block;background:#1c684e;border:none;border-radius:6px;color:#fff;cursor:pointer;min-height:39px;padding:9px;font-weight:800;font-size:11px;width:100%;text-align:center}
+.id-card button:hover{background:#205b49}
+.id-credit{display:block;font-size:9px;line-height:1.4;color:#718577;margin-top:7px}
+.id-credit a{color:#347358}
+.id-method{display:grid;grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr);gap:16px;border-top:1px solid #e0e8dd;padding-top:14px}
+.id-clue-guide,.id-private-photo{background:#f4f8f2;border-radius:9px;padding:16px;border:1px solid #dde9de}
+.id-method h3{font-size:16px;margin:0 0 8px;color:#254f3c}
+.id-fields{display:flex;flex-wrap:wrap;gap:10px}
+.id-fields label{flex:1 1 116px;display:block;color:#4b6958;font-size:11px;font-weight:750}
+.id-fields select{width:100%;display:block;margin-top:4px;appearance:auto;padding:9px;border:1px solid #bed6c4;border-radius:6px;background:white;color:#244732;font-size:12px}
+.id-results{margin-top:12px;font-size:12px;color:#456750}
+.id-results strong{display:block;margin-bottom:6px}
+.id-results button{display:inline-block;margin:0 5px 7px 0;border:1px solid #a8cbb3;color:#265945;background:#e5f2e5;padding:7px 9px;border-radius:6px;min-height:36px;font-weight:750;cursor:pointer;font-size:11px}
+.id-results p{font-size:11px;color:#657868;margin:4px 0}
+.id-private-photo input{display:block;margin-top:6px;font-size:12px;max-width:100%}
+#idPhotoPreview{display:block;max-width:100%;max-height:210px;object-fit:contain;margin:9px auto;background:#eef5ec;border-radius:6px}
+#idPhotoPreview[hidden]{display:none}
+#idPhotoClear{border:1px solid #b7d1c0;background:#fff;color:#246249;border-radius:6px;padding:7px 12px;font-weight:650;cursor:pointer;min-height:36px}
+.id-tip{font-size:11px;color:#668172;line-height:1.6;margin:10px 0 0}
+.id-science{font-size:11px;color:#607a6a;border-left:3px solid #c49b5a;padding:8px 12px;background:#fcfaf2;margin:12px 0 0}
+@media(max-width:1100px){.id-photo-row{grid-template-columns:repeat(3,minmax(0,1fr))}.id-card p{min-height:55px}}
+@media(max-width:740px){.hero.hero-with-reference .hero-inner{grid-template-columns:1fr}.hero-reference{height:170px;max-width:480px}.id-method{grid-template-columns:1fr}.id-photo-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.id-photo-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(225px,82%);grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 3px 10px}.id-card{scroll-snap-align:start}.id-card .id-photo{height:170px}.id-card p{min-height:65px}.hero-reference{height:154px}}
