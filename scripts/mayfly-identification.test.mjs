@@ -31,10 +31,28 @@ test('visual ID gallery, credited hero and offline-safe keyless CARTO map remain
 test('5 real photo references have a separate original, attribution and license, not generated scientific IDs',()=>{
  const ids=['hendrickson','brown-drake','hex','sulphur','bwo'];
  for(const id of ids)assert(guide.includes("id:'"+id+"'"));
- assert.equal((guide.match(/image:'https:\/\/upload.wikimedia.org\/wikipedia\/commons\/thumb\//g)||[]).length,5);
+ assert.equal((guide.match(/image:'\/images\/mayflies\/[a-z-]+\.webp'/g)||[]).length,5);
+ assert.equal((page.match(/src="\/images\/mayflies\/michigan-hex-hero\.webp"/g)||[]).length,1);
+ assert(guide.includes("stage:'Nymph · aquatic stage'"));
+ assert(guide.includes("stage:'Adult · winged'"));
+ assert(guide.includes('class="id-stage"'));
+ assert(!guide.includes('upload.wikimedia.org'));
+ for(const id of ['hendrickson','brown-drake','hex','sulphur','bwo','michigan-hex-hero']){
+  const bytes=readFileSync('public/images/mayflies/'+id+'.webp');
+  assert(bytes.length>5000&&bytes.length<180000,id+' unexpected file size');
+  assert.equal(bytes.toString('ascii',0,4),'RIFF',id+' invalid image header');
+  assert.equal(bytes.toString('ascii',8,12),'WEBP',id+' invalid image type');
+ }
  assert.equal((guide.match(/source:'https:\/\/commons.wikimedia.org\/wiki\/File:/g)||[]).length,5);
  assert.equal((guide.match(/license:'CC BY/g)||[]).length,5);
  assert(guide.includes('photos are sourced')||guide.includes('All images are sourced'));
+ assert(page.includes('two are aquatic nymphs, three are winged adults'));
+ assert(page.includes('Hendrickson and Sulphur photos here show aquatic NYMPHS'));
+ assert(guide.includes('Photo shows a submerged nymph'));
+ assert(guide.includes('Photo shows an aquatic nymph'));
+ assert(page.includes('CC BY-SA 3.0'));
+ assert(!page.includes('upload.wikimedia.org'));
+
  assert(!guide.includes('classifyImage('));
  assert(!guide.includes('/api/classify'));
 });
