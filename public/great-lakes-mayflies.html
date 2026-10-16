@@ -403,34 +403,67 @@ function initMap(){
   const researchMarks=new Map();
   data.spots.forEach(p=>{
    const pin=L.circleMarker([p.lat,p.lon],{
-    radius:8,color:'#fff',weight:2,fillColor:p.lake==='Connecting waters'?'#6c8983':'#267c76',fillOpacity:1
+    radius:11,color:'#fff',weight:2.5,fillColor:p.lake==='Connecting waters'?'#6c8983':'#267c76',fillOpacity:1
    }).addTo(map);
    pin.bindTooltip(esc(p.name),{direction:'top'});
    pin.bindPopup('<strong>'+esc(p.name)+'</strong><br><small>Approximate research-area reference — not a current hatch</small>');
-   pin.on('click',()=>data.select(p.id,false));
+   pin.on('click',()=>{
+    data.select(p.id,false);
+    $('atlasDetail')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+   });
    researchMarks.set(p.id,pin);
   });
-  data.onMapSelect(p=>{
-   if(!map)return;
-   if(activeAtlas&&researchMarks.get(activeAtlas))
-    researchMarks.get(activeAtlas).setStyle({radius:8,fillColor:'#267c76'});
-   activeAtlas=p.id;
-   const pin=researchMarks.get(p.id);
-   if(pin){
-    pin.setStyle({radius:11,fillColor:'#ba8745'});
-    map.panTo(pin.getLatLng());
-    pin.openPopup();
-   }
-  });
-  // Two independently instrumented buoys. These are NOT hatch location pins.
+  // NOAA instruments are separate from the researched-site pins, and
+  // appear only for the relevant monitored lakes.
   REGION.forEach(r=>{
-   const icon=L.divIcon({className:'',html:'<span style="display:block;background:#aa7742;color:#fff;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 5px #3338;padding:3px 5px;font-size:11px;font-weight:800">NOAA</span>',iconSize:[47,25],iconAnchor:[23,12]});
+   const icon=L.divIcon({className:'atlas-buoy-marker',html:'<span style="display:block;background:#ac7946;color:#fff;border:2px solid #fff;border-radius:4px;box-shadow:0 1px 6px #142e3e50;padding:6px 8px;font-size:10px;font-weight:900;letter-spacing:.06em">BUOY</span>',iconSize:[53,31],iconAnchor:[26,15]});
    const pin=L.marker([r.lat,r.lon],{icon}).addTo(map);
    pin.bindPopup('<strong>'+esc(r.title)+'</strong><br>Measured NOAA surface water · not emergence');
    pin.on('click',()=>choose(r.id));
    marks[r.id]=pin;
   });
-  map.fitBounds(L.latLngBounds(data.spots.filter(p=>p.lake!=='Connecting waters').map(p=>[p.lat,p.lon])).pad(.07),{maxZoom:6});
+  const baseBounds=L.latLngBounds(data.spots.filter(p=>p.lake!=='Connecting waters').map(p=>[p.lat,p.lon]));
+  data.onMapSelect(p=>{
+   if(!map)return;
+   if(activeAtlas&&researchMarks.get(activeAtlas)){
+    const old=data.spots.find(x=>x.id===activeAtlas);
+    researchMarks.get(activeAtlas).setStyle({radius:11,fillColor:old?.lake==='Connecting waters'?'#6c8983':'#267c76'});
+   }
+   activeAtlas=p.id;
+   const pin=researchMarks.get(p.id);
+   if(pin&&map.hasLayer(pin)){
+    pin.setStyle({radius:14,fillColor:'#ba8745'});
+    if(map.getZoom()<7)map.setView(pin.getLatLng(),7,{animate:true});
+    else map.panTo(pin.getLatLng());
+    pin.openPopup();
+   }
+  });
+  data.onLakeChange((lake,selected)=>{
+   if(!map)return;
+   const showing=data.spots.filter(p=>lake==='All five'?p.lake!=='Connecting waters':p.lake===lake);
+   for(const p of data.spots){
+    const pin=researchMarks.get(p.id);
+    const include=showing.includes(p);
+    if(include&&!map.hasLayer(pin))pin.addTo(map);
+    if(!include&&map.hasLayer(pin))map.removeLayer(pin);
+   }
+   for(const r of REGION){
+    const include=lake==='All five'||(lake==='Erie'&&r.id==='western-erie')||(lake==='Huron'&&r.id==='saginaw-bay');
+    const pin=marks[r.id];
+    if(include&&!map.hasLayer(pin))pin.addTo(map);
+    if(!include&&map.hasLayer(pin))map.removeLayer(pin);
+   }
+   map.closePopup();
+   if(lake==='All five')map.fitBounds(baseBounds.pad(.07),{maxZoom:6});
+   else if(showing.length===1)map.setView([showing[0].lat,showing[0].lon],8);
+   else if(showing.length>1)map.fitBounds(L.latLngBounds(showing.map(p=>[p.lat,p.lon])).pad(.48),{maxZoom:8});
+   if(selected&&researchMarks.get(selected.id)?.setStyle){
+    activeAtlas=selected.id;
+    researchMarks.get(selected.id).setStyle({radius:14,fillColor:'#ba8745'});
+   }
+  });
+  map.fitBounds(baseBounds.pad(.07),{maxZoom:6});
+
  }catch(_){
   try{map?.remove();}catch(_2){}
   map=null;
