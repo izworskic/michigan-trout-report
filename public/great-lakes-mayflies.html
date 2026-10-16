@@ -54,7 +54,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <div class="metric"><div class="label">Buoy water temperature</div><strong id="waterTemp">Checking…</strong><div class="foot" id="waterAt">Measured surface, not sediment</div></div>
 <div class="metric"><div class="label">Water trend</div><strong id="trend">—</strong><div class="foot">Last two complete sampled days</div></div>
 <div class="metric"><div class="label">Recent buoy wind</div><strong id="wind">—</strong><div class="foot">Measured where available</div></div>
-<div class="metric"><div class="label">Evening outlook</div><strong id="evening">—</strong><div class="foot">NWS forecast, not swarm count</div></div></div>
+<div class="metric"><div class="label">Evening outlook</div><strong id="evening">—</strong><div class="foot">NWS nearby shoreline weather</div></div></div>
 <div class="signal" role="status" id="signal">Collecting the last available NOAA buoy observation…</div>
 <p class="source"><span id="provenance">NOAA National Data Buoy Center</span> · <a id="stationUrl" href="https://www.ndbc.noaa.gov/station_page.php?station=45163" target="_blank" rel="noopener">Open original buoy observations</a> · <span id="updated"></span></p></section>
 <div class="grid">
@@ -67,12 +67,12 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <div class="legend"><span><span class="sample"></span>Buoy surface water</span><span><span class="sample threshold"></span>68°F reference, not confirmed emergence</span></div>
 <div class="warn">Sensor values, weather, and emergence are different observations. This tool cannot tell how many mayflies are present in the lake, whether the bottom has warmed, or where a windblown swarm will land.</div></section>
 <section class="card" aria-labelledby="sevenTitle"><div class="subheading"><h2 id="sevenTitle">Next seven evenings</h2><span class="small">6 PM–11 PM Eastern</span></div>
-<p class="muted">Compare wind and rain during the hours when airborne Hexagenia may be noticed. Only the immediate weather watch uses today's fresh surface temperature; later dates have no water-temperature forecast.</p>
+<p class="muted">Compare winds and rain forecast at nearby shoreline weather points during evening hours. Offshore winds can differ. Only the immediate weather watch uses today's fresh surface temperature; later dates have no water-temperature forecast.</p>
 <div class="days" id="eveningDays" aria-label="Seven evening nearshore weather and emergence watches"><p>Loading NOAA/NWS data…</p></div>
 </section>
 </section>
 <aside>
-<section class="card" aria-labelledby="mapTitle"><h2 id="mapTitle">Monitoring map</h2><p class="muted">The map marks two real buoy positions—not predicted hatch hotspots or shoreline concentrations.</p>
+<section class="card" aria-labelledby="mapTitle"><h2 id="mapTitle">Monitoring map</h2><p class="muted">The map marks two real buoy positions—not predicted hatch hotspots. Evening weather uses nearby land-based NWS forecast points.</p>
 <div id="lakeMap"></div><p class="small">Map tiles: CARTO / OpenStreetMap. No map key required.</p></section>
 <section class="card"><h2>What should I watch?</h2><div class="explain" style="grid-template-columns:1fr">
 <article><h3>1. Surface warming</h3><p>Look for a fresh local buoy temperature approaching or exceeding 68°F. In shallow western Erie, sediments can warm a few days later.</p></article>
@@ -125,7 +125,7 @@ function renderDays(){
 function render(){
  if(!report)return;
  txt('regionName',report.region.name);
- txt('regionCaveat',report.region.caveat);
+ txt('regionCaveat',report.region.caveat+' Evening weather uses NWS '+report.region.weatherProxy+' as a shoreline proxy; offshore wind may differ.');
  txt('status',report.status);$('status').className='status'+(report.rank>=3?' ready':report.status==='Off season'||report.metrics.waterTempF===null?' dim':'');
  txt('waterTemp',report.metrics.waterTempF===null?'Unavailable':report.metrics.waterTempF.toFixed(1)+'°F');
  txt('waterAt',report.metrics.measuredAt?'Observed '+when(report.metrics.measuredAt):'No fresh water sensor reading');
