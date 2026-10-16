@@ -2,9 +2,11 @@
 // Au Sable-specific first release. Uses the modern USGS OGC continuous API,
 // never the retiring waterservices.usgs.gov endpoint.
 import { REACHES, buildMayflyReport } from '../lib/mayfly-forecast.js';
+import { buildSevenDayOutlook } from '../lib/mayfly-outlook.js';
 
 const ENDPOINT='https://api.waterdata.usgs.gov/ogcapi/v1/collections/latest-continuous/items';
 const NWS='https://api.weather.gov';
+const HISTORY_ENDPOINT='https://api.waterdata.usgs.gov/ogcapi/v1/collections/continuous/items';
 const AGENT='MichiganTroutReport/1.0 (https://michigantroutreport.com)';
 async function json(url, ms=8500) {
   const controller=new AbortController();
@@ -49,19 +51,41 @@ async function loadGage(reach,now) {
     sourceUrl:'https://waterdata.usgs.gov/monitoring-location/USGS-'+reach.station
   };
 }
+// Seven days of measured water-temperature history, one station at a time.
+// OGC continuous "time=P7D" documented by USGS; fail closed if paginated
+// data cannot be collected completely rather than computing a partial trend.
+async function loadWaterHistory(reach) {
+  let next=HISTORY_ENDPOINT+'?f=json&skipGeometry=true&time=P7D&limit=1000&monitoring_location_id=USGS-'+reach.station+'&parameter_code=00010';
+  const features=[];
+  for(let page=0;page<2&&next;page++) {
+    const payload=await json(next,11000);
+    if(!Array.isArray(payload.features)) throw new Error('Unexpected USGS history response');
+    features.push(...payload.features);
+    const link=Array.isArray(payload.links)?payload.links.find(l=>l.rel==='next'):null;
+    next=link?.href||null;
+    if(next&&!next.startsWith('https://api.waterdata.usgs.gov/ogcapi/v1/collections/continuous/items')) {
+      throw new Error('Unexpected USGS history pagination host');
+    }
+  }
+  if(next)throw new Error('USGS history query exceeded two-page bound');
+  return features;
+}
 async function loadWeather(reach) {
   const point=await json(NWS+'/points/'+reach.lat+','+reach.lon);
   const url=point.properties?.forecastHourly;
   if(!url||!url.startsWith('https://api.weather.gov/')) throw new Error('No NWS hourly URL');
   const forecast=await json(url);
-  const p=forecast.properties?.periods?.[0];
+  const allPeriods=forecast.properties?.periods||[];
+  const p=allPeriods[0];
   if(!p) return {};
   const wind=String(p.windSpeed||'').match(/\d+/);
   return {
     windMph:wind?Number(wind[0]):null,
     cloudy:/cloud|overcast|rain|shower|drizzle/i.test(p.shortForecast||''),
     weatherText:p.shortForecast||null,
-    weatherObservedAt:p.startTime||null
+    weatherObservedAt:p.startTime||null,
+    hourlyForecast:allPeriods.slice(0,180),
+    weatherGeneratedAt:forecast.properties?.generatedAt||forecast.properties?.updateTime||null
   };
 }
 export default async function handler(req,res) {
@@ -73,20 +97,29 @@ export default async function handler(req,res) {
   const reach=REACHES.find(r=>r.id===id);
   if(!reach) return res.status(400).json({error:'Unknown reach'});
   const now=new Date();
-  const [gage,weather]=await Promise.allSettled([loadGage(reach,now),loadWeather(reach)]);
+  const [gage,weather,history]=await Promise.allSettled([loadGage(reach,now),loadWeather(reach),loadWaterHistory(reach)]);
   const measurement=gage.status==='fulfilled'?gage.value:{
     waterTempF:null,flowCfs:null,observedAt:null,temperatureSource:'unavailable',
     sourceUrl:'https://waterdata.usgs.gov/monitoring-location/USGS-'+reach.station
   };
   const meteo=weather.status==='fulfilled'?weather.value:{};
   const report=buildMayflyReport({reach,now,...measurement,...meteo});
+  const outlook=buildSevenDayOutlook({
+    now,waterTempF:measurement.waterTempF,observedAt:measurement.observedAt,
+    historyFeatures:history.status==='fulfilled'?history.value:[],
+    hourlyForecast:meteo.hourlyForecast||[],
+    weatherGeneratedAt:meteo.weatherGeneratedAt||null,
+  });
   return res.status(200).json({
     success:true,partial:measurement.waterTempF===null, ...report,
     sourceUrl:measurement.sourceUrl,
+    outlook,
     dataQuality:{
       waterTemp:measurement.waterTempF===null?'unavailable':'fresh measured at gauge',
       weather:meteo.weatherText?'NWS hourly forecast':'unavailable',
       actualHatchReports:'not provided',
+      history:history.status==='fulfilled'?'USGS 7-day observations':'unavailable',
+      forecast:outlook.forecastDaysAvailable+' of 7 dates have sufficient NWS hourly coverage',
     }
   });
 }
