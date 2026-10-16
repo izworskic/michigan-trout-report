@@ -94,12 +94,13 @@ test('API safely reports offline station with partial sources and no invented te
   assert.equal(res.body.sourceHealth.buoyRequest,'unavailable');
  }finally{globalThis.fetch=oldFetch;}
 });
-test('UI has both independent lake selectors, a CARTO map and parsable browser JS',()=>{
+test('UI retains both independent buoy selectors, five-lake map and parsable browser JS',()=>{
  const html=readFileSync('public/great-lakes-mayflies.html','utf8');
  for(const id of ['lakeMap','status','regionCaveat','waterTemp','trendChart','eveningDays','regions']){
   assert(html.includes('id="'+id+'"'));
  }
- assert(html.includes('basemaps.cartocdn.com'));
+ assert(!html.includes('basemaps.cartocdn.com'));
+ assert(html.includes('tile.openstreetmap.org'));
  assert(html.includes('/api/lake-mayflies?region='));
  const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
   .filter(m=>!/src=/i.test(m[1])&&!/application\/ld\+json/i.test(m[1]));

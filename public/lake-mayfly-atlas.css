@@ -1,0 +1,51 @@
+
+/* Great Lakes mayfly research atlas, deliberately distinct from a two-buoy
+   environmental watch. No hatch probabilities or invented sensors. */
+.atlas-intro{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.atlas-intro p{max-width:780px;margin:7px 0 0;color:#526a66;font-size:13px}
+.atlas-kicker{font-size:11px;letter-spacing:.12em;font-weight:800;color:#398276;text-transform:uppercase}
+.atlas-summary{font-weight:800;color:#2c605a;background:#edf6f2;border:1px solid #d2e7df;border-radius:5px;padding:6px 9px;font-size:12px}
+.atlas-switch{display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;margin:16px 0 12px;padding-bottom:6px}
+.atlas-switch button{flex:0 0 auto;border:1px solid #cfdfd9;background:#f3f8f6;border-radius:6px;padding:8px 13px;min-height:39px;color:#275c5a;font-weight:750;font-size:12px;cursor:pointer}
+.atlas-switch button[aria-pressed=true]{background:#195651;color:white;border-color:#195651}
+.atlas-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:13px}
+.atlas-map-wrap{min-width:0}
+.atlas-map-wrap #lakeMap{height:424px!important;width:100%;border:1px solid #d0e1db;border-radius:8px;background:#e8f3f0;overflow:hidden}
+.atlas-map-note{font-size:11px;color:#627b70;margin:8px 0 0}
+.atlas-map-note a{color:#286e65}
+.atlas-interact{min-width:0;display:flex;flex-direction:column;gap:9px}
+.atlas-locations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;overflow-y:auto;max-height:206px;padding:2px;scrollbar-width:thin}
+.atlas-spot{text-align:left;min-width:0;padding:10px;border-radius:7px;border:1px solid #dce7e0;background:#fbfdfa;color:#2d4f46;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.atlas-spot.selected{outline:2px solid #4b9882;background:#eef8f2}
+.atlas-lake{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#4a8979;font-weight:800}
+.atlas-spot strong{font:normal 15px Georgia,serif;color:#224b40}
+.atlas-near{display:block;font-size:10px;color:#6b8278}
+.atlas-proof{font-size:10px;color:#5d7568;margin-top:5px}
+.atlas-detail{flex:1;background:#f7faf6;border:1px solid #dce8df;border-radius:9px;padding:16px}
+.atlas-detail-head{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.atlas-detail-head h3{font:normal 23px Georgia,serif;margin:3px 0}
+.atlas-detail-head p{font-size:12px;color:#657d70;margin:0}
+.atlas-class{font-size:10px;max-width:150px;color:#3b6c5e;background:#e2f0e9;border:1px solid #c4ddce;border-radius:5px;padding:6px 8px;text-align:right}
+.atlas-leading{font-size:14px;font-weight:650;color:#2f5949;margin:11px 0}
+.atlas-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.atlas-facts>div{background:#fff;border:1px solid #e1e9e2;border-radius:6px;padding:11px}
+.atlas-facts strong{display:block;font-size:11px;color:#345f4f}
+.atlas-facts p{font-size:11px;color:#657b70;line-height:1.55;margin:6px 0 0}
+.atlas-disclosure{font-size:11px;color:#647d6e;margin:10px 0}
+.atlas-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid #dbe7dd;padding-top:10px}
+.atlas-actions a{font-size:12px;font-weight:800}
+.atlas-action{background:#1c6857;color:white!important;text-decoration:none;border-radius:5px;padding:9px 11px}
+.atlas-monitor-note{font-size:11px;color:#6e8073}
+.atlas-caveat{border-left:3px solid #c5a169;background:#fffcf5;color:#78633f;padding:10px 12px;border-radius:4px;font-size:12px;margin:15px 0 0}
+.atlas-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0 0}
+.atlas-bottom>div{border:1px solid #d9e8df;border-radius:8px;padding:13px;background:#fcfdfb}
+.atlas-bottom strong{display:block;color:#286358;font-size:13px}
+.atlas-bottom p{font-size:11px;color:#64796d;margin:5px 0 0}
+.atlas-monitor-header{margin-bottom:10px;border-bottom:1px solid #dfeae5;padding-bottom:10px}
+.atlas-monitor-header p{font-size:12px;color:#678078}
+.atlas-hero-photo{width:222px;height:153px;object-fit:cover;object-position:50% 50%;border-radius:9px;box-shadow:0 9px 21px #001f1e3a}
+.atlas-hero-credit{font-size:10px;color:#d5e7e1;text-align:right;margin-top:5px;display:block}
+.atlas-hero-credit a{color:#ffe0ae}
+.atlas-fallback{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:22px;font-size:13px;color:#58766b}
+@media(max-width:1000px){.atlas-layout{grid-template-columns:1fr}.atlas-map-wrap #lakeMap{height:365px!important}.atlas-locations{max-height:none;overflow-x:auto;display:flex;flex-wrap:nowrap}.atlas-spot{min-width:185px}.atlas-interact{gap:10px}}
+@media(max-width:620px){.atlas-map-wrap #lakeMap{height:315px!important}.atlas-facts,.atlas-bottom{grid-template-columns:1fr}.atlas-detail-head{display:block}.atlas-class{display:inline-block;margin-top:7px}.atlas-spot{min-width:170px}.atlas-hero-photo{width:130px;height:108px}}
