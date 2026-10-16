@@ -170,7 +170,7 @@ async function loadRiver(spot){
   const data=await res.json();if(data.success!==true||data.reach?.station!==spot.station)throw Error('Gauge mismatch');
   loaded.set(spot.id,data);
  }catch(e){loaded.set(spot.id,{error:true});}
- renderOne(spot);updateTotals();window.MayflyExperience?.notify?.();
+ renderOne(spot);updateTotals();window.MayflyBoard?.refreshMarkers?.();window.MayflyExperience?.notify?.();
 }
 function selectSpecies(fly){
  chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
@@ -202,37 +202,58 @@ function drawFallbackLocator(){
   n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
  });
 }
+// OpenStreetMap standard basemap: no vendor API token or CARTO watermark.
+// Tile requests happen only when a user views this interactive map (OSMF policy).
+// If external tiles or the Leaflet script are blocked, display the clickable
+// built-in station schematic. A blank/paid-key map is never an acceptable state.
 function initMap(){
  if(!window.L){drawFallbackLocator();return;}
  try{
-  map=L.map('riverMap',{scrollWheelZoom:false}).setView([44.3,-85.12],8);
-  let switched=false,backupErrors=0;
-  const carto=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-   {maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'});
-  carto.on('tileerror',()=>{
-   if(switched)return;switched=true;
-   try{
-    map.removeLayer(carto);
-    const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {maxZoom:16,attribution:'© OpenStreetMap contributors'});
-    osm.on('tileerror',()=>{if(++backupErrors>=3)drawFallbackLocator();});
-    osm.addTo(map);
-   }catch(_){drawFallbackLocator();}
+  map=L.map('riverMap',{scrollWheelZoom:false,zoomControl:true,preferCanvas:true})
+   .setView([44.3,-85.12],8);
+  let errors=0,loadedTiles=0,showingFallback=false;
+  const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+   maxZoom:13,minZoom:6,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>',
+   detectRetina:false,updateWhenIdle:true,keepBuffer:1
   });
-  carto.addTo(map);
+  osm.on('tileload',()=>{loadedTiles++;});
+  osm.on('tileerror',()=>{
+   errors++;
+   if(!showingFallback&&errors>=2&&loadedTiles===0){
+    showingFallback=true;drawFallbackLocator();
+   }
+  });
+  osm.addTo(map);
   SPOTS.forEach(s=>{
-   const p=L.circleMarker([s.lat,s.lon],{radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1}).addTo(map);
-   p.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' · monitoring location, not a hatch hotspot');
-   p.on('click',()=>window.MayflyExperience?.selectStation?.(s.id));markers[s.id]=p;
+   const point=L.circleMarker([s.lat,s.lon],{
+    radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1
+   }).addTo(map);
+   point.bindTooltip(esc(s.river)+' · '+esc(s.name.split('·').at(-1).trim()),{direction:'top',opacity:.92});
+   point.bindPopup('<strong>'+esc(s.name)+'</strong><br>USGS '+esc(s.station)+' · actual monitoring location, not hatch hotspot');
+   point.on('click',()=>window.MayflyExperience?.selectStation?.(s.id));
+   markers[s.id]=point;
   });
-  map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.12));
+  map.fitBounds(L.latLngBounds(SPOTS.map(s=>[s.lat,s.lon])).pad(.18));
+  // Marker visualization reflects real observations only.
+  window.MayflyBoard?.refreshMarkers?.();
  }catch(_){drawFallbackLocator();}
 }
 window.MayflyBoard={
  selectFly:(id)=>{if(names[id])selectSpecies(id);},
+ refreshMarkers:()=>{
+  for(const [id,point] of Object.entries(markers)){
+   const report=loaded.get(id);
+   const current=Number.isFinite(report?.waterTempF);
+   const missing=report&&!current;
+   point.setStyle({fillColor:missing?'#788c85':'#25644f'});
+  }
+ },
  get:()=>({spots:SPOTS,loaded,chosen,highlight:(id)=>{
   document.querySelectorAll('.river').forEach(e=>e.classList.toggle('selected-river',e.id==='r-'+id));
-  for(const [key,p] of Object.entries(markers))p.setStyle({fillColor:key===id?'#b17b3f':'#25644f',radius:key===id?11:9});
+  for(const [key,p] of Object.entries(markers)){
+   const hasTemp=Number.isFinite(loaded.get(key)?.waterTempF);
+   p.setStyle({fillColor:key===id?'#b17b3f':hasTemp?'#25644f':'#7c8e87',radius:key===id?11:9});
+  }
  }})
 };
 window.addEventListener('load',initMap);
