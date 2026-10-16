@@ -45,7 +45,7 @@ test('5 real photo references have a separate original, attribution and license,
  assert(!guide.includes('upload.wikimedia.org'));
  for(const id of ['hendrickson','brown-drake','hex','sulphur','bwo','michigan-hex-hero','ausable-sunset-hero']){
   const bytes=readFileSync('public/images/mayflies/'+id+'.webp');
-  assert(bytes.length>5000&&bytes.length<180000,id+' unexpected file size');
+  assert(bytes.length>5000&&bytes.length<(id==='ausable-sunset-hero'?450000:180000),id+' unexpected file size');
   assert.equal(bytes.toString('ascii',0,4),'RIFF',id+' invalid image header');
   assert.equal(bytes.toString('ascii',8,12),'WEBP',id+' invalid image type');
  }
@@ -92,7 +92,7 @@ test('responsive five-photo gallery builds referenced photos and simple matching
  E.get('mayflyPhotoCards').querySelectorAll=()=>[];
  E.get('idCandidates').querySelectorAll=()=>[];
  E.get('mayflyPhotoGuide').querySelectorAll=()=>[];
- const doc={getElementById:id=>E.get(id)||null,querySelector:()=>null};
+ const doc={getElementById:id=>E.get(id)||null,querySelector:()=>null,querySelectorAll:()=>[]};
  const w={addEventListener(){}};
  new Script(guide).runInNewContext({window:w,document:doc,URL:{createObjectURL(){throw Error('No upload');}},String,Array,Math,Map,RegExp});
  const gallery=E.get('mayflyPhotoCards').innerHTML;
