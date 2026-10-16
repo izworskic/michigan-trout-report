@@ -55,8 +55,8 @@ test('atlas is the primary five-lake user experience, legacy live sensors still 
  }
  assert(html.indexOf('id="atlas"')<html.indexOf('id="stationH"'));
  assert(html.indexOf('id="atlas"')<html.indexOf('id="observationList"'));
- assert(html.includes('src="/lake-mayfly-atlas.js"'));
- assert(html.includes('href="/lake-mayfly-atlas.css"'));
+ assert(html.includes('src="/lake-mayfly-atlas.js?v=2"'));
+ assert(html.includes('href="/lake-mayfly-atlas.css?v=2"'));
  assert(!html.includes('No map key required.</p>'));
  assert(html.includes('Research history is not a forecast for tonight'));
  assert(css.includes('@media(max-width:620px)'));
@@ -75,4 +75,39 @@ test('the two live sensor endpoints remain separate and no new inferred sensor a
  const live=atlas().spots.filter(x=>x.liveRegion!==null);
  assert(live.every(x=>['western-erie','saginaw-bay'].includes(x.liveRegion)));
  assert(live.length<atlas().spots.length);
+});
+
+
+test('visual redesign is a materially new five-lake map-first experience, not old compact hero/sidebar',()=>{
+ assert(html.includes('Five lakes.'));
+ assert(html.includes('atlas-cinematic-hero'));
+ assert(html.includes('atlas-hero-specimen'));
+ assert(html.includes('atlas-hero-statline'));
+ assert(html.includes('02 / THE INTERACTIVE MAP'));
+ assert(html.includes('Choose a place. Discover its story.'));
+ assert(html.includes('class="lake-navigation"'));
+ assert.equal((html.match(/<button type="button" data-lake=/g)||[]).length,7);
+ assert(html.indexOf('class="lake-navigation"')<html.indexOf('<main>'),'large lake selectors must be above the map');
+ assert(html.indexOf('id="lakeMap"')<html.indexOf('id="atlasSites"'),'full-width map must precede research cards');
+ assert(html.indexOf('id="atlasSites"')<html.indexOf('id="atlasDetail"'));
+ assert(html.includes('id="atlasMapLabel"'));
+ assert(html.includes('height:548px'));
+ assert(html.includes('window.LAKE_BUOY_CHOOSE=choose'));
+ assert(html.includes("data.onLakeChange((lake,selected)=>"));
+ assert(html.includes("map.removeLayer(pin)"),'nonmatching pins must be filtered');
+ assert(css.includes('.atlas-cinematic-hero h1'));
+ assert(css.includes('.lake-navigation .atlas-switch'));
+ assert(css.includes('.atlas-map-wrap #lakeMap{height:548px!important'));
+ assert(css.includes('scroll-snap-type:x mandatory'));
+ assert(!html.includes('Saginaw Bay & Western Lake Erie</title>'));
+});
+test('lake navigation updates both map and editorial state without inventing live monitoring',()=>{
+ assert(script.includes('lakeChanged(activeLake,match)'));
+ assert(script.includes("lakeChanged(activeLake,p)"));
+ assert(script.includes('currentLake:()=>activeLake'));
+ assert(script.includes("activeLake==='All five'?'ALL FIVE GREAT LAKES'"));
+ assert(script.includes("aria-pressed"));
+ const buf=JSON.stringify(atlas().spots);
+ assert(!buf.includes('chanceOfHatch'));
+ assert(!buf.includes('forecastNow'));
 });
