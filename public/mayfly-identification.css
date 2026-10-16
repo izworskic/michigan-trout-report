@@ -13,6 +13,7 @@
 .id-card .id-photo{height:133px;background:linear-gradient(115deg,#ddedde,#c8d9c9);display:block;position:relative;overflow:hidden}
 .id-card .id-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;position:relative;z-index:1}
 .id-photo-fallback{position:absolute;inset:13px;color:#55735d;font-size:12px}
+.id-stage{position:absolute;z-index:2;left:8px;bottom:8px;color:#fff;background:#143b34ed;border:1px solid #ffffff80;padding:4px 7px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.025em;box-shadow:0 2px 8px #173e3566}
 .id-card-inner{padding:12px}
 .id-season{font-size:10px;font-weight:850;letter-spacing:.055em;text-transform:uppercase;color:#507d67;margin:0 0 7px}
 .id-card h3{font:normal 20px/1.2 Georgia,serif;color:#1c4b39;margin:0}
