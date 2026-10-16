@@ -18,6 +18,9 @@ on:
       - 'public/michigan-mayfly-hatches.html'
       - 'public/mayfly-experience.js'
       - 'public/mayfly-experience.css'
+      - 'public/mayfly-identification.css'
+      - 'public/mayfly-identification.js'
+      - 'scripts/mayfly-identification.test.mjs'
       - 'scripts/mayfly-experience.test.mjs'
       - 'scripts/michigan-mayflies.test.mjs'
       - 'lib/mayfly-forecast.js'
@@ -55,10 +58,12 @@ jobs:
           node --check scripts/lake-mayflies.test.mjs
           node --check scripts/michigan-mayflies.test.mjs
           node --check public/mayfly-experience.js
+          node --check public/mayfly-identification.js
+          node --check scripts/mayfly-identification.test.mjs
           node --check scripts/mayfly-experience.test.mjs
           node --check lib/mayfly-forecast.js
           node --check lib/mayfly-outlook.js
           node --check api/mayfly-hatches.js
           node --check scripts/mayfly-forecast.test.mjs
       - name: Test no-fake-hatch and modern USGS contracts
-        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs scripts/lake-hex-observations.test.mjs scripts/lake-hatch-review.test.mjs scripts/michigan-mayflies.test.mjs scripts/mayfly-experience.test.mjs
+        run: node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs scripts/lake-hex-observations.test.mjs scripts/lake-hatch-review.test.mjs scripts/michigan-mayflies.test.mjs scripts/mayfly-experience.test.mjs scripts/mayfly-identification.test.mjs
