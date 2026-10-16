@@ -44,7 +44,7 @@ const SPOTS=Object.freeze([
   headline:'A real, researched Lake Superior embayment—not a generic open-water guess.',
   evidence:'USGS researchers found burrowing-mayfly nymphs generally abundant in suitable cohesive fine sediments within the surveyed western Superior embayment.',
   why:'Their fieldwork documented nymph populations, not a modern visible adult swarm or a June/July arrival date.',
-  where:'Map pin uses the Ashland-area shoreline as orientation; sampling extended around the bay.',source:SOURCES.superior,liveRegion:null},
+  where:'Approximate Ashland-area shoreline pin for orientation only; not a scientific sample location. Sampling extended around the bay.',source:SOURCES.superior,liveRegion:null},
  {id:'st-louis-estuary',lake:'Superior',name:'St. Louis River estuary',near:'Duluth / Superior harbor region',lat:46.745,lon:-92.105,
   year:'2002 research',kind:'patchy_benthic_population',level:'qualified_historical',
   headline:'Hexagenia habitat exists in parts of this estuary, but it is sharply patchy.',
