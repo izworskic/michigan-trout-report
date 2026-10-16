@@ -323,8 +323,9 @@ async function loadEvidence(id,requestToken){
   if(!response.ok)throw Error('Observation API '+response.status);
   const data=await response.json();
   if(requestToken!==reqCounter)return;
-  renderEvidence(data);
+  renderEvidence(data);window.LAKE_INSIGHTS?.observations?.(data);
  }catch(_){if(requestToken!==reqCounter)return;
+  window.LAKE_INSIGHTS?.unavailable?.('observations');
   txt('observationStatus','Source unavailable');
   txt('observationSummary','Public records could not be verified. We will not display a zero-sightings claim.');
   txt('observationUpdated','Feed unavailable');
@@ -358,9 +359,10 @@ async function loadReviewedEvents(id,requestToken){
   if(!response.ok)throw Error('Reviewed event API '+response.status);
   const data=await response.json();
   if(requestToken!==reqCounter)return;
-  renderReviewedEvents(data);
+  renderReviewedEvents(data);window.LAKE_INSIGHTS?.reviewed?.(data);
  }catch(_){
   if(requestToken!==reqCounter)return;
+  window.LAKE_INSIGHTS?.unavailable?.('reviewed');
   txt('reviewFreshness','Review ledger unavailable');
   txt('reviewStatus','Unable to check reviewed records');
   txt('reviewRecent','—');
@@ -372,6 +374,7 @@ async function loadReviewedEvents(id,requestToken){
 async function choose(id){
  if(!REGION.some(r=>r.id===id))return;
  current=id;const count=++reqCounter;report=null;
+ window.LAKE_INSIGHTS?.start?.(id);
  void loadEvidence(id,count);
  void loadReviewedEvents(id,count);
  document.querySelectorAll('[data-region]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.region===id)));
@@ -390,8 +393,9 @@ async function choose(id){
   const value=await response.json();
   if(count!==reqCounter)return;
   if(!value.success)throw new Error('Data unavailable');
-  report=value;render();
+  report=value;render();window.LAKE_INSIGHTS?.report?.(value);
  }catch(e){if(count!==reqCounter)return;
+  window.LAKE_INSIGHTS?.unavailable?.('report');
   txt('status','Service unavailable');txt('waterTemp','Unavailable');txt('wind','Unavailable');
   txt('trend','Unavailable');txt('evening','Unavailable');
   $('signal').textContent='Unable to reach the live NOAA/NWS service. No mayfly emergence claim is available.';
