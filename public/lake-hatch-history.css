@@ -42,3 +42,18 @@
 .history-disclaimer{border-top:1px solid #e0e9de;margin:15px 0 0;padding-top:12px;color:#5c7466;font-size:11px;line-height:1.7}
 @media(max-width:790px){.history-records{grid-template-columns:1fr}.history-panel{padding:14px}.history-header h3{font-size:25px}}
 @media(max-width:480px){.history-matrix{gap:3px;grid-template-columns:45px repeat(5,minmax(0,1fr))}.history-cell{min-height:36px;padding:3px}.history-dot{width:8px;height:8px}.history-month{font-size:10px}.history-event-when strong{font-size:12px}}
+
+/* Bounded Port Clinton community sightings: do not confuse with hatch dates. */
+.history-first-sightings{background:#163f46;color:#f0f4ed;border-radius:6px;padding:16px 19px;margin:13px 0 17px}
+.history-first-heading{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.history-first-heading strong{font-size:13px;color:#e6f3e8}
+.history-first-heading span{font-size:11px;color:#b8d4c8}
+.history-first-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}
+.history-first-stats>div{min-width:0;padding:12px;background:#295b5a;border-radius:5px}
+.history-first-stats>div span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#c1dcd3}
+.history-first-stats>div strong{display:block;font:normal clamp(19px,2.5vw,28px)/1.35 Georgia,serif;color:#f5dbad;margin:4px 0 0}
+.history-first-sightings p{color:#d1e3d9;font-size:11px;line-height:1.65;margin:8px 0 0}
+.history-first-sightings p strong{color:#ffe6bd}
+.history-first-sightings p a{color:#e9d3ac}
+.history-first-sightings .history-quiet{padding:7px 0}
+@media(max-width:480px){.history-first-sightings{padding:13px}.history-first-stats{gap:6px}.history-first-stats>div{padding:9px 7px}.history-first-stats>div strong{font-size:20px}.history-first-stats>div span{font-size:9px}}
