@@ -20,6 +20,7 @@ on:
       - 'public/mayfly-experience.css'
       - 'public/mayfly-identification.css'
       - 'public/mayfly-identification.js'
+      - 'public/images/mayflies/**'
       - 'scripts/mayfly-identification.test.mjs'
       - 'scripts/mayfly-experience.test.mjs'
       - 'scripts/michigan-mayflies.test.mjs'
