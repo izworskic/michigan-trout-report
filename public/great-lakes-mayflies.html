@@ -72,7 +72,8 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 @media(max-width:610px){.review-summary,.review-history{grid-template-columns:1fr}}
 
 </style><link rel="stylesheet" href="/lake-mayfly-atlas.css?v=2">
-<link rel="stylesheet" href="/lake-mayfly-insights.css?v=1"></head>
+<link rel="stylesheet" href="/lake-mayfly-insights.css?v=1">
+<link rel="stylesheet" href="/lake-hatch-history.css?v=1"></head>
 <body>
 <nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
 <div class="navlinks"><a href="/michigan-mayfly-hatches.html">Michigan trout-river hatches</a><a href="/hex.html">River Hex tracker</a><a href="/">Trout conditions</a></div></div></nav>
@@ -154,6 +155,27 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <section class="pulse-chart" aria-labelledby="pulseTempTitle"><span class="pulse-chart-kicker">01 / Measured trend</span><h3 id="pulseTempTitle">How warm is the water getting?</h3><p class="pulse-chart-desc">Up to 14 recent calendar days of real NOAA buoy surface temperatures. Daily ranges and averages; no gaps filled in.</p><div id="pulseTempGraph" class="pulse-svg-box" aria-live="polite"><div class="pulse-empty">Checking measured history…</div></div><div class="pulse-legends"><span class="pulse-key">Measured mean and range</span><span class="pulse-key threshold">Western Erie reference only</span></div><p class="pulse-chart-foot" id="pulseTempFoot">Checking NOAA National Data Buoy Center history…</p></section>
 <section class="pulse-chart" aria-labelledby="pulseEvidenceTitle"><span class="pulse-chart-kicker">02 / Independent dated evidence</span><h3 id="pulseEvidenceTitle">Any mayflies actually reported?</h3><p class="pulse-chart-desc">Last 30 days of <em>displayed</em> photo-backed specimen records and approved past swarm events. These are not equal evidence types.</p><div id="pulseEvidenceGraph" class="pulse-svg-box" aria-live="polite"><div class="pulse-empty">Checking dated reports…</div></div><div class="pulse-legends"><span class="pulse-key">Individual specimens</span><span class="pulse-key events">Reviewed mass events</span></div><p id="pulseEvidenceFoot" class="pulse-chart-foot">Neither source is a census or real-time hatch count.</p></section>
 <section class="pulse-chart pulse-season-panel" aria-labelledby="pulseSeasonTitle"><span class="pulse-chart-kicker">03 / Broad seasonal guide</span><h3 id="pulseSeasonTitle">When are Great Lakes Hex hatches usually possible?</h3><p class="pulse-chart-desc"><strong id="pulseSeason">Checking season…</strong> · The colored period is a broad summer reference across the basin, not a separate measured hatch peak for each lake.</p><div id="pulseSeasonChart" aria-live="polite"><div class="pulse-empty">Preparing the seasonal reference…</div></div></section>
+<section class="history-panel" id="publishedHatchHistory" aria-labelledby="historyTitle">
+<div class="history-header"><div><span class="pulse-chart-kicker">Historical data upgrade / dated published evidence</span><h3 id="historyTitle">When did mayflies actually appear?</h3><p>Explore exact historical dates in original field studies, news reports and separately labeled community first sightings. Select a lake or a year-month cell. <strong>This is not a recurring hatch calendar, live report or forecast.</strong></p></div><span id="historyScope" class="history-badge">ALL FIVE LAKES + CONNECTING WATER</span></div>
+<div class="history-lake-switch" role="group" aria-label="Filter dated historical mayfly evidence by Great Lake">
+<button type="button" data-history-lake="All five" aria-pressed="true">All five + connecting water</button>
+<button type="button" data-history-lake="Erie" aria-pressed="false">Lake Erie</button>
+<button type="button" data-history-lake="Huron" aria-pressed="false">Lake Huron</button>
+<button type="button" data-history-lake="Michigan" aria-pressed="false">Lake Michigan</button>
+<button type="button" data-history-lake="Superior" aria-pressed="false">Lake Superior</button>
+<button type="button" data-history-lake="Ontario" aria-pressed="false">Lake Ontario</button>
+<button type="button" data-history-lake="Connecting waters" aria-pressed="false">Lake St. Clair</button>
+</div>
+<div class="history-actions"><span id="historyCount">Checking published evidence…</span><button type="button" id="historyClear" hidden>Show all source dates</button></div>
+<div id="historyMatrix" aria-live="polite"><p class="history-empty">Loading cited historical dates…</p></div>
+<div class="history-legend">
+<span><i class="history-dot field"></i> Scientific adult sampling</span>
+<span><i class="history-dot reported"></i> Published shoreline swarm report</span>
+<span><i class="history-dot first"></i> Community first sighting, NOT a mass hatch</span>
+</div>
+<div id="historyRecords" class="history-records" aria-live="polite"><p class="history-empty">Retrieving original article links and field-study dates…</p></div>
+<p id="historySummary" class="history-disclaimer">This is a sparse dated-source archive, not proof that emergence began or peaked on the recorded dates. Lakes without validated dated reports remain blank rather than receiving invented peak timing.</p>
+</section>
 <section class="pulse-chart pulse-stage-panel" aria-labelledby="pulseStageTitle"><span class="pulse-chart-kicker">04 / Explain the signal</span><h3 id="pulseStageTitle">How far along is the evidence?</h3><p class="pulse-chart-desc">A transparent evidence ladder—not a progress percentage. A recent reviewed event is historical until independently confirmed ongoing.</p><ol class="pulse-stage-rail" id="pulseStageRail" aria-label="Evidence stages"></ol><p class="pulse-chart-foot" id="pulseStageCaveat">An environmental watch is never hatch confirmation.</p></section>
 <section class="pulse-chart pulse-weather-panel" aria-labelledby="pulseWeatherTitle"><span class="pulse-chart-kicker">05 / Next seven evenings</span><h3 id="pulseWeatherTitle">Will the shore be windy?</h3><p class="pulse-chart-desc">NWS shoreline wind forecast, 6–11 PM Eastern. Bar lengths indicate expected wind, not probabilities of mayfly emergence.</p><div id="pulseEveningGraph"><div class="pulse-empty">Checking evening conditions…</div></div><p class="pulse-chart-foot" id="pulseEveningFoot">Shoreline forecasts do not measure offshore emergence.</p></section>
 </div>
@@ -248,6 +270,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <script src="/lake-mayfly-atlas.js?v=2" defer></script>
 <script src="/lake-mayfly-insights.js?v=1"></script>
+<script src="/lake-hatch-history.js?v=1"></script>
 <script>
 const REGION=[{id:'saginaw-bay',title:'Saginaw Bay (recovery / seasonal buoy)',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie (best documented)',lat:41.702,lon:-83.262}];
 let current='western-erie',report=null,map=null,marks={},reqCounter=0;
