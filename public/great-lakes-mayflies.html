@@ -71,42 +71,68 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 .review-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid #e2ece6;padding-top:12px;margin-top:12px}
 @media(max-width:610px){.review-summary,.review-history{grid-template-columns:1fr}}
 
-</style><link rel="stylesheet" href="/lake-mayfly-atlas.css"></head>
+</style><link rel="stylesheet" href="/lake-mayfly-atlas.css?v=2"></head>
 <body>
 <nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
 <div class="navlinks"><a href="/michigan-mayfly-hatches.html">Michigan trout-river hatches</a><a href="/hex.html">River Hex tracker</a><a href="/">Trout conditions</a></div></div></nav>
-<header class="hero"><div class="heroinner">
-<div><div class="kicker">Great Lakes · A five-lake natural history atlas</div>
-<h1>Where do mayflies actually emerge around the Great Lakes?</h1>
-<p>Explore credible lakebed research, documented historical swarms and the waterfront places that help locate the evidence. The best-studied sites aren't evenly distributed across all five lakes. <strong>Research history is not a forecast for tonight.</strong></p>
-<p style="margin-top:12px;font-size:12px"><a style="color:#f2d8a9" href="/michigan-mayfly-hatches.html">Looking for Michigan trout-river fly hatches? Use the Michigan river predictor →</a></p>
-<div class="hero-flags"><span>All five Great Lakes</span><span>Research-linked locations</span><span>Documented vs historical</span><span>Separate live NOAA buoy data</span></div>
-</div><figure style="margin:0"><img class="atlas-hero-photo" src="/images/mayflies/hex.webp" alt="Real winged adult Hexagenia mayfly showing its pale yellow upright wings and long tail" width="222" height="153"><figcaption class="atlas-hero-credit">Real adult Hex · <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata_(giant_mayfly)_(Mitchell,_South_Dakota,_USA)_1.jpg" target="_blank" rel="noopener">James St. John, CC BY 2.0</a></figcaption></figure>
-</div></header>
-<main>
-<section class="card" id="atlas" aria-labelledby="atlasTitle">
-<div class="atlas-intro"><div><div class="atlas-kicker">First: where the evidence actually points</div><h2 id="atlasTitle">Mayfly habitat across the Great Lakes</h2><p>Pick a lake or a researched place. The map pins are approximate public reference locations—not hatch GPS coordinates. Source-linked cards distinguish lakebed nymph studies, historic swarm observations and places to watch along shore.</p></div><span class="atlas-summary" id="atlasCount">Loading research sites…</span></div>
-<div class="atlas-switch" role="group" aria-label="Select a Great Lake">
-<button type="button" data-lake="All five" aria-pressed="true">All five lakes</button>
-<button type="button" data-lake="Superior" aria-pressed="false">Superior</button>
-<button type="button" data-lake="Michigan" aria-pressed="false">Michigan</button>
-<button type="button" data-lake="Huron" aria-pressed="false">Huron</button>
-<button type="button" data-lake="Erie" aria-pressed="false">Erie</button>
-<button type="button" data-lake="Ontario" aria-pressed="false">Ontario</button>
-<button type="button" data-lake="Connecting waters" aria-pressed="false">Lake St. Clair + connecting waters</button>
+<header class="hero atlas-cinematic-hero" id="pageTop">
+<div class="atlas-hero-backdrop" aria-hidden="true"></div>
+<div class="atlas-cinematic-inner">
+<div class="atlas-hero-main">
+<div class="atlas-hero-eyebrow"><span class="atlas-hero-line"></span>THE GREAT LAKES FIELD ATLAS <span class="atlas-hero-year">2026</span></div>
+<h1>Five lakes.<br>One extraordinary<br><em>mayfly story.</em></h1>
+<p class="atlas-hero-lede">Where are giant Great Lakes mayflies actually documented? Follow the science from the Bass Islands to Chequamegon Bay, Tawas, Green Bay and the Bay of Quinte.</p>
+<p class="atlas-hero-caution">Research history is not a forecast for tonight. We separate known habitat, old swarm reports and today's measured conditions.</p>
+<div class="atlas-hero-actions">
+<a href="#atlas" class="atlas-hero-primary">Explore the five-lake map <span aria-hidden="true">↗</span></a>
+<a href="#stationH" class="atlas-hero-secondary">Check live water readings ↓</a>
 </div>
-<div class="atlas-layout">
-<div class="atlas-map-wrap"><div id="lakeMap" role="region" aria-label="Five Great Lakes research location map"><p class="atlas-fallback">Loading geographic map. All researched sites remain selectable in the list.</p></div><p class="atlas-map-note">Basemap: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>. Map pins are approximate research-area markers (not samples or fishing access). Dark teal = researched location; amber = NOAA instrument.</p></div>
+</div>
+<figure class="atlas-hero-specimen">
+<img class="atlas-hero-photo" src="/images/mayflies/hex.webp" alt="Real winged adult Hexagenia mayfly, photographed with its translucent upright wings and long tail filaments" width="520" height="340" fetchpriority="high">
+<figcaption><span>01 / THE GIANT MAYFLY</span><strong>Hexagenia limbata</strong><small>Real species photo · <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata_(giant_mayfly)_(Mitchell,_South_Dakota,_USA)_1.jpg" target="_blank" rel="noopener">James St. John, CC BY 2.0 ↗</a></small></figcaption>
+</figure>
+</div>
+<div class="atlas-hero-statline" aria-label="Great Lakes mayfly atlas coverage">
+<div><strong>05</strong><span>Great Lakes explored</span></div>
+<div><strong>07</strong><span>Sourced research locations</span></div>
+<div><strong>02</strong><span>Instrumented lake regions</span></div>
+<div class="atlas-hero-statnote">No invented hatch reports.<br>Every location links to published evidence.</div>
+</div>
+</header>
+<section class="lake-navigation" aria-label="Explore five Great Lakes">
+<div class="lake-navigation-inner">
+<div class="lake-navigation-heading"><span>01 / CHOOSE YOUR WATER</span><p>Explore a lake to see where Hexagenia populations or historical swarms have actually been documented.</p></div>
+<div class="atlas-switch" role="group" aria-label="Filter researched sites by Great Lake">
+<button type="button" data-lake="All five" aria-pressed="true"><span class="lake-tab-kicker">EXPLORE</span><strong>All lakes</strong><small>7 studied areas</small></button>
+<button type="button" data-lake="Superior" aria-pressed="false"><span class="lake-tab-kicker">LAKE</span><strong>Superior</strong><small>2 studied areas</small></button>
+<button type="button" data-lake="Michigan" aria-pressed="false"><span class="lake-tab-kicker">LAKE</span><strong>Michigan</strong><small>1 studied area</small></button>
+<button type="button" data-lake="Huron" aria-pressed="false"><span class="lake-tab-kicker">LAKE</span><strong>Huron</strong><small>1 historic swarm area</small></button>
+<button type="button" data-lake="Erie" aria-pressed="false"><span class="lake-tab-kicker">LAKE</span><strong>Erie</strong><small>2 studied areas</small></button>
+<button type="button" data-lake="Ontario" aria-pressed="false"><span class="lake-tab-kicker">LAKE</span><strong>Ontario</strong><small>1 recovery area</small></button>
+</div>
+<button type="button" class="lake-navigation-extra" data-lake="Connecting waters" aria-pressed="false">+ Explore Lake St. Clair (connecting water, not a sixth Great Lake) →</button>
+</div>
+</section>
+<main>
+<section class="card atlas-stage" id="atlas" aria-labelledby="atlasTitle">
+<div class="atlas-stage-heading"><div><div class="atlas-section-eyebrow">02 / THE INTERACTIVE MAP</div><h2 id="atlasTitle">Find the mayfly waters.</h2><p>The map is a guide to published research locations—not a map of hatches happening today. Select a lake above or a research location below.</p></div><span class="atlas-summary" id="atlasCount">Loading study locations…</span></div>
+<div class="atlas-map-wrap">
+<div id="lakeMap" role="region" aria-label="Interactive five Great Lakes map with approximate historical research locations and NOAA instrument markers"><p class="atlas-fallback">Loading five-lake map. Research site cards work even if map tiles are unavailable.</p></div>
+<div class="atlas-map-stamp" aria-hidden="true"><strong id="atlasMapLabel">ALL FIVE GREAT LAKES</strong><span>Research locations · not hatch reports</span></div>
+</div>
+<div class="atlas-map-foot"><div class="atlas-pin-legend"><span><i class="atlas-pin-icon"></i> Published research areas</span><span><i class="atlas-pin-icon sensor"></i> Measured NOAA station</span></div><span>Geography: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Pins are approximate orientation locations, never emergence coordinates.</span></div>
+<div class="atlas-explore-header"><div><div class="atlas-section-eyebrow">03 / WHAT THE EVIDENCE SHOWS</div><h2>Choose a place. Discover its story.</h2></div><p>Different locations have very different evidence: lakebed populations, historical swarms, and recovery reports are not interchangeable.</p></div>
 <div class="atlas-interact">
+<div class="atlas-index-heading">RESEARCH LOCATIONS <span>Scroll sideways to browse all sites →</span></div>
 <div id="atlasSites" class="atlas-locations" role="group" aria-label="Research-backed mayfly locations"><p class="muted">Preparing evidence…</p></div>
 <div id="atlasDetail" class="atlas-detail" aria-live="polite"><p class="muted">Choose a research area.</p></div>
 </div>
-</div>
-<p class="atlas-caveat"><strong>Do not mistake research evidence for a live hatch.</strong> Even a verified nymph study from 2001 or adult swarm in 2010 does not tell us whether insects are emerging tonight. Habitat and bottom oxygen matter. No surface-temperature threshold alone can tell you where insects are hatching.</p>
+<div class="atlas-trust"><div class="atlas-trust-symbol">!</div><p><strong>Important distinction</strong> — Finding Hexagenia nymphs in a 2001 survey or documenting a swarm in 2010 is not proof of a hatch tonight. A nearby NOAA temperature measures water at that instrument, not mayfly abundance across the lake.</p></div>
 <div class="atlas-bottom">
-<div><strong>Lake Erie: unusually well documented</strong><p>Western basin and island-area Hexagenia populations have extensive historical research and reported swarms. Other Erie basins are not equivalent.</p></div>
-<div><strong>Lake Michigan & Huron: localized</strong><p>Northern Green Bay and the Tawas/Saginaw region have documented populations or adult swarms, but population recovery is uneven and older evidence must be dated.</p></div>
-<div><strong>Superior & Ontario: sheltered waters</strong><p>Chequamegon Bay, the St. Louis estuary and Bay of Quinte have research or historic recovery evidence. We do not extend these signals to whole open lakes.</p></div>
+<div><span>FIELD NOTE / ERIE</span><strong>Best-studied western basin</strong><p>The islands and western shore have substantial research, but it doesn't represent all of Lake Erie.</p></div>
+<div><span>FIELD NOTE / MICHIGAN + HURON</span><strong>Patchy, uneven recovery</strong><p>Northern Green Bay and Tawas have historical evidence. What you see in one bay may not occur in another.</p></div>
+<div><span>FIELD NOTE / SUPERIOR + ONTARIO</span><strong>Sheltered habitat matters</strong><p>Research points to bays and estuaries, not to the entire open lake.</p></div>
 </div>
 </section>
 <section class="card" aria-labelledby="stationH"><div class="atlas-monitor-header"><h2 id="stationH">Secondary: live NOAA buoy conditions</h2><p>Only two verified monitoring stations currently feed the actual forecast model. Selecting another atlas location does not invent a sensor or borrow one from another lake.</p></div><div class="topline"><h3>Choose a monitored station</h3><span class="small">Sensor positions, not hatch destinations</span></div>
@@ -196,7 +222,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 </main>
 <footer>Environmental monitoring, not verified hatch reports. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable mayfly forecast</a> · <a href="/hex.html">River Hex tracker</a></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-<script src="/lake-mayfly-atlas.js" defer></script>
+<script src="/lake-mayfly-atlas.js?v=2" defer></script>
 <script>
 const REGION=[{id:'saginaw-bay',title:'Saginaw Bay (recovery / seasonal buoy)',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie (best documented)',lat:41.702,lon:-83.262}];
 let current='western-erie',report=null,map=null,marks={},reqCounter=0;
