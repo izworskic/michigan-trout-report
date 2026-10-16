@@ -19,3 +19,16 @@ The images used on `/michigan-mayfly-hatches.html` are locally hosted WebP **res
 - Common angling names cover multiple species and genera; a photo matcher is a candidate guide, not taxonomic verification.
 - Do not substitute AI illustrations for taxon-verified photographs on the identification cards. Original concept art can be editorial decoration only.
 - Assets are first-party under `/images/mayflies/`. No Wikimedia thumbnail dependency, no runtime scraping, no CARTO image API and no Vercel image optimization credits.
+
+## Full-bleed river hero
+
+- Local file: `public/images/mayflies/ausable-sunset-hero.webp`
+- Original: [HMNF AuSableRiver HighbanksOverlook (17762226084).jpg](https://commons.wikimedia.org/wiki/File:HMNF_AuSableRiver_HighbanksOverlook_(17762226084).jpg)
+- Creator: **U.S. Forest Service Eastern Region**; original U.S. government photograph is **public domain in the United States**.
+- Modification: web-optimized and cropped for page display. Source link and provenance visible on the hero.
+- Scenic context only. The sunset image is **not a current hatch or recent river conditions claim** and must never be labeled as one.
+- Photo-identity cards continue to use credited, first-party specimen photographs. On the new immediately visible five-fly strip, Hendrickson and Sulphur photos are explicitly labeled nymph examples; the others show winged adults.
+
+## Basemap provider correction
+
+The 2026 CARTO raster change caused "API KEY REQUIRED" watermark overlays for unauthenticated tile requests. The standalone trout-river gauge map now uses `https://tile.openstreetmap.org/{z}/{x}/{y}.png` with visible copyright attribution, browser caching and without bulk preloading; it degrades to an on-page clickable gauge locator when map resources fail. If future traffic requires a commercial tile provider, configure a project-scoped licensed map service rather than silently serving watermark tiles. See [OpenStreetMap Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/).
