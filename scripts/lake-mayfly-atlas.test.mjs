@@ -86,7 +86,8 @@ test('visual redesign is a materially new five-lake map-first experience, not ol
  assert(html.includes('02 / THE INTERACTIVE MAP'));
  assert(html.includes('Choose a place. Discover its story.'));
  assert(html.includes('class="lake-navigation"'));
- assert.equal((html.match(/<button type="button" data-lake=/g)||[]).length,7);
+ assert.equal((html.match(/<button type="button" data-lake=/g)||[]).length,6);
+ assert(html.includes('class="lake-navigation-extra" data-lake="Connecting waters"'), 'Lake St Clair must remain outside the five Great Lakes tiles');
  assert(html.indexOf('class="lake-navigation"')<html.indexOf('<main>'),'large lake selectors must be above the map');
  assert(html.indexOf('id="lakeMap"')<html.indexOf('id="atlasSites"'),'full-width map must precede research cards');
  assert(html.indexOf('id="atlasSites"')<html.indexOf('id="atlasDetail"'));
