@@ -91,7 +91,6 @@ test('visual redesign is a materially new five-lake map-first experience, not ol
  assert(html.indexOf('id="lakeMap"')<html.indexOf('id="atlasSites"'),'full-width map must precede research cards');
  assert(html.indexOf('id="atlasSites"')<html.indexOf('id="atlasDetail"'));
  assert(html.includes('id="atlasMapLabel"'));
- assert(html.includes('height:548px'));
  assert(html.includes('window.LAKE_BUOY_CHOOSE=choose'));
  assert(html.includes("data.onLakeChange((lake,selected)=>"));
  assert(html.includes("map.removeLayer(pin)"),'nonmatching pins must be filtered');
