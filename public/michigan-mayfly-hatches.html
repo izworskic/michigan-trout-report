@@ -26,12 +26,38 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 @media(max-width:640px){.river-grid,.calendar,.stats{grid-template-columns:1fr}.topbar{padding:12px}.hero-inner{padding:26px 14px}main{padding:12px 10px 36px}.panel{padding:15px}}
 </style>
 <link rel="stylesheet" href="/mayfly-experience.css">
+<link rel="stylesheet" href="/mayfly-identification.css">
 </head><body>
-<header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
-<section class="hero"><div class="hero-inner"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
+<header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="#mayflyPhotoGuide">Identify a mayfly</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
+<section class="hero hero-with-reference"><div class="hero-inner"><div class="hero-copy"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
 <p>Au Sable. Manistee. Pere Marquette. Muskegon. Boardman. Compare measured water conditions, regional hatch timing, and cautious three-day outlook signals at actual USGS stations—not fishing-access points or invented insect reports.</p>
-<div class="hero-tags"><span>Hendricksons in spring</span><span>Brown Drakes before Hex</span><span>Hex after dark</span><span>Measured river temperatures</span></div></div></section>
+<div class="hero-tags"><span>Real fly photographs</span><span>Identify what you see</span><span>Measured river conditions</span></div></div>
+<figure class="hero-reference"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Hexagenia_limbata.jpg/600px-Hexagenia_limbata.jpg" width="260" height="177" fetchpriority="high" alt="Real Hexagenia limbata mayfly photographed in Michigan, with wings and long abdomen visible"><figcaption>Real Michigan Hexagenia · Photo: <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata.jpg" target="_blank" rel="noopener">Cody Hough, CC BY-SA 3.0</a></figcaption></figure>
+</div></section>
 <main>
+<section class="panel id-feature-panel" id="mayflyPhotoGuide" aria-labelledby="idTitle">
+<div class="sectionhead"><div><div class="story-kicker">Real insects · credited specimen photographs</div><h2 id="idTitle">What mayfly am I looking at?</h2></div><span class="tiny">Five signature hatch groups · Michigan fishing field guide</span></div>
+<p class="id-intro">Compare <strong>actual photographs</strong> of the mayflies anglers talk about, then connect an insect to its normal season, preferred time of activity, and current river conditions. Reference photos may show a different sex or life stage from the insect you found; <strong>these are visual clues, not automatic species identifications.</strong></p>
+<div id="mayflyPhotoCards" class="id-photo-row" aria-live="polite"><p class="muted">Loading credited field-reference photos…</p></div>
+<div class="id-method">
+<div class="id-clue-guide"><h3>Help me narrow down the fly</h3>
+<p class="muted">Look first at size, body color and when it appeared. The results suggest photos to compare—not a definitive species ID.</p>
+<div class="id-fields">
+<label for="idSize">How big?<select id="idSize"><option value="">Not sure</option><option value="small">Tiny / small</option><option value="medium">Medium</option><option value="large">Large / giant</option></select></label>
+<label for="idColor">Body color?<select id="idColor"><option value="">Not sure</option><option value="brown">Brown / tan</option><option value="yellow">Cream / pale yellow</option><option value="olive">Olive / gray-olive</option></select></label>
+<label for="idTime">When observed?<select id="idTime"><option value="">Any / unknown</option><option value="afternoon">Afternoon</option><option value="evening">Dusk / evening</option><option value="night">After dark</option></select></label>
+</div><div id="idCandidates" class="id-results" aria-live="polite"><p>Select clues to see suggested species photos.</p></div>
+<p class="id-tip"><strong>First make sure it's a mayfly:</strong> adult mayflies normally hold large front wings upright at rest and have long tail filaments. Caddisflies commonly fold hairy wings roof-like; midges lack long mayfly tails. A mayfly dun has more opaque wings; a mature spinner usually has clearer wings. Take a sharp side-view photo and include a coin or fingertip for scale.</p></div>
+<div class="id-private-photo"><h3>Compare a picture from your phone</h3><p class="muted">Put your own photo beside the species images to look at wing shape, tails and colors. This is <strong>manual comparison</strong>—not a photo-identification service.</p>
+<label for="idPhotoInput" class="id-tip"><strong>Your insect photo (optional)</strong></label>
+<input type="file" id="idPhotoInput" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif">
+<img id="idPhotoPreview" alt="Your locally selected mayfly or other insect photo for comparison" hidden>
+<button type="button" id="idPhotoClear" hidden>Clear my photo</button>
+<p class="id-tip" id="idPhotoNote">Your picture stays on your own device/browser. The site never uploads or stores it.</p>
+</div>
+</div>
+<p class="id-science"><strong>Accuracy note:</strong> “Hex,” “sulphur,” and “BWO” are angling shorthand, not reliable species IDs from color alone. Some photos are examples of a genus or group, and adults, duns, spinners and nymphs may look very different. Source credits and licenses are linked below every image. <a href="https://explorer.natureserve.org/Taxon/ELEMENT_GLOBAL.2.795656/Ephemerella_dorothea/" target="_blank" rel="noopener">Expert identification often requires diagnostic details beyond a photo.</a></p>
+</section>
 <section class="panel">
 <div class="sectionhead"><h2>Michigan trout-river hatch board</h2><span class="tiny" id="boardStamp">Checking USGS stations…</span></div>
 <p class="muted">Five renowned river systems. Six monitored locations. Each card reports its named gauge; famous upstream fly-fishing reaches do not inherit temperatures from downstream flow stations.</p>
@@ -88,6 +114,7 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 </main><footer>Hatches are not directly measured. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable Predictor</a> · <a href="/hatches/michigan-hatch-calendar.html">Hatch guide</a></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <script src="/mayfly-experience.js" defer></script>
+<script src="/mayfly-identification.js" defer></script>
 <script>
 const SPOTS=[
  {id:'red-oak',name:'Au Sable · Mainstream / Red Oak',river:'Au Sable',lat:44.6769593,lon:-84.2925146,station:'04136000',scope:'Measured Red Oak mainstream water, NOT Holy Water near Grayling.',guide:'/stream/ausable-river.html'},
@@ -147,7 +174,7 @@ async function loadRiver(spot){
 }
 function selectSpecies(fly){
  chosen=fly;document.querySelectorAll('[data-fly]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fly===fly)));
- SPOTS.forEach(renderOne);window.MayflyExperience?.notify?.();
+ SPOTS.forEach(renderOne);window.MayflyExperience?.notify?.(); window.MayflyID?.updateSelected?.(fly);
 }
 // A zero-key CARTO basemap with OSM backup and an embedded schematic fallback.
 // Real station coordinates are kept separate from fishing access or hatch sites.
@@ -202,6 +229,7 @@ function initMap(){
  }catch(_){drawFallbackLocator();}
 }
 window.MayflyBoard={
+ selectFly:(id)=>{if(names[id])selectSpecies(id);},
  get:()=>({spots:SPOTS,loaded,chosen,highlight:(id)=>{
   document.querySelectorAll('.river').forEach(e=>e.classList.toggle('selected-river',e.id==='r-'+id));
   for(const [key,p] of Object.entries(markers))p.setStyle({fillColor:key===id?'#b17b3f':'#25644f',radius:key===id?11:9});
