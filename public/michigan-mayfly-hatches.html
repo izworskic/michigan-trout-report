@@ -44,6 +44,12 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 </div>
 <div class="stats"><div class="stat"><strong>5</strong><span>Named trout-river systems</span></div><div class="stat"><strong>6</strong><span>Actual USGS monitoring stations</span></div><div class="stat"><strong id="liveStations">Checking…</strong><span>Gauges with fresh measured water temp</span></div></div>
 </section>
+<section class="panel compare-panel" aria-labelledby="compareTitle">
+<div class="sectionhead"><h2 id="compareTitle">Michigan water temperature right now</h2><span class="tiny">Measured USGS °F, not a hatch ranking</span></div>
+<p class="muted">See which monitored rivers are actually warm or cool. Temperatures are observed <strong>at the listed gauge only</strong>; rivers with no fresh sensor reading stay visibly unavailable.</p>
+<div class="comparison-grid" id="riverComparison" aria-live="polite"><p class="data-empty">Checking measured temperatures at six river stations…</p></div>
+<div class="comparison-scale"><span>35°F</span><span>50°F</span><span>68°F · trout heat caution</span><span>80°F</span></div>
+</section>
 <div class="columns">
 <section class="panel"><div class="sectionhead"><h2>Compare river conditions</h2><span class="tiny">No species sightings claimed</span></div><div id="riverCards" class="river-grid" aria-live="polite"></div>
 <p class="warning"><strong>Important:</strong> A gauge recording favorable water temperatures is not a confirmed hatch. At 68°F or warmer, the trout-fishing signal is suppressed for catch-and-release safety. Missing water temperatures are never estimated from air temperature or a different river.</p>
