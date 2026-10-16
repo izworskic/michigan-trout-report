@@ -29,11 +29,31 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <link rel="stylesheet" href="/mayfly-identification.css">
 </head><body>
 <header><div class="topbar"><a class="brand" href="/">MICHIGAN TROUT REPORT / MAYFLY OUTLOOK</a><nav><a href="/mayfly-hatches.html">Au Sable detailed forecast</a><a href="#mayflyPhotoGuide">Identify a mayfly</a><a href="/hex.html">River Hex</a><a href="/hatches/michigan-hatch-calendar.html">Hatch calendar</a></nav></div></header>
-<section class="hero hero-with-reference"><div class="hero-inner"><div class="hero-copy"><div class="eyebrow">Michigan's legendary trout-river hatches</div><h1>Where might Michigan's next mayfly hatch happen?</h1>
-<p>Au Sable. Manistee. Pere Marquette. Muskegon. Boardman. Compare measured water conditions, regional hatch timing, and cautious three-day outlook signals at actual USGS stations—not fishing-access points or invented insect reports.</p>
-<div class="hero-tags"><span>Real fly photographs</span><span>Identify what you see</span><span>Measured river conditions</span></div></div>
-<figure class="hero-reference"><img src="/images/mayflies/michigan-hex-hero.webp" width="260" height="177" fetchpriority="high" alt="Real Hexagenia limbata mayfly photographed in Michigan, with wings and long abdomen visible"><figcaption>Real Michigan Hexagenia · Photo: <a href="https://commons.wikimedia.org/wiki/File:Hexagenia_limbata.jpg" target="_blank" rel="noopener">Cody Hough, CC BY-SA 3.0</a></figcaption></figure>
-</div></section>
+<section class="hero hero-with-reference" aria-labelledby="mainTitle">
+<img class="hero-landscape" src="/images/mayflies/ausable-sunset-hero.webp" alt="Sunset reflecting on a northern Michigan forest river, photographed by the U.S. Forest Service" fetchpriority="high" width="1200" height="830">
+<div class="hero-inner">
+<div class="hero-copy">
+<div class="eyebrow">Michigan's celebrated trout-stream hatches</div>
+<h1 id="mainTitle">Michigan Mayfly Hatch Predictor</h1>
+<p class="hero-storyline">Find the river. Recognize the insect. Read the water.</p>
+<p>Track Hex, Hendrickson, Brown Drake, Sulphur, and Blue-Winged Olive conditions across the Au Sable, Manistee, Pere Marquette, Muskegon, and Boardman rivers. We show real gauge readings—not invented hatch sightings.</p>
+<div class="hero-actions"><a class="hero-action primary" href="#mayflyPhotoGuide">Identify the mayfly ↓</a><a class="hero-action secondary" href="#mapOfRivers">Explore the river map ↓</a></div>
+</div>
+<p class="hero-photo-credit">Scenic river photograph: <a href="https://commons.wikimedia.org/wiki/File:HMNF_AuSableRiver_HighbanksOverlook_(17762226084).jpg" target="_blank" rel="noopener">U.S. Forest Service · public domain</a>. Illustrative scenery, not a current hatch report.</p>
+</div>
+</section>
+<section class="hatch-quicklook" aria-labelledby="quickFlyTitle">
+<div class="hatch-quick-inner">
+<div class="quick-head"><h2 id="quickFlyTitle">Which mayfly are you seeing?</h2><span>Real photographed specimens · select to see identification details</span></div>
+<div class="hatch-quick-grid">
+<a href="#mayflyPhotoGuide" data-quick-fly="hendrickson"><img src="/images/mayflies/hendrickson.webp" alt="Aquatic nymph reference of a Hendrickson mayfly" width="200" height="112"><span class="quick-name">Hendrickson</span><span class="quick-month">April–May · nymph photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="brown-drake"><img src="/images/mayflies/brown-drake.webp" alt="Adult Brown Drake mayfly with mottled wings" width="200" height="112"><span class="quick-name">Brown Drake</span><span class="quick-month">May–June · adult photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="hex"><img src="/images/mayflies/hex.webp" alt="Adult yellow Hexagenia mayfly with tall wings and long tails" width="200" height="112"><span class="quick-name">Hexagenia / Hex</span><span class="quick-month">June–July · adult photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="sulphur"><img src="/images/mayflies/sulphur.webp" alt="Aquatic nymph reference of a Sulphur mayfly" width="200" height="112"><span class="quick-name">Sulphur</span><span class="quick-month">May–July · nymph photo</span></a>
+<a href="#mayflyPhotoGuide" data-quick-fly="bwo"><img src="/images/mayflies/bwo.webp" alt="Adult Blue-Winged Olive mayfly on a mesh surface" width="200" height="112"><span class="quick-name">Blue-Winged Olive</span><span class="quick-month">Spring and fall · adult photo</span></a>
+</div>
+</div>
+</section>
 <main>
 <section class="panel id-feature-panel" id="mayflyPhotoGuide" aria-labelledby="idTitle">
 <div class="sectionhead"><div><div class="story-kicker">Real insects · credited specimen photographs</div><h2 id="idTitle">What mayfly am I looking at?</h2></div><span class="tiny">Five signature hatch groups · Michigan fishing field guide</span></div>
@@ -70,6 +90,13 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 </div>
 <div class="stats"><div class="stat"><strong>5</strong><span>Named trout-river systems</span></div><div class="stat"><strong>6</strong><span>Actual USGS monitoring stations</span></div><div class="stat"><strong id="liveStations">Checking…</strong><span>Gauges with fresh measured water temp</span></div></div>
 </section>
+<section class="panel map-panel" id="mapOfRivers" aria-labelledby="mapPanelTitle">
+<div class="sectionhead"><h2 id="mapPanelTitle">Michigan trout-river map</h2><span class="map-live-indicator">6 measured gauge locations · no map API key</span></div>
+<p class="muted">Explore actual USGS gauge locations and select a pin to read its river conditions. These are monitoring stations—not public fishing access, hatch locations, or guarantees of mayfly activity.</p>
+<div id="riverMap"><p class="data-empty">Loading the geographic map. A self-contained station locator is available if map services fail.</p></div>
+<div class="map-key"><span><i class="map-dot fresh"></i> Fresh water-temperature reading</span><span><i class="map-dot missing"></i> Temperature unavailable</span><span><i class="map-dot selected"></i> Selected gauge</span></div>
+<p class="map-provider-note">Basemap: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>. No CARTO key is used; the previous unkeyed CARTO tiles displayed an “API KEY REQUIRED” watermark. If remote tiles fail, a clickable local station locator takes over.</p>
+</section>
 <section class="panel compare-panel" aria-labelledby="compareTitle">
 <div class="sectionhead"><h2 id="compareTitle">Michigan water temperature right now</h2><span class="tiny">Measured USGS °F, not a hatch ranking</span></div>
 <p class="muted">See which monitored rivers are actually warm or cool. Temperatures are observed <strong>at the listed gauge only</strong>; rivers with no fresh sensor reading stay visibly unavailable.</p>
@@ -81,7 +108,6 @@ footer{background:#13372e;color:#cfe5d5;text-align:center;padding:19px 14px;font
 <p class="warning"><strong>Important:</strong> A gauge recording favorable water temperatures is not a confirmed hatch. At 68°F or warmer, the trout-fishing signal is suppressed for catch-and-release safety. Missing water temperatures are never estimated from air temperature or a different river.</p>
 </section>
 <aside>
-<section class="panel"><h2>Where are the gauges?</h2><p class="muted">Markers are verified USGS monitoring locations, not Hex emergence hotspots or guaranteed public access.</p><div id="riverMap"></div><p class="legend">CARTO / OpenStreetMap basemap. Select a marker to highlight its river card.</p></section>
 <section class="panel"><h2>Don't confuse the water</h2><p class="muted"><strong>Au Sable Holy Water:</strong> outstanding for classic spring hatches. Michigan DNR's natural river plan notes that Brown Drake and Hex hatches favor sand-and-silt sections above and below the flies-only reach.</p>
 <p class="muted"><strong>Pere Marquette:</strong> the Scottville gauge is downstream of the renowned flies-only water near Baldwin. Its flow cannot prove a Baldwin Hex hatch.</p>
 <p class="muted"><strong>Manistee:</strong> upper-river and Sherman gauges are separate sections; neither represents the entire river.</p>
