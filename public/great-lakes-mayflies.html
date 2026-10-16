@@ -31,6 +31,26 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 @media(max-width:940px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.days{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:190px}.explain{grid-template-columns:1fr 1fr}}
 @media(max-width:730px){.grid{grid-template-columns:1fr}.heroinner{grid-template-columns:1fr}.hero-art{display:none}.explain{grid-template-columns:1fr}main{padding:14px 10px 32px}.card{padding:15px}.navinner{padding:12px 14px}}
 @media(max-width:470px){.metric strong{font-size:21px}.days{grid-auto-columns:76%}h2{font-size:23px}}
+
+/* Sourced species observation pulse — not a hatch confirmation */
+.obs-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.obs-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.obs-panel{border-radius:8px;border:1px solid #dfe9e3;background:#f4f8f6;padding:12px}
+.obs-panel .eyebrow{font-size:10px;text-transform:uppercase;font-weight:800;color:#567a71;letter-spacing:.06em}
+.obs-panel strong{display:block;margin:3px 0;font-size:17px;color:#174d49}
+.obs-panel p{font-size:11px;color:#657a74;margin:0}
+.obs-panel.unverified{background:#fbf6ec;border-color:#efe1c7}
+.obs-panel.unverified strong{color:#876037}
+.obs-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.obs-item{border:1px solid #dce9e2;padding:12px;border-radius:8px;display:flex;flex-direction:column;gap:5px}
+.obs-item time{color:#657e76;font-size:11px}
+.obs-item strong{font-size:14px;color:#275349;font-style:italic}
+.obs-item a{font-weight:750;font-size:12px;margin-top:auto}
+.obs-disclaimer{margin-top:11px;padding:11px 12px;border-radius:6px;background:#f5f7f4;color:#57716b;font-size:12px}
+.obs-total{font-size:12px;color:#627d74}
+@media(max-width:690px){.obs-list{grid-template-columns:1fr 1fr}}
+@media(max-width:470px){.obs-list,.obs-panels{grid-template-columns:1fr}}
+
 </style></head>
 <body>
 <nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
@@ -57,6 +77,29 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <div class="metric"><div class="label">Evening outlook</div><strong id="evening">—</strong><div class="foot">NWS nearby shoreline weather</div></div></div>
 <div class="signal" role="status" id="signal">Collecting the last available NOAA buoy observation…</div>
 <p class="source"><span id="provenance">NOAA National Data Buoy Center</span> · <a id="stationUrl" href="https://www.ndbc.noaa.gov/station_page.php?station=45163" target="_blank" rel="noopener">Open original buoy observations</a> · <span id="updated"></span></p></section>
+<section class="card" aria-labelledby="observationTitle">
+<div class="obs-header">
+  <div><div class="kicker" style="color:#447b67">Citizen-science evidence</div><h2 id="observationTitle">Are people actually seeing Hexagenia?</h2></div>
+  <span class="pill" id="observationUpdated">Checking observations…</span>
+</div>
+<p class="muted">Public, photo-backed, <strong>Research Grade</strong> Hexagenia identifications from iNaturalist in the selected region over the last year. These records help confirm that someone identified an insect; they <strong>do not verify a mass hatch</strong> or a specific emergence location.</p>
+<div class="obs-panels" aria-label="Species identification and separate hatch verification states">
+  <div class="obs-panel">
+    <div class="eyebrow">Independent species IDs</div>
+    <strong id="observationStatus">Checking source…</strong>
+    <p id="observationSummary">Searching public regional records.</p>
+  </div>
+  <div class="obs-panel unverified">
+    <div class="eyebrow">Mass emergence verification</div>
+    <strong>Not verified by this tool</strong>
+    <p>A Research Grade ID, even with a photo, does not document a swarm or lakebed hatch.</p>
+  </div>
+</div>
+<div class="obs-header"><h3>Recent documented specimens</h3><span class="obs-total" id="observationCount">Latest public records</span></div>
+<div id="observationList" class="obs-list" aria-live="polite"><p class="muted">Checking observation records…</p></div>
+<p class="obs-disclaimer">Reports are filtered by a regional search box that includes nearby land. Exact coordinates may be obscured; we intentionally do not pin specimens to shoreline locations. No observations is not evidence of no hatch. Taxonomic identifications can change.</p>
+<p class="source"><a id="observationsLink" href="https://www.inaturalist.org/observations?taxon_name=Hexagenia" target="_blank" rel="noopener">Explore source observations on iNaturalist</a> · <a href="https://www.inaturalist.org/observations/upload" target="_blank" rel="noopener">Submit your own observation</a> · <a href="https://www.inaturalist.org/pages/api+recommended+practices" target="_blank" rel="noopener">iNaturalist API and responsible use</a></p>
+</section>
 <div class="grid">
 <section>
 <section class="card" aria-labelledby="heatTitle"><div class="subheading"><h2 id="heatTitle">The 68°F emergence watch</h2><span class="pill">Surface proxy, not lakebed</span></div>
@@ -77,7 +120,7 @@ footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size
 <section class="card"><h2>What should I watch?</h2><div class="explain" style="grid-template-columns:1fr">
 <article><h3>1. Surface warming</h3><p>Look for a fresh local buoy temperature approaching or exceeding 68°F. In shallow western Erie, sediments can warm a few days later.</p></article>
 <article><h3>2. Evening winds</h3><p>Light winds may make flight activity more noticeable near the water. Direction can shift where swarms arrive onshore. A good-looking evening isn't an observed swarm.</p></article>
-<article><h3>3. Actual sightings</h3><p>Photos, verified observer reports, and radar may eventually help validate the model. We are not collecting or presenting sightings in this version.</p></article></div></section>
+<article><h3>3. Documented specimens</h3><p>Research Grade photo observations show where Hexagenia were identified in a broad surrounding region. These records do not establish lake emergence, a mass swarm or a particular shoreline location. Follow the links to review the original evidence.</p></article></div></section>
 </aside></div>
 <section class="card"><h2>A lake hatch isn't the Au Sable Hex hatch</h2><div class="explain">
 <article><h3>Different habitat</h3><p>Lake Hexagenia nymphs burrow in sediment. Water-column oxygen and bottom habitat influence their populations. A fishable trout-river riffle doesn't behave like a Great Lakes bay.</p></article>
@@ -139,9 +182,50 @@ function render(){
  marker.hidden=t===null;if(t!==null)marker.style.left=Math.max(0,Math.min(100,(t-40)/40*100))+'%';
  renderHistory(report.metrics);renderDays();
 }
+
+// Species ID evidence is intentionally kept separate from the lake environmental rank.
+function renderEvidence(data){
+ if(!data||!data.success){throw new Error('Invalid observation response');}
+ const found=data.status==='records_found',outage=data.status==='unavailable';
+ txt('observationStatus',outage?'Source unavailable':found?'Research Grade records found':'No matching records');
+ txt('observationSummary',outage
+  ?'The observation source did not respond. This is not a zero-sightings report.'
+  :found?'Latest observation: '+data.latestDate+'. '+data.recentDisplayed+' of the displayed records date to the last 30 days.'
+  :'No photo-backed Research Grade matches returned for this regional search and one-year window.');
+ txt('observationUpdated',outage?'Feed unavailable':'Source: iNaturalist');
+ txt('observationCount',outage?'Records unavailable':data.totalMatched===null
+  ?'Latest eligible records':'Source matched '+data.totalMatched+' records · showing up to 12');
+ $('observationsLink').href=data.sourceUrl;
+ const reports=data.records||[];
+ $('observationList').innerHTML=reports.length
+   ?reports.map(r=>'<article class="obs-item"><time datetime="'+esc(r.date)+'">'+esc(r.date)+'</time><strong>'+esc(r.taxon)+'</strong><span class="small">Research Grade species/genus ID</span><span class="small">Hatch not independently verified</span><a href="'+esc(r.url)+'" target="_blank" rel="noopener">Inspect original record ↗</a></article>').join('')
+   :'<p class="muted">'+(outage?'Public observations cannot be checked right now.': 'No qualifying public observations within the past 365 days. This does not indicate a hatch did not occur.')+'</p>';
+}
+async function loadEvidence(id,requestToken){
+ txt('observationStatus','Checking…');
+ txt('observationSummary','Checking iNaturalist regional records.');
+ txt('observationUpdated','Fetching evidence…');
+ txt('observationCount','Research Grade, photo-backed');
+ $('observationList').innerHTML='<p class="muted">Looking for independently documented specimens…</p>';
+ try{
+  const response=await fetch('/api/lake-hex-observations?region='+encodeURIComponent(id),{headers:{Accept:'application/json'}});
+  if(!response.ok)throw Error('Observation API '+response.status);
+  const data=await response.json();
+  if(requestToken!==reqCounter)return;
+  renderEvidence(data);
+ }catch(_){if(requestToken!==reqCounter)return;
+  txt('observationStatus','Source unavailable');
+  txt('observationSummary','Public records could not be verified. We will not display a zero-sightings claim.');
+  txt('observationUpdated','Feed unavailable');
+  txt('observationCount','Records unavailable');
+  $('observationList').innerHTML='<p class="muted">Observation feed unavailable; check the linked iNaturalist source directly.</p>';
+ }
+}
+
 async function choose(id){
  if(!REGION.some(r=>r.id===id))return;
  current=id;const count=++reqCounter;report=null;
+ void loadEvidence(id,count);
  document.querySelectorAll('[data-region]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.region===id)));
  if(map&&marks[id]){map.panTo(marks[id].getLatLng());marks[id].openPopup();}
  txt('regionName',REGION.find(r=>r.id===id).title);
