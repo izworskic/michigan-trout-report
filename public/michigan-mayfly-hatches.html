@@ -259,10 +259,10 @@ function initMap(){
    errors++;
    if(errors>=2&&loadedTiles===0)fallbackIfNoTiles();
   });
-  osm.addTo(map);
-  // Some browsers/firewalls silently hang tile requests without firing tileerror.
-  // Do not leave visitors staring at a blank map or an API-key error forever.
+  // Arm the deadline before starting requests, so even a cached tile load
+  // clears it correctly; a silent stalled request gets a no-key local map.
   tileDeadline=setTimeout(fallbackIfNoTiles,8000);
+  osm.addTo(map);
   SPOTS.forEach(s=>{
    const point=L.circleMarker([s.lat,s.lon],{
     radius:9,weight:2,color:'#fff',fillColor:'#25644f',fillOpacity:1
@@ -295,7 +295,9 @@ window.MayflyBoard={
   }
  }})
 };
-window.addEventListener('load',initMap);
+// Do not wait on the hero and insect photos before initializing the map.
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMap,{once:true});
+else initMap();
 Promise.allSettled(SPOTS.map(loadRiver));
 </script>
 </body></html>
