@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Great Lakes Mayfly Hatch Tracker | Saginaw Bay & Western Lake Erie</title>
+<meta name="description" content="Are Great Lakes mayflies coming soon? Follow live NOAA lake temperatures, the 68°F Hexagenia trigger, Saginaw Bay and western Lake Erie buoy conditions, plus a seven-evening weather watch.">
+<link rel="canonical" href="https://michigantroutreport.com/great-lakes-mayflies.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Great Lakes Mayfly Hatch Tracker | Saginaw Bay & Lake Erie">
+<meta property="og:description" content="Are fish flies coming soon? Track NOAA buoy temperatures, Hexagenia emergence conditions and seven evenings of forecast winds on Saginaw Bay and western Lake Erie.">
+<meta property="og:url" content="https://michigantroutreport.com/great-lakes-mayflies.html">
+<meta property="og:image" content="https://michigantroutreport.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Great Lakes Mayfly Hatch Tracker | Saginaw Bay & Lake Erie">
+<meta name="twitter:description" content="Live NOAA buoy temperatures, 68°F lake-bottom emergence reference and seven-evening wind forecast for Great Lakes fish flies.">
+<meta name="twitter:image" content="https://michigantroutreport.com/og-image.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://michigantroutreport.com/great-lakes-mayflies.html#page","name":"Great Lakes Mayfly Hatch Tracker","description":"Evidence-labelled environmental Hexagenia watch for Saginaw Bay and western Lake Erie, based on current NOAA buoy surface temperatures and NWS evening winds; does not directly observe emergence.","url":"https://michigantroutreport.com/great-lakes-mayflies.html","author":{"@id":"https://chrisizworski.com/#person"},"publisher":{"@id":"https://chrisizworski.com/#person"}},{"@type":"Person","@id":"https://chrisizworski.com/#person","name":"Chris Izworski","url":"https://chrisizworski.com/"}]}</script>
+<style>
+:root{--deep:#112f36;--ink:#1b3032;--sea:#286c72;--shore:#b78348;--mist:#edf3f1;--line:#dce8e4;--muted:#627a79;--warm:#f4f0e7;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:#f6f8f6;color:var(--ink);font:15px/1.52 system-ui,-apple-system,Segoe UI,sans-serif}a{color:#176d70}a:hover{text-decoration:underline}button{font:inherit}button:focus-visible,a:focus-visible{outline:3px solid #dba455;outline-offset:3px}
+nav{background:#102d32;color:#daeeee}nav .navinner{max-width:1180px;display:flex;align-items:center;gap:20px;justify-content:space-between;flex-wrap:wrap;margin:auto;padding:13px 20px}.brand{color:#fff;text-decoration:none;font-weight:800;font-size:14px;letter-spacing:.04em}.navlinks{display:flex;gap:16px;flex-wrap:wrap}.navlinks a{color:#c6e0de;font-size:12px}
+.hero{background:linear-gradient(120deg,#11363b,#226969 72%,#397873);color:#fff}.heroinner{max-width:1180px;margin:auto;padding:29px 20px 30px;display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:24px;align-items:center}.kicker{font-weight:750;letter-spacing:.17em;text-transform:uppercase;color:#e9c28c;font-size:11px}.hero h1{font:normal clamp(31px,4vw,47px)/1.12 Georgia,serif;max-width:730px;margin:7px 0 11px}.hero p{max-width:730px;color:#deebeb;margin:0;font-size:15px}.hero-art{width:200px;height:auto;opacity:.85}.hero-flags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.hero-flags span{padding:4px 9px;border-radius:4px;border:1px solid #d2ebe266;color:#eff7f1;font-size:11px}
+main{max-width:1180px;margin:auto;padding:19px 17px 50px}.card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:19px;margin-bottom:16px;box-shadow:0 5px 20px #1c51570b}h2{font:normal 26px/1.25 Georgia,serif;margin:0 0 8px}h3{font-size:16px;margin:0 0 7px}p{margin:0 0 11px}.muted{color:var(--muted);font-size:13px}.small{color:var(--muted);font-size:11px}.switch{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0 12px}.switch button{padding:11px 16px;border:1px solid #cfdeda;border-radius:8px;background:#f1f6f3;color:#234a4a;font-weight:750;cursor:pointer;min-height:44px}.switch button[aria-pressed="true"]{background:#1b6468;color:#fff;border-color:#1b6468}.topline{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px}.status{font-weight:750;color:#a3672c;background:#fff3e4;padding:6px 10px;border-radius:5px;font-size:12px}.status.ready{color:#19594d;background:#dff2e7}.status.dim{color:#607673;background:#eef2f0}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:15px 0 12px}.metric{padding:14px;background:#f3f7f5;border:1px solid #e0eae5;border-radius:8px;min-width:0}.metric .label{color:#637976;text-transform:uppercase;letter-spacing:.045em;font-weight:700;font-size:10px}.metric strong{font-size:23px;letter-spacing:-.02em;display:block;font-variant-numeric:tabular-nums}.metric .foot{font-size:10px;color:#667e7a}.signal{padding:14px;border-left:4px solid #ae794b;background:#faf5eb;border-radius:5px;color:#5c503a;margin:10px 0 0;font-size:13px}.signal.good{border-color:#38856b;background:#edf8f2;color:#285844}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(290px,.9fr);gap:16px;align-items:start}.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#eef5f1;border:1px solid #dbe9e1;border-radius:5px;padding:3px 7px;color:#3a615b}.subheading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.scale{display:flex;justify-content:space-between;color:#65817c;font-size:10px;margin:3px 0 12px}.tempbar{position:relative;height:13px;background:linear-gradient(90deg,#b1c9d4 0%,#66a2a6 48%,#ebbe7c 72%,#bd7d45 100%);border-radius:10px;margin-top:19px}.tempmarker{position:absolute;top:-5px;width:3px;height:22px;background:#243e3b;box-shadow:0 0 0 2px white}.trigger{position:absolute;top:-5px;height:22px;border-left:2px dashed #fff;left:72%}.divider{border:0;border-top:1px solid var(--line);margin:14px 0}
+.days{display:grid;grid-template-columns:repeat(7,minmax(143px,1fr));gap:8px;overflow-x:auto;padding:4px 0 9px}.day{background:#f4f8f6;border:1px solid var(--line);border-radius:8px;padding:12px;min-height:164px}.day .dt{font-weight:750;font-size:12px}.day .grade{font-size:13px;line-height:1.3;margin:10px 0;font-weight:700;color:#32675c}.day small{display:block;color:#657b74;font-size:11px}.warn{background:#fbf3e6;border-left:3px solid #b88639;padding:12px;color:#725126;border-radius:5px;font-size:12px;margin-top:12px}
+#lakeMap{height:295px;border-radius:8px;border:1px solid #d8e8df;background:#edf4f1;margin:9px 0}#trendChart{width:100%;min-height:180px}#trendChart svg{width:100%;height:auto}#trendChart .gridline{stroke:#e5eeea}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:#64817a}.sample{display:inline-block;width:15px;height:3px;margin:0 4px 3px 0;vertical-align:middle;background:#287a75}.sample.threshold{border-top:2px dashed #b27635;background:none}
+.explain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.explain article{background:#f6f9f7;border:1px solid #e0ebe6;padding:15px;border-radius:8px}.explain article p{font-size:13px;color:#526a62;margin:0}.source{border-top:1px solid #e1e9e4;margin-top:16px;padding-top:13px;color:#59756a;font-size:12px}.source a{word-break:break-word}
+.faq details{padding:12px 0;border-top:1px solid #e5eae6}.faq summary{cursor:pointer;font-weight:750;font-size:14px}.faq details p{font-size:13px;color:#587068;margin:9px 0 0}
+footer{background:#112f36;color:#d3e7df;text-align:center;padding:22px;font-size:12px}footer a{color:#def0e5}
+@media(max-width:940px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.days{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:190px}.explain{grid-template-columns:1fr 1fr}}
+@media(max-width:730px){.grid{grid-template-columns:1fr}.heroinner{grid-template-columns:1fr}.hero-art{display:none}.explain{grid-template-columns:1fr}main{padding:14px 10px 32px}.card{padding:15px}.navinner{padding:12px 14px}}
+@media(max-width:470px){.metric strong{font-size:21px}.days{grid-auto-columns:76%}h2{font-size:23px}}
+</style></head>
+<body>
+<nav><div class="navinner"><a class="brand" href="/">MICHIGAN TROUT REPORT <span style="font-weight:400;color:#9bc8c6">/ LAKE MAYFLIES</span></a>
+<div class="navlinks"><a href="/mayfly-hatches.html">Au Sable hatch predictor</a><a href="/hex.html">River Hex tracker</a><a href="/">Trout conditions</a></div></div></nav>
+<header class="hero"><div class="heroinner"><div>
+<div class="kicker">Great Lakes · Nearshore Phenology</div>
+<h1>Are the Great Lakes mayflies about to emerge?</h1>
+<p>A real-data watch for Hexagenia, the burrowing lake mayflies sometimes called fish flies. Follow lake-surface warming toward the sediment emergence marker, then watch evening wind and weather. No invented swarms or scores.</p>
+<div class="hero-flags"><span>NOAA buoy temperatures</span><span>NWS evening weather</span><span>68°F surface watch</span><span>Source timestamps</span></div></div>
+<svg class="hero-art" viewBox="0 0 250 154" role="img" aria-label="Line drawing of a Hexagenia mayfly over water" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M123 102Q76 41 15 25Q42 100 114 102Q47 108 22 135Q83 138 121 108Q168 138 228 135Q188 110 132 102Q212 96 239 25Q177 43 127 102" stroke="#d6e9dc" stroke-width="2.1" stroke-linejoin="round" opacity=".88"/>
+<path d="M123 68Q115 78 119 94L124 121L128 95Q135 79 123 68ZM122 121Q112 140 103 149M125 120L125 153M126 120Q135 142 147 149" stroke="#efcd93" stroke-width="2" stroke-linecap="round"/>
+<path d="M118 94L95 82M130 93L153 82M119 100L91 103M131 99L161 103" stroke="#d6e9dc" stroke-width="1.5"/></svg>
+</div></header>
+<main>
+<section class="card" aria-labelledby="stationH"><div class="topline"><h2 id="stationH">Choose your lake</h2><span class="small">Buoy monitoring locations, not predicted swarm destinations</span></div>
+<div class="switch" id="regions" role="group" aria-label="Select monitored Great Lakes nearshore region"></div>
+<p id="regionCaveat" class="muted"></p>
+<div class="topline"><div><span class="small">TODAY'S LAKE MAYFLY SIGNAL</span><h3 id="regionName" style="font:normal 25px Georgia,serif">Saginaw Bay</h3></div><span class="status dim" id="status">Loading data…</span></div>
+<div class="metrics" aria-live="polite">
+<div class="metric"><div class="label">Buoy water temperature</div><strong id="waterTemp">Checking…</strong><div class="foot" id="waterAt">Measured surface, not sediment</div></div>
+<div class="metric"><div class="label">Water trend</div><strong id="trend">—</strong><div class="foot">Last two complete sampled days</div></div>
+<div class="metric"><div class="label">Recent buoy wind</div><strong id="wind">—</strong><div class="foot">Measured where available</div></div>
+<div class="metric"><div class="label">Evening outlook</div><strong id="evening">—</strong><div class="foot">NWS forecast, not swarm count</div></div></div>
+<div class="signal" role="status" id="signal">Collecting the last available NOAA buoy observation…</div>
+<p class="source"><span id="provenance">NOAA National Data Buoy Center</span> · <a id="stationUrl" href="https://www.ndbc.noaa.gov/station_page.php?station=45163" target="_blank" rel="noopener">Open original buoy observations</a> · <span id="updated"></span></p></section>
+<div class="grid">
+<section>
+<section class="card" aria-labelledby="heatTitle"><div class="subheading"><h2 id="heatTitle">The 68°F emergence watch</h2><span class="pill">Surface proxy, not lakebed</span></div>
+<p class="muted">Michigan Sea Grant describes a shallow western Lake Erie pattern: several days after lake-surface water reaches about 20°C (68°F), sediments may warm enough for Hexagenia to emerge. That timing is not proven for every Great Lakes site.</p>
+<div class="tempbar" aria-label="Lake surface water 40 to 80°F scale; 68°F marker"><div class="trigger"></div><div class="tempmarker" id="tempMarker" hidden></div></div>
+<div class="scale"><span>40°F</span><span>60°F</span><span>68°F watch</span><span>80°F</span></div>
+<div id="trendChart" role="img" aria-label="Measured daily mean surface water temperature and 68 degree Fahrenheit reference"><p class="muted">Waiting for measured water history…</p></div>
+<div class="legend"><span><span class="sample"></span>Buoy surface water</span><span><span class="sample threshold"></span>68°F reference, not confirmed emergence</span></div>
+<div class="warn">Sensor values, weather, and emergence are different observations. This tool cannot tell how many mayflies are present in the lake, whether the bottom has warmed, or where a windblown swarm will land.</div></section>
+<section class="card" aria-labelledby="sevenTitle"><div class="subheading"><h2 id="sevenTitle">Next seven evenings</h2><span class="small">6 PM–11 PM Eastern</span></div>
+<p class="muted">Compare wind and rain during the hours when airborne Hexagenia may be noticed. Only the immediate weather watch uses today's fresh surface temperature; later dates have no water-temperature forecast.</p>
+<div class="days" id="eveningDays" aria-label="Seven evening nearshore weather and emergence watches"><p>Loading NOAA/NWS data…</p></div>
+</section>
+</section>
+<aside>
+<section class="card" aria-labelledby="mapTitle"><h2 id="mapTitle">Monitoring map</h2><p class="muted">The map marks two real buoy positions—not predicted hatch hotspots or shoreline concentrations.</p>
+<div id="lakeMap"></div><p class="small">Map tiles: CARTO / OpenStreetMap. No map key required.</p></section>
+<section class="card"><h2>What should I watch?</h2><div class="explain" style="grid-template-columns:1fr">
+<article><h3>1. Surface warming</h3><p>Look for a fresh local buoy temperature approaching or exceeding 68°F. In shallow western Erie, sediments can warm a few days later.</p></article>
+<article><h3>2. Evening winds</h3><p>Light winds may make flight activity more noticeable near the water. Direction can shift where swarms arrive onshore. A good-looking evening isn't an observed swarm.</p></article>
+<article><h3>3. Actual sightings</h3><p>Photos, verified observer reports, and radar may eventually help validate the model. We are not collecting or presenting sightings in this version.</p></article></div></section>
+</aside></div>
+<section class="card"><h2>A lake hatch isn't the Au Sable Hex hatch</h2><div class="explain">
+<article><h3>Different habitat</h3><p>Lake Hexagenia nymphs burrow in sediment. Water-column oxygen and bottom habitat influence their populations. A fishable trout-river riffle doesn't behave like a Great Lakes bay.</p></article>
+<article><h3>Different 68°F meaning</h3><p>Here, 68°F is a reported lake emergence-development reference. On the trout-river tool, 68°F is a caution for catch-and-release fishing. We do not mix the two rules.</p></article>
+<article><h3>Different confidence</h3><p>A fresh NOAA buoy is evidence of water temperature, not evidence that Hexagenia are present. Historic Saginaw Bay and Lake Erie population studies don't establish current local abundance.</p></article>
+</div><p class="source">Scientific basis: <a href="https://www.michiganseagrant.org/blog/2024/03/11/when-will-the-mayflies-arrive/" target="_blank" rel="noopener">Michigan Sea Grant: When will the mayflies arrive?</a> · <a href="https://www.usgs.gov/publications/burrowing-mayflies-indicators-ecosystem-health-status-populations-western-lake-erie" target="_blank" rel="noopener">USGS: Burrowing mayflies in western Lake Erie and Saginaw Bay</a> · <a href="https://www.usgs.gov/publications/evaluating-factors-driving-population-densities-mayfly-nymphs-western-lake-erie" target="_blank" rel="noopener">USGS: Water quality and population dynamics</a>.</p></section>
+<section class="card faq"><h2>Frequently asked questions</h2>
+<details><summary>When do the Great Lakes mayflies hatch?</summary><p>Hexagenia swarms commonly occur across June through August in shallow Great Lakes waters. In western Lake Erie the first big periods can begin in early summer, depending on bottom warming and nymph populations. There is no single statewide hatch date.</p></details>
+<details><summary>Does 68°F mean the mayflies are hatching tonight?</summary><p>No. Michigan Sea Grant identifies about 20°C (68°F) at the sediment as a relevant biological threshold. A surface buoy reading is a proxy and may lead bottom temperature by days. We do not claim emergence has begun without observations.</p></details>
+<details><summary>Why does Saginaw Bay sometimes say temperature unavailable?</summary><p>The Saginaw Bay buoy is seasonal and may not publish live water temperatures in autumn or winter. Missing and stale measurements are displayed honestly instead of substituting Toledo, a river gauge, or Lake Huron open-water averages.</p></details>
+<details><summary>Will the tracker tell me which shoreline gets the swarms?</summary><p>Not yet. Wind direction and speed influence where airborne mayflies move, but a buoy and NWS point forecast cannot verify where insects emerged or where they will accumulate.</p></details>
+<details><summary>What's the difference between lake flies and Hex on the Au Sable?</summary><p>Both can include large mayflies in the genus Hexagenia, but Great Lakes emergence depends on lake-bottom habitat and temperatures; the Au Sable tool focuses on trout-stream conditions and fly-fishing windows. <a href="/mayfly-hatches.html">Open the Au Sable mayfly predictor</a>.</p></details>
+</section>
+</main>
+<footer>Environmental monitoring, not verified hatch reports. <a href="https://chrisizworski.com/chris-izworski/">Built by Chris Izworski</a> · <a href="/mayfly-hatches.html">Au Sable mayfly forecast</a> · <a href="/hex.html">River Hex tracker</a></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script>
+const REGION=[{id:'saginaw-bay',title:'Saginaw Bay',lat:43.983,lon:-83.600},{id:'western-erie',title:'Western Lake Erie',lat:41.702,lon:-83.262}];
+let current='saginaw-bay',report=null,map=null,marks={},reqCounter=0;
+const $=id=>document.getElementById(id);
+function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function txt(id,v){$(id).textContent=v;}
+function when(date){return date?new Date(date).toLocaleString('en-US',{timeZone:'America/Detroit',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' ET':'Unknown timestamp';}
+function renderHistory(m){
+ const days=m.history||[],box=$('trendChart');
+ if(!days.length){box.innerHTML='<p class="muted">No measured buoy water-temperature history available for this station.</p>';return;}
+ const w=600,h=208,l=39,r=20,top=16,b=34;
+ const bottom=Math.min(45,Math.floor((Math.min(...days.map(d=>d.minF),68)-3)/5)*5);
+ const upper=Math.max(80,Math.ceil((Math.max(...days.map(d=>d.maxF),68)+3)/5)*5);
+ const x=i=>l+(w-l-r)*i/Math.max(1,days.length-1),y=t=>top+(upper-t)/(upper-bottom)*(h-top-b);
+ let svg='<svg role="img" aria-label="Measured buoy daily mean temperatures and 68 degree reference, Fahrenheit" viewBox="0 0 '+w+' '+h+'">';
+ for(let t=Math.ceil(bottom/10)*10;t<=upper;t+=10){svg+='<line class="gridline" x1="'+l+'" x2="'+(w-r)+'" y1="'+y(t)+'" y2="'+y(t)+'"/><text x="4" y="'+(y(t)+4)+'" fill="#738780" font-size="11">'+t+'°</text>';}
+ svg+='<line x1="'+l+'" x2="'+(w-r)+'" y1="'+y(68)+'" y2="'+y(68)+'" stroke="#b78348" stroke-dasharray="5 5" stroke-width="2"/>';
+ if(days.length>1)svg+='<polyline points="'+days.map((d,i)=>x(i)+','+y(d.meanF)).join(' ')+'" fill="none" stroke="#287a75" stroke-width="3" stroke-linejoin="round"/>';
+ days.forEach((d,i)=>{svg+='<circle cx="'+x(i)+'" cy="'+y(d.meanF)+'" r="3.7" fill="#287a75"/><text x="'+x(i)+'" y="'+(h-10)+'" text-anchor="middle" fill="#718781" font-size="10">'+esc(d.date.slice(5))+'</text>';});
+ svg+='</svg>';box.innerHTML=svg;
+}
+function renderDays(){
+ const data=report?.evenings||[];
+ $('eveningDays').innerHTML=data.map(d=>{
+  const date=new Date(d.date+'T12:00:00Z').toLocaleDateString('en-US',{timeZone:'America/Detroit',weekday:'short',month:'short',day:'numeric'});
+  return '<article class="day"><div class="dt">'+esc(date)+'</div><div class="grade">'+esc(d.signal)+'</div><small>'+esc(d.maxEveningWindMph===null?'Wind not available':'Evening wind up to '+d.maxEveningWindMph+' mph')+'</small><small>'+esc(d.forecastText||'Forecast unavailable')+'</small></article>';
+ }).join('')||'<p class="muted">NWS evening outlook currently unavailable.</p>';
+}
+function render(){
+ if(!report)return;
+ txt('regionName',report.region.name);
+ txt('regionCaveat',report.region.caveat);
+ txt('status',report.status);$('status').className='status'+(report.rank>=3?' ready':report.status==='Off season'||report.metrics.waterTempF===null?' dim':'');
+ txt('waterTemp',report.metrics.waterTempF===null?'Unavailable':report.metrics.waterTempF.toFixed(1)+'°F');
+ txt('waterAt',report.metrics.measuredAt?'Observed '+when(report.metrics.measuredAt):'No fresh water sensor reading');
+ txt('trend',report.metrics.trendF===null?'Unavailable':(report.metrics.trendF>=0?'+':'')+report.metrics.trendF.toFixed(1)+'°F');
+ txt('wind',report.metrics.windMph===null?'Unavailable':report.metrics.windMph.toFixed(1)+' mph');
+ const next=report.evenings.find(d=>d.coverageHours>=3);
+ txt('evening',next?.maxEveningWindMph===null||!next?'Unavailable':next.maxEveningWindMph+' mph');
+ $('signal').textContent=report.detail;$('signal').className='signal'+(report.rank>=3?' good':'');
+ $('stationUrl').href=report.stationURL;txt('updated','Report '+when(report.generatedAt));
+ const t=report.metrics.waterTempF,marker=$('tempMarker');
+ marker.hidden=t===null;if(t!==null)marker.style.left=Math.max(0,Math.min(100,(t-40)/40*100))+'%';
+ renderHistory(report.metrics);renderDays();
+}
+async function choose(id){
+ if(!REGION.some(r=>r.id===id))return;
+ current=id;const count=++reqCounter;report=null;
+ document.querySelectorAll('[data-region]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.region===id)));
+ if(map&&marks[id]){map.panTo(marks[id].getLatLng());marks[id].openPopup();}
+ txt('regionName',REGION.find(r=>r.id===id).title);
+ txt('status','Checking buoy…');$('status').className='status dim';
+ ['waterTemp','trend','wind','evening'].forEach(x=>txt(x,'Checking…'));
+ txt('regionCaveat','Checking regional buoy availability…');
+ txt('waterAt','Waiting for NOAA observation');
+ $('signal').textContent='Fetching real observations; missing sources will not be replaced with estimates.';
+ $('eveningDays').innerHTML='<p>Checking the seven-evening weather watch…</p>';
+ $('trendChart').innerHTML='<p>Checking NOAA temperature history…</p>';
+ try{
+  const response=await fetch('/api/lake-mayflies?region='+encodeURIComponent(id),{headers:{Accept:'application/json'}});
+  if(!response.ok)throw new Error('API status '+response.status);
+  const value=await response.json();
+  if(count!==reqCounter)return;
+  if(!value.success)throw new Error('Data unavailable');
+  report=value;render();
+ }catch(e){if(count!==reqCounter)return;
+  txt('status','Service unavailable');txt('waterTemp','Unavailable');txt('wind','Unavailable');
+  txt('trend','Unavailable');txt('evening','Unavailable');
+  $('signal').textContent='Unable to reach the live NOAA/NWS service. No mayfly emergence claim is available.';
+  $('eveningDays').innerHTML='<p class="muted">Weather forecast unavailable; retry later.</p>';
+  $('trendChart').innerHTML='<p class="muted">Measured buoy data unavailable.</p>';
+ }
+}
+REGION.forEach(r=>{const b=document.createElement('button');b.dataset.region=r.id;b.textContent=r.title;b.setAttribute('aria-pressed',String(r.id===current));b.addEventListener('click',()=>choose(r.id));$('regions').appendChild(b);});
+function initMap(){
+ if(!window.L){$('lakeMap').textContent='Map tiles unavailable. The region buttons still let you switch monitoring locations.';return;}
+ map=L.map('lakeMap',{scrollWheelZoom:false}).setView([42.7,-83.42],7);
+ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:16,attribution:'© OpenStreetMap contributors, © CARTO'}).addTo(map);
+ REGION.forEach(r=>{const m=L.circleMarker([r.lat,r.lon],{radius:10,weight:2,color:'#fff',fillColor:'#23676a',fillOpacity:1}).addTo(map);
+  m.bindPopup('<strong>'+esc(r.title)+'</strong><br>NOAA buoy location, not hatch hotspot');
+  m.on('click',()=>choose(r.id));marks[r.id]=m;});
+ map.fitBounds(L.latLngBounds(REGION.map(r=>[r.lat,r.lon])).pad(.25));
+}
+window.addEventListener('load',initMap);choose(current);
+</script></body></html>
