@@ -23,7 +23,7 @@ export async function buoyObservations(region,now) {
 }
 export async function eveningForecast(region) {
  const origin='https://api.weather.gov';
- const point=await readResponse(origin+'/points/'+region.lat+','+region.lon,'json');
+ const point=await readResponse(origin+'/points/'+region.weatherLat+','+region.weatherLon,'json');
  const url=point?.properties?.forecastHourly;
  if(typeof url!=='string'||!/^https:\/\/api\.weather\.gov\/gridpoints\/[A-Za-z]{3}\/\d+,\d+\/forecast\/hourly(?:\?.*)?$/.test(url))
   throw new Error('NWS point did not return a verified hourly URL');
@@ -44,7 +44,8 @@ export default async function handler(req,res) {
  const forecasts=nws.status==='fulfilled'?nws.value:[];
  const report=buildLakeHexReport({region,now,observations:observed,hourlyForecast:forecasts,
    sources:{buoyRequest:obs.status==='fulfilled'?'received':'unavailable',
-     forecastRequest:nws.status==='fulfilled'?'received':'unavailable'}});
+     forecastRequest:nws.status==='fulfilled'?'received':'unavailable',
+     weatherProxy:region.weatherProxy,weatherProxyNote:'NWS wind forecast at nearby shore, not over-water buoy wind'}});
  return res.status(200).json({success:true,partial:obs.status==='rejected'||nws.status==='rejected',
   ...report,stationURL:region.stationURL,
   notes:['Buoy water temperature represents near-surface water only. It is not a direct lakebed measurement.',
