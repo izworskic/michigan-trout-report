@@ -97,7 +97,7 @@ assert.equal(salmonPage.publisher['@id'], person, 'salmon WebPage publisher must
 assert.ok(salmonGraph.some((node) => node['@id'] === person && node.url === personUrl), 'salmon graph must define the canonical Person');
 
 assert.equal(contentDocumentCount, 101, 'all 101 current Trout Report content documents must have a checked primary publishing node');
-assert.equal(contentSchemaCount, 126, 'all primary publishing nodes across current Trout Report content documents must be checked');
+assert.equal(contentSchemaCount, 128, 'all primary publishing nodes across current Trout Report content documents must be checked');
 assert.ok(dynamicRiverPage.includes("publisher: { '@id': PERSON_ID }"), 'dynamic river Dataset must name the canonical publisher');
 assert.ok(dynamicRiverPage.includes("creator: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL"), 'dynamic river Dataset creator must define the canonical Person');
 assert.ok(dynamicRiverPage.includes("author: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL"), 'dynamic river Article author must define the canonical Person');
