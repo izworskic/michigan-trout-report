@@ -21,6 +21,8 @@ test('visual ID gallery, credited hero and offline-safe keyless river map remain
  assert(page.includes('tile.openstreetmap.org'));
  assert(page.includes('data-quick-fly="hex"'));
  assert.equal((page.match(/data-quick-fly=/g)||[]).length,5);
+ assert(page.indexOf('data-quick-fly="hex"')<page.indexOf('data-quick-fly="hendrickson"'), 'mobile gallery must show winged Hex before the nymph examples');
+ assert(page.includes("$('riverMap').replaceChildren()"), 'remove a11y-obsolete Loading placeholder when map initializes');
  assert(page.includes('U.S. Forest Service'));
  assert(page.includes('hatch-quicklook'));
  assert(page.indexOf('id="mapOfRivers"')<page.indexOf('id="mayflyPhotoGuide"'), 'map must be prominent rather than below all long content');
