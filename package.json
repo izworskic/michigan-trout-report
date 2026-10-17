@@ -4,7 +4,7 @@
   "description": "Daily Michigan trout stream conditions: powered by USGS live data and AI interpretation",
   "type": "module",
   "scripts": {
-    "test": "node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs scripts/lake-mayfly-atlas.test.mjs scripts/lake-mayfly-insights.test.mjs scripts/lake-hatch-history.test.mjs scripts/lake-hex-observations.test.mjs scripts/lake-hatch-review.test.mjs scripts/michigan-mayflies.test.mjs scripts/mayfly-experience.test.mjs scripts/mayfly-identification.test.mjs scripts/mayfly-map-resilience.test.mjs && node --test scripts/smelt-run.test.mjs && node --test scripts/social-metadata.test.mjs && node scripts/social-metadata.mjs --check && node scripts/check-seo.mjs && node scripts/check-creator-entity.mjs && node scripts/check-cron-reliability.mjs",
+    "test": "node --test scripts/mayfly-forecast.test.mjs scripts/mayfly-page.test.mjs scripts/lake-mayflies.test.mjs scripts/lake-mayfly-atlas.test.mjs scripts/lake-mayfly-insights.test.mjs scripts/lake-hatch-history.test.mjs scripts/lake-hex-observations.test.mjs scripts/lake-hatch-review.test.mjs scripts/michigan-mayflies.test.mjs scripts/mayfly-experience.test.mjs scripts/mayfly-identification.test.mjs scripts/mayfly-map-resilience.test.mjs && node --test scripts/smelt-environment.test.mjs && node --test scripts/smelt-run.test.mjs && node --test scripts/social-metadata.test.mjs && node scripts/social-metadata.mjs --check && node scripts/check-seo.mjs && node scripts/check-creator-entity.mjs && node scripts/check-cron-reliability.mjs",
     "metadata:sync": "node scripts/social-metadata.mjs"
   },
   "dependencies": {
