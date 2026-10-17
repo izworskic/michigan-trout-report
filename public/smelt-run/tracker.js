@@ -21,7 +21,7 @@ let selected=(new URLSearchParams(location.search)).get("region")||"whitefish";
 if(!fallback.some(x=>x.id===selected))selected="whitefish";
 let map=null;const markers=new Map();
 function badge(r){
- const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"?"watch":s==="Hazard watch"?"hazard":"off";
+ const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"?"watch":s==="Hazard watch"||s==="Ice watch"?"hazard":"off";
  return '<span class="status '+cls+'">'+esc(s)+'</span>';
 }
 function ordered(rows){return rows.slice().sort((a,b)=>{
@@ -42,6 +42,15 @@ function renderChart(water){
  const y=v=>91-(v-min)/(max-min)*75;
  const points=rows.map((r,i)=>x(i).toFixed(1)+","+y(r.f).toFixed(1)).join(" ");
  svg.innerHTML='<rect width="340" height="105" rx="6" fill="#f1f8f5"/><rect x="10" y="'+y(54).toFixed(1)+'" width="315" height="'+(y(42)-y(54)).toFixed(1)+'" fill="#ddf0e0"/><line x1="10" x2="325" y1="'+y(42).toFixed(1)+'" y2="'+y(42).toFixed(1)+'" stroke="#79b9a5" stroke-dasharray="4 3"/><polyline points="'+points+'" fill="none" stroke="#177d76" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="102" fill="#6a817f" font-size="10">USGS measured · recent 7 days</text><text x="292" y="14" fill="#48716c" font-size="10">°F</text>';
+}
+function lakeTrend(sat){
+ const svg=$("lake-chart");svg.innerHTML="";
+ if(!sat?.history?.length||sat.history.length<2)return;
+ const rows=sat.history.filter(x=>Number.isFinite(x.f));if(rows.length<2)return;
+ const values=rows.map(x=>x.f),min=Math.min(...values)-2,max=Math.max(...values)+2;
+ const scaleY=v=>87-(v-min)/(max-min)*70;
+ const pts=rows.map((r,i)=>(10+i/(rows.length-1)*310).toFixed(1)+","+scaleY(r.f).toFixed(1)).join(" ");
+ svg.innerHTML='<rect width="340" height="105" rx="7" fill="#f1f7f6"/><polyline points="'+pts+'" fill="none" stroke="#1c7280" stroke-width="2.4" stroke-linejoin="round"/><text x="11" y="102" font-size="10" fill="#59777b">NOAA GLSEA · '+esc(rows[0].date)+' → '+esc(rows.at(-1).date)+'</text>';
 }
 function nights(r){
  const forecast=r.forecast||[];
@@ -81,6 +90,18 @@ function detail(){
  $("marine-periods").innerHTML=marine?.periods?.length?
  marine.periods.slice(0,2).map(p=>'<div class="explain" style="padding:7px 8px;background:#f5f9f7;border:1px solid #e0e9e5;border-radius:7px"><strong>'+esc(p.name)+'</strong>: '+esc(p.text)+'</div>').join("")
  :'<p class="explain">No NWS nearshore periods returned. Use the official link; nearshore products may not be issued year-round.</p>';
+ const sat=r.satellite||null,ice=r.ice||null;
+ $("sat-value").textContent=sat&&!sat.stale?Number(sat.tempF).toFixed(1)+"°F":"No current reading";
+ $("sat-date").textContent=sat?(r.lakeBasin+" lake-wide average · "+(sat.stale?"STALE ":"")+"Last GLSEA date "+new Date(sat.measuredAt).toLocaleDateString("en-US",{timeZone:"UTC",dateStyle:"medium"})):"No NOAA GLSEA analysis available";
+ $("sat-trend").textContent=sat?(sat.change3dF!==null?"Three-day change "+(sat.change3dF>=0?"+":"")+sat.change3dF.toFixed(1)+"°F. ":"")
+ +"Satellite-derived and blended lake-wide average, NOT the temperature in "+(r.waterbody||"this stream")+"."
+ +(sat.stale?" Older than 96h; excluded from current readiness.":""):"No lake average available. The site will not estimate nearshore water from air temperatures.";
+ lakeTrend(sat);
+ $("ice-value").textContent=ice?.status==="current"?ice.band:ice?.status==="stale"?"Stale ice analysis":ice?.status==="no coverage"?"No chart coverage":"Ice data unavailable";
+ $("ice-date").textContent=ice?.observedAt?"USNIC analysis dated "+new Date(ice.observedAt).toLocaleDateString("en-US",{dateStyle:"medium",timeZone:"UTC"})+(ice.status==="stale"?" · EXCLUDED from current conditions":""):"No dated ice analysis for this sample";
+ $("ice-explain").textContent=ice?.status==="current"
+   ?(ice.band+" at a mapped offshore point, not a surveyed dipping access or stream. Open water in a chart cannot guarantee safe access.")
+   :(ice?.reason||"No usable analysis; missing data does not establish ice-free water.");
  renderChart(season?w:null);nights(r);
 }
 function select(id,focus){
