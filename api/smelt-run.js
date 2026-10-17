@@ -53,6 +53,15 @@ async function ndbc(station){
     return parseNdbc(await resp.text(),station);
   }finally{clearTimeout(timeout);}
 }
+
+async function nwsMarine(zone){
+  const data=await json("https://api.weather.gov/zones/forecast/"+zone+"/forecast",4700);
+  const p=data?.properties;
+  if(!Array.isArray(p?.periods)||!p.periods.length)return null;
+  return {zone,updatedAt:p.updated||p.updateTime||null,kind:"Official NWS nearshore zone forecast, not a stream or fish forecast",
+    periods:p.periods.slice(0,3).map(x=>({name:String(x.name||"Period").slice(0,70),
+    text:String(x.detailedForecast||x.shortForecast||"").slice(0,440)}))};
+}
 async function nwsAlerts(lat,lon){
   const data=await json("https://api.weather.gov/alerts/active?point="+lat+","+lon,4500);
   const now=Date.now();
@@ -139,6 +148,8 @@ export default async function handler(req,res){
     if(!buoyRequests.has(id))buoyRequests.set(id,ndbc(id).catch(()=>null));
     return buoyRequests.get(id);
   };
+  const zoneRequests=new Map();
+  const getZone=zone=>{if(!zoneRequests.has(zone))zoneRequests.set(zone,nwsMarine(zone).catch(()=>null));return zoneRequests.get(zone);};
   const regions=await Promise.all(list.map(async r=>{
     const marine=MARINE[r.id]||{zone:null,buoys:[]};
     let forecast=[],water=null,alerts=[],alertState=season?"unavailable":"off season",errors=[];
@@ -148,11 +159,11 @@ export default async function handler(req,res){
       if(r.station)tasks.push(streamTemp(r.station).then(t=>water=t).catch(()=>errors.push("USGS water reading missing")));
       tasks.push(nwsAlerts(r.lat,r.lon).then(a=>{alerts=a;alertState="checked";}).catch(()=>errors.push("NWS alert feed unavailable")));
     }
-    const buoys=await Promise.all(marine.buoys.map(getBuoy));
+    const [buoys,zoneForecast]=await Promise.all([Promise.all(marine.buoys.map(getBuoy)),marine.zone?getZone(marine.zone):Promise.resolve(null)]);
     await Promise.all(tasks);
     const current=buoys.filter(Boolean).sort((a,b)=>(a.stale?1:0)-(b.stale?1:0)||a.ageHours-b.ageHours)[0]||null;
     return {...r,waterbody:r.water,forecast,water,buoy:current,
-      buoyCandidates:marine.buoys,marineZone:marine.zone,
+      buoyCandidates:marine.buoys,marineZone:marine.zone,marineForecast:zoneForecast,
       marineForecastUrl:marine.zone?"https://marine.weather.gov/MapClick.php?TextType=2&zoneid="+marine.zone:null,
       alerts,alertState,...summarize(r,forecast,water,season,current,alerts),errors};
   }));
