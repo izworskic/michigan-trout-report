@@ -1,3 +1,4 @@
+import {lakeAverage,iceAnalysis,offshoreIce,ICE_MAP} from "../lib/smelt-environment.js";
 // Spring smelt-run readiness: NOAA NWS night forecasts + USGS *measured* stream temperature.
 // The condition signal is not a catch or fish-presence report.
 const REGIONS = [
@@ -18,6 +19,16 @@ const MARINE = {
   marquette:{zone:"LSZ248",buoys:[]}, // NOAA 45004 water-temperature sensor failed in 2026.
   straits:{zone:"LHZ346",buoys:[]},
   huron:{zone:"LHZ349",buoys:[]}
+};
+// Offshore samples are contextual ice-chart points, not public dipping accesses.
+const ENVIRONMENT = {
+  whitefish:{lake:"Superior",offshore:{lat:46.75,lon:-85.10}},
+  roxbury:{lake:"Superior",offshore:{lat:46.75,lon:-85.10}},
+  munising:{lake:"Superior",offshore:{lat:46.46,lon:-86.59}},
+  keweenaw:{lake:"Superior",offshore:{lat:46.83,lon:-88.48}},
+  marquette:{lake:"Superior",offshore:{lat:46.64,lon:-87.40}},
+  straits:{lake:"Huron",offshore:{lat:46.10,lon:-84.60}},
+  huron:{lake:"Huron",offshore:{lat:44.40,lon:-83.35}}
 };
 const BUOY_NAMES={"4403587":"Whitefish Bay","45172":"Grand Marais","45025":"South Keweenaw Entry","45023":"North Keweenaw Entry"};
 export function parseNdbc(text,station,now=Date.now()){
@@ -100,7 +111,9 @@ const SOURCES = {
   ndbc:"https://www.ndbc.noaa.gov/",
   coastwatch:"https://coastwatch.glerl.noaa.gov/satellite-data-products/lake-surface-temperature/",
   ice:"https://glerl.noaa.gov/data/ice/",
-  glos:"https://glos.org/data/faq/"
+  glos:"https://glos.org/data/faq/",
+  lakeAverages:"https://coastwatch.glerl.noaa.gov/statistics/average-surface-water-temperature-glsea/",
+  iceChart:ICE_MAP
 };
 const z = (n)=>String(n).padStart(2,"0");
 const localParts=(date)=>Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"America/Detroit",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23",weekday:"short"}).formatToParts(date).filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));
@@ -144,11 +157,12 @@ async function streamTemp(station){
   const last=vals.at(-1);const hours=(Date.now()-Date.parse(last.time))/3600000;
   return {station,waterF:Math.round((last.c*9/5+32)*10)/10,measuredAt:last.time,stale:!Number.isFinite(hours)||hours>18,history:vals.filter((x,i)=>i%Math.max(1,Math.floor(vals.length/35))===0).map(x=>({t:x.time,f:Math.round((x.c*9/5+32)*10)/10})).slice(-40),source:"USGS measured water temperature"};
 }
-function summarize(r,forecast,water,season,buoy,alerts){
+function summarize(r,forecast,water,season,buoy,alerts,ice){
   if(!season)return {status:"Off season",signal:"Historical opportunity only",reason:"Outside the spring spawning and netting window. No current-run prediction is made.",bestNight:null};
   if(!forecast?.length)return {status:"Data unavailable",signal:"Cannot assess upcoming nights",reason:"NWS hourly forecast could not be retrieved. No readiness ranking.",bestNight:null};
   const best=forecast.slice().sort((a,b)=>b.nightScore-a.nightScore)[0];
   if(alerts?.length)return {status:"Hazard watch",signal:"NWS alert in effect",reason:"NWS alert for this area: "+alerts.map(a=>a.event).join(", ")+". Check official warning details and local access safety; do not assume conditions are safe.",bestNight:null};
+  if(ice?.status==="current"&&["heavy","moderate"].includes(ice.category))return {status:"Ice watch",signal:"Offshore ice remains",reason:"A dated National Ice Center polygon reports "+ice.band+" at a nearby lake sample. This does not describe tributary ice or access conditions; investigate locally.",bestNight:null};
   if(water&&!water.stale&&water.waterF>=42&&water.waterF<=54){
     return {status:"Conditions promising",signal:"Measured temperature in spawning range",reason:"A nearby USGS stream sensor reads "+water.waterF+"°F; suitable temperatures and night weather suggest it may be worth checking locally. Fish presence is unverified.",bestNight:best.date};
   }
@@ -171,6 +185,15 @@ export default async function handler(req,res){
     return buoyRequests.get(id);
   };
   const zoneRequests=new Map();
+  const lakeRequests=new Map();
+  const getLake=lake=>{if(!lakeRequests.has(lake))lakeRequests.set(lake,lakeAverage(lake,now.getTime()).catch(()=>null));return lakeRequests.get(lake);};
+  const basinIce=await iceAnalysis(now.getTime());
+  const iceRequests=new Map();
+  const getIce=(env,id)=>{
+    if(basinIce.status!=="current")return Promise.resolve({...basinIce,kind:"Latest regional NOAA ice chart status (not a current stream observation)"});
+    if(!iceRequests.has(id))iceRequests.set(id,offshoreIce(env.offshore,now.getTime()));
+    return iceRequests.get(id);
+  };
   const getZone=zone=>{if(!zoneRequests.has(zone))zoneRequests.set(zone,nwsMarine(zone).catch(()=>null));return zoneRequests.get(zone);};
   const regions=await Promise.all(list.map(async r=>{
     const marine=MARINE[r.id]||{zone:null,buoys:[]};
@@ -181,13 +204,15 @@ export default async function handler(req,res){
       if(r.station)tasks.push(streamTemp(r.station).then(t=>water=t).catch(()=>errors.push("USGS water reading missing")));
       tasks.push(nwsAlerts(r.lat,r.lon).then(a=>{alerts=a;alertState="checked";}).catch(()=>errors.push("NWS alert feed unavailable")));
     }
-    const [buoys,zoneForecast]=await Promise.all([Promise.all(marine.buoys.map(getBuoy)),marine.zone?getZone(marine.zone):Promise.resolve(null)]);
+    const env=ENVIRONMENT[r.id];
+    const [buoys,zoneForecast,satellite,ice]=await Promise.all([Promise.all(marine.buoys.map(getBuoy)),marine.zone?getZone(marine.zone):Promise.resolve(null),getLake(env.lake),getIce(env,r.id)]);
     await Promise.all(tasks);
     const current=buoys.filter(Boolean).sort((a,b)=>(a.stale?1:0)-(b.stale?1:0)||a.ageHours-b.ageHours)[0]||null;
     return {...r,waterbody:r.water,forecast,water,buoy:current,
+      satellite,ice,lakeBasin:env.lake,
       buoyCandidates:marine.buoys,marineZone:marine.zone,marineForecast:zoneForecast,
       marineForecastUrl:marine.zone?"https://marine.weather.gov/MapClick.php?TextType=2&zoneid="+marine.zone:null,
-      alerts,alertState,...summarize(r,forecast,water,season,current,alerts),errors};
+      alerts,alertState,...summarize(r,forecast,water,season,current,alerts,ice),errors};
   }));
-  return res.status(200).json({updatedAt:now.toISOString(),season,seasonYear:month>=7?now.getUTCFullYear()+1:now.getUTCFullYear(),kind:"weather-and-water-conditions-not-fish-counts",regions,sources:SOURCES,model:{waterTriggerF:"42–45°F early trigger; spawning can continue warmer",bestHours:"10 PM – 2 AM (local time)",rankings:"A sensor-supported indicator is only offered when a fresh USGS water temperature exists. Buoys supply lake context only; stream temperature is a separate measurement. NWS alerts suppress positive signals."}});
+  return res.status(200).json({updatedAt:now.toISOString(),season,seasonYear:month>=7?now.getUTCFullYear()+1:now.getUTCFullYear(),kind:"weather-and-water-conditions-not-fish-counts",regions,sources:SOURCES,model:{waterTriggerF:"42–45°F early trigger; spawning can continue warmer",bestHours:"10 PM – 2 AM (local time)",rankings:"A sensor-supported indicator is only offered when a fresh USGS water temperature exists. Satellite readings are LAKE-WIDE averages (not per-region pixels), USNIC chart samples are offshore, and neither confirms fish. NWS alerts and heavy observed ice suppress optimistic labels."}});
 }
