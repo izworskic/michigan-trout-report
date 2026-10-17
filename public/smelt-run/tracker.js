@@ -21,7 +21,7 @@ let selected=(new URLSearchParams(location.search)).get("region")||"whitefish";
 if(!fallback.some(x=>x.id===selected))selected="whitefish";
 let map=null;const markers=new Map();
 function badge(r){
- const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"?"watch":"off";
+ const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"?"watch":s==="Hazard watch"?"hazard":"off";
  return '<span class="status '+cls+'">'+esc(s)+'</span>';
 }
 function ordered(rows){return rows.slice().sort((a,b)=>{
@@ -65,6 +65,18 @@ function detail(){
  $("water-source").textContent=!season?"Measured readings are evaluated during spring.":w&&!w.stale?"USGS station "+w.station+" · "+new Date(w.measuredAt).toLocaleString("en-US",{timeZone:"America/Detroit",dateStyle:"medium",timeStyle:"short"})+" ET":r.station?"USGS station "+r.station+" missing or older than 18h":"No local USGS stream thermometer verified. Air ≠ water.";
  const link=r.station?"https://waterdata.usgs.gov/monitoring-location/USGS-"+encodeURIComponent(r.station)+"/":"https://api.waterdata.usgs.gov/";
  $("gage-link").href=link;
+ const buoy=r.buoy||null,usable=buoy&&!buoy.stale,stationList=(r.buoyCandidates||[]).join(", ");
+ $("buoy-value").textContent=usable?Number(buoy.tempF).toFixed(1)+"°F":"No fresh reading";
+ $("buoy-source").textContent=buoy?(buoy.name+" · "+buoy.station+" · "+(buoy.stale?"stale":"measured "+new Date(buoy.measuredAt).toLocaleString("en-US",{dateStyle:"short",timeStyle:"short",timeZone:"America/Detroit"})+" ET")):stationList?"No reports from NOAA station(s): "+stationList:"No vetted local lake buoy for this area";
+ const trend=usable&&buoy.change24hF!=null?(buoy.change24hF>0?"+":"")+Number(buoy.change24hF).toFixed(1)+"°F in 24 h. ":"";
+ const wind=usable&&buoy.windMph!=null?" · Wind "+buoy.windMph+" mph":"";
+ const wave=usable&&buoy.waveFt!=null?" · Wave "+buoy.waveFt+" ft":"";
+ $("buoy-trend").textContent=usable?trend+"Measured in the lake, not in the tributary."+wind+wave:buoy?"Most recent lake reading is older than 12 hours and is excluded from readiness.":"Buoy readings may be unavailable seasonally or when a sensor fails. No reading is invented.";
+ $("buoy-link").href=buoy?buoy.url:"https://www.ndbc.noaa.gov/mobile/region.php?reg=great_lakes";
+ const hazards=r.alerts||[];
+ $("nws-status").textContent=hazards.length?hazards.map(a=>a.event).join(" · "):r.alertState==="checked"?"No matching active alerts":"No current alert check";
+ $("nws-alert-state").textContent=hazards.length?"NWS active warning: check details before entering cold spring water.":r.alertState==="checked"?"No selected hazards returned. This does not establish safe river or lake conditions.":season?"Alert feed unavailable; do not assume safe conditions.":"Active alerts will be checked during spring.";
+ $("nws-marine-link").href=r.marineForecastUrl||"https://www.weather.gov/marine/greatlakestext";
  renderChart(season?w:null);nights(r);
 }
 function select(id,focus){
