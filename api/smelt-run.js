@@ -55,12 +55,34 @@ async function ndbc(station){
 }
 
 async function nwsMarine(zone){
-  const data=await json("https://api.weather.gov/zones/forecast/"+zone+"/forecast",4700);
-  const p=data?.properties;
-  if(!Array.isArray(p?.periods)||!p.periods.length)return null;
-  return {zone,updatedAt:p.updated||p.updateTime||null,kind:"Official NWS nearshore zone forecast, not a stream or fish forecast",
-    periods:p.periods.slice(0,3).map(x=>({name:String(x.name||"Period").slice(0,70),
-    text:String(x.detailedForecast||x.shortForecast||"").slice(0,440)}))};
+  // NWS API zone-forecast route returns 404 for some Great Lakes marine UGCs.
+  // Use the official NWS marine text page, but never display a stale issuance.
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),5000);
+  try{
+    const resp=await fetch("https://marine.weather.gov/MapClick.php?TextType=2&zoneid="+zone,{
+      signal:ctrl.signal,headers:{"Accept":"text/html","User-Agent":"MichiganTroutReport-SmeltRun/1.2 chrisizworski.com"}});
+    if(!resp.ok)throw Error("NWS marine HTTP "+resp.status);
+    const html=(await resp.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi," ").replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi," ");
+    const plain=html.replace(/<br\s*\/?>/gi,"\n").replace(/<\/(?:p|div|li|h[1-6]|tr)>/gi,"\n")
+      .replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/&amp;/gi,"&").replace(/&#39;|&apos;/gi,"'")
+      .replace(/&quot;/gi,'"');
+    const line=plain.replace(/\s+/g," ");
+    const stamp=line.match(/Last Update:\s*(\d{3,4})\s*(AM|PM)\s*(EST|EDT|CST|CDT)\s*\w+\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})\s+(\d{4})/i);
+    if(!stamp)return null;
+    const hh=stamp[1].padStart(4,"0"),issued=Date.parse(stamp[4]+" "+stamp[5]+" "+stamp[6]+" "+Number(hh.slice(0,-2))+":"+hh.slice(-2)+" "+stamp[2]+" "+stamp[3]);
+    if(!Number.isFinite(issued)||issued>Date.now()+3600000||Date.now()-issued>36*3600000)return null;
+    const lines=plain.split(/\n/).map(x=>x.replace(/\s+/g," ").trim()).filter(Boolean);
+    const regex=/^(Tonight|Today|This Afternoon|Overnight|Monday(?: Night)?|Tuesday(?: Night)?|Wednesday(?: Night)?|Thursday(?: Night)?|Friday(?: Night)?|Saturday(?: Night)?|Sunday(?: Night)?):\s*(.*)/i;
+    const periods=[];
+    for(let i=0;i<lines.length;i++){
+      const m=lines[i].match(regex);
+      if(!m)continue;
+      let body=m[2];if(body.length<18)body+=" "+(lines[i+1]||"");
+      if(body.length>15)periods.push({name:m[1],text:body.slice(0,440)});
+      if(periods.length===3)break;
+    }
+    return periods.length?{zone,updatedAt:new Date(issued).toISOString(),kind:"Official NWS nearshore marine forecast; not fish activity",periods}:null;
+  }finally{clearTimeout(timer);}
 }
 async function nwsAlerts(lat,lon){
   const data=await json("https://api.weather.gov/alerts/active?point="+lat+","+lon,4500);
