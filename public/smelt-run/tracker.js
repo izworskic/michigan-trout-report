@@ -77,6 +77,10 @@ function detail(){
  $("nws-status").textContent=hazards.length?hazards.map(a=>a.event).join(" · "):r.alertState==="checked"?"No matching active alerts":"No current alert check";
  $("nws-alert-state").textContent=hazards.length?"NWS active warning: check details before entering cold spring water.":r.alertState==="checked"?"No selected hazards returned. This does not establish safe river or lake conditions.":season?"Alert feed unavailable; do not assume safe conditions.":"Active alerts will be checked during spring.";
  $("nws-marine-link").href=r.marineForecastUrl||"https://www.weather.gov/marine/greatlakestext";
+ const marine=r.marineForecast;
+ $("marine-periods").innerHTML=marine?.periods?.length?
+ marine.periods.slice(0,2).map(p=>'<div class="explain" style="padding:7px 8px;background:#f5f9f7;border:1px solid #e0e9e5;border-radius:7px"><strong>'+esc(p.name)+'</strong>: '+esc(p.text)+'</div>').join("")
+ :'<p class="explain">No NWS nearshore periods returned. Use the official link; nearshore products may not be issued year-round.</p>';
  renderChart(season?w:null);nights(r);
 }
 function select(id,focus){
