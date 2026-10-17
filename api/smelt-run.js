@@ -54,7 +54,7 @@ async function streamTemp(station){
   // New USGS Water Data OGC API. The legacy NWIS iv service ends in Feb 2027.
   const u="https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items?f=json&monitoring_location_id=USGS-"+station+"&parameter_code=00010&time=P7D&limit=1000";
   const data=await json(u,5800);
-  const vals=(data.features||[]).map(f=>f.properties||{}).filter(p=>p.parameter_code==="00010"&&Number.isFinite(Number(p.value))&&p.time).map(p=>({time:p.time,c:Number(p.value)})).sort((a,b)=>Date.parse(a.time)-Date.parse(b.time));
+  const vals=(data.features||[]).map(f=>f.properties||{}).filter(p=>p.parameter_code==="00010"&&p.value!==null&&p.value!==""&&Number.isFinite(Number(p.value))&&p.time).map(p=>({time:p.time,c:Number(p.value)})).sort((a,b)=>Date.parse(a.time)-Date.parse(b.time));
   if(!vals.length)return null;
   const last=vals.at(-1);const hours=(Date.now()-Date.parse(last.time))/3600000;
   return {station,waterF:Math.round((last.c*9/5+32)*10)/10,measuredAt:last.time,stale:!Number.isFinite(hours)||hours>18,history:vals.filter((x,i)=>i%Math.max(1,Math.floor(vals.length/35))===0).map(x=>({t:x.time,f:Math.round((x.c*9/5+32)*10)/10})).slice(-40),source:"USGS measured water temperature"};
@@ -84,7 +84,7 @@ export default async function handler(req,res){
       if(w.status==="fulfilled")forecast=w.value;else errors.push("NWS forecast missing");
       if(t.status==="fulfilled")water=t.value;else errors.push("USGS water reading missing");
     }
-    return {...r,forecast,water,...summarize(r,forecast,water,season),errors};
+    return {...r,waterbody:r.water,forecast,water,...summarize(r,forecast,water,season),errors};
   }));
   return res.status(200).json({updatedAt:now.toISOString(),season,seasonYear:month>=7?now.getUTCFullYear()+1:now.getUTCFullYear(),kind:"weather-and-water-conditions-not-fish-counts",regions,sources:SOURCES,model:{waterTriggerF:"42–45°F early trigger; spawning can continue warmer",bestHours:"10 PM – 2 AM (local time)",rankings:"A sensor-supported indicator is only offered when a fresh USGS water temperature exists. Other areas receive weather-only context."}});
 }
