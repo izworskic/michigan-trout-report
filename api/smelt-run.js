@@ -187,13 +187,14 @@ export default async function handler(req,res){
   const zoneRequests=new Map();
   const lakeRequests=new Map();
   const getLake=lake=>{if(!lakeRequests.has(lake))lakeRequests.set(lake,lakeAverage(lake,now.getTime()).catch(()=>null));return lakeRequests.get(lake);};
-  const basinIce=await iceAnalysis(now.getTime());
+  const basinIcePromise=iceAnalysis(now.getTime());
   const iceRequests=new Map();
-  const getIce=(env,id)=>{
-    if(basinIce.status!=="current")return Promise.resolve({...basinIce,kind:"Latest regional NOAA ice chart status (not a current stream observation)"});
-    if(!iceRequests.has(id))iceRequests.set(id,offshoreIce(env.offshore,now.getTime()));
-    return iceRequests.get(id);
-  };
+  const getIce=(env,id)=>basinIcePromise.then(basinIce=>{
+    if(basinIce.status!=="current")return {...basinIce,kind:"Latest regional NOAA ice chart status (not a current stream observation)"};
+    const sampleKey=env.offshore.lat+","+env.offshore.lon;
+    if(!iceRequests.has(sampleKey))iceRequests.set(sampleKey,offshoreIce(env.offshore,now.getTime()));
+    return iceRequests.get(sampleKey);
+  });
   const getZone=zone=>{if(!zoneRequests.has(zone))zoneRequests.set(zone,nwsMarine(zone).catch(()=>null));return zoneRequests.get(zone);};
   const regions=await Promise.all(list.map(async r=>{
     const marine=MARINE[r.id]||{zone:null,buoys:[]};
