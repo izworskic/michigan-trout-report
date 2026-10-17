@@ -55,12 +55,12 @@ function nights(r){
 function detail(){
  const r=data.find(x=>x.id===selected)||data[0];if(!r)return;
  $("detail-title").textContent=r.name;
- $("detail-sub").textContent=r.water+" · "+r.county+" County / counties";
+ $("detail-sub").textContent=(r.waterbody||r.water||"Waterway") +" · "+r.county+" County / counties";
  $("detail-badge").outerHTML=badge(r).replace('<span ','<span id="detail-badge" ');
  $("insight").textContent=(season?(r.reason||"Current condition evidence is unavailable."):"Off season: Michigan's spring smelt spawning run is not active now. This is a historical-opportunity and preparation guide.")+" "+r.detail;
  $("historical-value").textContent=r.history;
  $("history-text").textContent="Michigan DNR historic dipping opportunity · older survey, not a live catch estimate.";
- const w=r.water;
+ const w=typeof r.water==="object"?r.water:null;
  $("water-value").textContent=w&&!w.stale?Number(w.waterF).toFixed(1)+"°F":"No live reading";
  $("water-source").textContent=!season?"Measured readings are evaluated during spring.":w&&!w.stale?"USGS station "+w.station+" · "+new Date(w.measuredAt).toLocaleString("en-US",{timeZone:"America/Detroit",dateStyle:"medium",timeStyle:"short"})+" ET":r.station?"USGS station "+r.station+" missing or older than 18h":"No local USGS stream thermometer verified. Air ≠ water.";
  const link=r.station?"https://waterdata.usgs.gov/monitoring-location/USGS-"+encodeURIComponent(r.station)+"/":"https://api.waterdata.usgs.gov/";
