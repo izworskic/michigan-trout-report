@@ -122,10 +122,7 @@ function paintMarkers(){
 }
 function startMap(){
  const target=$("map");
- if(!maplibregl.supported()){
-  target.innerHTML='<p class="map-error">Interactive mapping is unavailable in this browser. All seven regions can still be selected in the list.</p>';
-  return;
- }
+ // MapLibre v6 removed the global supported() helper. The constructor reports GPU support failures.
  try{
   map=new maplibregl.Map({
    container:"map",
