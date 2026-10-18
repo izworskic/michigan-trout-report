@@ -66,6 +66,27 @@ test("changing first region to previous comparison swaps second to previous firs
  exp.update(rows,"falls",false,null);
  assert.equal(exp.getCompareId(),"whitefish");
 });
+test("API hydration upgrades an uninformative fallback default to a measured-stream comparison",()=>{
+ const {root,exp}=harness();
+ const initial=[place("whitefish","Whitefish Bay",null,null),place("roxbury","Roxbury Creek",null,null),place("falls","Falls River",null,null)];
+ exp.update(initial,"whitefish",false,null);
+ assert.equal(exp.getCompareId(),"roxbury");
+ const hydrated=[place("whitefish","Whitefish Bay",null,55),place("roxbury","Roxbury Creek",null,55),place("falls","Falls River",44,null)];
+ exp.update(hydrated,"whitefish",false,null);
+ assert.equal(exp.getCompareId(),"falls");
+ assert.match(root.innerHTML,/REGION B · COMPARISON/);
+ assert.match(root.innerHTML,/44\.0°F/);
+});
+test("explicitly selected comparison survives refresh even when another stream gauge becomes available",()=>{
+ const {root,exp,change}=harness();
+ const rows=[place("whitefish","Whitefish Bay",null,55),place("falls","Falls River",44,null),place("munising","Munising",null,null)];
+ exp.update(rows,"whitefish",false,null);
+ change("exp-compare-b","munising");
+ assert.equal(exp.getCompareId(),"munising");
+ exp.update(rows,"whitefish",false,null);
+ assert.equal(exp.getCompareId(),"munising");
+ assert.match(root.innerHTML,/REGION B · COMPARISON/);
+});
 test("comparison never pretends a shared lake basin or buoy is independent evidence",()=>{
  const {root,exp}=harness();
  const rows=[place("whitefish","Whitefish Bay",null,47),place("roxbury","Roxbury Creek",null,47)];
