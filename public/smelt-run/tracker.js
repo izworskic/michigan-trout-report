@@ -22,17 +22,29 @@ let selected=(new URLSearchParams(location.search)).get("region")||"whitefish";
 if(!fallback.some(x=>x.id===selected))selected="whitefish";
 let map=null;const markers=new Map();
 function badge(r){
- const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"?"watch":s==="Hazard watch"||s==="Ice watch"?"hazard":"off";
+ const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"||s==="Weather caution"?"watch":s==="Hazard watch"||s==="Ice watch"||s==="Safety data unavailable"?"hazard":"off";
  return '<span class="status '+cls+'">'+esc(s)+'</span>';
 }
-function ordered(rows){return rows.slice().sort((a,b)=>{
- const n=x=>x.status==="Conditions promising"?4:x.status==="Temperature watch"?3:x.history==="Good"?2:1;
- return n(b)-n(a)||fallback.findIndex(x=>x.id===a.id)-fallback.findIndex(x=>x.id===b.id);
-});}
+function ordered(rows){
+ const priority=r=>!season?(r.history==="Good"?2:1):({
+  "Conditions promising":6,"Temperature watch":5,"Lake warming watch":4,
+  "Weather watch":3,"Weather caution":2,"Data unavailable":1,
+  "Safety data unavailable":0,"Ice watch":0,"Hazard watch":0
+ }[r.status]??1);
+ return rows.slice().sort((a,b)=>priority(b)-priority(a)||(b.history==="Good"?1:0)-(a.history==="Good"?1:0)||fallback.findIndex(x=>x.id===a.id)-fallback.findIndex(x=>x.id===b.id));
+}
+function evidenceLabel(r){
+ const temp=r.water&&typeof r.water==="object"&&!r.water.stale?r.water:null;
+ if(temp)return "Measured stream "+Number(temp.waterF).toFixed(1)+"°F · "+(temp.provisional?"USGS provisional":"USGS verified");
+ if(r.station)return "Stream sensor has no fresh reading";
+ const buoy=r.buoy&&!r.buoy.stale?r.buoy:null;
+ if(buoy)return "Lake buoy "+Number(buoy.tempF).toFixed(1)+"°F · stream unknown";
+ return "No verified stream gauge · historical opportunity only";
+}
 function board(){
- $("board").innerHTML=ordered(data).map(r=>'<button class="location '+(r.id===selected?'active':'')+'" type="button" data-region="'+esc(r.id)+'"><span><strong>'+esc(r.name)+'</strong><small>'+esc(r.area)+' · Historic: '+esc(r.history)+'</small></span>'+badge(r)+'</button>').join("");
+ $("board").innerHTML=ordered(data).map(r=>'<button class="location '+(r.id===selected?'active':'')+'" type="button" data-region="'+esc(r.id)+'"><span><strong>'+esc(r.name)+'</strong><small>'+esc(r.area)+' · Historic: '+esc(r.history)+'</small><small class="evidence-note">'+esc(evidenceLabel(r))+'</small></span>'+badge(r)+'</button>').join("");
  document.querySelectorAll(".location").forEach(b=>b.addEventListener("click",()=>select(b.dataset.region)));
- $("board-status").textContent=season?"Spring conditions":"Seasonal guide";
+ $("board-status").textContent=season?"Spring readiness":"Seasonal guide";
 }
 function renderChart(water){
  const svg=$("temp-chart");svg.innerHTML="";
@@ -70,7 +82,7 @@ function nights(r){
 function decision(r){
  const measured=r.water&&typeof r.water==="object"&&!r.water.stale?r.water:null;
  const when=r.bestNight?dateLabel(r.bestNight):null;
- const title=!season?"Not smelt-dipping season":r.status==="Conditions promising"?"Conditions worth scouting"+(when?" — "+when:""):r.status==="Hazard watch"?"Official weather hazard: check before heading out":r.status==="Safety data unavailable"?"Safety alert information unavailable":r.status==="Ice watch"?"Lake ice deserves caution":r.status==="Weather caution"?"Water in range, but nights not favorable":r.status==="Temperature watch"?"Still waiting on measured stream temperature":r.status==="Lake warming watch"?"Lake warming — stream conditions unverified":"Not enough evidence to recommend a night";
+ const title=!season?"Not smelt-dipping season":r.status==="Conditions promising"?"Conditions worth scouting"+(when?" — "+when:""):r.status==="Hazard watch"?"Official weather hazard: check before heading out":r.status==="Safety data unavailable"?"Safety alert information unavailable":r.status==="Ice watch"?"Lake ice deserves caution":r.status==="Weather caution"?"Water in range, but nights not favorable":r.status==="Temperature watch"?"Measured stream temperature outside early spawning range":r.status==="Lake warming watch"?"Lake warming — stream conditions unverified":"Not enough evidence to recommend a night";
  const explanation=!season?"Watch the lake and stream through winter; return in spring for measured-water and nightly forecasts. Historical spots are not a guarantee of fish.":r.reason||"No run-confirming observations.";
  $("decision-title").textContent=title;
  $("decision-description").textContent=explanation;
