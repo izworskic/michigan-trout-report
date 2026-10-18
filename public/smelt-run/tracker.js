@@ -1,5 +1,5 @@
-import * as maplibregl from "https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs";
-import {createExplorer} from "./explorer.js";
+import {createExplorer} from "./explorer.js?v=20261018-reliability1";
+// Mapping is optional: a blocked third-party CDN must never prevent NOAA/NWS/USGS data from rendering.
 /* Michigan smelt tracker — client. No third-party map key required. */
 (function(){
 "use strict";
@@ -22,7 +22,7 @@ let season=month>=3&&month<=5;
 let selected=(new URLSearchParams(location.search)).get("region")||"whitefish";
 if(!fallback.some(x=>x.id===selected))selected="whitefish";
 let night=new URLSearchParams(location.search).get("night")||null;
-let map=null;const markers=new Map();
+let map=null,maplibregl=null;const markers=new Map();
 let explorer=null;
 function badge(r){
  const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"||s==="Weather caution"?"watch":s==="Hazard watch"||s==="Ice watch"||s==="Safety data unavailable"?"hazard":"off";
@@ -182,10 +182,12 @@ function paintMarkers(){
   element.setAttribute("aria-pressed",id===selected?"true":"false");
  });
 }
-function startMap(){
+async function startMap(){
  const target=$("map");
- // MapLibre v6 removed the global supported() helper. The constructor reports GPU support failures.
+ target.setAttribute("aria-busy","true");
  try{
+  // Load only after the data UI has started. A CDN failure cannot abort the module.
+  maplibregl=await import("https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs");
   map=new maplibregl.Map({
    container:"map",
    style:"https://tiles.openfreemap.org/styles/positron",
@@ -223,13 +225,15 @@ function startMap(){
   });
  }catch(error){
   map=null;
-  target.innerHTML='<p class="map-error">Map unavailable. Use the region list to explore every location.</p>';
+  target.innerHTML='<p class="map-error">Map tiles are unavailable in this browser. Live water and weather observations are still available in the region list and explorer.</p>';
+ }finally{
+  target.removeAttribute("aria-busy");
  }
 }
 async function load(){
  const button=$("refresh");button.disabled=true;button.textContent="Updating…";
  try{
- const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),15000);
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),22000);
  let response;
  try{response=await fetch("/api/smelt-run",{signal:ctrl.signal,cache:"no-store"});}finally{clearTimeout(timer);}
  if(!response.ok)throw Error("API "+response.status);
@@ -258,5 +262,8 @@ $("nights").addEventListener("click",event=>{
  if(target)selectNight(target.dataset.nightDate);
 });
 $("refresh").addEventListener("click",load);
-board();detail();startMap();explorer.update(data,selected,season,night);load();
+board();detail();explorer.update(data,selected,season,night);
+// Start the API first; map imports and map tiles are independent of live data.
+void load();
+void startMap();
 })();
