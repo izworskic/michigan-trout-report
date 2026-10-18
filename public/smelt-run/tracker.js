@@ -1,4 +1,4 @@
-import {createExplorer} from "./explorer.js?v=20261018-reliability1";
+import {createExplorer} from "./explorer.js?v=20261018-reliability2";
 // Mapping is optional: a blocked third-party CDN must never prevent NOAA/NWS/USGS data from rendering.
 /* Michigan smelt tracker — client. No third-party map key required. */
 (function(){
