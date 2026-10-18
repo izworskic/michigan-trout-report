@@ -24,6 +24,6 @@ test("smelt map preserves seven accessible clickable region markers",()=>{
  assert.match(client,/el\.addEventListener\("click",\(\)=>select\(r\.id,true\)\)/);
  assert.match(client,/el\.setAttribute\("aria-label"/);
  assert.match(client,/classList\.toggle\("active"/);
- assert.match(client,/map\.flyTo\(\{center:\[r\.lon,r\.lat\]/);
+ assert.match(client,/map\.easeTo\(\{center:\[r\.lon,r\.lat\]/);
  assert.match(client,/Map unavailable\. Use the region list/);
 });
