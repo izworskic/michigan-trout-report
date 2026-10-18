@@ -29,7 +29,7 @@ const availableSeries=r=>{
 };
 const nearestForecast=(r,date)=>r?.forecast?.find(x=>x.date===date)||null;
 export function createExplorer(root,{onRegion,onNight}){
- let regions=[],selected="",season=false,night=null,pinned=null,hoverDate=null;
+ let regions=[],selected="",season=false,night=null,compareId=null,hoverDate=null;
  const layers=new Set(["stream","buoy","lake"]);
  const region=()=>regions.find(r=>r.id===selected)||regions[0]||null;
  const control=(selector)=>root.querySelector(selector);
@@ -102,20 +102,47 @@ export function createExplorer(root,{onRegion,onNight}){
   '<button data-exp-step="1" type="button" aria-label="Next observation date" '+(dayIndex===days.length-1?'disabled':'')+'>›</button></div>'+
   '<div class="exp-snapshot">'+vals+'</div>';
  };
+ const compareOptions=(selectedId)=>regions.map(r=>'<option value="'+esc(r.id)+'"'+(r.id===selectedId?' selected':'')+'>'+esc(r.name)+'</option>').join("");
+ const comparableObservation=(left,right)=>{
+  // Only compare like with like. Lake-wide GLSEA means are shared across a basin and are NOT site comparisons.
+  const w1=temperature(left).water,w2=temperature(right).water;
+  if(w1&&w2){
+   const a=Date.parse(w1.measuredAt),b=Date.parse(w2.measuredAt);
+   if(Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a-b)<=24*3600000)
+    return '<strong>Comparable measured stream temperatures:</strong> '+esc(left.name)+' '+fmt(w1.waterF)+
+     ' versus '+esc(right.name)+' '+fmt(w2.waterF)+'. Difference: '+Math.abs(w1.waterF-w2.waterF).toFixed(1)+
+     '°F (observations within 24 hours). This is not a fish-presence estimate.';
+  }
+  return '<strong>No valid stream-to-stream comparison.</strong> At least one location lacks a fresh independent USGS stream gauge. Lake readings are useful context, not substitutes for spawning tributary measurements.';
+ };
  const renderCompare=()=>{
-  const reference=regions.find(r=>r.id===pinned);
-  if(!reference)return '<div class="exp-compare-help">Select <strong>Pin for comparison</strong> on a region, then choose another region from the map or evidence matrix. Comparison uses source-quality labels, not a fabricated smelt score.</div>';
-  if(reference.id===selected)return '<div class="exp-compare-help"><strong>'+esc(reference.name)+'</strong> is pinned. Select a different region on the map or in the evidence matrix to compare them.</div>';
-  const cell=r=>{
+  const first=region(),second=regions.find(r=>r.id===compareId&&r.id!==selected);
+  if(!first)return '<p class="exp-compare-help">The region data is not ready.</p>';
+  const selector='<div class="exp-compare-controls">'+
+   '<label>First region <select id="exp-compare-a" aria-label="First region for comparison">'+compareOptions(selected)+'</select></label>'+
+   '<label>Compare with <select id="exp-compare-b" aria-label="Second region for comparison">'+
+    '<option value="">Choose another region…</option>'+regions.filter(x=>x.id!==selected).map(r=>'<option value="'+esc(r.id)+'"'+(r.id===compareId?' selected':'')+'>'+esc(r.name)+'</option>').join("")+
+   '</select></label></div>';
+  if(!second)return selector+'<p class="exp-compare-help" role="status">Choose a second region above to view two real observation profiles side by side.</p>';
+  const cell=(r,firstColumn)=>{
    const {water,buoy,lake}=temperature(r),c=coverage(r);
-   return '<div class="exp-compare-card"><strong>'+esc(r.name)+'</strong><small>'+esc(c.label)+' · '+esc(r.history)+' historic opportunity</small>'+
-    '<dl><div><dt>Measured stream</dt><dd>'+esc(water?fmt(water.waterF):'Not available')+'</dd></div>'+
-    '<div><dt>Measured lake buoy</dt><dd>'+esc(buoy?fmt(buoy.tempF):'Not available')+'</dd></div>'+
-    '<div><dt>Lake-wide GLSEA</dt><dd>'+esc(lake?fmt(lake.tempF):'Not available')+'</dd></div>'+
-    '<div><dt>Spring status</dt><dd>'+esc(r.status||'Unknown')+'</dd></div></dl></div>';
+   const provenance=(reading,kind)=>reading?'<span class="exp-data-date">'+esc(
+    reading.measuredAt?new Date(reading.measuredAt).toLocaleDateString("en-US",{timeZone:"America/Detroit",month:"short",day:"numeric"}):""
+   )+(reading.provisional?" · provisional":"")+'</span>':'';
+   return '<div class="exp-compare-card"><span class="exp-compare-role">'+(firstColumn?'REGION A · MAP + CHART':'REGION B · COMPARISON')+'</span>'+
+    '<strong>'+esc(r.name)+'</strong><small>'+esc(c.label)+' · '+esc(r.history)+' historical opportunity</small>'+
+    '<dl><div><dt>USGS measured stream</dt><dd>'+esc(water?fmt(water.waterF):'Unavailable')+provenance(water)+'</dd></div>'+
+    '<div><dt>NOAA lake buoy</dt><dd>'+esc(buoy?fmt(buoy.tempF):'Unavailable')+(buoy?' <span class="exp-data-date">Station '+esc(buoy.station||"unverified")+'</span>':'')+provenance(buoy)+'</dd></div>'+
+    '<div><dt>GLSEA whole-lake mean</dt><dd>'+esc(lake?fmt(lake.tempF):'Unavailable')+(lake?' <span class="exp-data-date">'+esc(r.lakeBasin)+' basin</span>':'')+'</dd></div>'+
+    '<div><dt>Season status</dt><dd>'+esc(r.status||'Unknown')+'</dd></div></dl></div>';
   };
-  return '<div class="exp-compare-grid">'+cell(reference)+cell(region())+'</div>'+
-   '<p class="exp-fine">Direct stream, point buoy, and whole-lake means are different measurement types. Equal temperatures do not establish equal fishing conditions.</p>';
+  const duplicateBuoy=first.buoy?.station&&first.buoy.station===second.buoy?.station;
+  const basinShared=first.lakeBasin&&first.lakeBasin===second.lakeBasin;
+  return selector+'<div class="exp-compare-grid" aria-live="polite">'+cell(first,true)+cell(second,false)+'</div>'+
+   '<div class="exp-compare-assessment">'+comparableObservation(first,second)+'</div>'+
+   (duplicateBuoy?'<p class="exp-fine"><strong>Same buoy:</strong> Both regions reference station '+esc(first.buoy.station)+'. This is one shared lake measurement, not two independent observations.</p>':'')+
+   (basinShared?'<p class="exp-fine"><strong>Same lake basin:</strong> Both regions show the identical GLSEA basin average; it does not differentiate their tributaries.</p>':'')+
+   '<p class="exp-fine">Data sources have different locations and observation times. Historical DNR opportunity does not establish current catches or legal dipping access.</p>';
  };
  const renderNights=()=>{
   if(!season)return '<div class="exp-no-nights"><strong>Spring night explorer is dormant.</strong> When March–May arrives, selectable NWS forecast nights will filter the weather evidence across all seven areas. No October run or weather forecast is invented.</div>';
@@ -138,9 +165,8 @@ export function createExplorer(root,{onRegion,onNight}){
    '<div class="exp-top-grid"><div class="exp-chart-card"><div class="exp-card-top"><div><div class="eyebrow">01 / Temperature history</div><h3>'+esc(r.name)+'</h3><p>'+esc(cov.short)+' · '+esc(r.waterbody||r.water||"")+'</p></div>'+
    '<div class="exp-source-pills">'+sources.map(source=>'<button type="button" class="exp-layer '+(layers.has(source.id)?'on':'')+'" aria-pressed="'+layers.has(source.id)+'" data-exp-layer="'+source.id+'" title="'+esc(source.description)+'"><i style="background:'+source.color+'"></i>'+esc(source.label)+'</button>').join("")+'</div></div>'+
    renderChart(r)+'<div class="exp-chart-note">Dots are dated observations. Source readouts identify the latest sample when none exists on the selected date. Lines stop at missing calendar days—no values are interpolated. USGS = stream, NDBC = a lake buoy, GLSEA = a whole-lake satellite-derived mean. Off-season temperatures do not imply smelt are running.</div></div>'+
-   '<aside class="exp-side-card"><div class="eyebrow">02 / Build a comparison</div><h3>Compare conditions, not imaginary odds</h3>'+
-   '<p class="exp-side-copy">Pin one area and explore another. Switching the region also moves the map marker and changes the chart.</p>'+
-   '<div class="exp-pin-row"><button id="exp-pin" type="button">'+(pinned===selected?'Pinned ✓':'Pin '+esc(r.name))+'</button>'+(pinned?'<button id="exp-clear" type="button">Clear pin</button>':'')+'</div>'+
+   '<aside class="exp-side-card"><div class="eyebrow">02 / Compare two regions</div><h3>See conditions side by side</h3>'+
+   '<p class="exp-side-copy">Choose two regions here. The first controls the map and temperature chart; the second stays in the comparison. No pinning or scrolling required.</p>'+
    '<div class="exp-compare-body">'+renderCompare()+'</div></aside></div>'+
    '<div class="exp-matrix"><div class="exp-card-top"><div><div class="eyebrow">03 / Statewide evidence explorer</div><h3>Compare all seven regions</h3><p>Tap a row to sync the map, charts and briefing. “—” means no verified current reading—not zero.</p></div></div>'+
    '<div class="exp-table" role="group" aria-label="Seven smelt regions and observation coverage"><div class="exp-table-head"><span>Region / historic area</span><span>USGS stream</span><span>NOAA buoy</span><span>GLSEA basin mean</span><span>'+(night?'NWS '+esc(labelDate(night)):'NWS night')+'</span></div>'+matrixRows()+'</div></div>'+
@@ -157,8 +183,6 @@ export function createExplorer(root,{onRegion,onNight}){
    const dates=(control("#exp-date-slider")?.dataset.expDays||"").split(",").filter(Boolean),i=dates.indexOf(hoverDate);
    hoverDate=dates[Math.max(0,Math.min(dates.length-1,i+Number(step.dataset.expStep)))];render();return;
   }
-  if(event.target.closest("#exp-pin")){pinned=selected;render();return;}
-  if(event.target.closest("#exp-clear")){pinned=null;render();return;}
   if(event.target.closest("#exp-share")){
    const url=new URL(location.href);
    url.searchParams.set("region",selected);
@@ -167,6 +191,22 @@ export function createExplorer(root,{onRegion,onNight}){
     const label=control("#exp-share");if(label)label.textContent="Link copied";
    }).catch(()=>{const label=control("#exp-share");if(label)label.textContent="Select URL to share";});}
    else {const label=control("#exp-share");if(label)label.textContent="Share your browser URL";}
+  }
+ });
+ root.addEventListener("change",event=>{
+  if(event.target.id==="exp-compare-a"){
+   const id=event.target.value;
+   if(regions.some(r=>r.id===id)&&id!==selected){
+    // Keep the secondary region where possible, but prevent comparing a region with itself.
+    if(compareId===id)compareId=selected;
+    onRegion(id);
+   }
+   return;
+  }
+  if(event.target.id==="exp-compare-b"){
+   const id=event.target.value;
+   compareId=id&&id!==selected&&regions.some(r=>r.id===id)?id:null;
+   render();
   }
  });
  root.addEventListener("input",event=>{
@@ -178,9 +218,11 @@ export function createExplorer(root,{onRegion,onNight}){
  return {
   update(nextRegions,nextSelected,nextSeason,nextNight){
    regions=nextRegions||[];selected=nextSelected;season=!!nextSeason;night=nextNight||null;
-   if(!regions.some(r=>r.id===pinned))pinned=null;
+   if(!regions.some(r=>r.id===compareId&&r.id!==selected)){
+    compareId=regions.find(r=>r.id!==selected)?.id||null;
+   }
    render();
   },
-  getPinned:()=>pinned
+  getCompareId:()=>compareId
  };
 }
