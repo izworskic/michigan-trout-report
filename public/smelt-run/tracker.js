@@ -147,11 +147,11 @@ function select(id,focus){
  selected=id;
  board();detail();paintMarkers();explorer?.update(data,selected,season,night);
  syncUrl();
- if(focus&&map){
+ if(map){
   const r=data.find(x=>x.id===id);
-  map.flyTo({center:[r.lon,r.lat],zoom:8,duration:650,essential:true});
-  $("explorer").scrollIntoView({behavior:"smooth",block:"start"});
+  map.easeTo({center:[r.lon,r.lat],zoom:focus?8:Math.max(6,map.getZoom()),duration:600,essential:true});
  }
+ if(focus)$("explorer").scrollIntoView({behavior:"smooth",block:"start"});
 }
 function syncUrl(){
  const url=new URL(location.href);
