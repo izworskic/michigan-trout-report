@@ -29,7 +29,7 @@ const availableSeries=r=>{
 };
 const nearestForecast=(r,date)=>r?.forecast?.find(x=>x.date===date)||null;
 export function createExplorer(root,{onRegion,onNight}){
- let regions=[],selected="",season=false,night=null,compareId=null,hoverDate=null;
+ let regions=[],selected="",season=false,night=null,compareId=null,compareTouched=false,hoverDate=null;
  const layers=new Set(["stream","buoy","lake"]);
  const region=()=>regions.find(r=>r.id===selected)||regions[0]||null;
  const control=(selector)=>root.querySelector(selector);
@@ -121,12 +121,12 @@ export function createExplorer(root,{onRegion,onNight}){
   const selector='<div class="exp-compare-controls">'+
    '<label>First region <select id="exp-compare-a" aria-label="First region for comparison">'+compareOptions(selected)+'</select></label>'+
    '<label>Compare with <select id="exp-compare-b" aria-label="Second region for comparison">'+
-    '<option value="">Choose another region…</option>'+regions.filter(x=>x.id!==selected).map(r=>'<option value="'+esc(r.id)+'"'+(r.id===compareId?' selected':'')+'>'+esc(r.name)+'</option>').join("")+
+    regions.filter(x=>x.id!==selected).map(r=>'<option value="'+esc(r.id)+'"'+(r.id===compareId?' selected':'')+'>'+esc(r.name)+'</option>').join("")+
    '</select></label></div>';
   if(!second)return selector+'<p class="exp-compare-help" role="status">Choose a second region above to view two real observation profiles side by side.</p>';
   const cell=(r,firstColumn)=>{
    const {water,buoy,lake}=temperature(r),c=coverage(r);
-   const provenance=(reading,kind)=>reading?'<span class="exp-data-date">'+esc(
+   const provenance=(reading,kind)=>reading?' · <span class="exp-data-date">'+esc(
     reading.measuredAt?new Date(reading.measuredAt).toLocaleDateString("en-US",{timeZone:"America/Detroit",month:"short",day:"numeric"}):""
    )+(reading.provisional?" · provisional":"")+'</span>':'';
    return '<div class="exp-compare-card"><span class="exp-compare-role">'+(firstColumn?'REGION A · MAP + CHART':'REGION B · COMPARISON')+'</span>'+
@@ -199,13 +199,17 @@ export function createExplorer(root,{onRegion,onNight}){
    if(regions.some(r=>r.id===id)&&id!==selected){
     // Keep the secondary region where possible, but prevent comparing a region with itself.
     if(compareId===id)compareId=selected;
+    compareTouched=true;
     onRegion(id);
    }
    return;
   }
   if(event.target.id==="exp-compare-b"){
    const id=event.target.value;
-   compareId=id&&id!==selected&&regions.some(r=>r.id===id)?id:null;
+   if(id&&id!==selected&&regions.some(r=>r.id===id)){
+    compareId=id;
+    compareTouched=true;
+   }
    render();
   }
  });
@@ -218,8 +222,12 @@ export function createExplorer(root,{onRegion,onNight}){
  return {
   update(nextRegions,nextSelected,nextSeason,nextNight){
    regions=nextRegions||[];selected=nextSelected;season=!!nextSeason;night=nextNight||null;
-   if(!regions.some(r=>r.id===compareId&&r.id!==selected)){
-    compareId=regions.find(r=>r.id!==selected&&r.water&&!r.water.stale)?.id||regions.find(r=>r.id!==selected)?.id||null;
+   if(!compareTouched||!regions.some(r=>r.id===compareId&&r.id!==selected)){
+    // Initial fallback rows lack measurements; reassess when current observations hydrate.
+    // A visitor's deliberate comparison choice survives data refresh.
+    compareId=regions.find(r=>r.id!==selected&&r.water&&!r.water.stale)?.id||
+     regions.find(r=>r.id!==selected&&r.buoy&&!r.buoy.stale&&r.buoy.station!==region()?.buoy?.station)?.id||
+     regions.find(r=>r.id!==selected)?.id||null;
    }
    render();
   },
