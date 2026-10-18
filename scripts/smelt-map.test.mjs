@@ -11,8 +11,8 @@ test("smelt map uses keyless OpenFreeMap rather than CARTO tile watermarks",()=>
  assert.match(page,/OpenStreetMap/);
 });
 test("live water data initializes before the optional third-party map module",()=>{
- assert.match(page,/<script src="\/smelt-run\/tracker\.js\?v=20261018-reliability2" type="module"><\/script>/);
- assert.match(client,/^import \{createExplorer\} from "\.\/explorer\.js\?v=20261018-reliability2"/);
+ assert.match(page,/<script src="\/smelt-run\/tracker\.js\?v=20261018-compare-fix1" type="module"><\/script>/);
+ assert.match(client,/^import \{createExplorer\} from "\.\/explorer\.js\?v=20261018-compare-fix1"/);
  assert.doesNotMatch(client,/^import .*https:\/\/unpkg\.com\/maplibre-gl/m);
  assert.match(client,/maplibregl=await import\("https:\/\/unpkg\.com\/maplibre-gl@6\.13\.0\/dist\/maplibre-gl\.mjs"\)/);
  assert.match(client,/void load\(\);\s*void startMap\(\);/);
