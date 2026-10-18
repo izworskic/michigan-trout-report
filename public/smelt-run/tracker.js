@@ -115,7 +115,8 @@ function paintMarkers(){
  markers.forEach((mark,id)=>{
   const r=data.find(x=>x.id===id);if(!r)return;
   const element=mark.getElement();
-  element.className="map-marker"+(r.history==="Limited"?" limited":"")+(id===selected?" active":"");
+  element.classList.toggle("limited",r.history==="Limited");
+  element.classList.toggle("active",id===selected);
   element.setAttribute("aria-pressed",id===selected?"true":"false");
  });
 }
@@ -141,6 +142,7 @@ function startMap(){
   for(const r of fallback){
    const el=document.createElement("button");
    el.type="button";
+   el.className="map-marker";
    el.title=r.name;
    el.setAttribute("aria-label","Explore "+r.name+" smelt conditions");
    const m=new maplibregl.Marker({element:el,anchor:"center"}).setLngLat([r.lon,r.lat]).addTo(map);
