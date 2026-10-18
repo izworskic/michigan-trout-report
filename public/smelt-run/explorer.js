@@ -219,7 +219,7 @@ export function createExplorer(root,{onRegion,onNight}){
   update(nextRegions,nextSelected,nextSeason,nextNight){
    regions=nextRegions||[];selected=nextSelected;season=!!nextSeason;night=nextNight||null;
    if(!regions.some(r=>r.id===compareId&&r.id!==selected)){
-    compareId=regions.find(r=>r.id!==selected)?.id||null;
+    compareId=regions.find(r=>r.id!==selected&&r.water&&!r.water.stale)?.id||regions.find(r=>r.id!==selected)?.id||null;
    }
    render();
   },
