@@ -1,3 +1,4 @@
+import * as maplibregl from "https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs";
 /* Michigan smelt tracker — client. No third-party map key required. */
 (function(){
 "use strict";
@@ -108,22 +109,61 @@ function select(id,focus){
  if(!data.some(x=>x.id===id))return;selected=id;
  board();detail();paintMarkers();
  const url=new URL(location.href);url.searchParams.set("region",id);history.replaceState(null,"",url.pathname+url.search+url.hash);
- if(focus&&map){const r=data.find(x=>x.id===id);map.flyTo([r.lat,r.lon],8,{duration:.65});}
+ if(focus&&map){const r=data.find(x=>x.id===id);map.flyTo({center:[r.lon,r.lat],zoom:8,duration:650,essential:true});}
 }
 function paintMarkers(){
- markers.forEach((mark,id)=>{const r=data.find(x=>x.id===id);if(!r)return;
- const className="map-marker "+(r.history==="Limited"?"limited ":"")+(id===selected?"active":"");
- mark.setIcon(window.L.divIcon({html:'<span class="'+className+'"></span>',className:"",iconSize:[26,26],iconAnchor:[13,13]}));
+ markers.forEach((mark,id)=>{
+  const r=data.find(x=>x.id===id);if(!r)return;
+  const element=mark.getElement();
+  element.className="map-marker"+(r.history==="Limited"?" limited":"")+(id===selected?" active":"");
+  element.setAttribute("aria-pressed",id===selected?"true":"false");
  });
 }
 function startMap(){
- if(!window.L){$("map").innerHTML='<div style="padding:25px">Map temporarily unavailable. All seven regions remain selectable in the regional board.</div>';return;}
+ const target=$("map");
+ if(!maplibregl.supported()){
+  target.innerHTML='<p class="map-error">Interactive mapping is unavailable in this browser. All seven regions can still be selected in the list.</p>';
+  return;
+ }
  try{
- map=L.map("map",{scrollWheelZoom:false,zoomControl:true}).setView([45.89,-86.7],6);
- L.tileLayer("https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',maxZoom:16}).addTo(map);
- for(const r of fallback){const m=L.marker([r.lat,r.lon],{title:r.name}).addTo(map);m.bindTooltip(esc(r.name));m.on("click",()=>select(r.id,true));markers.set(r.id,m);}
- paintMarkers();
- }catch(e){$("map").textContent="Map unavailable. Use the regional board to explore every location.";}
+  map=new maplibregl.Map({
+   container:"map",
+   style:"https://tiles.openfreemap.org/styles/positron",
+   center:[-86.7,45.89],
+   zoom:6,
+   maxZoom:16,
+   dragRotate:false,
+   pitchWithRotate:false,
+   attributionControl:false
+  });
+  map.addControl(new maplibregl.NavigationControl({showCompass:false}),"top-right");
+  map.addControl(new maplibregl.AttributionControl({customAttribution:'<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>',compact:true}),"bottom-right");
+  for(const r of fallback){
+   const el=document.createElement("button");
+   el.type="button";
+   el.title=r.name;
+   el.setAttribute("aria-label","Explore "+r.name+" smelt conditions");
+   const m=new maplibregl.Marker({element:el,anchor:"center"}).setLngLat([r.lon,r.lat]).addTo(map);
+   el.addEventListener("click",()=>select(r.id,true));
+   markers.set(r.id,m);
+  }
+  paintMarkers();
+  map.on("load",()=>{map.resize();});
+  map.on("error",e=>{
+   // A service failure should not leave an unexplained blank map; retain the region board.
+   const msg=String(e?.error?.message||"");
+   if(/style|source|tile|fetch|network/i.test(msg)&&!target.querySelector(".map-error")){
+    const alert=document.createElement("p");
+    alert.className="map-error";
+    alert.setAttribute("role","status");
+    alert.textContent="Map background temporarily unavailable. Select any region from the list.";
+    target.appendChild(alert);
+   }
+  });
+ }catch(error){
+  map=null;
+  target.innerHTML='<p class="map-error">Map unavailable. Use the region list to explore every location.</p>';
+ }
 }
 async function load(){
  const button=$("refresh");button.disabled=true;button.textContent="Updating…";
