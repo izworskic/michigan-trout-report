@@ -14,7 +14,9 @@ test("smelt map loads MapLibre v6 module without removed API and doesn't block r
  assert.match(page,/<script src="\/smelt-run\/tracker\.js" type="module"><\/script>/);
  assert.match(client,/import \* as maplibregl from "https:\/\/unpkg\.com\/maplibre-gl@6\.13\.0\/dist\/maplibre-gl\.mjs"/);
  assert.doesNotMatch(client,/maplibregl\.supported\(/);
- assert.match(client,/board\(\);detail\(\);startMap\(\);load\(\);/);
+ assert.match(client,/board\(\);detail\(\);startMap\(\);explorer\.update\(data,selected,season,night\);load\(\);/);
+ assert.match(client,/createExplorer\(/);
+ assert.match(client,/function selectNight\(/);
  assert.match(client,/function startMap\(\)[\s\S]*?try\s*\{[\s\S]*?catch/);
 });
 test("smelt map preserves seven accessible clickable region markers",()=>{
