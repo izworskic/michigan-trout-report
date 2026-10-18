@@ -55,15 +55,32 @@ function lakeTrend(sat){
 }
 function nights(r){
  const forecast=r.forecast||[];
- if(!season){$("nights").innerHTML='<p class="explain">Next spring’s night-by-night forecast will appear during March–May. There is no October run forecast.</p>';return;}
- if(!forecast.length){$("nights").innerHTML='<p class="explain">The NWS forecast is temporarily unavailable for this region. No nights have been ranked.</p>';return;}
- $("nights").innerHTML=forecast.map(f=>{
- const score=Number(f.nightScore)||0;
- return '<div class="night"><div><b>'+esc(dateLabel(f.date))+'</b><small>'+esc(f.weather||"NWS hourly forecast")+'</small></div><div><div class="bar"><i style="width:'+Math.min(100,Math.max(0,score/3*100))+'%"></i></div><small>Night conditions only'+(f.precipChance==null?'':' · Rain chance '+esc(f.precipChance)+'%')+'</small></div><div class="right">'+esc(f.airF)+'°F<small>'+esc(f.windMph)+' mph wind</small></div></div>';
+ if(!season){$("nights").innerHTML='<p class="explain">Night-by-night outlook resumes in spring. October conditions are not a smelt-run forecast.</p>';return;}
+ if(!forecast.length){$("nights").innerHTML='<p class="explain">The NWS overnight forecast is missing. No nights are ranked.</p>';return;}
+ const unsafe=r.status==="Hazard watch"||r.status==="Safety data unavailable"||r.status==="Ice watch";
+ const notice=unsafe?'<p class="explain"><strong>Do not use night ratings as go recommendations:</strong> safety or ice evidence requires a separate check.</p>':"";
+ $("nights").innerHTML=notice+forecast.map(f=>{
+  const grade=f.weatherGrade||"Incomplete";
+  const pct=f.nightScore==null?0:Math.round(Math.min(3,Math.max(0,f.nightScore))/3*100);
+  const chance=f.precipChance==null?"Rain chance unavailable":"Rain chance "+esc(f.precipChance)+"%";
+  const wind=f.maxWindMph==null?"Wind estimate unavailable":"Peak forecast wind "+esc(f.maxWindMph)+" mph";
+  return '<div class="night"><div><b>'+esc(dateLabel(f.date))+'</b><small>'+esc(f.weather||"NWS hourly forecast")+'</small></div><div><div class="bar"><i style="width:'+pct+'%"></i></div><span class="night-grade '+(grade==="Poor"?"poor":grade==="Incomplete"?"incomplete":"")+'">'+esc(grade)+' weather</span><small>'+chance+' · '+wind+'</small></div><div class="right">'+esc(f.airF)+'°F<small>'+(f.windMph==null?"No wind value":esc(f.windMph)+" mph avg")+'</small></div></div>';
  }).join("");
+}
+function decision(r){
+ const measured=r.water&&typeof r.water==="object"&&!r.water.stale?r.water:null;
+ const when=r.bestNight?dateLabel(r.bestNight):null;
+ const title=!season?"Not smelt-dipping season":r.status==="Conditions promising"?"Conditions worth scouting"+(when?" — "+when:""):r.status==="Hazard watch"?"Official weather hazard: check before heading out":r.status==="Safety data unavailable"?"Safety alert information unavailable":r.status==="Ice watch"?"Lake ice deserves caution":r.status==="Weather caution"?"Water in range, but nights not favorable":r.status==="Temperature watch"?"Still waiting on measured stream temperature":r.status==="Lake warming watch"?"Lake warming — stream conditions unverified":"Not enough evidence to recommend a night";
+ const explanation=!season?"Watch the lake and stream through winter; return in spring for measured-water and nightly forecasts. Historical spots are not a guarantee of fish.":r.reason||"No run-confirming observations.";
+ $("decision-title").textContent=title;
+ $("decision-description").textContent=explanation;
+ $("decision-temperature").textContent=measured?"Stream gauge: "+Number(measured.waterF).toFixed(1)+"°F · "+(measured.provisional?"provisional":"observed"):r.station?"Stream gauge: missing or older than 18h":"Stream gauge: none verified";
+ $("decision-weather").textContent=!season?"Nights: available during spring":r.forecast?.length?"NWS nights: "+r.forecast.length+" · weather only":"NWS nights: unavailable";
+ $("decision-alerts").textContent=!season?"NWS alerts: checked in spring":r.alertState==="checked"?(r.alerts?.length?"Alerts: "+r.alerts.length+" active":"Alerts: none matched"):"NWS alerts: unchecked";
 }
 function detail(){
  const r=data.find(x=>x.id===selected)||data[0];if(!r)return;
+ decision(r);
  $("detail-title").textContent=r.name;
  $("detail-sub").textContent=(r.waterbody||r.water||"Waterway") +" · "+r.county+" County / counties";
  $("detail-badge").outerHTML=badge(r).replace('<span ','<span id="detail-badge" ');
@@ -72,7 +89,7 @@ function detail(){
  $("history-text").textContent="Michigan DNR historic dipping opportunity · older survey, not a live catch estimate.";
  const w=typeof r.water==="object"?r.water:null;
  $("water-value").textContent=w&&!w.stale?Number(w.waterF).toFixed(1)+"°F":"No live reading";
- $("water-source").textContent=!season?"Measured readings are evaluated during spring.":w&&!w.stale?"USGS station "+w.station+" · "+new Date(w.measuredAt).toLocaleString("en-US",{timeZone:"America/Detroit",dateStyle:"medium",timeStyle:"short"})+" ET":r.station?"USGS station "+r.station+" missing or older than 18h":"No local USGS stream thermometer verified. Air ≠ water.";
+ $("water-source").textContent=w&&!w.stale?"USGS station "+w.station+" · "+new Date(w.measuredAt).toLocaleString("en-US",{timeZone:"America/Detroit",dateStyle:"medium",timeStyle:"short"})+" ET · "+(w.provisional?"Provisional reading":"Observed")+" · "+(!season?"Off season, no run claim":"Spring context"):r.station?"USGS station "+r.station+" missing or older than 18h":"No local USGS stream thermometer verified. Air ≠ water.";
  const link=r.station?"https://waterdata.usgs.gov/monitoring-location/USGS-"+encodeURIComponent(r.station)+"/":"https://api.waterdata.usgs.gov/";
  $("gage-link").href=link;
  const buoy=r.buoy||null,usable=buoy&&!buoy.stale,stationList=(r.buoyCandidates||[]).join(", ");
@@ -109,7 +126,7 @@ function select(id,focus){
  if(!data.some(x=>x.id===id))return;selected=id;
  board();detail();paintMarkers();
  const url=new URL(location.href);url.searchParams.set("region",id);history.replaceState(null,"",url.pathname+url.search+url.hash);
- if(focus&&map){const r=data.find(x=>x.id===id);map.flyTo({center:[r.lon,r.lat],zoom:8,duration:650,essential:true});}
+ if(focus&&map){const r=data.find(x=>x.id===id);map.flyTo({center:[r.lon,r.lat],zoom:8,duration:650,essential:true});$("detail").scrollIntoView({behavior:"smooth",block:"start"});}
 }
 function paintMarkers(){
  markers.forEach((mark,id)=>{
