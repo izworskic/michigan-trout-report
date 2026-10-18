@@ -76,10 +76,11 @@ export function createExplorer(root,{onRegion,onNight}){
    // Do not bridge missing dates with an invented path.
    let path="",previous=null;
    for(const p of values){
-    const i=days.indexOf(p.date);
-    if(previous===null||i-previous>1)path+="M"+x(p.date).toFixed(1)+" "+y(p.f).toFixed(1);
+    // Test real elapsed days, not array positions: a missing calendar day is not a measured trend.
+    const elapsed=previous===null?Infinity:(Date.parse(p.date+"T12:00:00Z")-Date.parse(previous+"T12:00:00Z"))/86400000;
+    if(elapsed>1.5||elapsed<=0)path+="M"+x(p.date).toFixed(1)+" "+y(p.f).toFixed(1);
     else path+=" L"+x(p.date).toFixed(1)+" "+y(p.f).toFixed(1);
-    previous=i;
+    previous=p.date;
    }
    svg+='<path d="'+path+'" stroke="'+source.color+'" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>';
    for(const p of values)svg+='<circle cx="'+x(p.date).toFixed(1)+'" cy="'+y(p.f).toFixed(1)+'" r="'+(p.date===hoverDate?5.5:3)+'" fill="'+source.color+'" stroke="white" stroke-width="1.5"><title>'+esc(source.label+' · '+p.date+' · '+fmt(p.f))+'</title></circle>';
@@ -135,7 +136,7 @@ export function createExplorer(root,{onRegion,onNight}){
    '<div class="exp-heading-action"><span class="exp-evidence-badge '+cov.grade+'">'+esc(cov.label)+'</span><button type="button" id="exp-share">Copy this view ↗</button></div></div>'+
    '<div class="exp-top-grid"><div class="exp-chart-card"><div class="exp-card-top"><div><div class="eyebrow">01 / Temperature history</div><h3>'+esc(r.name)+'</h3><p>'+esc(cov.short)+' · '+esc(r.waterbody||r.water||"")+'</p></div>'+
    '<div class="exp-source-pills">'+sources.map(source=>'<button type="button" class="exp-layer '+(layers.has(source.id)?'on':'')+'" aria-pressed="'+layers.has(source.id)+'" data-exp-layer="'+source.id+'" title="'+esc(source.description)+'"><i style="background:'+source.color+'"></i>'+esc(source.label)+'</button>').join("")+'</div></div>'+
-   renderChart(r)+'<div class="exp-chart-note">Dots are dated observations—not interpolated forecasts. USGS = stream, NDBC = a lake buoy, GLSEA = a whole-lake satellite-derived mean. Off-season temperatures do not imply smelt are running.</div></div>'+
+   renderChart(r)+'<div class="exp-chart-note">Dots are dated observations. Lines stop when observation days are missing—no values are interpolated. USGS = stream, NDBC = a lake buoy, GLSEA = a whole-lake satellite-derived mean. Off-season temperatures do not imply smelt are running.</div></div>'+
    '<aside class="exp-side-card"><div class="eyebrow">02 / Build a comparison</div><h3>Compare conditions, not imaginary odds</h3>'+
    '<p class="exp-side-copy">Pin one area and explore another. Switching the region also moves the map marker and changes the chart.</p>'+
    '<div class="exp-pin-row"><button id="exp-pin" type="button">'+(pinned===selected?'Pinned ✓':'Pin '+esc(r.name))+'</button>'+(pinned?'<button id="exp-clear" type="button">Clear pin</button>':'')+'</div>'+
