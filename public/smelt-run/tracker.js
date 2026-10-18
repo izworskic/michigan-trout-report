@@ -167,6 +167,10 @@ function selectNight(date){
  syncUrl();
 }
 function paintMarkers(){
+ const legend=$("map-legend");
+ if(legend)legend.innerHTML=season&&night?
+  '<strong>NWS weather on '+esc(dateLabel(night))+' (not fish activity):</strong> <span style="color:#147260">● Favorable</span> · <span style="color:#a18028">● Marginal</span> · <span style="color:#a95232">● Poor</span> · <span style="color:#7e9296">● Missing</span>'
+  :'<span style="color:#176d69">● Good historical opportunity</span> &nbsp; <span style="color:#b47b31">● Limited historical opportunity</span>';
  markers.forEach((mark,id)=>{
   const r=data.find(x=>x.id===id);if(!r)return;
   const element=mark.getElement();
