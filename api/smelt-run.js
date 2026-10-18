@@ -55,7 +55,15 @@ export function parseNdbc(text,station,now=Date.now()){
   observations.sort((a,b)=>b.t-a.t);
   const latest=observations[0],ageHours=Math.round((now-latest.t)/360000)/10;
   const past=observations.find(x=>x.t<latest.t-20*3600000&&x.t>latest.t-29*3600000);
-  return {station,name:BUOY_NAMES[station]||station,source:"NOAA NDBC",url:"https://www.ndbc.noaa.gov/station_page.php?station="+station,measuredAt:new Date(latest.t).toISOString(),ageHours,stale:ageHours>12,tempF:latest.tempF,windMph:latest.windMph,waveFt:latest.waveFt,change24hF:past?Math.round((latest.tempF-past.tempF)*10)/10:null,kind:"Measured lake water (not tributary water)"};
+  // One actual observation per UTC date; no interpolation or estimated lake temperatures.
+  const days=new Set(),history=[];
+  for(const row of observations){
+    const day=new Date(row.t).toISOString().slice(0,10);
+    if(days.has(day)||row.t<latest.t-7*86400000)continue;
+    days.add(day);history.push({t:new Date(row.t).toISOString(),f:row.tempF});
+  }
+  history.reverse();
+  return {station,name:BUOY_NAMES[station]||station,source:"NOAA NDBC",url:"https://www.ndbc.noaa.gov/station_page.php?station="+station,measuredAt:new Date(latest.t).toISOString(),ageHours,stale:ageHours>12,tempF:latest.tempF,windMph:latest.windMph,waveFt:latest.waveFt,change24hF:past?Math.round((latest.tempF-past.tempF)*10)/10:null,history,kind:"Measured lake water (not tributary water)"};
 }
 async function ndbc(station){
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),5200);
