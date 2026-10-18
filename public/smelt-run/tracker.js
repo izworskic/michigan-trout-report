@@ -1,4 +1,5 @@
 import * as maplibregl from "https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs";
+import {createExplorer} from "./explorer.js";
 /* Michigan smelt tracker — client. No third-party map key required. */
 (function(){
 "use strict";
@@ -20,7 +21,9 @@ let data=fallback.map(r=>({...r,status:"Off season",signal:"Historical opportuni
 let season=month>=3&&month<=5;
 let selected=(new URLSearchParams(location.search)).get("region")||"whitefish";
 if(!fallback.some(x=>x.id===selected))selected="whitefish";
+let night=new URLSearchParams(location.search).get("night")||null;
 let map=null;const markers=new Map();
+let explorer=null;
 function badge(r){
  const s=r.status||"Weather watch",cls=s==="Conditions promising"?"promising":s==="Temperature watch"||s==="Weather watch"||s==="Lake warming watch"||s==="Weather caution"?"watch":s==="Hazard watch"||s==="Ice watch"||s==="Safety data unavailable"?"hazard":"off";
  return '<span class="status '+cls+'">'+esc(s)+'</span>';
@@ -41,8 +44,13 @@ function evidenceLabel(r){
  if(buoy)return "Lake buoy "+Number(buoy.tempF).toFixed(1)+"°F · stream unknown";
  return "No verified stream gauge · historical opportunity only";
 }
+function nightWeatherLabel(r){
+ const f=r.forecast?.find(x=>x.date===night);
+ if(!f)return "NWS forecast unavailable for this night";
+ return "NWS "+f.weatherGrade+" weather · "+(f.maxWindMph==null?"wind unknown":f.maxWindMph+" mph peak")+" · not fish activity";
+}
 function board(){
- $("board").innerHTML=ordered(data).map(r=>'<button class="location '+(r.id===selected?'active':'')+'" type="button" data-region="'+esc(r.id)+'"><span><strong>'+esc(r.name)+'</strong><small>'+esc(r.area)+' · Historic: '+esc(r.history)+'</small><small class="evidence-note">'+esc(evidenceLabel(r))+'</small></span>'+badge(r)+'</button>').join("");
+ $("board").innerHTML=ordered(data).map(r=>'<button class="location '+(r.id===selected?'active':'')+'" type="button" data-region="'+esc(r.id)+'"><span><strong>'+esc(r.name)+'</strong><small>'+esc(r.area)+' · Historic: '+esc(r.history)+'</small><small class="evidence-note">'+esc(evidenceLabel(r))+'</small>'+(season&&night?'<small class="night-indicator">'+esc(nightWeatherLabel(r))+'</small>':'')+'</span>'+badge(r)+'</button>').join("");
  document.querySelectorAll(".location").forEach(b=>b.addEventListener("click",()=>select(b.dataset.region)));
  $("board-status").textContent=season?"Spring readiness":"Seasonal guide";
 }
@@ -76,7 +84,7 @@ function nights(r){
   const pct=f.nightScore==null?0:Math.round(Math.min(3,Math.max(0,f.nightScore))/3*100);
   const chance=f.precipChance==null?"Rain chance unavailable":"Rain chance "+esc(f.precipChance)+"%";
   const wind=f.maxWindMph==null?"Wind estimate unavailable":"Peak forecast wind "+esc(f.maxWindMph)+" mph";
-  return '<div class="night"><div><b>'+esc(dateLabel(f.date))+'</b><small>'+esc(f.weather||"NWS hourly forecast")+'</small></div><div><div class="bar"><i style="width:'+pct+'%"></i></div><span class="night-grade '+(grade==="Poor"?"poor":grade==="Incomplete"?"incomplete":"")+'">'+esc(grade)+' weather</span><small>'+chance+' · '+wind+'</small></div><div class="right">'+esc(f.airF)+'°F<small>'+(f.windMph==null?"No wind value":esc(f.windMph)+" mph avg")+'</small></div></div>';
+  return '<button type="button" data-night-date="'+esc(f.date)+'" class="night'+(night===f.date?' chosen-night':'')+'" aria-pressed="'+(night===f.date)+'"><div><b>'+esc(dateLabel(f.date))+'</b><small>'+esc(f.weather||"NWS hourly forecast")+'</small></div><div><div class="bar"><i style="width:'+pct+'%"></i></div><span class="night-grade '+(grade==="Poor"?"poor":grade==="Incomplete"?"incomplete":"")+'">'+esc(grade)+' weather</span><small>'+chance+' · '+wind+'</small></div><div class="right">'+esc(f.airF)+'°F<small>'+(f.windMph==null?"No wind value":esc(f.windMph)+" mph avg")+'</small></div></button>';
  }).join("");
 }
 function decision(r){
@@ -87,7 +95,7 @@ function decision(r){
  $("decision-title").textContent=title;
  $("decision-description").textContent=explanation;
  $("decision-temperature").textContent=measured?"Stream gauge: "+Number(measured.waterF).toFixed(1)+"°F · "+(measured.provisional?"provisional":"observed"):r.station?"Stream gauge: missing or older than 18h":"Stream gauge: none verified";
- $("decision-weather").textContent=!season?"Nights: available during spring":r.forecast?.length?"NWS nights: "+r.forecast.length+" · weather only":"NWS nights: unavailable";
+ $("decision-weather").textContent=!season?"Nights: available during spring":night?"Selected "+dateLabel(night)+": "+nightWeatherLabel(r):r.forecast?.length?"NWS nights: "+r.forecast.length+" · weather only":"NWS nights: unavailable";
  $("decision-alerts").textContent=!season?"NWS alerts: checked in spring":r.alertState==="checked"?(r.alerts?.length?"Alerts: "+r.alerts.length+" active":"Alerts: none matched"):"NWS alerts: unchecked";
 }
 function detail(){
@@ -135,10 +143,28 @@ function detail(){
  renderChart(season?w:null);nights(r);
 }
 function select(id,focus){
- if(!data.some(x=>x.id===id))return;selected=id;
- board();detail();paintMarkers();
- const url=new URL(location.href);url.searchParams.set("region",id);history.replaceState(null,"",url.pathname+url.search+url.hash);
- if(focus&&map){const r=data.find(x=>x.id===id);map.flyTo({center:[r.lon,r.lat],zoom:8,duration:650,essential:true});$("detail").scrollIntoView({behavior:"smooth",block:"start"});}
+ if(!data.some(x=>x.id===id))return;
+ selected=id;
+ board();detail();paintMarkers();explorer?.update(data,selected,season,night);
+ syncUrl();
+ if(focus&&map){
+  const r=data.find(x=>x.id===id);
+  map.flyTo({center:[r.lon,r.lat],zoom:8,duration:650,essential:true});
+  $("explorer").scrollIntoView({behavior:"smooth",block:"start"});
+ }
+}
+function syncUrl(){
+ const url=new URL(location.href);
+ url.searchParams.set("region",selected);
+ if(night&&season)url.searchParams.set("night",night);else url.searchParams.delete("night");
+ history.replaceState(null,"",url.pathname+url.search+url.hash);
+}
+function selectNight(date){
+ if(!season)return;
+ const known=[...new Set(data.flatMap(r=>(r.forecast||[]).map(x=>x.date)))];
+ night=date&&known.includes(date)?date:null;
+ board();detail();paintMarkers();explorer?.update(data,selected,season,night);
+ syncUrl();
 }
 function paintMarkers(){
  markers.forEach((mark,id)=>{
@@ -146,6 +172,9 @@ function paintMarkers(){
   const element=mark.getElement();
   element.classList.toggle("limited",r.history==="Limited");
   element.classList.toggle("active",id===selected);
+  for(const grade of ["favorable","marginal","poor","incomplete"])element.classList.remove("weather-"+grade);
+  const f=season&&night?r.forecast?.find(x=>x.date===night):null;
+  if(f)element.classList.add("weather-"+String(f.weatherGrade||"Incomplete").toLowerCase());
   element.setAttribute("aria-pressed",id===selected?"true":"false");
  });
 }
@@ -212,8 +241,18 @@ async function load(){
  $("updated").textContent="No live ranking displayed";
  }
  button.disabled=false;button.textContent="↻ Refresh conditions";
- board();detail();paintMarkers();
+ if(!season)night=null;
+ else if(night&&!data.some(r=>r.forecast?.some(f=>f.date===night)))night=null;
+ board();detail();paintMarkers();explorer?.update(data,selected,season,night);syncUrl();
 }
+explorer=createExplorer($("smelt-explorer"),{
+ onRegion:id=>select(id,false),
+ onNight:date=>selectNight(date)
+});
+$("nights").addEventListener("click",event=>{
+ const target=event.target.closest("[data-night-date]");
+ if(target)selectNight(target.dataset.nightDate);
+});
 $("refresh").addEventListener("click",load);
-board();detail();startMap();load();
+board();detail();startMap();explorer.update(data,selected,season,night);load();
 })();
