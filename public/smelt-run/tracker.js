@@ -186,7 +186,15 @@ async function startMap(){
  const target=$("map");
  target.setAttribute("aria-busy","true");
  try{
-  // Load only after the data UI has started. A CDN failure cannot abort the module.
+  // The optional third-party stylesheet also loads after the data UI has started.
+  if(!document.querySelector('link[data-smelt-map-style]')){
+   const stylesheet=document.createElement("link");
+   stylesheet.rel="stylesheet";
+   stylesheet.href="https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.css";
+   stylesheet.dataset.smeltMapStyle="optional";
+   document.head.appendChild(stylesheet);
+  }
+  // A blocked map module only disables mapping, never the NOAA/NWS/USGS observations.
   maplibregl=await import("https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs");
   map=new maplibregl.Map({
    container:"map",
