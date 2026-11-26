@@ -10,6 +10,7 @@ import { fetchRiverReports } from '../../lib/outfitters.js';
 import { synthesizeReports } from '../../lib/synthesizer.js';
 import { findSimilarDays } from '../../lib/history.js';
 import { MICHIGAN_HATCHES } from '../../lib/hatches.js';
+import { loadPageConditions, pageCacheControl } from '../../lib/river-page-data.js';
 
 const SITE       = 'https://michigantroutreport.com';
 const AUTHOR     = 'Chris Izworski';
@@ -27,7 +28,7 @@ const CACHE_TTL = 6 * 60 * 60;
 
 // ── SEO HTML PAGE BUILDER ───────────────────────────────────────────────
 function cfsLabel(cfs) {
-  if (!cfs || isNaN(cfs)) return null;
+  if (!Number.isFinite(cfs) || cfs < 0) return null;
   if (cfs < 50)  return `${Math.round(cfs)} cfs: very low`;
   if (cfs < 150) return `${Math.round(cfs)} cfs: low`;
   if (cfs < 400) return `${Math.round(cfs)} cfs: normal`;
@@ -35,13 +36,16 @@ function cfsLabel(cfs) {
   return `${Math.round(cfs)} cfs: high`;
 }
 
-function buildSEOPage(river, conditions, hatches) {
+export function buildSEOPage(river, conditions, hatches) {
   const monthName = new Date().toLocaleString('en-US', { month: 'long' });
   const year      = new Date().getFullYear();
   const dateStr   = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const flow      = cfsLabel(conditions?.cfs);
   const temp      = conditions?.tempC != null ? `${(conditions.tempC * 9/5 + 32).toFixed(1)}°F` : null;
   const rating    = conditions?.rating?.label || null;
+  const sourceStatus = conditions?.complete ? 'current' : conditions?.hasData ? 'partial' : 'unavailable';
+  const evidenceNotice = sourceStatus === 'current' ? 'USGS readings and seasonal statistics are available. Check gauge times before travel.' : sourceStatus === 'partial' ? 'Some live gauge readings or seasonal statistics are unavailable. Missing values and ratings are not estimated.' : 'Live gauge data is temporarily unavailable. The river guide, access information and seasonal hatch calendar remain available.';
+  const flowTime = conditions?.flowTimestamp ? new Date(conditions.flowTimestamp).toLocaleString('en-US', { timeZone:'America/Detroit', timeZoneName:'short' }) : null;
 
   const hatchRows = hatches.map(h => `<tr>
     <td style="padding:10px 12px;border-bottom:1px solid #eee;font-weight:600;color:#111;">${h.name}</td>
@@ -55,8 +59,7 @@ function buildSEOPage(river, conditions, hatches) {
       '@type': 'Article',
       headline: `${river.name} Fly Fishing Conditions: ${monthName} ${year}`,
       description: `Live ${river.name} trout fishing conditions. USGS flow ${flow || 'data'}, water temperature, active hatches, and fly recommendations for ${monthName} ${year}. By ${AUTHOR}.`,
-      dateModified: new Date().toISOString(),
-      datePublished: new Date().toISOString(),
+      ...(conditions?.flowTimestamp ? { dateModified: new Date(conditions.flowTimestamp).toISOString() } : {}),
       author: { '@type': 'Person', '@id': PERSON_ID, name: AUTHOR, url: PERSON_URL, sameAs: [AUTHOR_URL, DAILY, 'https://www.wikidata.org/wiki/Q138283432'] },
       publisher: { '@type': 'Organization', name: 'Michigan Trout Report', url: SITE },
       about: { '@type': 'Place', name: river.name, description: river.notes },
@@ -152,21 +155,22 @@ p{font-size:16px;color:var(--ink2);line-height:1.78;margin-bottom:18px}
 <div class="wrap">
   <div class="breadcrumb"><a href="${AUTHOR_URL}">${AUTHOR}</a> &rsaquo; <a href="/">Michigan Trout Report</a> &rsaquo; ${river.name}</div>
   <h1>${river.name}: Fly Fishing Conditions &amp; Hatch Report</h1>
-  <div class="byline">By <a href="${AUTHOR_URL}">${AUTHOR}</a> &nbsp;&#183;&nbsp; Updated ${dateStr} &nbsp;&#183;&nbsp; <a href="${DAILY}" target="_blank">Daily reports at Michigan Trout Daily</a></div>
+  <div class="byline">By <a href="${AUTHOR_URL}">${AUTHOR}</a> &nbsp;&#183;&nbsp; Guide viewed ${dateStr} &nbsp;&#183;&nbsp; <a href="${DAILY}" target="_blank">Daily reports at Michigan Trout Daily</a></div>
+  <p role="status" data-conditions-state="${sourceStatus}">${evidenceNotice}</p>
   <div class="conditions-bar">
-    <div><div class="cond-label">Flow</div><div class="cond-value">${flow ? flow.split(': ')[0] : 'N/A'}</div><div class="cond-sub">${flow ? flow.split(': ')[1] || '' : 'gauge unavailable'}</div></div>
+    <div><div class="cond-label">Flow</div><div class="cond-value">${flow ? flow.split(': ')[0] : 'N/A'}</div><div class="cond-sub">${flow ? (flow.split(': ')[1] || '') + (flowTime ? ' · measured ' + flowTime : '') : 'gauge unavailable'}</div></div>
     <div><div class="cond-label">Water Temp</div><div class="cond-value">${temp || 'N/A'}</div><div class="cond-sub">${conditions?.tempC != null ? ((conditions.tempC * 9/5 + 32) < 50 ? 'cold' : (conditions.tempC * 9/5 + 32) < 60 ? 'prime' : (conditions.tempC * 9/5 + 32) < 68 ? 'warm' : 'hot') : 'unavailable'}</div></div>
-    <div><div class="cond-label">Gauge Height</div><div class="cond-value">${conditions?.gaugeHeight ? conditions.gaugeHeight + ' ft' : 'N/A'}</div><div class="cond-sub">USGS gauge</div></div>
-    <div><div class="cond-label">Conditions</div><div class="cond-value" style="font-size:16px;text-transform:capitalize;">${rating || 'check app'}</div><div class="cond-sub">as of ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}</div></div>
+    <div><div class="cond-label">Gauge Height</div><div class="cond-value">${conditions?.gaugeHeight != null ? conditions.gaugeHeight + ' ft' : 'N/A'}</div><div class="cond-sub">USGS gauge</div></div>
+    <div><div class="cond-label">Conditions</div><div class="cond-value" style="font-size:16px;text-transform:capitalize;">${rating || 'Not rated'}</div><div class="cond-sub">${rating ? 'Based on available readings' : 'Insufficient live evidence'}</div></div>
   </div>
   <div class="section-head">About This River</div>
   <h2>${river.name}, ${river.region}</h2>
   <p>${river.notes}</p>
   <p>Species present: ${river.species.map(s => s.charAt(0).toUpperCase() + s.slice(1) + ' trout').join(', ')}. Stream type: ${river.type.replace('_', ' ')}.</p>
-  <div class="section-head">Active Hatches: ${monthName} ${year}</div>
-  <h2>What's Hatching Now</h2>
-  ${hatches.length > 0 ? `<p>Based on current water temperature${temp ? ` (${temp})` : ''} and time of year, the following insects are active or expected on the ${river.name}.</p>
-  <table class="hatch-table"><thead><tr><th>Hatch</th><th>Latin</th><th>Top Patterns</th><th>Time of Day</th></tr></thead><tbody>${hatchRows}</tbody></table>` : `<p>No major hatches active at current conditions. Nymphs, streamers, and midges are the recommended approach.</p>`}
+  <div class="section-head">Seasonal Hatches: ${monthName} ${year}</div>
+  <h2>Hatches to watch for</h2>
+  ${hatches.length > 0 ? `<p>Based on ${temp ? `available water temperature (${temp}) and ` : ''}the seasonal hatch calendar, the following insects may be present on the ${river.name}. These are not verified hatch observations.</p>
+  <table class="hatch-table"><thead><tr><th>Hatch</th><th>Latin</th><th>Top Patterns</th><th>Time of Day</th></tr></thead><tbody>${hatchRows}</tbody></table>` : `<p>No major hatches match the available seasonal and water-temperature evidence. Check local observations before selecting a pattern.</p>`}
   <div class="section-head">Access &amp; Regulations</div>
   <div class="info-grid">
     <div class="info-cell"><div class="info-cell-label">Public Access</div><div class="info-cell-val">${river.access}</div></div>
@@ -203,29 +207,8 @@ export default async function handler(req, res) {
 
   // ── HTML SEO PAGE branch ────────────────────────────────────────
   if ((req.url || '').startsWith('/rivers/')) {
-    const redis    = makeState();
-    const cacheKey = `trout:river-page:v2:${id}`;
-
-    if (redis) {
-      try {
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=7200');
-          res.setHeader('X-Cache', 'HIT');
-          return res.send(cached);
-        }
-      } catch(e) {}
-    }
-
-    let conditions = {};
-    try {
-      const readings = await fetchLiveReadings([river.primaryGauge]);
-      const stats    = await fetchAllStats([river.primaryGauge]);
-      const raw      = readings[river.primaryGauge] || {};
-      const s        = stats[river.primaryGauge] || {};
-      conditions     = { ...buildConditions(raw, s), cfs: raw.flow, tempC: raw.temp_c, gaugeHeight: raw.gage };
-    } catch(e) {}
+    // CDN caching remains. Never block public HTML on private state.
+    const conditions = await loadPageConditions(river.primaryGauge, { fetchLiveReadings, fetchAllStats });
 
     const month   = new Date().getMonth() + 1;
     const tempF   = conditions.tempC != null ? conditions.tempC * 9/5 + 32 : null;
@@ -236,10 +219,9 @@ export default async function handler(req, res) {
     });
 
     const html = buildSEOPage(river, conditions, hatches);
-    if (redis) try { await redis.set(cacheKey, html, { ex: 3600 }); } catch(e) {}
-
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=7200');
+    res.setHeader('Cache-Control', pageCacheControl(conditions));
+    res.setHeader('X-River-Conditions', conditions.complete ? 'current' : conditions.hasData ? 'partial' : 'unavailable');
     return res.send(html);
   }
 

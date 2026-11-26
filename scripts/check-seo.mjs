@@ -33,9 +33,7 @@ assert.ok(
   'dynamic river pages must not interpolate the full rating object',
 );
 
-assert.ok(
-  riverHandler.includes('trout:river-page:v2:${id}'),
-  'dynamic river page cache must be versioned when rendered HTML changes',
-);
+assert.ok(riverHandler.includes('pageCacheControl(conditions)'), 'river HTML needs evidence-dependent CDN caching');
+assert.ok(!riverHandler.includes('trout:river-page:v2:${id}'), 'legacy rendered HTML cache must not block river pages');
 
 console.log('SEO checks passed.');
