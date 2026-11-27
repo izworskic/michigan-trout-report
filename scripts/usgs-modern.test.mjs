@@ -106,3 +106,22 @@ test('weather and daylight cannot substitute for missing river evidence',async()
  assert.equal(supportsFishingAdvice(c),true);assert.equal(weatherForEvidence(wx,true),wx);assert.equal(sunForEvidence(sun,true),sun);
  for(const value of [null,undefined,NaN])assert.equal(estimateSpinnerFall(1000,value).start,null);
 });
+
+test('full report renderer does not invent rain or fishing advice for withheld evidence',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const vm=await import('node:vm');
+ const html=readFileSync(new URL('../public/river.html',import.meta.url),'utf8');
+ const start=html.indexOf('  const supported = c.evidenceState');
+ const end=html.indexOf('  const gaugesHtml',start);
+ assert.ok(start>=0&&end>start);
+ const code=html.slice(start,end)+'\n({recHtml,weatherHtml})';
+ const recData={conditions:{adviceSupported:true},recommendation:'Go fishing',staticRec:{},weather:{today:{tempF:49,rain:0,forecast:'Clear'},flowTrend:null,week:[]}};
+ for(const c of [{evidenceState:'unavailable',ratingKey:'UNRATED'},{evidenceState:'complete',ratingKey:'TOUGH'},{evidenceState:'complete',ratingKey:'FAIR'}]){
+  const result=vm.runInNewContext(code,{c,recData});
+  assert.doesNotMatch(result.weatherHtml,/Rain incoming/);
+  assert.match(result.weatherHtml,/49/);
+  if(c.ratingKey!=='FAIR')assert.doesNotMatch(result.recHtml,/Go fishing/);
+ }
+ const result=vm.runInNewContext(code,{c:{evidenceState:'complete',ratingKey:'FAIR'},recData:{...recData,weather:{...recData.weather,flowTrend:'rising'}}});
+ assert.match(result.weatherHtml,/Rain incoming/);
+});
