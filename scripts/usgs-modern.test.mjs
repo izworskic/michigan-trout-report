@@ -51,3 +51,23 @@ test('documented string qualifiers preserve unrelated fresh gauge observations',
   assert.equal(batch[id].observationStates.flow,'seasonal');assert.equal(batch[other].flow,29.1);
  }finally{globalThis.fetch=original;}
 });
+
+test('four Sentinel incident river guides render independently dated measured flow from modern USGS payload',async()=>{
+ const {RIVERS}=await import('../lib/rivers.js');
+ const {loadPageConditions}=await import('../lib/river-page-data.js');
+ const {buildSEOPage}=await import('../api/river/[id].js');
+ // Recorded official response, 2026-11-27. This fixture is not live data.
+ const samples=[['black-river-up','04031000','29.1','2026-11-27T11:00:00+00:00'],['ausable','04136500','877','2026-11-27T11:30:00+00:00'],['white-river','04122200','315','2026-11-27T11:15:00+00:00'],['tittabawassee-river','04153300','382','2026-11-27T11:00:00+00:00']];
+ const observed=parseLiveObservations(live(samples.map(([,gauge,value,t])=>feature('00060',value,{monitoring_location_id:'USGS-'+gauge,time:t}))),samples.map(s=>s[1]),Date.parse('2026-11-27T11:45:00Z'));
+ for(const [slug,gauge,value,t] of samples){
+  const river=RIVERS.find(r=>r.id===slug);
+  assert.equal(river.primaryGauge,gauge);
+  const result=await loadPageConditions(gauge,{fetchLiveReadings:async()=>observed,fetchAllStats:async()=>({})});
+  assert.equal(result.cfs,Number(value));assert.equal(result.flowTimestamp,new Date(t).toISOString());
+  assert.equal(result.rating,null);assert.equal(result.tempC,null);
+  const html=buildSEOPage(river,result,[]);
+  assert.match(html,/data-conditions-state="partial"/);
+  assert.match(html,/cond-label">Flow<\/div><div class="cond-value">[^<]+ cfs/);
+  assert.match(html,/measured /);assert.match(html,/Not rated/);
+ }
+});
