@@ -231,7 +231,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const r = makeState();
-  const cacheKey = `trout:detail:${id}:${new Date().toISOString().slice(0, 10)}`;
+  const cacheKey = `trout:detail:v2:${id}:${new Date().toISOString().slice(0, 10)}`;
   if (r) {
     try {
       const cached = await r.get(cacheKey);

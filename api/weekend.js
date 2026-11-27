@@ -95,7 +95,7 @@ export default async function handler(req, res) {
 
   const redis = makeState();
   const weekend = getNextWeekendDays();
-  const cacheKey = `trout:weekend:${weekend.saturday.date}`;
+  const cacheKey = `trout:weekend:v2:${weekend.saturday.date}`;
 
   // Try cache
   if (redis) {
@@ -148,7 +148,7 @@ export default async function handler(req, res) {
       const satTemp = satPeriod?.temperature ?? null;
       const satWind = satPeriod?.windSpeed || '';
       const satForecast = satPeriod?.shortForecast || '';
-      const satProjected = conditions.ratingKey
+      const satProjected = conditions.evidenceState === 'complete' && SCORE[conditions.ratingKey]>0
         ? projectRating(conditions.ratingKey, satRain, conditions.flowPct || 100, satTemp || 50)
         : null;
 
@@ -157,7 +157,7 @@ export default async function handler(req, res) {
       const sunTemp = sunPeriod?.temperature ?? null;
       const sunWind = sunPeriod?.windSpeed || '';
       const sunForecast = sunPeriod?.shortForecast || '';
-      const sunProjected = conditions.ratingKey
+      const sunProjected = conditions.evidenceState === 'complete' && SCORE[conditions.ratingKey]>0
         ? projectRating(conditions.ratingKey, sunRain, conditions.flowPct || 100, sunTemp || 50)
         : null;
 

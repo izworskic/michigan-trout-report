@@ -30,6 +30,7 @@ function computeTrend(todayConditions, yesterdaySnap) {
   const SCORE = { PRIME: 5, FISHING_WELL: 4, FAIR: 3, TOUGH: 2, BLOWN_OUT: 1 };
   const todayScore = SCORE[todayConditions.ratingKey] || 0;
   const yesterdayScore = SCORE[yesterdaySnap.ratingKey] || 0;
+  if (!todayScore || !yesterdayScore) return null;
 
   // Flow trend
   let flowTrend = null;
@@ -77,7 +78,7 @@ export default async function handler(req, res) {
   }
 
   const today    = todayUTC();
-  const redisKey = `trout:daily:${today}`;
+  const redisKey = `trout:daily:v2:${today}`;
   const ttl      = secondsUntilMidnight();
   const r        = makeState();
 
@@ -186,7 +187,7 @@ export default async function handler(req, res) {
 
   } catch(e) {
     console.error('[generate] Fatal:', e.message);
-    if (memCache.payload) {
+    if (memCache.payload && memCache.dateKey === today) {
       return res.status(200).json({ success: true, cached: true, stale: true, ...memCache.payload });
     }
     return res.status(500).json({ success: false, error: e.message });

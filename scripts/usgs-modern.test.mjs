@@ -71,3 +71,22 @@ test('four Sentinel incident river guides render independently dated measured fl
   assert.match(html,/measured /);assert.match(html,/Not rated/);
  }
 });
+
+test('missing and partial observations never default to a positive fishability rating',async()=>{
+ const {buildConditions,rateConditions}=await import('../lib/rater.js');
+ for(const reading of [{},{flow:null,temp_c:null,gage:null},{flow:NaN,temp_c:undefined},{flow:500,temp_c:10,observationStates:{flow:'stale',temp_c:'seasonal'}}]){
+   const c=buildConditions(reading,{p50:500});
+   assert.equal(c.ratingKey,'UNRATED');assert.equal(c.evidenceState,'unavailable');
+   assert.equal(c.flow,null);assert.equal(c.tempF,null);
+ }
+ for(const reading of [{flow:500},{temp_c:10},{gage:2}]){
+   const c=buildConditions(reading,{p50:500});
+   assert.equal(c.ratingKey,'UNRATED');assert.equal(c.evidenceState,'partial');
+ }
+ const normal=buildConditions({flow:500,temp_c:10},{p50:500});
+ assert.equal(normal.ratingKey,'PRIME');assert.equal(normal.evidenceState,'complete');
+ const zero=buildConditions({flow:0},{p50:500});assert.equal(zero.flow,0);assert.equal(zero.flowPct,0);assert.equal(zero.ratingKey,'TOUGH');
+ assert.equal(rateConditions(2000,{p50:500},null),'BLOWN_OUT');
+ assert.equal(rateConditions(null,{},25),'TOUGH');
+ assert.equal(rateConditions(500,{p50:0},10),'UNRATED');
+});

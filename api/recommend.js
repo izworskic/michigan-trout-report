@@ -41,7 +41,7 @@ export default async function handler(req, res) {
   const month     = now.getMonth() + 1;
   const dateKey   = now.toISOString().slice(0, 10);
   const hourBucket = Math.floor(hourET / 4); // 6 buckets per day
-  const cacheKey  = `trout:recommend:${id}:${dateKey}:${hourBucket}`;
+  const cacheKey  = `trout:recommend:v2:${id}:${dateKey}:${hourBucket}`;
 
   // Try cache
   if (redis) {
@@ -107,10 +107,11 @@ export default async function handler(req, res) {
     );
 
     // Generate AI recommendation (now includes weather)
-    const aiRec = await generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hourET);
+    const unrated = conditions.ratingKey === 'UNRATED';
+    const aiRec = unrated ? 'Current river conditions cannot be rated. Check the gauge and local reports before deciding to fish.' : await generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hourET);
 
     // Build lure recommendations (excluded for fly-only water)
-    const lureRec = buildLureRecommendations({
+    const lureRec = unrated ? null : buildLureRecommendations({
       tempF: conditions.tempF,
       flowPct: conditions.flowPct,
       turbidityFNU: conditions.turbidity_fnu,
@@ -130,16 +131,17 @@ export default async function handler(req, res) {
         flowPct:    conditions.flowPct,
         flowLabel:  conditions.flowLabel,
         ratingKey:  conditions.ratingKey,
+        evidenceState: conditions.evidenceState,
       },
       recommendation: aiRec,
       staticRec: {
-        activeHatches: staticRec.activeHatches.map(h => ({
+        activeHatches: (unrated ? [] : staticRec.activeHatches).map(h => ({
           name: h.name, timeOfDay: h.timeOfDay, tempRange: h.tempRange,
           patterns: h.patterns, presentation: h.presentation, notes: h.notes,
         })),
-        flowAdvice: staticRec.flowAdvice,
+        flowAdvice: unrated ? null : staticRec.flowAdvice,
         timeAdvice: staticRec.timeAdvice,
-        topFlies:   staticRec.topFlies,
+        topFlies:   unrated ? [] : staticRec.topFlies,
       },
       lureRec,
       intel: {
@@ -288,6 +290,6 @@ Keep it under 300 words. Write like you're texting a friend before they leave fo
     // Fallback to structured static rec
     if (!staticRec.activeHatches.length) return null;
     const h = staticRec.activeHatches[0];
-    return `${staticRec.flowAdvice?.summary || 'Conditions are fishable'}. Primary hatch: ${h.name}. ${h.presentation} Flies: ${h.patterns.slice(0,3).map(p => `${p.name} #${p.sizes[0]}`).join(', ')}.`;
+    return `${staticRec.flowAdvice?.summary || 'Flow-based advice is unavailable'}. Primary hatch: ${h.name}. ${h.presentation} Flies: ${h.patterns.slice(0,3).map(p => `${p.name} #${p.sizes[0]}`).join(', ')}.`;
   }
 }
