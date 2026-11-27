@@ -46,3 +46,7 @@ The complete test gate and production build reject missing, blank, duplicated, o
 - [Freighter View Farms](https://freighterviewfarms.com): Great Lakes gardening blog
 - [Great Lakes Gazette](https://gazette.chrisizworski.com): daily maritime newsletter
 - [chrisizworski.com](https://chrisizworski.com)
+
+## USGS data contract (November 2026)
+
+Live readings use the modern USGS v1 latest-continuous endpoint; historical discharge percentiles use observationNormals, approved daily mean, Detroit calendar day. Independent 24-hour observation age, explicit units, source times, seasonal/discontinued states, no fabricated measurements or baseline. Requests are batched and body-deadline bounded; no new dependencies, routes, model calls or schedule. Anonymous rate limits and live production delivery remain verification requirements. The API returns no inferred measurements for unreported parameters. See `docs/usgs-modernization.md`.
