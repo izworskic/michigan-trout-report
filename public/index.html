@@ -1011,10 +1011,11 @@ function renderModal(data,aiNote,rec,riverId){
   const c=data.primaryConditions;
   const rat=c?.ratingKey?(RATINGS[c.ratingKey]||RATINGS.UNRATED):null;
   const slug=SLUGS[riverId];
+  const supported = c?.evidenceState === 'complete' && ['PRIME','FISHING_WELL','FAIR'].includes(c.ratingKey) && rec?.conditions?.adviceSupported === true;
 
   // Fly recommendations
   let fliesHtml='';
-  if(rec?.recommendation){
+  if(supported && rec?.recommendation){
     const flies=(rec.staticRec?.topFlies||[]).slice(0,4);
     fliesHtml=`<div style="margin-top:12px;padding-top:11px;border-top:1px solid #f0ece4">
       <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#bbb;margin-bottom:6px">🪰 Fly Recommendations</div>
@@ -1025,7 +1026,7 @@ function renderModal(data,aiNote,rec,riverId){
 
   // Lure recommendations (only if allowed on this water)
   let lureHtml='';
-  const lr=rec?.lureRec;
+  const lr=supported ? rec?.lureRec : null;
   if(lr && lr.allowed && lr.lures?.length){
     const lureTags=lr.lures.map(l=>{
       const q=encodeURIComponent(l.amazonQuery);
@@ -1056,10 +1057,10 @@ function renderModal(data,aiNote,rec,riverId){
         ${t.wind?`<span style="font-size:12px;background:#f0f4ff;padding:3px 8px;border-radius:3px;color:#444">Wind: ${t.wind}</span>`:''}
         ${t.rain>15?`<span style="font-size:12px;background:#fff5f2;padding:3px 8px;border-radius:3px;color:#c62828">Rain: ${t.rain}%</span>`:''}
       </div>
-      ${t.cloud?.hatchTip?`<div style="font-size:11px;color:#666;margin-bottom:4px">${t.cloud.hatchTip}</div>`:''}
-      ${t.wind_int?.tip?`<div style="font-size:11px;color:#666;margin-bottom:4px">${t.wind_int.tip}</div>`:''}
-      ${wx.flowTrend&&wx.flowTrend!=='stable'?`<div style="font-size:11px;color:#c62828">⚠ Rain incoming. Flow may rise in 12-24h.</div>`:''}
-      ${wx.bestWindow&&wx.bestWindow.name!==t.name?`<div style="font-size:11px;color:#2e7d32;margin-top:4px">Best window: <strong>${wx.bestWindow.name}</strong> (${wx.bestWindow.tempF}°F, ${wx.bestWindow.rain}% rain)</div>`:''}
+      ${supported&&t.cloud?.hatchTip?`<div style="font-size:11px;color:#666;margin-bottom:4px">${t.cloud.hatchTip}</div>`:''}
+      ${supported&&t.wind_int?.tip?`<div style="font-size:11px;color:#666;margin-bottom:4px">${t.wind_int.tip}</div>`:''}
+      ${supported&&wx.flowTrend&&wx.flowTrend!=='stable'?`<div style="font-size:11px;color:#c62828">⚠ Rain incoming. Flow may rise in 12-24h.</div>`:''}
+      ${supported&&wx.bestWindow&&wx.bestWindow.name!==t.name?`<div style="font-size:11px;color:#2e7d32;margin-top:4px">Best window: <strong>${wx.bestWindow.name}</strong> (${wx.bestWindow.tempF}°F, ${wx.bestWindow.rain}% rain)</div>`:''}
     </div>`;
   }
 
@@ -1083,7 +1084,7 @@ function renderModal(data,aiNote,rec,riverId){
     ${fliesHtml}
     ${lureHtml}
     ${discl}
-    ${aiNote?`<div class="modal-note">${aiNote}</div>`:''}
+    ${supported&&aiNote?`<div class="modal-note">${aiNote}</div>`:''}
     <div class="modal-actions">
       <a href="/map.html?river=${riverId}" class="modal-btn primary" style="background:#1565c0">🗺 Map + Access</a>
       ${slug?`<a href="/stream/${slug}.html" class="modal-btn primary">Stream page</a>`:''}

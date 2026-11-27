@@ -90,3 +90,19 @@ test('missing and partial observations never default to a positive fishability r
  assert.equal(rateConditions(null,{},25),'TOUGH');
  assert.equal(rateConditions(500,{p50:0},10),'UNRATED');
 });
+
+test('weather and daylight cannot substitute for missing river evidence',async()=>{
+ const {supportsFishingAdvice,weatherForEvidence,sunForEvidence}=await import('../lib/recommendation-evidence.js');
+ const {estimateSpinnerFall}=await import('../lib/sun.js');
+ const wx={today:{tempF:49,cloud:{hatchTip:'ideal'},wind_int:{tip:'fish'}},bestWindow:{name:'Saturday'},flowTrend:'rising'};
+ const sun={sunrise:'7:54 AM',sunset:'5:06 PM',goldenMorning:'7:24 AM',spinner:{start:'4 PM'}};
+ for(const c of [{ratingKey:'UNRATED',evidenceState:'unavailable'},{ratingKey:'FAIR',evidenceState:'partial'},{ratingKey:'TOUGH',evidenceState:'complete'},{ratingKey:'BLOWN_OUT',evidenceState:'complete'},{}]){
+  assert.equal(supportsFishingAdvice(c),false);
+  const w=weatherForEvidence(wx,false),s=sunForEvidence(sun,false);
+  assert.equal(w.today.tempF,49);assert.equal(w.today.cloud,undefined);assert.equal(w.today.wind_int,undefined);assert.equal(w.bestWindow,null);assert.equal(w.flowTrend,null);
+  assert.equal(s.sunrise,'7:54 AM');assert.equal(s.goldenMorning,null);assert.equal(s.spinner,null);
+ }
+ const c={ratingKey:'FISHING_WELL',evidenceState:'complete'};
+ assert.equal(supportsFishingAdvice(c),true);assert.equal(weatherForEvidence(wx,true),wx);assert.equal(sunForEvidence(sun,true),sun);
+ for(const value of [null,undefined,NaN])assert.equal(estimateSpinnerFall(1000,value).start,null);
+});
