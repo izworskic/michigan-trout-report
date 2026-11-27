@@ -3,6 +3,7 @@
 // uses these functions for consistent presentation.
 
 const RATINGS = {
+  UNRATED: {label:'Not rated', emoji:'○', color:'#666666', bg:'#f1f1f1', tagline:'Insufficient current evidence to assess fishability.'},
   PRIME:        { label: 'Prime',        emoji: '🎣', color: '#2e7d32', bg: '#e8f5e9', tagline: 'Drop everything and go.' },
   FISHING_WELL: { label: 'Fishing Well', emoji: '✅', color: '#558b2f', bg: '#f1f8e9', tagline: 'Worth the drive.' },
   FAIR:         { label: 'Fair',         emoji: '🟡', color: '#f9a825', bg: '#fffde7', tagline: 'Fishable. Pick your spots.' },
@@ -36,12 +37,12 @@ function sectionDivider() {
 
 // ── Rating badge ────────────────────────────────────────────────────────────
 function renderRating(c) {
-  const rat = RATINGS[c.ratingKey] || RATINGS.FAIR;
+  const rat = RATINGS[c.ratingKey] || RATINGS.UNRATED;
   return `<div style="display:flex;align-items:center;gap:10px;background:${rat.bg};border:1px solid ${rat.color}25;padding:10px 14px;border-radius:5px;margin-bottom:12px">
     <span style="font-size:24px">${rat.emoji}</span>
     <div>
       <div style="font-size:18px;font-weight:bold;color:${rat.color}">${rat.label}</div>
-      <div style="font-size:13px;opacity:.8;color:${rat.color}">${rat.tagline}</div>
+      <div style="font-size:13px;opacity:.8;color:${rat.color}">${rat.tagline}${c.evidenceState==='partial' && c.ratingKey!=='UNRATED'?' Partial evidence; not a complete assessment.':''}</div>
     </div>
   </div>`;
 }
