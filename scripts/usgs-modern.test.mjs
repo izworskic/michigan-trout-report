@@ -37,3 +37,17 @@ test('network adapter uses modern API, Detroit calendar and one request for mult
   assert.match(urls[1],/monitoring_location_id=USGS-04136500&monitoring_location_id=USGS-04031000/);
  }finally{globalThis.fetch=old;}
 });
+
+test('documented string qualifiers preserve unrelated fresh gauge observations',async()=>{
+ const mixed=live([feature('00060',null,{qualifier:'SEASONAL'}),feature('00060','29.1',{monitoring_location_id:'USGS-'+other,qualifier:'ESTIMATED'}),feature('00065','2.98',{qualifier:'ICE, ESTIMATED'})]);
+ const r=parseLiveObservations(mixed,[id,other],now);
+ assert.equal(r[id].flow,null);assert.equal(r[id].observationStates.flow,'seasonal');
+ assert.equal(r[other].flow,29.1);assert.deepEqual(r[other].observationQualifiers.flow,['ESTIMATED']);
+ assert.deepEqual(r[id].observationQualifiers.gage,['ICE','ESTIMATED']);
+ const original=globalThis.fetch;
+ try {
+  globalThis.fetch=async()=>({ok:true,json:async()=>live(mixed.features.map(f=>({...f,properties:{...f.properties,time:new Date(Date.now()-1000).toISOString()}})))});
+  const batch=await fetchLiveReadings([id,other]);
+  assert.equal(batch[id].observationStates.flow,'seasonal');assert.equal(batch[other].flow,29.1);
+ }finally{globalThis.fetch=original;}
+});
