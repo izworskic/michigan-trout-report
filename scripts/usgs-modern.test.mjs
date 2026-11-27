@@ -90,3 +90,38 @@ test('missing and partial observations never default to a positive fishability r
  assert.equal(rateConditions(null,{},25),'TOUGH');
  assert.equal(rateConditions(500,{p50:0},10),'UNRATED');
 });
+
+test('weather and daylight cannot substitute for missing river evidence',async()=>{
+ const {supportsFishingAdvice,weatherForEvidence,sunForEvidence}=await import('../lib/recommendation-evidence.js');
+ const {estimateSpinnerFall}=await import('../lib/sun.js');
+ const wx={today:{tempF:49,cloud:{hatchTip:'ideal'},wind_int:{tip:'fish'}},bestWindow:{name:'Saturday'},flowTrend:'rising'};
+ const sun={sunrise:'7:54 AM',sunset:'5:06 PM',goldenMorning:'7:24 AM',spinner:{start:'4 PM'}};
+ for(const c of [{ratingKey:'UNRATED',evidenceState:'unavailable'},{ratingKey:'FAIR',evidenceState:'partial'},{ratingKey:'TOUGH',evidenceState:'complete'},{ratingKey:'BLOWN_OUT',evidenceState:'complete'},{}]){
+  assert.equal(supportsFishingAdvice(c),false);
+  const w=weatherForEvidence(wx,false),s=sunForEvidence(sun,false);
+  assert.equal(w.today.tempF,49);assert.equal(w.today.cloud,undefined);assert.equal(w.today.wind_int,undefined);assert.equal(w.bestWindow,null);assert.equal(w.flowTrend,null);
+  assert.equal(s.sunrise,'7:54 AM');assert.equal(s.goldenMorning,null);assert.equal(s.spinner,null);
+ }
+ const c={ratingKey:'FISHING_WELL',evidenceState:'complete'};
+ assert.equal(supportsFishingAdvice(c),true);assert.equal(weatherForEvidence(wx,true),wx);assert.equal(sunForEvidence(sun,true),sun);
+ for(const value of [null,undefined,NaN])assert.equal(estimateSpinnerFall(1000,value).start,null);
+});
+
+test('full report renderer does not invent rain or fishing advice for withheld evidence',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const vm=await import('node:vm');
+ const html=readFileSync(new URL('../public/river.html',import.meta.url),'utf8');
+ const start=html.indexOf('  const supported = c.evidenceState');
+ const end=html.indexOf('  const gaugesHtml',start);
+ assert.ok(start>=0&&end>start);
+ const code=html.slice(start,end)+'\n({recHtml,weatherHtml})';
+ const recData={conditions:{adviceSupported:true},recommendation:'Go fishing',staticRec:{},weather:{today:{tempF:49,rain:0,forecast:'Clear'},flowTrend:null,week:[]}};
+ for(const c of [{evidenceState:'unavailable',ratingKey:'UNRATED'},{evidenceState:'complete',ratingKey:'TOUGH'},{evidenceState:'complete',ratingKey:'FAIR'}]){
+  const result=vm.runInNewContext(code,{c,recData});
+  assert.doesNotMatch(result.weatherHtml,/Rain incoming/);
+  assert.match(result.weatherHtml,/49/);
+  if(c.ratingKey!=='FAIR')assert.doesNotMatch(result.recHtml,/Go fishing/);
+ }
+ const result=vm.runInNewContext(code,{c:{evidenceState:'complete',ratingKey:'FAIR'},recData:{...recData,weather:{...recData.weather,flowTrend:'rising'}}});
+ assert.match(result.weatherHtml,/Rain incoming/);
+});

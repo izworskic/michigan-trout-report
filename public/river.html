@@ -187,9 +187,12 @@ function renderPage(data, recData) {
   document.getElementById('pageTitle').textContent = `${r.name} Conditions: Michigan Trout Report`;
   document.getElementById('pageDesc').content = `Live stream conditions for the ${r.name}: ${rat.label}. Flow ${c.flow ? c.flow + ' cfs' : 'N/A'}, water temp ${c.tempF ? c.tempF + '°F' : 'N/A'}.`;
 
+  const supported = c.evidenceState === 'complete' && ['PRIME','FISHING_WELL','FAIR'].includes(c.ratingKey) && recData?.conditions?.adviceSupported === true;
   // Build recommendation section
   let recHtml = '';
-  if (recData) {
+  if (recData && !supported) {
+    recHtml = '<div class="rec-section">Fishing advice is withheld until current river evidence supports it.</div>';
+  } else if (recData) {
     const flies = (recData.staticRec?.topFlies || []).slice(0, 6);
     const flyTags = flies.map(f =>
       `<span class="rec-fly-tag">${f.name} #${f.sizes.join('/')}</span>`
@@ -244,13 +247,13 @@ function renderPage(data, recData) {
         <div class="wx-stat">
           <div class="wx-stat-label">Wind</div>
           <div class="wx-stat-value" style="font-size:13px">${t.wind || 'Calm'}</div>
-          <div class="wx-stat-sub">${t.wind_int?.level || ''}</div>
+          <div class="wx-stat-sub">${supported ? (t.wind_int?.level || '') : ''}</div>
         </div>
       </div>
-      <div class="wx-tip">${t.forecast}${t.cloud?.hatchTip ? ': ' + t.cloud.hatchTip : ''}</div>
-      ${wx.flowTrend !== 'stable' ? `<div class="${rainClass}">⚠ Rain incoming: flow may rise in the next 24-48h. Check conditions before heading out.</div>` : ''}
-      ${t.wind_int?.level === 'high' ? `<div class="wx-tip">${t.wind_int.tip}</div>` : ''}
-      ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div class="wx-tip">Best upcoming window: <strong>${wx.bestWindow.name}</strong>: ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast} (${wx.bestWindow.rain}% rain)</div>` : ''}
+      <div class="wx-tip">${t.forecast}${supported && t.cloud?.hatchTip ? ': ' + t.cloud.hatchTip : ''}</div>
+      ${supported && wx.flowTrend && wx.flowTrend !== 'stable' ? `<div class="${rainClass}">⚠ Rain incoming: flow may rise in the next 24-48h. Check conditions before heading out.</div>` : ''}
+      ${supported && t.wind_int?.level === 'high' ? `<div class="wx-tip">${t.wind_int.tip}</div>` : ''}
+      ${supported && wx.bestWindow && wx.bestWindow.name !== t.name ? `<div class="wx-tip">Best upcoming window: <strong>${wx.bestWindow.name}</strong>: ${wx.bestWindow.tempF}°F, ${wx.bestWindow.forecast} (${wx.bestWindow.rain}% rain)</div>` : ''}
       ${weekCards ? `<div class="wx-week">${weekCards}</div>` : ''}
     </div>`;
   }

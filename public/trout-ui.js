@@ -78,7 +78,7 @@ function renderFlowBar(pct) {
 }
 
 // ── Weather forecast ────────────────────────────────────────────────────────
-function renderWeather(wx) {
+function renderWeather(wx, supported = false) {
   if (!wx?.today) return '';
   const t = wx.today;
   return `${sectionDivider()}
@@ -89,10 +89,10 @@ function renderWeather(wx) {
       ${t.wind ? `<span style="font-size:12px;background:#f0f4ff;padding:3px 8px;border-radius:3px;color:#444">Wind: ${t.wind}</span>` : ''}
       ${t.rain > 15 ? `<span style="font-size:12px;background:#fff5f2;padding:3px 8px;border-radius:3px;color:#c62828">Rain: ${t.rain}%</span>` : ''}
     </div>
-    ${t.cloud?.hatchTip ? `<div style="font-size:11px;color:#666;margin-bottom:3px">${t.cloud.hatchTip}</div>` : ''}
-    ${t.wind_int?.tip ? `<div style="font-size:11px;color:#666;margin-bottom:3px">${t.wind_int.tip}</div>` : ''}
-    ${wx.flowTrend && wx.flowTrend !== 'stable' ? `<div style="font-size:11px;color:#c62828;margin-bottom:3px">⚠ Rain incoming. Flow may rise in 12-24h.</div>` : ''}
-    ${wx.bestWindow && wx.bestWindow.name !== t.name ? `<div style="font-size:11px;color:#2e7d32;margin-top:3px">Best window: <strong>${wx.bestWindow.name}</strong> (${wx.bestWindow.tempF}°F, ${wx.bestWindow.rain}% rain)</div>` : ''}
+    ${supported && t.cloud?.hatchTip ? `<div style="font-size:11px;color:#666;margin-bottom:3px">${t.cloud.hatchTip}</div>` : ''}
+    ${supported && t.wind_int?.tip ? `<div style="font-size:11px;color:#666;margin-bottom:3px">${t.wind_int.tip}</div>` : ''}
+    ${supported && wx.flowTrend && wx.flowTrend !== 'stable' ? `<div style="font-size:11px;color:#c62828;margin-bottom:3px">⚠ Rain incoming. Flow may rise in 12-24h.</div>` : ''}
+    ${supported && wx.bestWindow && wx.bestWindow.name !== t.name ? `<div style="font-size:11px;color:#2e7d32;margin-top:3px">Best window: <strong>${wx.bestWindow.name}</strong> (${wx.bestWindow.tempF}°F, ${wx.bestWindow.rain}% rain)</div>` : ''}
     ${wx.week?.length ? renderWeekForecast(wx.week) : ''}
   </div>`;
 }
@@ -148,11 +148,11 @@ function renderLures(lureRec) {
 }
 
 // ── Sun times + Spinner fall ────────────────────────────────────────────────
-function renderSunTimes(recData) {
+function renderSunTimes(recData, supported = false) {
   const sun = recData?.sun;
   if (!sun?.sunrise) return '';
 
-  const spinner = sun.spinner;
+  const spinner = supported ? sun.spinner : null;
   const spinnerHtml = spinner?.start ? `
     <div style="margin-top:8px;padding:8px 10px;background:#fff8e1;border-radius:4px;border:1px solid #ffe082">
       <div style="font-size:11px;color:#f57f17;font-weight:bold;margin-bottom:2px">🪰 Estimated Spinner Fall</div>
@@ -161,14 +161,14 @@ function renderSunTimes(recData) {
     </div>` : (spinner?.advice ? `<div style="font-size:11px;color:#999;margin-top:4px">${spinner.advice}</div>` : '');
 
   return `${sectionDivider()}
-    ${sectionLabel('☀️', 'Sun & Fishing Windows')}
+    ${sectionLabel('☀️', supported ? 'Sun & Fishing Windows' : 'Daylight')}
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">
       <span style="font-size:12px;background:#fff8e1;padding:3px 8px;border-radius:3px;color:#e65100">🌅 ${sun.sunrise}</span>
       <span style="font-size:12px;background:#e8eaf6;padding:3px 8px;border-radius:3px;color:#283593">🌇 ${sun.sunset}</span>
       <span style="font-size:12px;background:#f5f5f5;padding:3px 8px;border-radius:3px;color:#666">${sun.dayLength} daylight</span>
     </div>
-    ${sun.goldenMorning ? `<div style="font-size:11px;color:#666;margin-bottom:2px">🎣 Morning window: <strong>${sun.goldenMorning}</strong></div>` : ''}
-    ${sun.goldenEvening ? `<div style="font-size:11px;color:#666;margin-bottom:2px">🎣 Evening window: <strong>${sun.goldenEvening}</strong></div>` : ''}
+    ${supported && sun.goldenMorning ? `<div style="font-size:11px;color:#666;margin-bottom:2px">🎣 Morning window: <strong>${sun.goldenMorning}</strong></div>` : ''}
+    ${supported && sun.goldenEvening ? `<div style="font-size:11px;color:#666;margin-bottom:2px">🎣 Evening window: <strong>${sun.goldenEvening}</strong></div>` : ''}
     ${spinnerHtml}
   </div>`;
 }
@@ -207,16 +207,18 @@ function renderFullWidget(c, recData, riverId) {
 
   const pct = c.flowPct;
   const wx = recData?.weather;
-  const lr = recData?.lureRec;
+  const supported = c.evidenceState === 'complete' && ['PRIME','FISHING_WELL','FAIR'].includes(c.ratingKey) && recData?.conditions?.adviceSupported === true;
+  const lr = supported ? recData?.lureRec : null;
+  const advice = supported ? recData : {recommendation:'Fishing advice is withheld until current river evidence supports it.'};
 
   return [
     renderRating(c),
     renderRegulationBadge(recData),
     renderConditionStats(c),
     renderFlowBar(pct),
-    renderWeather(wx),
-    renderSunTimes(recData),
-    renderFlies(recData),
+    renderWeather(wx, supported),
+    renderSunTimes(recData, supported),
+    renderFlies(advice),
     renderLures(lr),
     renderDisclosure(),
     `<div style="display:flex;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid #e8e4dc;flex-wrap:wrap">

@@ -12,6 +12,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { RIVERS } from '../lib/rivers.js';
 import { fetchLiveReadings, fetchAllStats } from '../lib/usgs.js';
 import { buildConditions } from '../lib/rater.js';
+import { supportsFishingAdvice, weatherForEvidence, sunForEvidence } from '../lib/recommendation-evidence.js';
 import { buildRecommendations, getTempZone, getFlowAdvice, MICHIGAN_HATCHES } from '../lib/hatches.js';
 import { fetchHatchIntel } from '../lib/intel.js';
 import { fetchRiverWeather, RIVER_GRIDS } from '../lib/weather.js';
@@ -41,7 +42,7 @@ export default async function handler(req, res) {
   const month     = now.getMonth() + 1;
   const dateKey   = now.toISOString().slice(0, 10);
   const hourBucket = Math.floor(hourET / 4); // 6 buckets per day
-  const cacheKey  = `trout:recommend:v2:${id}:${dateKey}:${hourBucket}`;
+  const cacheKey  = `trout:recommend:v3:${id}:${dateKey}:${hourBucket}`;
 
   // Try cache
   if (redis) {
@@ -107,11 +108,11 @@ export default async function handler(req, res) {
     );
 
     // Generate AI recommendation (now includes weather)
-    const unrated = conditions.ratingKey === 'UNRATED';
-    const aiRec = unrated ? 'Current river conditions cannot be rated. Check the gauge and local reports before deciding to fish.' : await generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hourET);
+    const supported = supportsFishingAdvice(conditions);
+    const aiRec = supported ? await generateAIRecommendation(river, conditions, staticRec, intel, weather, month, hourET) : conditions.ratingKey === 'UNRATED' ? 'Current river conditions cannot be rated. Check the gauge and local reports before deciding to fish.' : 'Current evidence does not support a positive fishing recommendation. Recheck gauge conditions and local regulations before traveling.';
 
     // Build lure recommendations (excluded for fly-only water)
-    const lureRec = unrated ? null : buildLureRecommendations({
+    const lureRec = !supported ? null : buildLureRecommendations({
       tempF: conditions.tempF,
       flowPct: conditions.flowPct,
       turbidityFNU: conditions.turbidity_fnu,
@@ -132,16 +133,17 @@ export default async function handler(req, res) {
         flowLabel:  conditions.flowLabel,
         ratingKey:  conditions.ratingKey,
         evidenceState: conditions.evidenceState,
+        adviceSupported: supported,
       },
       recommendation: aiRec,
       staticRec: {
-        activeHatches: (unrated ? [] : staticRec.activeHatches).map(h => ({
+        activeHatches: (!supported ? [] : staticRec.activeHatches).map(h => ({
           name: h.name, timeOfDay: h.timeOfDay, tempRange: h.tempRange,
           patterns: h.patterns, presentation: h.presentation, notes: h.notes,
         })),
-        flowAdvice: unrated ? null : staticRec.flowAdvice,
-        timeAdvice: staticRec.timeAdvice,
-        topFlies:   unrated ? [] : staticRec.topFlies,
+        flowAdvice: supported ? staticRec.flowAdvice : null,
+        timeAdvice: supported ? staticRec.timeAdvice : null,
+        topFlies:   supported ? staticRec.topFlies : [],
       },
       lureRec,
       intel: {
@@ -150,7 +152,7 @@ export default async function handler(req, res) {
           excerpt: i.content.slice(0, 200),
         })),
       },
-      weather: weather ? {
+      weather: weather ? weatherForEvidence({
         today:       weather.today,
         tonight:     weather.tonight,
         week:        weather.week?.slice(0, 5),
@@ -158,7 +160,7 @@ export default async function handler(req, res) {
         flowTrend:   weather.flowTrend,
         maxRainNext48: weather.maxRainNext48,
         hourly:      weather.hourly?.slice(0, 8),
-      } : null,
+      }, supported) : null,
       context: { month, hourET, dateKey },
       sun: (() => {
         // Try exact match, then prefix match (RIVER_GRIDS uses short keys like 'rifle', river IDs use 'rifle-river')
@@ -167,8 +169,8 @@ export default async function handler(req, res) {
         if (!grid) return null;
         const sunTimes = calcSunTimes(grid.lat, grid.lon, now);
         const waterTemp = conditions?.tempF ?? null;
-        const spinner = sunTimes.sunsetMin ? estimateSpinnerFall(sunTimes.sunsetMin, waterTemp) : null;
-        return { ...sunTimes, spinner };
+        const spinner = supported && sunTimes.sunsetMin ? estimateSpinnerFall(sunTimes.sunsetMin, waterTemp) : null;
+        return sunForEvidence({ ...sunTimes, spinner }, supported);
       })(),
       generatedAt: now.toISOString(),
     };
