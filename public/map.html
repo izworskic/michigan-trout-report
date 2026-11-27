@@ -248,6 +248,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 
 <script>
 const RATINGS = {
+  UNRATED: {label:'Not rated', emoji:'○', color:'#666666', bg:'#f1f1f1', tagline:'Insufficient current evidence to assess fishability.'},
   PRIME:        {label:'Prime',        emoji:'🎣', color:'#2e7d32', bg:'#e8f5e9', tagline:'Drop everything and go.'},
   FISHING_WELL: {label:'Fishing Well', emoji:'✅', color:'#558b2f', bg:'#f1f8e9', tagline:'Worth the drive.'},
   FAIR:         {label:'Fair',         emoji:'🟡', color:'#f9a825', bg:'#fffde7', tagline:'Fishable. Pick your spots.'},
@@ -346,7 +347,7 @@ function renderRiverMarkers(rivers){
     const coords=RIVER_COORDS[r.id];
     if(!coords)return;
     const c=r.conditions;
-    const rat=c?.ratingKey?(RATINGS[c.ratingKey]||RATINGS.FAIR):RATINGS.FAIR;
+    const rat=c?.ratingKey?(RATINGS[c.ratingKey]||RATINGS.UNRATED):RATINGS.UNRATED;
 
     const icon=L.divIcon({
       className:'',
@@ -365,8 +366,8 @@ function renderRiverMarkers(rivers){
         <div><div class="pu-label" style="color:${rat.color}">${rat.label}</div>
         <div class="pu-tagline" style="color:${rat.color}">${rat.tagline}</div></div>
       </div>
-      ${c?.flow!==null?`<div class="pu-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong>${c.flowPct?' ('+c.flowPct+'% of median)':''}</div>`:''}
-      ${c?.tempF!==null?`<div class="pu-stat">Water: <strong>${c.tempF}°F</strong>: ${c.tempLabel}</div>`:''}
+      ${c?.flow!=null?`<div class="pu-stat">Flow: <strong>${c.flow.toLocaleString()} cfs</strong>${c.flowPct?' ('+c.flowPct+'% of median)':''}</div>`:''}
+      ${c?.tempF!=null?`<div class="pu-stat">Water: <strong>${c.tempF}°F</strong>: ${c.tempLabel}</div>`:''}
       <div class="pu-links">
         <a href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}" target="_blank" rel="noopener" class="pu-nav">Navigate</a>
         ${slug?`<a href="/stream/${slug}.html" class="pu-link">Stream page</a>`:''}
@@ -540,7 +541,7 @@ function renderSbList(points){
 // ── Best rivers ───────────────────────────────────────────────────────────────
 function renderBest(rivers){
   const top=[...rivers]
-    .filter(r=>r.conditions?.ratingKey && RIVER_COORDS[r.id])
+    .filter(r=>SCORE[r.conditions?.ratingKey]>0 && RIVER_COORDS[r.id])
     .sort((a,b)=>(SCORE[b.conditions.ratingKey]||0)-(SCORE[a.conditions.ratingKey]||0))
     .slice(0,5);
   const el=document.getElementById('bestList');

@@ -145,6 +145,7 @@ WRITING RULES:
 - USE SUN TIMES: For dry-fly rivers in late spring through fall, mention the golden-hour evening window or spinner fall window when relevant to the hatch you're discussing.
 - If gauge data IS available (numbers shown above), USE IT. Do not write "gauge data is unavailable" when numbers are present.
 - If gauge data is genuinely unavailable (shown as "data unavailable"), say so plainly and tell the reader what to watch for instead.
+- NOT RATED means insufficient current evidence. Do not declare the river fishable, recommend a drive, or treat weather or calendar timing as measured river conditions.
 - Hatch and fly recommendations must be specific: name, hook size, presentation. But only recommend fishing if the river is actually fishable today.
 - Access information should be practical and honest about what you actually know.
 - No em dashes. Use commas, colons, or periods.
@@ -594,7 +595,7 @@ export default async function handler(req, res) {
     const payload = { rivers: riverData, brief, generated_at: new Date().toISOString(), date: today };
 
     if (r) {
-      await r.set(`trout:daily:${today}`, JSON.stringify(payload), { ex: ttl });
+      await r.set(`trout:daily:v2:${today}`, JSON.stringify(payload), { ex: ttl });
       log.push(`[${ts()}] Main payload cached`);
     }
 

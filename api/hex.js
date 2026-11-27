@@ -102,8 +102,8 @@ export default async function handler(req, res) {
         for (let i = 6; i >= 0; i--) {
           const d = new Date(now);
           d.setDate(d.getDate() - i);
-          const dk = `trout:daily:${d.toISOString().slice(0, 10)}`;
-          const snap = await redis.get(dk);
+          const day = d.toISOString().slice(0, 10);
+          const snap = await redis.get(`trout:daily:v2:${day}`) || await redis.get(`trout:daily:${day}`);
           if (snap) {
             const parsed = typeof snap === 'string' ? JSON.parse(snap) : snap;
             const aus = parsed?.rivers?.find(r => r.id === 'ausable');
