@@ -63,7 +63,7 @@ async function fetchGauge(gauge){
   const tempF = tempC!=null ? Math.round(tempC*9/5+32*10)/10 : null;
   return {flow, tempF: tempC!=null? Math.round((tempC*9/5+32)*10)/10 : null, trend, flowObservedAt, tempObservedAt};
 }
-function arrow(tr){ return tr==='rising'?'&#9650; rising':tr==='falling'?'&#9660; falling':'&#8212; steady'; }
+function arrow(tr){ if(tr==null)return 'Trend unavailable'; return tr==='rising'?'&#9650; rising':tr==='falling'?'&#9660; falling':'&#8212; steady'; }
 function pill(s){ return '<span class="status-pill" style="background:'+s.color+'1a;color:'+s.color+'">'+s.label+'</span>'; }
 
 
@@ -107,6 +107,17 @@ function speciesPills(salmon,steelhead,tracked){
     (tracked?pill(steelhead):'<span class="status-pill status-not-tracked">Not tracked</span>')+'</div></div>';
 }
 
+// Reuse the spring board's explicit 24-hour observation-age contract. Missing
+// or outdated parameters cannot support a current temperature or flow decision.
+function currentRunEvidence(c){
+  const flowFresh=c.flow!=null&&springFresh(c.flowObservedAt);
+  const tempFresh=c.tempF!=null&&springFresh(c.tempObservedAt);
+  return {...c,flow:flowFresh?c.flow:null,tempF:tempFresh?c.tempF:null,trend:flowFresh?c.trend:null,flowFresh,tempFresh,flowOld:c.flow!=null&&!flowFresh,tempOld:c.tempF!=null&&!tempFresh};
+}
+function runEvidenceNote(c){
+  return (c.tempOld?' Temperature outdated or undated.':c.tempF==null?' No usable temperature sensor.':' Temperature observed '+springTime(c.tempObservedAt)+'.')+
+    (c.flowOld?' Flow outdated or undated.':c.flow==null?' No usable flow reading.':' Flow observed '+springTime(c.flowObservedAt)+'.');
+}
 async function renderBoard(){
   const tb=document.getElementById('runboard-body'); if(!tb) return;
   const slugs=Object.keys(RIVERS).filter(slug=>document.getElementById('row-'+slug));
@@ -114,13 +125,15 @@ async function renderBoard(){
   const summaries=await Promise.all(slugs.map(async slug=>{
     const R=RIVERS[slug], row=document.getElementById('row-'+slug);
     try{
-      const c=await fetchGauge(R.gauge), st=boardStatus(R.species,c.tempF,c.trend);
+      const c=currentRunEvidence(await springFetchWithDeadline(R.gauge)), st=boardStatus(R.species,c.tempF,c.trend);
       const steelhead=R.species.includes('steelhead')?steelheadSignal(today().doy,c.tempF,c.trend):null;
+      if(steelhead&&!c.tempFresh){steelhead.label='Seasonal window only';steelhead.color='#777';}
+      if(!c.tempFresh){st.label='Seasonal context only';st.color='#777';}
       row.querySelector('.c-status').innerHTML=speciesPills(st,steelhead,!!steelhead);
-      row.querySelector('.c-flow').innerHTML=(c.flow!=null? Math.round(c.flow).toLocaleString()+' <span class="trend">cfs</span>':'&#8212;')+(c.flow!=null?'<div class="trend">'+arrow(c.trend)+'</div>':'');
-      row.querySelector('.c-temp').innerHTML=(c.tempF!=null? c.tempF+'&deg;F':'<span class="trend">no sensor</span>');
-      row.querySelector('.c-note').textContent=st.note;
-      if(steelhead)row.querySelector('.c-status').title=steelhead.note;
+      row.querySelector('.c-flow').innerHTML=(c.flow!=null? Math.round(c.flow).toLocaleString()+' <span class="trend">cfs</span>':c.flowOld?'Outdated':'&#8212;')+(c.flow!=null?'<div class="trend">'+arrow(c.trend)+'</div>':'');
+      row.querySelector('.c-temp').innerHTML=(c.tempF!=null? c.tempF+'&deg;F':c.tempOld?'Outdated':'<span class="trend">no sensor</span>');
+      row.querySelector('.c-note').textContent=(c.tempFresh?st.note:'Calendar context only; current temperature readiness is unknown.')+runEvidenceNote(c);
+      if(steelhead)row.querySelector('.c-status').title=steelhead.note+runEvidenceNote(c);
       return {slug,name:R.name,tempF:c.tempF,trend:c.trend,steelhead};
     }catch(e){
       row.querySelector('.c-status').innerHTML='<span class="trend">USGS data unavailable</span>';
@@ -138,32 +151,33 @@ async function renderBoard(){
     const cooling=observed.filter(x=>x.tempF>high&&x.tempF<=60)
       .sort((a,b)=>a.tempF-b.tempF).slice(0,3);
     const chosen=favorable.length?favorable:cooling;
-    const links=chosen.map(x=>'<a href="/salmon-run/rivers/'+x.slug+'.html">'+x.name.split(' (')[0]+'</a> ('+x.tempF+'°F, '+x.trend+' flow)').join(' · ');
+    const links=chosen.map(x=>'<a href="/salmon-run/rivers/'+x.slug+'.html">'+x.name.split(' (')[0]+'</a> ('+x.tempF+'°F, '+(x.trend?x.trend+' flow':'flow age unverified')+')').join(' · ');
     picks.innerHTML=favorable.length
       ? '<strong>Rivers in the '+low+'–'+high+'°F steelhead temperature window:</strong> '+links+
         '<div class="trend">Temperature/flow indicators only; not confirmed fish counts. Rivers without a temperature sensor are not ranked.</div>'
       : cooling.length
         ? '<strong>No monitored river is in the '+low+'–'+high+'°F steelhead temperature window yet.</strong> Closest cooling readings: '+links+
           '<div class="trend">These rivers are still warmer than the target range; this is a watchlist, not a fishing hot-spot claim. Rivers without temperature sensors are unranked.</div>'
-        : '<strong>No monitored river currently matches the '+low+'–'+high+'°F steelhead temperature window.</strong> See USGS readings and individual rivers below. Missing temperature sensors are not assumed to be favorable.';
+        : '<strong>No monitored river currently matches the '+low+'–'+high+'°F steelhead temperature window.</strong> See USGS readings and individual rivers below. Missing, outdated or undated temperatures are excluded; this is not proof that fish are absent.';
   }
-  if(stamp) stamp.textContent='Live USGS readings as of '+new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  if(stamp) stamp.textContent='USGS checked '+new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 }
 
 async function renderRiver(slug){
   const el=document.getElementById('widgetContent'); if(!el) return; const R=RIVERS[slug];
   try{
-    const c=await fetchGauge(R.gauge); const st=boardStatus(R.species,c.tempF,c.trend);
+    const c=currentRunEvidence(await springFetchWithDeadline(R.gauge)); const st=boardStatus(R.species,c.tempF,c.trend);
+    if(!c.tempFresh){st.label='Seasonal context only';st.color='#777';st.note='Current temperature readiness is unknown.';}
     el.innerHTML=
       '<div class="widget-rating"><span class="status-pill" style="background:'+st.color+'1a;color:'+st.color+';font-size:14px;padding:5px 13px">'+st.label+'</span></div>'+
-      '<p style="font-size:14px;color:#444;margin:10px 0 14px">'+st.note+'</p>'+
+      '<p style="font-size:14px;color:#444;margin:10px 0 14px">'+st.note+runEvidenceNote(c)+'</p>'+
       '<div class="widget-stats">'+
-        '<div class="widget-stat"><div class="widget-stat-label">Flow</div><div class="widget-stat-value num">'+(c.flow!=null?Math.round(c.flow).toLocaleString()+' cfs':'&#8212;')+'</div><div class="widget-stat-sub">'+arrow(c.trend)+'</div></div>'+
-        '<div class="widget-stat"><div class="widget-stat-label">Water Temp</div><div class="widget-stat-value num">'+(c.tempF!=null?c.tempF+'&deg;F':'&#8212;')+'</div><div class="widget-stat-sub">'+(c.tempF!=null?'':'no USGS sensor')+'</div></div>'+
+        '<div class="widget-stat"><div class="widget-stat-label">Flow</div><div class="widget-stat-value num">'+(c.flow!=null?Math.round(c.flow).toLocaleString()+' cfs':c.flowOld?'Outdated':'&#8212;')+'</div><div class="widget-stat-sub">'+arrow(c.trend)+'</div></div>'+
+        '<div class="widget-stat"><div class="widget-stat-label">Water Temp</div><div class="widget-stat-value num">'+(c.tempF!=null?c.tempF+'&deg;F':c.tempOld?'Outdated':'&#8212;')+'</div><div class="widget-stat-sub">'+(c.tempF!=null?'':c.tempOld?'older than 24 hours or undated':'no USGS sensor')+'</div></div>'+
         '<div class="widget-stat"><div class="widget-stat-label">7-Day Trend</div><div class="widget-stat-value" style="font-size:13px">'+arrow(c.trend)+'</div></div>'+
       '</div>'+
       '<div class="widget-actions"><a class="widget-btn widget-btn-primary" href="https://waterdata.usgs.gov/monitoring-location/'+R.gauge+'/" target="_blank" rel="noopener">USGS gauge '+R.gauge+'</a></div>'+
-      '<div class="trend" style="margin-top:8px">Updated '+new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'. Run status is our read from date, water temp, and flow trend.</div>';
+      '<div class="trend" style="margin-top:8px">Updated '+new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'. Run status is a seasonal interpretation, not a verified fish count. Observation times are listed above.</div>';
   }catch(e){ el.innerHTML='<span style="color:#bbb;font-size:13px">Live data unavailable right now. <a href="https://waterdata.usgs.gov/monitoring-location/'+R.gauge+'/" target="_blank" rel="noopener" style="color:#4a7c4a">Check USGS directly</a>.</span>'; }
 }
 
